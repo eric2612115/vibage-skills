@@ -40,7 +40,12 @@ Then paste [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md) into a new Agent chat.
 
 After install, agents resolve the package root via:
 
+### PKG_ROOT resolve
+
 ```bash
+# Prefer P1 init symlink:
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+# Fallback V0:
 python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-locate")))))'
 ```
 
