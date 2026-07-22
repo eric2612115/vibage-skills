@@ -81,6 +81,14 @@ python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os
 - Dual artifacts; soft CTA after reports; no signup wall; TBD site → graceful degrade.
 - No customer cloud root keys; Markdown SSOT; HTML optional later.
 
+## P1 parent hub (quick)
+
+```bash
+bash scripts/install.sh --init-hub="/abs/path/to/parent-folder"
+# then in Cursor: paste prompts/NEW-CHAT.md — init → orient → confirm → locate
+# preview: bash scripts/serve-preview.sh "/abs/path/to/parent-folder"
+```
+
 ## License
 
 MIT — see `LICENSE`. Copyright holder: `[TBD — Eric to fill]`.

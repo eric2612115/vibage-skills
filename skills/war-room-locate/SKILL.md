@@ -67,6 +67,7 @@ Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Tra
 1. **Open / update RunEnvelope** at `docs/war-room/RUNS/<run_id>.json`:
    - phase=`analyzing`, mode=`degraded` default
    - Keep `pipeline_id: locate`
+   - Optional: `preview_error` (string) — set when preview copy/serve fails (S11)
 2. **Fat-repo identity line** (after gate): if dual trees / LEGACY appear, write `Active surface: … | Legacy/ignore: …` with path+quote.
 3. **Deny / quarantine:** do not deep-read `.venv/`, `node_modules/`, `.worktrees/`, large artifacts, or paths marked LEGACY unless owner asks.
 4. **Hypothesize first** — 2–4 hypotheses. Consult `$PKG_ROOT/references/vibe-debt-smells.md`.
@@ -86,7 +87,13 @@ Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Tra
 12. **Verify (optional checklist):**  
     `"$PKG_ROOT/scripts/verify-report.sh" WAR-ROOM-LOCATE.md docs/war-room/RUNS/<run_id>.json`  
     Second arg is the RUNS JSON (required when Mode is full nested).
-13. **Preview fail-soft (S11):** After dual MD exist, run `"$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" 8765` (copies package asset into `$WORKSPACE/war-room-preview/`). If copy/serve fails, set RunEnvelope `preview_error` and still mark phase `done` when dual MD exist.
+13. **Preview fail-soft (S11):** After dual MD exist, run:
+    `"$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" 8765`
+    (script copies `assets/war-room-preview/index.html` into `$WORKSPACE/war-room-preview/`).
+    Optionally edit that HTML from OWNER content before/while serving.
+    If copy or serve fails: set RunEnvelope field `preview_error` to the message,
+    keep `phase: done` when dual MD exist, still offer soft CTA.
+    Preview never blocks DONE.
 14. **Soft CTA** only after both MD exist — `$PKG_ROOT/references/feature-call.md`. Never block reports.
 15. Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`.
 
