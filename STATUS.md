@@ -2,7 +2,7 @@
 
 > **Agent／人類接續入口。** 進度與 Phase 邊界以本檔為準；行為細節仍以 `skills/` + 未來 spec 為準。  
 > **Date:** 2026-07-22  
-> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；**待你確認 spec 檔後再 writing-plans**
+> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；plan Tasks 1–14 **scripts-green**
 
 ## 〇、一句話
 
@@ -17,7 +17,7 @@
 | Phase | 名稱 | 主要解決 | 狀態 |
 |-------|------|----------|------|
 | **V0** | Locate 儀式 | 症狀→雙報告；pin；硬停；soft CTA 文案 | **已落地** |
-| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **Spec ✅；待人確認後開 plan** |
+| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（Tasks 1–14 ✅）；S1–S14 待 manual |
 | **P2** | 重裝備本地 | graphify／等價**全圖**；coverage 閘；long-task + AUTO_DECIDED；更深 service-map | **未開始** |
 | **P3** | 雲端 Pro／B | UploadManifest 上傳；加強版結果；Architecture Pass／訂閱 | **未開始**（app scaffold only） |
 
@@ -64,22 +64,22 @@ graphify 全圖、coverage 強制、long-task 代決（DECISIONS 可預留 `AUTO
 |------|----|----|----|-----|
 | 單倉 vibing 定位 | YES | YES | YES | YES |
 | 非工程雙報告 | YES | YES | YES | YES |
-| 母夾多 repo＋確認後深挖 | NO | YES | YES | YES |
-| 少掛 repo／監控缺口追問 | NO | YES | YES | YES |
-| 足跡／是否處理過 | NO | YES 本地 | YES | YES 雲端 |
-| 一句話啟用分析 | NO | YES | YES | YES |
-| 本地 preview wow | NO | YES fail-soft | YES | YES |
-| 該時上網對齊先例 | NO | YES | YES | YES |
-| 設計段落自動 3 審 | NO | YES | YES | YES |
-| 模型依難度／額度降級 | NO | YES | YES | YES |
-| 假 full nested 綠燈 | 弱 | FAIL 假 full | 更強 | 更強 |
+| 母夾多 repo＋確認後深挖 | NO | scripts（assert_gate smoke ✅） | YES | YES |
+| 少掛 repo／監控缺口追問 | NO | 待 S1–S14 | YES | YES |
+| 足跡／是否處理過 | NO | scripts（hub/RUNS stub） | YES | YES 雲端 |
+| 一句話啟用分析 | NO | 待 S1–S14 | YES | YES |
+| 本地 preview wow | NO | scripts（fail-soft path ✅） | YES | YES |
+| 該時上網對齊先例 | NO | 待 S1–S14 | YES | YES |
+| 設計段落自動 3 審 | NO | 待 S1–S14 | YES | YES |
+| 模型依難度／額度降級 | NO | 待 S1–S14 | YES | YES |
+| 假 full nested 綠燈 | 弱 | scripts ✅ FAIL 假 full | 更強 | 更強 |
 | Graphify 級全圖 | NO | NO | YES | YES |
 | coverage 強制 | NO | NO | YES | 可接 |
 | long-task 代決＋交帳 | NO | NO | YES | 可同步 |
 | 註冊看加強版／真·B wow | NO | 僅軟 CTA | 僅軟 CTA | YES |
 | 100% 證明 nested | NO | NO | 仍難 | 仍難 |
 
-**P1 做完**＝上表 P1 欄 YES 列。**P1+P2+P3**＝practically 全表；僅 100% nested 除外。
+**P1 做完**＝上表 P1 欄 YES 列（**現況：** scripts-green；S1–S14 manual checklist 後才誠實標 YES）。**P1+P2+P3**＝practically 全表；僅 100% nested 除外。
 
 ## 三、穩定介面（schema-only；P1 可 stub）
 
@@ -137,7 +137,7 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §3 | 人點頭；must_fix 已吸納 |
 | §4 | 人點頭 |
 | Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（✅ Approved） |
-| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（chunk review ✅；**待執行**） |
+| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（Tasks 1–14 ✅；Task 15 manual 待做） |
 
 ### §3 section-gate 紀錄
 
@@ -171,8 +171,8 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. 執行 P1 plan（subagent-driven-development）：`docs/superpowers/plans/2026-07-22-war-room-os-p1.md`  
-2. 腳本／skill 落地後更新本檔 P1 列與能力表誠實度  
+1. Task 15：`coverage/p1-manual-checklist.md` — S1–S14 agent 手動驗收  
+2. manual checklist 全綠後，才將能力表 P1 欄誠實標 YES  
 3. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
 ## 九、相關路徑
