@@ -17,7 +17,7 @@
 | Phase | 名稱 | 主要解決 | 狀態 |
 |-------|------|----------|------|
 | **V0** | Locate 儀式 | 症狀→雙報告；pin；硬停；soft CTA 文案 | **已落地** |
-| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（Tasks 1–14 ✅）；S1–S14 待 manual |
+| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（plan Tasks 1–15 ✅）；S1–S14 agent 手動驗收待跑 |
 | **P2** | 重裝備本地 | graphify／等價**全圖**；coverage 閘；long-task + AUTO_DECIDED；更深 service-map | **未開始** |
 | **P3** | 雲端 Pro／B | UploadManifest 上傳；加強版結果；Architecture Pass／訂閱 | **未開始**（app scaffold only） |
 
@@ -137,7 +137,8 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §3 | 人點頭；must_fix 已吸納 |
 | §4 | 人點頭 |
 | Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（✅ Approved） |
-| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（Tasks 1–14 ✅；Task 15 manual 待做） |
+| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（Tasks 1–15 ✅；checklist 已落地） |
+| Manual checklist | `coverage/p1-manual-checklist.md`（S1–S14 勾選待跑） |
 
 ### §3 section-gate 紀錄
 
@@ -171,9 +172,10 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. Task 15：`coverage/p1-manual-checklist.md` — S1–S14 agent 手動驗收  
+1. 依 `coverage/p1-manual-checklist.md` 跑 S1–S14 agent 手動驗收  
 2. manual checklist 全綠後，才將能力表 P1 欄誠實標 YES  
-3. 任何 Phase／成功定義變更 → **先改本 STATUS**
+3. 合併／整合 `feature/war-room-os-p1`（worktree）回主線後，再決定是否重 pin `~/.cursor/skills`  
+4. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
 ## 九、相關路徑
 
