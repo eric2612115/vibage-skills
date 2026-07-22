@@ -3,3 +3,4 @@ war-room-bootstrap
 war-room-locate
 war-room-orient
 research-survey-review
+section-gate-review
