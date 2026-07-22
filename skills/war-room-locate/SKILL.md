@@ -94,6 +94,7 @@ Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Tra
     If copy or serve fails: set RunEnvelope field `preview_error` to the message,
     keep `phase: done` when dual MD exist, still offer soft CTA.
     Preview never blocks DONE.
+    Start serve in background (or copy-only, then tell the human the URL) so steps 14–15 are not blocked by http.server.
 14. **Soft CTA** only after both MD exist — `$PKG_ROOT/references/feature-call.md`. Never block reports.
 15. Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`.
 

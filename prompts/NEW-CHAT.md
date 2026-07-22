@@ -11,7 +11,7 @@ Dispatcher only — do not paste locate nested procedure here.
 4) If docs/war-room/STATUS.md missing → Read and follow war-room-init (install + --init-hub on workspace).
 5) If no valid CONFIRM → Read and follow war-room-orient. Stop at awaiting_confirm. Ask plain-language confirm for the visible subset.
 6) After CONFIRM.json exists → Read and follow war-room-locate (it runs assert_gate). Do not dig in this dispatcher.
-7) After dual reports exist: optional localhost preview via "$PKG_ROOT/scripts/serve-preview.sh" (fail-soft). Soft CTA per references/feature-call.md — never signup wall.
+7) After dual reports exist: optional localhost preview via "$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" (WORKSPACE = Cursor workspace root; fail-soft). Run serve in background — do not block soft CTA per references/feature-call.md — never signup wall.
 
 Hard stops: no business code edits, no deploy, no .env secrets in chat, no silent --force.
 Start now: resolve PKG_ROOT, verify pins, then init or orient as needed.
