@@ -14,7 +14,7 @@ Usage: $0 [options]
   --with-project-rule=/path/to/repo   Copy thin rule if missing
   --project-skills=/path/to/repo      Symlink MANIFEST skills under repo .cursor/skills
   --init-hub=/abs/path                Copy references/hub/* into path/docs/war-room/
-  --force                             Replace project skill symlinks that point outside package
+  --force                             Replace package-owned stale project skill symlinks only
   --force-hub                         Overwrite existing hub files (still never deletes CONFIRM unless --force-hub)
   -h|--help
 EOF
@@ -65,42 +65,46 @@ link_project_skill() {
   local name="$1"
   local dest="$PROJECT_SKILLS/.cursor/skills/$name"
   local src="$PKG_ROOT/skills/$name"
+  local resolved expected pkg_skills
   mkdir -p "$PROJECT_SKILLS/.cursor/skills"
   if [[ ! -e "$dest" && ! -L "$dest" ]]; then
     ln -sfn "$src" "$dest"
     echo "Linked project skill: $dest"
     return
   fi
+  expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$src")"
+  pkg_skills="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$PKG_ROOT/skills")"
   if [[ -L "$dest" ]]; then
-    local resolved expected
     resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$dest")"
-    expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$src")"
     if [[ "$resolved" == "$expected" ]]; then
       echo "OK project skill symlink: $dest"
       return
     fi
+    # Package-owned stale symlink: --force may replace the link only (never a real directory).
+    case "$resolved" in
+      "$pkg_skills"/*)
+        echo "WARN stale package-owned project skill symlink: $dest" >&2
+        if [[ "$FORCE" -eq 1 ]]; then
+          rm "$dest"
+          ln -sfn "$src" "$dest"
+          echo "Replaced with symlink (--force): $dest"
+        else
+          echo "Skip (re-run with --force to replace package-owned stale link): $dest" >&2
+        fi
+        return
+        ;;
+    esac
+    # Foreign symlink: do not delete; manual rm + reinstall (no --force dead path).
+    echo "WARN foreign project skill symlink: $dest (resolved=$resolved)" >&2
+    echo "Refusing to replace foreign symlink (even with --force)." >&2
+    echo "Manual recovery: rm \"$dest\" then re-run install with --project-skills (no --force needed)." >&2
+    return 0
   fi
-  echo "WARN stale/foreign project skill: $dest" >&2
-  if [[ "$FORCE" -eq 1 ]]; then
-    # Only replace if existing symlink resolves under PKG_ROOT/skills OR --force with explicit user intent
-    local resolved
-    if [[ -L "$dest" ]]; then
-      resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$dest")"
-      case "$resolved" in
-        "$PKG_ROOT/skills"/*) ;;
-        *)
-          echo "Refusing --force replace for non-package skill at $dest (resolved=$resolved)" >&2
-          echo "Record explicit user approval in docs/war-room/DECISIONS.md then re-run." >&2
-          return 1
-          ;;
-      esac
-    fi
-    rm -rf "$dest"
-    ln -sfn "$src" "$dest"
-    echo "Replaced with symlink (--force): $dest"
-  else
-    echo "Skip (re-run with --force to replace package-owned stale link): $dest" >&2
-  fi
+  # Real directory/file: never rm -rf under --force.
+  echo "WARN real (non-symlink) project skill path: $dest" >&2
+  echo "Refusing to delete real skill directory/file (even with --force)." >&2
+  echo "Manual recovery: remove that path yourself only if you intend to discard it, then re-run install with --project-skills." >&2
+  return 0
 }
 
 if [[ -n "$PROJECT_SKILLS" ]]; then
@@ -152,4 +156,4 @@ fi
 echo "Installed. PKG_ROOT=$PKG_ROOT"
 echo "MANIFEST skills linked under ~/.cursor/skills/"
 echo "Pin check: $PKG_ROOT/scripts/verify-pins.sh"
-echo "PKG_ROOT resolve: python3 realpath on ~/.cursor/skills/war-room-init then dirname/../.."
+echo "PKG_ROOT resolve: python3 realpath on ~/.cursor/skills/war-room-init then dirname/dirname"

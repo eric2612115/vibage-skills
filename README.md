@@ -25,14 +25,16 @@ bash /path/to/war-room-skills/scripts/install.sh
 bash /path/to/war-room-skills/scripts/install.sh \
   --with-project-rule=/path/to/your-repo \
   --project-skills=/path/to/your-repo
-# If project skill dirs already exist but are NOT symlinks to this package:
+# Package-owned stale project skill symlinks only:
 bash /path/to/war-room-skills/scripts/install.sh \
   --project-skills=/path/to/your-repo --force
+# Foreign symlinks or real skill dirs: manually rm that path, then re-run
+# --project-skills (do not use --force; install never deletes real directories).
 bash /path/to/war-room-skills/scripts/verify-pins.sh
 ```
 
 - Global `~/.cursor/skills/war-room-*` always refreshes via `ln -sfn`.
-- Project skills: skip + **WARN** if stale/foreign; use `--force` to replace with package symlink.
+- Project skills: skip + **WARN** if stale/foreign/real; `--force` replaces **package-owned stale symlinks only** (never real dirs, never foreign symlinks).
 
 Then paste [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md) into a new Agent chat.
 

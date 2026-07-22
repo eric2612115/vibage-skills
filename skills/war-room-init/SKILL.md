@@ -48,7 +48,7 @@ Match the owner's language. Never assume Traditional Chinese. Paths and identifi
    - Optional project rule: `--with-project-rule="$WORKSPACE"`
    - Optional project skills: `--project-skills="$WORKSPACE"`
    - Hub: `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$WORKSPACE"`
-3. **`--force` policy:** Do not pass `--force` unless the user explicitly approved replacing a foreign/stale project skill link. Record that approval as a human decision in `docs/war-room/DECISIONS.md` (`source: human`) before re-running with `--force`.
+3. **`--force` policy:** `--force` only replaces **package-owned stale** project skill **symlinks** (resolved under `$PKG_ROOT/skills`). It never deletes real (non-symlink) skill directories, and never replaces foreign symlinks. For foreign symlinks or real skill dirs: tell the owner to manually `rm` that path, then re-run install with `--project-skills` (no `--force`). Do not pass `--force` unless the user explicitly approved replacing a package-owned stale link; record that approval in `docs/war-room/DECISIONS.md` (`source: human`).
 4. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery:
    1) Ensure `~/.cursor/skills/superpowers` is a git checkout of obra/superpowers (or their pin path).  
    2) `git -C ~/.cursor/skills/superpowers fetch && git -C ~/.cursor/skills/superpowers checkout <superpowers_sha from DEPENDENCIES.md>`.  
@@ -82,3 +82,4 @@ Match the owner's language. Never assume Traditional Chinese. Paths and identifi
 - Do not write `WAR-ROOM-OWNER.md` / `WAR-ROOM-LOCATE.md` in init.
 - Do not deep-dig or claim nested Mode.
 - Do not use `--force` without recorded human approval.
+- Do not `rm -rf` real project skill directories to “help” install; only the owner may remove them.
