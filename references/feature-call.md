@@ -15,6 +15,8 @@ Only **after** both `WAR-ROOM-OWNER.md` and `WAR-ROOM-LOCATE.md` exist.
 3. Soft CTA (owner language): optional deeper Architecture Pass.
    - Open `{SITE}/login` (magic link).
    - Then `{SITE}/architecture-pass` (web calls Checkout **with cookie**).
+   - After pay, browser success page **polls** entitlements; webhook is grant SSOT.
+   - Active Pass unlocks browser `POST /v1/architecture-pass/intake` (deeper-map ticket) — agents still must not call cookie-authed APIs.
 4. Optional unauthenticated probe only: `GET {API}/health` if `WAR_ROOM_API_BASE` is set. Do **not** call cookie-authed routes from the agent.
 5. Device/pairing code for agent→API auth: **not v1** `[TBD]`.
 6. If site/API fails: continue; never delete or block local reports.
