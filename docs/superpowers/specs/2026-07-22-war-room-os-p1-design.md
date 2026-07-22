@@ -3,7 +3,7 @@
 **Date:** 2026-07-22  
 **Status:** Design approved in brainstorming (§1–§4); awaiting spec-review loop then implementation plan  
 **Package SSOT:** `/Users/eric.fang/MindOwnBuz/war-room-skills`  
-**Progress tracker:** [`STATUS.md`](../../../../STATUS.md) (repo root)  
+**Progress tracker:** [`STATUS.md`](../../../STATUS.md) (package repo root)  
 **Sibling app (P3):** `/Users/eric.fang/MindOwnBuz/war-room-app`
 
 ## Problem
@@ -47,23 +47,30 @@ V0 (`war-room-locate`) helps non-coder owners locate *where* a problem lives in 
 
 P1 vs P2 service-map: P1 = RootRef inventory + hot-path budget; P2 = full graph / deeper map.
 
-Capability matrix (problem × phase): see root [`STATUS.md`](../../../../STATUS.md) §二 — normative for “done means YES”.
+Capability matrix (problem × phase): see package [`STATUS.md`](../../../STATUS.md) §二 — normative for “done means YES”.
 
 ## Architecture
 
+**Hub layout is locked (not optional):**
+
 ```text
-Parent folder workspace (hub)
-  docs/war-room/ or WAR-ROOM-* at root (implementation may choose one layout; prefer docs/war-room/)
-    STATUS.md          # OS pointer: hub_ready, focus run_id/pipeline_id
-    RUNS/<run_id>.md   # RunEnvelope
+Parent folder workspace
+  docs/war-room/                 # hub SSOT (init creates)
+    STATUS.md                    # OS pointer: hub_ready, focus run_id/pipeline_id
+    RUNS/<run_id>.json           # RunEnvelope (machine-read; optional .md mirror later)
     SCAN_PLAN.md
     CONFIRM.json
     DECISIONS.md
-  WAR-ROOM-OWNER.md / WAR-ROOM-LOCATE.md
-  war-room-preview/    # optional static HTML
+    model-routing.json           # optional slug map for L1–L3
+    UploadManifest.stub.json     # schema only; no upload in P1
+  WAR-ROOM-OWNER.md              # dual reports stay at workspace root (V0 compat)
+  WAR-ROOM-LOCATE.md
+  war-room-preview/              # static HTML for localhost serve
 
 ~/.cursor/skills/war-room-*  → package (install.sh)
 ```
+
+`assert_gate`, resume (S12), and init skeleton **must** use `docs/war-room/` paths above. Do not scatter hub files at repo root.
 
 ### Skills (same install box; separate SKILL.md files)
 
@@ -103,24 +110,47 @@ Product skills hand off only via STATUS/RUNS/CONFIRM files.
 
 All artifacts include `schema_version` where machine-read.
 
-### RootRef / ServiceRef
+### RootRef
 
-`id`, `path|uri`, `presence: checked_out|missing|external_ref|submodule`, `kind: app|deploy|lib|data|unknown`, `evidence[]`.
+Canonical inventory unit (one checkout or missing/external unit):
+
+`id`, `path|uri`, `presence: checked_out|missing|external_ref|submodule`, `kind: app|deploy|lib|data|unknown`, `evidence[]`, optional `hot_path: bool`.
+
+**ServiceRef:** alias for the same schema when `kind` is `app|deploy|lib|data` — not a second type. Orient writes RootRef[]; GapQuestion may reference `root_ref_id`.
 
 ### SCAN_PLAN
 
-Roots list (including missing/external), budgets (time/files/depth), hot-path marks, known incompleteness statement, planned dig subset.
+Markdown human form **plus** fenced JSON block `scan_plan_v1` used for hashing, containing at least:
+
+`schema_version`, `root_refs[]` (full RootRef objects), `budgets: { max_wall_min, max_files, max_depth }`, `hot_path_ids[]`, `known_incompleteness: string`, `planned_dig_ids[]`.
+
+Default budgets if unspecified: `max_wall_min=25`, `max_files=40`, `max_depth=3` (seed/orient shallower; dig uses planned subset).
 
 ### CONFIRM.json
 
-`confirm_kind` (`scan_plan` in P1), `subject_ref`, `payload_hash` (canonical SCAN_PLAN fields), `timestamp`, optional `confirmed_by`.  
+`confirm_kind` (`scan_plan` in P1), `subject_ref` (path to SCAN_PLAN), `payload_hash`, `hash_alg: "sha256"`, `timestamp`, optional `confirmed_by`.
+
+**`payload_hash`:** SHA-256 hex of UTF-8 bytes of canonical JSON for `scan_plan_v1` only — keys sorted recursively, no insignificant whitespace, JSON numbers/strings as produced by a single agreed serializer (implementation: Python `json.dumps(obj, sort_keys=True, separators=(",", ":"))` or equivalent). Hash **only** those fields listed under SCAN_PLAN JSON; ignore prose outside the fence.
+
 Chat “OK” only triggers writing this file — **file is the gate**.  
-Plan change → stale; recovery without `--force`: clear CONFIRM → re-orient.  
+Plan change → hash mismatch → `stale_confirm`; recovery without `--force`: clear CONFIRM → re-orient.  
 Owner-facing summary MUST show: confirming visible subset, not whole system.
 
 ### RunEnvelope
 
-`schema_version`, `pipeline_id`, `run_id`, `phase`, `mode`, artifact URIs, `survey_refs[]`, `gap_ids[]`, nested dispatch records (if any).
+`schema_version`, `pipeline_id`, `run_id`, `phase`, `mode`, `artifact_uris[]`, `survey_refs[]`, `gap_ids[]`.
+
+**`nested_dispatch` (required for Mode=full nested; omit or empty ⇒ must use degraded):**
+
+```json
+{
+  "investigators": [{"id": "string", "label": "string", "started_at": "ISO-8601"}],
+  "reviewers": [{"id": "string", "label": "string", "started_at": "ISO-8601"}],
+  "critique_verdict_summary": "APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE"
+}
+```
+
+`id` should be Task/subagent identifier when the platform exposes one; otherwise a parent-generated unique label for this run (still required — empty investigators+reviewers ⇒ verify FAIL if Mode claims full).
 
 ### GapQuestion
 
