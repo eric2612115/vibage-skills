@@ -37,7 +37,7 @@ python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os
 | `skills/war-room-locate/` | Main locate skill |
 | `skills/war-room-bootstrap/` | Cold-start / install handoff |
 | `prompts/NEW-CHAT.md` | Owner paste prompt |
-| `references/` | Nested protocol, templates, no-docs cold start, vibe-debt smells |
+| `references/` | Nested protocol, templates, no-docs cold start, vibe-debt smells, `feature-call.md` (Soft CTA → web) |
 | `examples/` | Synthetic golden `WAR-ROOM-*.md` (not real customer data) |
 | `rules/war-room-locate.mdc` | Thin hard-stops rule |
 | `scripts/install.sh` | Global (+ optional project) install |

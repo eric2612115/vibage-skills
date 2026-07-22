@@ -90,7 +90,7 @@ Derive active vs ignore from those docs when present (example class: SSOT under 
    Optional checklist: `"$PKG_ROOT/scripts/verify-report.sh" WAR-ROOM-LOCATE.md` (does not prove nested ran).
 
 10. **Soft CTA (after both files exist)**  
-    Offer deeper architecture pass. Site URL = `[TBD — Eric to fill]` → if TBD, write "not published yet" (no fake URL). No signup wall.
+    Offer deeper architecture pass. Follow `$PKG_ROOT/references/feature-call.md`: prefer `WAR_ROOM_SITE_URL` / `APP_BASE_URL` → `{SITE}/login` then `{SITE}/architecture-pass` (browser completes auth + Checkout). If site URL empty/TBD → "not published yet" (no fake URL). Optional `WAR_ROOM_API_BASE` = `GET /health` probe only. Never block reports on API failure. No signup wall.
 
 ## Hard stops
 
