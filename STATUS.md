@@ -136,8 +136,8 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §2 | 修訂鎖＋三審通過 |
 | §3 | 人點頭；must_fix 已吸納 |
 | §4 | 人點頭 |
-| Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（reviewer ✅ Approved） |
-| Implementation plan | 未寫（**等人確認 spec 檔**後 writing-plans） |
+| Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（✅ Approved） |
+| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（chunk review ✅；**待執行**） |
 
 ### §3 section-gate 紀錄
 
@@ -171,10 +171,9 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. Spec-review loop → Approved  
-2. 人確認 spec 檔內容  
-3. writing-plans → 實作 P1  
-4. 任何 Phase／成功定義變更 → **先改本 STATUS**
+1. 執行 P1 plan（subagent-driven-development）：`docs/superpowers/plans/2026-07-22-war-room-os-p1.md`  
+2. 腳本／skill 落地後更新本檔 P1 列與能力表誠實度  
+3. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
 ## 九、相關路徑
 

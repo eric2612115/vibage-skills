@@ -1,0 +1,2346 @@
+# War Room OS P1 Implementation Plan
+
+> **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+
+**Goal:** Ship parent-folder War Room hub + confirm-before-dig locate pipeline with mechanical gates, dual reports, localhost preview, and in-package research-survey-review / section-gate-review skills.
+
+**Architecture:** File-contract OS under docs/war-room/ plus three script families (hash/assert_gate, MANIFEST install, Mode-honest verify). Skills are thin MD. No FSM runtime, no upload, no graphify.
+
+**Tech Stack:** Bash, Python 3, Markdown skills, static HTML preview.
+
+**Spec:** docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md
+
+---
+
+## File structure (locked)
+
+| Path | Responsibility |
+|------|----------------|
+| `skills/MANIFEST.txt` | One skill dir name per line; install reads this (staged append across chunks) |
+| `scripts/lib/scan_plan_hash.py` | Extract `scan_plan_v1` + SHA-256 canonical JSON |
+| `scripts/assert_gate.sh` | Hub CONFIRM vs SCAN_PLAN hash; exit 0/1 |
+| `scripts/write_confirm.sh` | Write CONFIRM.json from current plan hash |
+| `scripts/verify-run.sh` | Validate one RunEnvelope JSON Mode honesty |
+| `scripts/verify-report.sh` | Format check + optional RUNS JSON Mode honesty |
+| `scripts/install.sh` | MANIFEST loop; optional `--init-hub=/path` |
+| `scripts/serve-preview.sh` | Localhost static serve for `war-room-preview/` |
+| `references/hub/*` | Templates copied by init into workspace hub |
+| `references/l0-l3-glossary.md` | Model level SSOT |
+| `references/scenario-matrix.md` | S1–S14 |
+| `references/survey-matrix.md` | MUST/SKIP predicates |
+| `references/gap-question-template.md` | GapQuestion fields |
+| `skills/war-room-init/` | Install + hub skeleton; no dig |
+| `skills/war-room-orient/` | Root discovery, SCAN_PLAN, awaiting_confirm |
+| `skills/war-room-locate/` | Post-confirm dig, nested, dual reports, RUNS |
+| `skills/research-survey-review/` | External survey loop |
+| `skills/section-gate-review/` | Design section 3-lens gate |
+| `assets/war-room-preview/index.html` | Template copied into workspace preview dir |
+| `prompts/NEW-CHAT.md` | Dispatcher only |
+| `tests/` | pytest + bash fixtures for hash/gate/verify/smoke |
+| `coverage/p1-manual-checklist.md` | S1–S14 manual agent checklist |
+| `DEPENDENCIES.md` | required / optional / first_party |
+
+**MANIFEST staging (do not install skills that do not exist yet):**
+
+| When | `skills/MANIFEST.txt` lines |
+|------|-----------------------------|
+| Chunk 2 | `war-room-init`, `war-room-bootstrap`, `war-room-locate` |
+| Chunk 3 | append `war-room-orient` |
+| Chunk 4 | append `research-survey-review`, `section-gate-review` |
+
+---
+
+## Chunk 1: Hash, assert_gate, verify-run
+
+### Task 1: scan_plan_hash library + pytest
+
+**Files:**
+- Create: `scripts/lib/scan_plan_hash.py`
+- Create: `scripts/lib/__init__.py` (empty)
+- Create: `tests/test_scan_plan_hash.py`
+- Create: `tests/fixtures/sample_SCAN_PLAN.md`
+
+- [ ] **Step 1: Write fixture**
+
+Create `tests/fixtures/sample_SCAN_PLAN.md`:
+
+````markdown
+# SCAN_PLAN
+
+Human summary: empty parent seed plan for hash tests.
+
+```json scan_plan_v1
+{
+  "schema_version": "1",
+  "root_refs": [],
+  "budgets": {"max_wall_min": 25, "max_files": 40, "max_depth": 3},
+  "hot_path_ids": [],
+  "known_incompleteness": "no roots discovered yet",
+  "planned_dig_ids": []
+}
+```
+````
+
+- [ ] **Step 2: Write failing tests**
+
+Create `tests/test_scan_plan_hash.py`:
+
+```python
+from pathlib import Path
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts" / "lib"))
+from scan_plan_hash import extract_scan_plan_v1, payload_hash, hash_scan_plan_file
+
+FIXTURE = Path(__file__).parent / "fixtures" / "sample_SCAN_PLAN.md"
+
+
+def test_extract_and_hash_stable():
+    text = FIXTURE.read_text(encoding="utf-8")
+    obj = extract_scan_plan_v1(text)
+    assert obj["schema_version"] == "1"
+    h1 = payload_hash(obj)
+    h2 = payload_hash(obj)
+    assert h1 == h2
+    assert len(h1) == 64
+
+
+def test_key_order_does_not_change_hash():
+    a = {
+        "schema_version": "1",
+        "root_refs": [],
+        "budgets": {"max_wall_min": 25, "max_files": 40, "max_depth": 3},
+        "hot_path_ids": [],
+        "known_incompleteness": "x",
+        "planned_dig_ids": [],
+    }
+    b = {
+        "budgets": {"max_depth": 3, "max_files": 40, "max_wall_min": 25},
+        "planned_dig_ids": [],
+        "hot_path_ids": [],
+        "known_incompleteness": "x",
+        "root_refs": [],
+        "schema_version": "1",
+    }
+    assert payload_hash(a) == payload_hash(b)
+
+
+def test_hash_scan_plan_file():
+    h = hash_scan_plan_file(str(FIXTURE))
+    assert len(h) == 64
+```
+
+- [ ] **Step 3: Run tests — expect FAIL (module missing)**
+
+Run: `cd /Users/eric.fang/MindOwnBuz/war-room-skills && python3 -m pytest tests/test_scan_plan_hash.py -v`
+
+Expected: collection/import error (`ModuleNotFoundError: scan_plan_hash` or similar FAIL).
+
+- [ ] **Step 4: Implement `scripts/lib/__init__.py`** (empty file) and `scripts/lib/scan_plan_hash.py`
+
+```python
+#!/usr/bin/env python3
+"""Extract scan_plan_v1 and SHA-256 payload_hash per P1 spec."""
+from __future__ import annotations
+
+import hashlib
+import json
+import re
+import sys
+from typing import Any
+
+FENCE_RE = re.compile(
+    r"```(?:json)?\s*scan_plan_v1\s*\n(.*?)```",
+    re.DOTALL | re.IGNORECASE,
+)
+
+REQUIRED = (
+    "schema_version",
+    "root_refs",
+    "budgets",
+    "hot_path_ids",
+    "known_incompleteness",
+    "planned_dig_ids",
+)
+
+
+def extract_scan_plan_v1(markdown: str) -> dict[str, Any]:
+    m = FENCE_RE.search(markdown)
+    if not m:
+        raise ValueError("missing fenced scan_plan_v1 JSON block")
+    obj = json.loads(m.group(1))
+    for k in REQUIRED:
+        if k not in obj:
+            raise ValueError(f"scan_plan_v1 missing key: {k}")
+    return obj
+
+
+def payload_hash(obj: dict[str, Any]) -> str:
+    canonical = json.dumps(
+        obj, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+    )
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+def hash_scan_plan_file(path: str) -> str:
+    with open(path, encoding="utf-8") as f:
+        text = f.read()
+    return payload_hash(extract_scan_plan_v1(text))
+
+
+if __name__ == "__main__":
+    if len(sys.argv) != 2:
+        print(f"Usage: {sys.argv[0]} <SCAN_PLAN.md>", file=sys.stderr)
+        sys.exit(2)
+    print(hash_scan_plan_file(sys.argv[1]))
+```
+
+- [ ] **Step 5: Run tests — expect PASS**
+
+Run: `python3 -m pytest tests/test_scan_plan_hash.py -v`
+
+Expected: 3 passed.
+
+- [ ] **Step 6: Commit**
+
+```bash
+chmod +x scripts/lib/scan_plan_hash.py
+git add scripts/lib/__init__.py scripts/lib/scan_plan_hash.py \
+  tests/test_scan_plan_hash.py tests/fixtures/sample_SCAN_PLAN.md
+git commit -m "$(cat <<'EOF'
+feat: add scan_plan_v1 canonical hash helper
+
+EOF
+)"
+```
+
+---
+
+### Task 2: assert_gate.sh + write_confirm.sh + bash tests
+
+**Files:**
+- Create: `scripts/assert_gate.sh`
+- Create: `scripts/write_confirm.sh`
+- Create: `tests/test_assert_gate.sh`
+
+- [ ] **Step 1: Write full failing gate test script**
+
+Create `tests/test_assert_gate.sh`:
+
+```bash
+#!/usr/bin/env bash
+# tests/test_assert_gate.sh — red/green for assert_gate + write_confirm
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+mkdir -p "$TMP/docs/war-room"
+cp "$ROOT/tests/fixtures/sample_SCAN_PLAN.md" "$TMP/docs/war-room/SCAN_PLAN.md"
+
+# Case A: missing CONFIRM → FAIL
+set +e
+"$ROOT/scripts/assert_gate.sh" "$TMP"
+RC=$?
+set -e
+if [[ "$RC" -eq 0 ]]; then
+  echo "FAIL: expected assert_gate to fail without CONFIRM"
+  exit 1
+fi
+echo "OK: missing confirm rejected (rc=$RC)"
+
+# Case B: write_confirm then assert_gate OK
+"$ROOT/scripts/write_confirm.sh" "$TMP" "test-owner"
+"$ROOT/scripts/assert_gate.sh" "$TMP"
+echo "OK: matching confirm accepted"
+
+# Case C: mutate plan → mismatch FAIL
+python3 - <<'PY' "$TMP/docs/war-room/SCAN_PLAN.md"
+import pathlib, sys
+p = pathlib.Path(sys.argv[1])
+text = p.read_text(encoding="utf-8")
+text = text.replace(
+    '"known_incompleteness": "no roots discovered yet"',
+    '"known_incompleteness": "MUTATED"',
+)
+p.write_text(text, encoding="utf-8")
+PY
+set +e
+"$ROOT/scripts/assert_gate.sh" "$TMP"
+RC=$?
+set -e
+if [[ "$RC" -eq 0 ]]; then
+  echo "FAIL: expected assert_gate to fail after plan mutate"
+  exit 1
+fi
+echo "OK: stale confirm rejected after plan mutate (rc=$RC)"
+echo "ALL assert_gate tests passed"
+```
+
+- [ ] **Step 2: Run — expect FAIL (scripts missing)**
+
+Run: `bash tests/test_assert_gate.sh`
+
+Expected: FAIL because `scripts/assert_gate.sh` or `scripts/write_confirm.sh` does not exist (or not executable).
+
+- [ ] **Step 3: Implement `scripts/assert_gate.sh`**
+
+```bash
+#!/usr/bin/env bash
+# Usage: assert_gate.sh <workspace_root>
+# Exit 0 if docs/war-room/CONFIRM.json payload_hash matches SCAN_PLAN.
+set -euo pipefail
+WS="${1:-}"
+[[ -n "$WS" && -d "$WS" ]] || { echo "Usage: $0 <workspace_root>" >&2; exit 2; }
+HUB="$WS/docs/war-room"
+PLAN="$HUB/SCAN_PLAN.md"
+CONF="$HUB/CONFIRM.json"
+PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+fail() { echo "ASSERT_GATE_FAIL: $*" >&2; exit 1; }
+[[ -f "$PLAN" ]] || fail "missing $PLAN"
+[[ -f "$CONF" ]] || fail "missing $CONF"
+HASH="$("$PKG_ROOT/scripts/lib/scan_plan_hash.py" "$PLAN")"
+GOT="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["payload_hash"])' "$CONF")"
+ALG="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8")).get("hash_alg","sha256"))' "$CONF")"
+[[ "$ALG" == "sha256" ]] || fail "unsupported hash_alg=$ALG"
+[[ "$GOT" == "$HASH" ]] || fail "payload_hash mismatch (plan changed or stale confirm)"
+echo "ASSERT_GATE_OK: $WS"
+```
+
+- [ ] **Step 4: Implement `scripts/write_confirm.sh`**
+
+```bash
+#!/usr/bin/env bash
+# Usage: write_confirm.sh <workspace_root> [confirmed_by]
+set -euo pipefail
+WS="${1:-}"
+BY="${2:-owner}"
+[[ -n "$WS" && -d "$WS" ]] || { echo "Usage: $0 <workspace_root> [confirmed_by]" >&2; exit 2; }
+HUB="$WS/docs/war-room"
+PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+PLAN="$HUB/SCAN_PLAN.md"
+[[ -f "$PLAN" ]] || { echo "missing $PLAN" >&2; exit 1; }
+mkdir -p "$HUB"
+HASH="$("$PKG_ROOT/scripts/lib/scan_plan_hash.py" "$PLAN")"
+python3 - "$HUB/CONFIRM.json" "$HASH" "$BY" <<'PY'
+import json, sys, datetime
+path, h, by = sys.argv[1], sys.argv[2], sys.argv[3]
+obj = {
+    "schema_version": "1",
+    "confirm_kind": "scan_plan",
+    "subject_ref": "docs/war-room/SCAN_PLAN.md",
+    "payload_hash": h,
+    "hash_alg": "sha256",
+    "timestamp": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+    "confirmed_by": by,
+}
+with open(path, "w", encoding="utf-8") as f:
+    json.dump(obj, f, indent=2)
+    f.write("\n")
+print("WROTE", path)
+PY
+```
+
+- [ ] **Step 5: chmod + run — expect PASS**
+
+Run:
+
+```bash
+chmod +x scripts/assert_gate.sh scripts/write_confirm.sh
+bash tests/test_assert_gate.sh
+```
+
+Expected stdout ends with `ALL assert_gate tests passed` (missing confirm rejected, matching accepted, mutate rejected).
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add scripts/assert_gate.sh scripts/write_confirm.sh tests/test_assert_gate.sh
+git commit -m "$(cat <<'EOF'
+feat: assert_gate and write_confirm for scan plan hash
+
+EOF
+)"
+```
+
+---
+
+### Task 3: verify-run Mode honesty + verify-report RUNS arg
+
+**Files:**
+- Create: `scripts/verify-run.sh`
+- Create: `tests/fixtures/run_degraded_ok.json`
+- Create: `tests/fixtures/run_full_ok.json`
+- Create: `tests/fixtures/run_full_fake.json`
+- Create: `tests/test_verify_run.sh`
+- Modify: `scripts/verify-report.sh`
+- Create: `tests/fixtures/sample_LOCATE_degraded.md`
+- Create: `tests/fixtures/sample_LOCATE_full.md`
+
+- [ ] **Step 1: Write fixtures**
+
+`tests/fixtures/run_degraded_ok.json`:
+
+```json
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "run-degraded-ok",
+  "phase": "done",
+  "mode": "degraded",
+  "artifact_uris": ["WAR-ROOM-OWNER.md", "WAR-ROOM-LOCATE.md"],
+  "survey_refs": [],
+  "gap_ids": []
+}
+```
+
+`tests/fixtures/run_full_ok.json`:
+
+```json
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "run-full-ok",
+  "phase": "done",
+  "mode": "full nested",
+  "artifact_uris": ["WAR-ROOM-OWNER.md", "WAR-ROOM-LOCATE.md"],
+  "survey_refs": [],
+  "gap_ids": [],
+  "nested_dispatch": {
+    "investigators": [
+      {"id": "inv-1", "label": "investigator-1", "started_at": "2026-07-22T00:00:00Z"}
+    ],
+    "reviewers": [
+      {"id": "rev-1", "label": "reviewer-1", "started_at": "2026-07-22T00:01:00Z"}
+    ],
+    "critique_verdict_summary": "APPROVE"
+  }
+}
+```
+
+`tests/fixtures/run_full_fake.json` (claims full nested, empty dispatch → must FAIL):
+
+```json
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "run-full-fake",
+  "phase": "done",
+  "mode": "full nested",
+  "artifact_uris": ["WAR-ROOM-OWNER.md", "WAR-ROOM-LOCATE.md"],
+  "survey_refs": [],
+  "gap_ids": [],
+  "nested_dispatch": {
+    "investigators": [],
+    "reviewers": [],
+    "critique_verdict_summary": "APPROVE"
+  }
+}
+```
+
+`tests/fixtures/sample_LOCATE_degraded.md`:
+
+```markdown
+# War Room Locate — test
+
+## Nested pass
+- Investigators: 0 — none
+- Reviewers: 0 — none
+- CritiqueVerdict summary: INCONCLUSIVE
+- Mode: degraded
+
+Evidence: `src/app.py` quote placeholder.
+```
+
+`tests/fixtures/sample_LOCATE_full.md`:
+
+```markdown
+# War Room Locate — test
+
+## Nested pass
+- Investigators: 1 — inv-1
+- Reviewers: 1 — rev-1
+- CritiqueVerdict summary: APPROVE
+- Mode: full nested
+
+Evidence: `src/app.py` quote placeholder.
+```
+
+- [ ] **Step 2: Write failing bash test `tests/test_verify_run.sh`**
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# RED/GREEN for verify-run alone
+set +e
+"$ROOT/scripts/verify-run.sh" "$ROOT/tests/fixtures/run_degraded_ok.json"
+RC=$?
+set -e
+[[ "$RC" -eq 0 ]] || { echo "FAIL: degraded_ok should pass"; exit 1; }
+echo "OK: degraded_ok"
+
+set +e
+"$ROOT/scripts/verify-run.sh" "$ROOT/tests/fixtures/run_full_ok.json"
+RC=$?
+set -e
+[[ "$RC" -eq 0 ]] || { echo "FAIL: full_ok should pass"; exit 1; }
+echo "OK: full_ok"
+
+set +e
+"$ROOT/scripts/verify-run.sh" "$ROOT/tests/fixtures/run_full_fake.json"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || { echo "FAIL: full_fake should fail"; exit 1; }
+echo "OK: full_fake rejected"
+
+# verify-report: second arg is RUNS json path
+set +e
+"$ROOT/scripts/verify-report.sh" \
+  "$ROOT/tests/fixtures/sample_LOCATE_degraded.md" \
+  "$ROOT/tests/fixtures/run_degraded_ok.json"
+RC=$?
+set -e
+[[ "$RC" -eq 0 ]] || { echo "FAIL: verify-report degraded should pass"; exit 1; }
+echo "OK: verify-report + degraded RUNS"
+
+set +e
+"$ROOT/scripts/verify-report.sh" \
+  "$ROOT/tests/fixtures/sample_LOCATE_full.md" \
+  "$ROOT/tests/fixtures/run_full_fake.json"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || { echo "FAIL: verify-report with fake full RUNS should fail"; exit 1; }
+echo "OK: verify-report rejects fake full nested RUNS"
+
+echo "ALL verify-run tests passed"
+```
+
+- [ ] **Step 3: Run — expect FAIL (verify-run missing)**
+
+Run: `bash tests/test_verify_run.sh`
+
+Expected: FAIL (script missing or Mode honesty not enforced).
+
+- [ ] **Step 4: Implement `scripts/verify-run.sh`**
+
+```bash
+#!/usr/bin/env bash
+# Usage: verify-run.sh <RunEnvelope.json>
+# Exit 0 if mode honesty rules pass.
+set -euo pipefail
+RUN="${1:-}"
+[[ -n "$RUN" && -f "$RUN" ]] || { echo "Usage: $0 <RunEnvelope.json>" >&2; exit 2; }
+fail() { echo "VERIFY_RUN_FAIL: $*" >&2; exit 1; }
+python3 - "$RUN" <<'PY'
+import json, sys
+path = sys.argv[1]
+with open(path, encoding="utf-8") as f:
+    obj = json.load(f)
+mode = obj.get("mode")
+if mode not in ("degraded", "full nested"):
+    print(f"invalid mode literal: {mode!r}", file=sys.stderr)
+    sys.exit(1)
+if mode == "full nested":
+    nd = obj.get("nested_dispatch") or {}
+    inv = nd.get("investigators") or []
+    rev = nd.get("reviewers") or []
+    if len(inv) < 1 or len(rev) < 1:
+        print(
+            "full nested requires nested_dispatch.investigators>=1 and reviewers>=1",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+sys.exit(0)
+PY
+RC=$?
+[[ "$RC" -eq 0 ]] || fail "Mode honesty failed for $RUN"
+echo "VERIFY_RUN_OK: $RUN"
+```
+
+- [ ] **Step 5: Rewrite `scripts/verify-report.sh`** — second arg is optional RUNS JSON
+
+Replace file with:
+
+```bash
+#!/usr/bin/env bash
+# Checklist only — does NOT prove nested subagents actually ran.
+# Usage: verify-report.sh <WAR-ROOM-LOCATE.md> [RUNS/<run_id>.json]
+# Second arg: path to RunEnvelope JSON. When Mode in the MD is "full nested",
+# the RUNS json is REQUIRED and must pass verify-run.sh.
+set -euo pipefail
+LOCATE="${1:-}"
+RUNS_JSON="${2:-}"
+if [[ -z "$LOCATE" || ! -f "$LOCATE" ]]; then
+  echo "Usage: $0 /path/to/WAR-ROOM-LOCATE.md [RUNS/<run_id>.json]" >&2
+  exit 2
+fi
+PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+fail() { echo "VERIFY_REPORT_FAIL: $*" >&2; exit 1; }
+grep -qiE '^##[[:space:]]*Nested pass' "$LOCATE" || fail "missing ## Nested pass heading"
+grep -qiE 'Investigators' "$LOCATE" || fail "Nested pass missing Investigators"
+grep -qiE 'Reviewers' "$LOCATE" || fail "Nested pass missing Reviewers"
+grep -qiE 'Mode:[[:space:]]*(full nested|degraded)' "$LOCATE" || fail "Nested pass missing Mode: full nested|degraded"
+if ! grep -qE '`[^`]+/[A-Za-z0-9_.-]+`|/[A-Za-z0-9_./-]+\.(ts|tsx|js|jsx|py|go|md|yml|yaml|json)' "$LOCATE"; then
+  fail "no path-like evidence line found"
+fi
+MODE_LINE="$(grep -iE 'Mode:[[:space:]]*(full nested|degraded)' "$LOCATE" | head -n1 || true)"
+if echo "$MODE_LINE" | grep -qiE 'full nested'; then
+  [[ -n "$RUNS_JSON" && -f "$RUNS_JSON" ]] || fail "Mode full nested requires second arg: RUNS/<run_id>.json"
+  "$PKG_ROOT/scripts/verify-run.sh" "$RUNS_JSON" || fail "RUNS Mode honesty failed: $RUNS_JSON"
+fi
+if [[ -n "$RUNS_JSON" ]]; then
+  [[ -f "$RUNS_JSON" ]] || fail "RUNS json not found: $RUNS_JSON"
+  "$PKG_ROOT/scripts/verify-run.sh" "$RUNS_JSON" || fail "RUNS Mode honesty failed: $RUNS_JSON"
+fi
+echo "VERIFY_REPORT_OK: $LOCATE"
+exit 0
+```
+
+- [ ] **Step 6: Run — expect PASS**
+
+Run:
+
+```bash
+chmod +x scripts/verify-run.sh scripts/verify-report.sh
+bash tests/test_verify_run.sh
+```
+
+Expected: `ALL verify-run tests passed`.
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add scripts/verify-run.sh scripts/verify-report.sh \
+  tests/fixtures/run_degraded_ok.json tests/fixtures/run_full_ok.json \
+  tests/fixtures/run_full_fake.json \
+  tests/fixtures/sample_LOCATE_degraded.md tests/fixtures/sample_LOCATE_full.md \
+  tests/test_verify_run.sh
+git commit -m "$(cat <<'EOF'
+feat: verify-run Mode honesty and verify-report RUNS arg
+
+EOF
+)"
+```
+
+---
+
+## Chunk 2: Hub templates, MANIFEST install, war-room-init
+
+### Task 4: Hub templates (complete contents)
+
+**Files:**
+- Create: `references/hub/STATUS.md`
+- Create: `references/hub/DECISIONS.md`
+- Create: `references/hub/SCAN_PLAN.template.md`
+- Create: `references/hub/UploadManifest.stub.json`
+- Create: `references/hub/model-routing.json`
+- Create: `references/hub/RUNS/.gitkeep`
+
+- [ ] **Step 1: Write `references/hub/STATUS.md`**
+
+```markdown
+# War Room Hub STATUS
+
+schema_version: 1
+hub_ready: true
+focus_run_id: ""
+focus_pipeline_id: "locate"
+phase: installed
+notes: "OS pointer only — not global done. Update focus_run_id when a run is active."
+```
+
+- [ ] **Step 2: Write `references/hub/DECISIONS.md`**
+
+```markdown
+# DECISIONS
+
+P1: only humans write decisions. `source: auto` / AUTO_DECIDED is reserved and forbidden.
+
+## Template entry
+
+- id: D-000
+- timestamp: YYYY-MM-DDTHH:MM:SSZ
+- source: human
+- summary: <what was decided>
+- links: []
+```
+
+- [ ] **Step 3: Write `references/hub/SCAN_PLAN.template.md`**
+
+````markdown
+# SCAN_PLAN
+
+## Owner-facing summary
+
+Confirming the **visible subset** below — not the whole system.
+
+- Roots to dig: (none yet)
+- Time estimate: ~25 minutes wall / ~40 files / depth 3
+- Known incompleteness: no roots discovered yet
+
+## Machine block (do not remove fence)
+
+```json scan_plan_v1
+{
+  "schema_version": "1",
+  "root_refs": [],
+  "budgets": {"max_wall_min": 25, "max_files": 40, "max_depth": 3},
+  "hot_path_ids": [],
+  "known_incompleteness": "no roots discovered yet",
+  "planned_dig_ids": []
+}
+```
+````
+
+- [ ] **Step 4: Write `references/hub/UploadManifest.stub.json`**
+
+```json
+{
+  "schema_version": "1",
+  "path_allowlist": [
+    "WAR-ROOM-OWNER.md",
+    "WAR-ROOM-LOCATE.md",
+    "docs/war-room/STATUS.md",
+    "docs/war-room/RUNS/",
+    "docs/war-room/SCAN_PLAN.md",
+    "docs/war-room/CONFIRM.json"
+  ],
+  "redaction_policy": "strip_env_secrets_and_credentials",
+  "forbid_whole_hub_upload": true,
+  "upload_implemented": false,
+  "notes": "P1 stub only — no upload behavior."
+}
+```
+
+- [ ] **Step 5: Write `references/hub/model-routing.json`**
+
+```json
+{
+  "schema_version": "1",
+  "levels": {
+    "L1": "composer-2.5-fast",
+    "L2": "claude-sonnet-4-thinking-high",
+    "L3": "cursor-grok-4.5-high-fast"
+  },
+  "notes": "Skills reference level ids only. If a slug is unavailable, degrade and record degraded_model."
+}
+```
+
+- [ ] **Step 6: Write `references/hub/RUNS/.gitkeep`** (empty file)
+
+- [ ] **Step 7: Verify files exist**
+
+Run:
+
+```bash
+test -f references/hub/STATUS.md && \
+test -f references/hub/DECISIONS.md && \
+test -f references/hub/SCAN_PLAN.template.md && \
+test -f references/hub/UploadManifest.stub.json && \
+test -f references/hub/model-routing.json && \
+test -f references/hub/RUNS/.gitkeep && echo "HUB_TEMPLATES_OK"
+```
+
+Expected: `HUB_TEMPLATES_OK`
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add references/hub/
+git commit -m "$(cat <<'EOF'
+docs: add docs/war-room hub templates for init
+
+EOF
+)"
+```
+
+---
+
+### Task 5: MANIFEST-driven install.sh (Chunk 2 skills only)
+
+**Files:**
+- Create: `skills/MANIFEST.txt` (init / bootstrap / locate only)
+- Modify: `scripts/install.sh` (full rewrite)
+- Create: `tests/test_install_manifest.sh`
+
+- [ ] **Step 1: Write `skills/MANIFEST.txt`**
+
+```text
+war-room-init
+war-room-bootstrap
+war-room-locate
+```
+
+Do **not** list orient / research / section-gate until those skill dirs exist (later chunks append).
+
+- [ ] **Step 2: Write failing install test**
+
+Create `tests/test_install_manifest.sh`:
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+TMP_HOME="$(mktemp -d)"
+TMP_WS="$(mktemp -d)"
+trap 'rm -rf "$TMP_HOME" "$TMP_WS"' EXIT
+export HOME="$TMP_HOME"
+
+# Minimal skill dirs already exist in package for MANIFEST names.
+# Install into fake HOME.
+bash "$ROOT/scripts/install.sh" --init-hub="$TMP_WS"
+
+for name in war-room-init war-room-bootstrap war-room-locate; do
+  link="$HOME/.cursor/skills/$name"
+  [[ -L "$link" ]] || { echo "FAIL: missing symlink $link"; exit 1; }
+  resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$link")"
+  expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/skills/$name")"
+  [[ "$resolved" == "$expected" ]] || { echo "FAIL: bad target $resolved"; exit 1; }
+done
+
+[[ -f "$TMP_WS/docs/war-room/STATUS.md" ]] || { echo "FAIL: hub STATUS missing"; exit 1; }
+[[ -f "$TMP_WS/docs/war-room/DECISIONS.md" ]] || { echo "FAIL: hub DECISIONS missing"; exit 1; }
+[[ -f "$TMP_WS/docs/war-room/SCAN_PLAN.md" ]] || { echo "FAIL: hub SCAN_PLAN missing"; exit 1; }
+[[ -f "$TMP_WS/docs/war-room/UploadManifest.stub.json" ]] || { echo "FAIL: stub missing"; exit 1; }
+[[ -f "$TMP_WS/docs/war-room/model-routing.json" ]] || { echo "FAIL: model-routing missing"; exit 1; }
+[[ -d "$TMP_WS/docs/war-room/RUNS" ]] || { echo "FAIL: RUNS dir missing"; exit 1; }
+
+# Re-init must not clobber existing CONFIRM
+mkdir -p "$TMP_WS/docs/war-room"
+echo '{"schema_version":"1","payload_hash":"abc"}' > "$TMP_WS/docs/war-room/CONFIRM.json"
+bash "$ROOT/scripts/install.sh" --init-hub="$TMP_WS"
+grep -q '"payload_hash":"abc"' "$TMP_WS/docs/war-room/CONFIRM.json" \
+  || { echo "FAIL: CONFIRM was clobbered"; exit 1; }
+
+echo "ALL install_manifest tests passed"
+```
+
+- [ ] **Step 3: Run — expect FAIL (old install.sh lacks --init-hub / MANIFEST)**
+
+Run: `bash tests/test_install_manifest.sh`
+
+Expected: FAIL until install.sh is rewritten.
+
+- [ ] **Step 4: Full rewrite `scripts/install.sh`**
+
+```bash
+#!/usr/bin/env bash
+set -euo pipefail
+PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+MANIFEST="$PKG_ROOT/skills/MANIFEST.txt"
+PROJECT_RULE=""
+PROJECT_SKILLS=""
+INIT_HUB=""
+FORCE=0
+FORCE_HUB=0
+
+usage() {
+  cat <<EOF
+Usage: $0 [options]
+  --with-project-rule=/path/to/repo   Copy thin rule if missing
+  --project-skills=/path/to/repo      Symlink MANIFEST skills under repo .cursor/skills
+  --init-hub=/abs/path                Copy references/hub/* into path/docs/war-room/
+  --force                             Replace project skill symlinks that point outside package
+  --force-hub                         Overwrite existing hub files (still never deletes CONFIRM unless --force-hub)
+  -h|--help
+EOF
+  exit 2
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    --with-project-rule=*) PROJECT_RULE="${arg#*=}" ;;
+    --project-skills=*) PROJECT_SKILLS="${arg#*=}" ;;
+    --init-hub=*) INIT_HUB="${arg#*=}" ;;
+    --force) FORCE=1 ;;
+    --force-hub) FORCE_HUB=1 ;;
+    -h|--help) usage ;;
+    *) echo "Unknown flag: $arg" >&2; usage ;;
+  esac
+done
+
+[[ -f "$MANIFEST" ]] || { echo "Missing MANIFEST: $MANIFEST" >&2; exit 1; }
+
+mkdir -p "$HOME/.cursor/skills"
+
+link_global_skill() {
+  local name="$1"
+  local src="$PKG_ROOT/skills/$name"
+  local dest="$HOME/.cursor/skills/$name"
+  [[ -d "$src" ]] || { echo "MANIFEST skill missing on disk: $src" >&2; exit 1; }
+  ln -sfn "$src" "$dest"
+  echo "Linked global skill: $dest -> $src"
+}
+
+while IFS= read -r name || [[ -n "$name" ]]; do
+  [[ -z "$name" || "$name" =~ ^# ]] && continue
+  link_global_skill "$name"
+done < "$MANIFEST"
+
+if [[ -n "$PROJECT_RULE" ]]; then
+  mkdir -p "$PROJECT_RULE/.cursor/rules"
+  if [[ -f "$PROJECT_RULE/.cursor/rules/war-room-locate.mdc" ]]; then
+    echo "Skip rule: already exists"
+  else
+    cp "$PKG_ROOT/rules/war-room-locate.mdc" "$PROJECT_RULE/.cursor/rules/war-room-locate.mdc"
+    echo "Copied project rule"
+  fi
+fi
+
+link_project_skill() {
+  local name="$1"
+  local dest="$PROJECT_SKILLS/.cursor/skills/$name"
+  local src="$PKG_ROOT/skills/$name"
+  mkdir -p "$PROJECT_SKILLS/.cursor/skills"
+  if [[ ! -e "$dest" && ! -L "$dest" ]]; then
+    ln -sfn "$src" "$dest"
+    echo "Linked project skill: $dest"
+    return
+  fi
+  if [[ -L "$dest" ]]; then
+    local resolved expected
+    resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$dest")"
+    expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$src")"
+    if [[ "$resolved" == "$expected" ]]; then
+      echo "OK project skill symlink: $dest"
+      return
+    fi
+  fi
+  echo "WARN stale/foreign project skill: $dest" >&2
+  if [[ "$FORCE" -eq 1 ]]; then
+    # Only replace if existing symlink resolves under PKG_ROOT/skills OR --force with explicit user intent
+    local resolved
+    if [[ -L "$dest" ]]; then
+      resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$dest")"
+      case "$resolved" in
+        "$PKG_ROOT/skills"/*) ;;
+        *)
+          echo "Refusing --force replace for non-package skill at $dest (resolved=$resolved)" >&2
+          echo "Record explicit user approval in docs/war-room/DECISIONS.md then re-run." >&2
+          return 1
+          ;;
+      esac
+    fi
+    rm -rf "$dest"
+    ln -sfn "$src" "$dest"
+    echo "Replaced with symlink (--force): $dest"
+  else
+    echo "Skip (re-run with --force to replace package-owned stale link): $dest" >&2
+  fi
+}
+
+if [[ -n "$PROJECT_SKILLS" ]]; then
+  while IFS= read -r name || [[ -n "$name" ]]; do
+    [[ -z "$name" || "$name" =~ ^# ]] && continue
+    link_project_skill "$name"
+  done < "$MANIFEST"
+fi
+
+init_hub() {
+  local ws="$1"
+  local hub="$ws/docs/war-room"
+  local src="$PKG_ROOT/references/hub"
+  [[ -d "$src" ]] || { echo "Missing hub templates: $src" >&2; exit 1; }
+  mkdir -p "$hub/RUNS"
+  copy_if_needed() {
+    local from="$1" to="$2"
+    if [[ -e "$to" && "$FORCE_HUB" -ne 1 ]]; then
+      echo "Skip existing: $to"
+      return
+    fi
+    mkdir -p "$(dirname "$to")"
+    cp "$from" "$to"
+    echo "Wrote: $to"
+  }
+  copy_if_needed "$src/STATUS.md" "$hub/STATUS.md"
+  copy_if_needed "$src/DECISIONS.md" "$hub/DECISIONS.md"
+  copy_if_needed "$src/UploadManifest.stub.json" "$hub/UploadManifest.stub.json"
+  copy_if_needed "$src/model-routing.json" "$hub/model-routing.json"
+  # SCAN_PLAN template → SCAN_PLAN.md
+  if [[ -e "$hub/SCAN_PLAN.md" && "$FORCE_HUB" -ne 1 ]]; then
+    echo "Skip existing: $hub/SCAN_PLAN.md"
+  else
+    cp "$src/SCAN_PLAN.template.md" "$hub/SCAN_PLAN.md"
+    echo "Wrote: $hub/SCAN_PLAN.md"
+  fi
+  # Never create empty CONFIRM; never delete CONFIRM without --force-hub
+  if [[ -f "$hub/CONFIRM.json" && "$FORCE_HUB" -eq 1 ]]; then
+    echo "WARN: --force-hub leaves CONFIRM in place (clear manually for re-orient)" >&2
+  fi
+  touch "$hub/RUNS/.gitkeep"
+}
+
+if [[ -n "$INIT_HUB" ]]; then
+  [[ -d "$INIT_HUB" ]] || mkdir -p "$INIT_HUB"
+  init_hub "$INIT_HUB"
+fi
+
+echo "Installed. PKG_ROOT=$PKG_ROOT"
+echo "MANIFEST skills linked under ~/.cursor/skills/"
+echo "Pin check: $PKG_ROOT/scripts/verify-pins.sh"
+echo "PKG_ROOT resolve: python3 realpath on ~/.cursor/skills/war-room-init then dirname/../.."
+```
+
+- [ ] **Step 5: Create stub `skills/war-room-init/` so MANIFEST install can link (replaced entirely in Task 6)**
+
+Create `skills/war-room-init/SKILL.md` if missing (Task 6 overwrites with full skill):
+
+```markdown
+---
+name: war-room-init
+description: Temporary stub for MANIFEST link test; Task 6 replaces this file entirely.
+---
+
+# War Room Init
+
+Temporary stub for install symlink test. Task 6 replaces this file with the full skill.
+```
+
+- [ ] **Step 6: Run install test — expect PASS**
+
+Run: `bash tests/test_install_manifest.sh`
+
+Expected: `ALL install_manifest tests passed`
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add skills/MANIFEST.txt scripts/install.sh tests/test_install_manifest.sh skills/war-room-init/SKILL.md
+git commit -m "$(cat <<'EOF'
+feat: MANIFEST install and optional --init-hub
+
+EOF
+)"
+```
+
+---
+
+### Task 6: war-room-init SKILL (full) + bootstrap redirect
+
+**Files:**
+- Modify: `skills/war-room-init/SKILL.md` (replace placeholder with full skill)
+- Modify: `skills/war-room-bootstrap/SKILL.md` (thin redirect)
+- Modify: `DEPENDENCIES.md`
+
+- [ ] **Step 1: Write full `skills/war-room-init/SKILL.md`**
+
+````markdown
+---
+name: war-room-init
+description: >-
+  Use when War Room is not installed, hub STATUS missing, user pastes NEW-CHAT,
+  or asks to install/init War Room on the parent-folder workspace.
+  Do not write WAR-ROOM-OWNER/LOCATE or deep-dig.
+---
+
+# War Room Init
+
+Goal: install package skills, create `docs/war-room/` hub skeleton, verify pins, hand off to orient.
+
+## When / Not
+
+| When | Not |
+|------|-----|
+| No hub `docs/war-room/STATUS.md` | Write locate dual reports |
+| Install unclear / NEW-CHAT cold start | Deep dig or nested investigation |
+| User asks "install War Room" | Claim survey or Mode full nested |
+
+## PKG_ROOT (mandatory — portable)
+
+Prefer init symlink (P1):
+
+```bash
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+```
+
+Fallback if init not linked yet (V0 installs):
+
+```bash
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-locate")))))'
+```
+
+If neither exists, PKG_ROOT = this package checkout (directory containing `skills/` and `scripts/`).
+
+Never hardcode `/Users/...`.
+
+## Language
+
+Match the owner's language. Never assume Traditional Chinese. Paths and identifiers stay English.
+
+## Procedure
+
+1. Confirm package layout exists: `skills/MANIFEST.txt`, `scripts/install.sh`, `DEPENDENCIES.md`, `prompts/NEW-CHAT.md`, `references/hub/`.
+2. Install (no silent `--force`):
+   - Global: `bash "$PKG_ROOT/scripts/install.sh"`
+   - Optional project rule: `--with-project-rule="$WORKSPACE"`
+   - Optional project skills: `--project-skills="$WORKSPACE"`
+   - Hub: `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$WORKSPACE"`
+3. **`--force` policy:** Do not pass `--force` unless the user explicitly approved replacing a foreign/stale project skill link. Record that approval as a human decision in `docs/war-room/DECISIONS.md` (`source: human`) before re-running with `--force`.
+4. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery:
+   1) Ensure `~/.cursor/skills/superpowers` is a git checkout of obra/superpowers (or their pin path).  
+   2) `git -C ~/.cursor/skills/superpowers fetch && git -C ~/.cursor/skills/superpowers checkout <superpowers_sha from DEPENDENCIES.md>`.  
+   3) Re-run verify-pins.
+5. Create or continue a run footprint:
+   - Pick `run_id` = `locate-YYYYMMDD-HHMMSS` (UTC).
+   - Write `docs/war-room/RUNS/<run_id>.json` with phase `installed`, mode `degraded`, empty artifacts.
+   - Update `docs/war-room/STATUS.md`: `hub_ready: true`, `focus_run_id`, `focus_pipeline_id: locate`, `phase: installed`.
+6. **Resume (S12):** If STATUS/CONFIRM already exist, do **not** wipe CONFIRM via re-init. Prefer `--init-hub` skip-existing behavior. Hand off based on phase.
+7. Hand off: instruct agent to **Read and follow** `war-room-orient` (do not dig; do not write OWNER/LOCATE here).
+
+## RunEnvelope seed (write this JSON)
+
+```json
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "<run_id>",
+  "phase": "installed",
+  "mode": "degraded",
+  "artifact_uris": [],
+  "survey_refs": [],
+  "gap_ids": []
+}
+```
+
+## Hard stops
+
+- Do not invent site URLs or commercial claims.
+- Do not require signup before local reports.
+- Do not write `WAR-ROOM-OWNER.md` / `WAR-ROOM-LOCATE.md` in init.
+- Do not deep-dig or claim nested Mode.
+- Do not use `--force` without recorded human approval.
+````
+
+- [ ] **Step 2: Replace `skills/war-room-bootstrap/SKILL.md` with thin redirect**
+
+```markdown
+---
+name: war-room-bootstrap
+description: >-
+  Use when the user pastes NEW-CHAT.md, asks how to install war-room-skills,
+  or pins/install are unclear. Do not use to write locate reports yourself.
+---
+
+# War Room Bootstrap
+
+Deprecated entrypoint. **Read and follow** `war-room-init` for all install/hub/init work.
+
+Do not write locate reports here. Do not deep-dig.
+```
+
+- [ ] **Step 3: Update `DEPENDENCIES.md`** — keep pin table; append sections
+
+Append after existing pin content:
+
+```markdown
+
+## required
+
+- superpowers (see pin table / `superpowers_sha=...`)
+
+## optional
+
+- graphify (P2+) — not required for P1
+
+## first_party
+
+- war-room-init, war-room-orient, war-room-locate, war-room-bootstrap
+- research-survey-review, section-gate-review (same release; added in later chunks)
+```
+
+- [ ] **Step 4: Verify skill frontmatter parses**
+
+Run:
+
+```bash
+head -n 8 skills/war-room-init/SKILL.md
+head -n 8 skills/war-room-bootstrap/SKILL.md
+grep -n 'war-room-orient' skills/war-room-init/SKILL.md
+```
+
+Expected: YAML frontmatter present; init body mentions handoff to `war-room-orient`.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add skills/war-room-init/SKILL.md skills/war-room-bootstrap/SKILL.md DEPENDENCIES.md
+git commit -m "$(cat <<'EOF'
+feat: war-room-init skill; bootstrap redirects
+
+EOF
+)"
+```
+
+---
+
+## Chunk 3: Orient + references + locate gate
+
+### Task 7: war-room-orient + references (full text)
+
+**Files:**
+- Create: `skills/war-room-orient/SKILL.md`
+- Create: `references/scenario-matrix.md`
+- Create: `references/survey-matrix.md`
+- Create: `references/gap-question-template.md`
+- Create: `references/l0-l3-glossary.md`
+- Modify: `skills/MANIFEST.txt` — append `war-room-orient`
+
+- [ ] **Step 1: Append MANIFEST**
+
+`skills/MANIFEST.txt` becomes:
+
+```text
+war-room-init
+war-room-bootstrap
+war-room-locate
+war-room-orient
+```
+
+- [ ] **Step 2: Write `references/l0-l3-glossary.md`**
+
+```markdown
+# L0–L3 model levels (SSOT)
+
+Skills reference **level ids only**, never hardcode slugs in SKILL body. Slugs live in hub `docs/war-room/model-routing.json` (from init template).
+
+| Level | Meaning | Default slug source |
+|-------|---------|---------------------|
+| L0 | No research dispatch | — |
+| L1 | Cheap short look | Hub `levels.L1` (default prefer composer-2.5-fast) |
+| L2 | Standard multi-facet | Hub `levels.L2` |
+| L3 | Heavy model | Hub `levels.L3`; if unavailable → degrade + record `degraded_model`; never pretend L3 |
+
+Degrade rule: missing premium model ⇒ continue with lower level and honest `degraded_model` note in RUNS/survey output.
+```
+
+- [ ] **Step 3: Write `references/scenario-matrix.md`**
+
+```markdown
+# Scenario matrix (P1 acceptance)
+
+| ID | Scenario | Expected |
+|----|----------|----------|
+| S1 | Empty parent | init+orient; no dig without roots |
+| S1b | Repos added later | re-orient; stale CONFIRM |
+| S2 | Many `.git` roots | orient→CONFIRM→locate with budget |
+| S3 | Vibing single repo | still light SCAN_PLAN+CONFIRM |
+| S4 | Path iron evidence | locate; survey SKIP |
+| S5 | Missing deploy/infra | GapQuestion; MUST survey if hot path |
+| S6 | Missing Grafana/DB/… | ask after analysis |
+| S7 | One-line install+analyze | stop at awaiting_confirm |
+| S8 | Pin fail | block analyzing |
+| S9 | Design section gate | section-gate; `go_next` ≠ Mode |
+| S10 | User skips web | survey SKIP |
+| S11 | Post-CONFIRM delivery | dual MD + RUNS + preview fail-soft + soft CTA |
+| S12 | Resume | read STATUS/RUNS; do not wipe CONFIRM via re-init |
+| S13 | Reject/change plan | clear/re-CONFIRM; hash mismatch blocks analyzing |
+| S14 | Stale CONFIRM | phase stale_confirm; re-orient/confirm |
+
+Do not mix columns: `phase` ≠ `Mode` ≠ section-gate `go_next`.
+```
+
+- [ ] **Step 4: Write `references/survey-matrix.md`**
+
+```markdown
+# Survey matrix (research-survey-review)
+
+**Default SKIP.** MUST iff one of:
+
+1. Unknown deploy topology that would change hypotheses
+2. Critical RootRef `presence` is `missing` or `external_ref` on SCAN_PLAN hot path (`hot_path_ids`)
+3. Owner explicitly asks for prior art
+4. Fresh nested reviewer escalates
+
+Rules:
+
+- Session = `run_id`; ≤1 short survey; optional second only on reviewer escalate
+- Timing: after CONFIRM, after first hypotheses — not a 30-question intake
+- Cache fingerprint (same hub + plan/symptom) → SKIP
+- User says "skip web" → SKIP
+```
+
+- [ ] **Step 5: Write `references/gap-question-template.md`**
+
+````markdown
+# GapQuestion template
+
+Write unanswered gaps after analysis (and optionally during orient as known_incompleteness). Machine fields:
+
+```json
+{
+  "schema_version": "1",
+  "id": "gap-001",
+  "kind": "missing_repo|observability|owner|deploy|contract",
+  "why_blocks_hot_path": "<string>",
+  "owner_action": "<string>",
+  "unanswered": true,
+  "root_ref_id": "<optional RootRef.id>"
+}
+```
+
+Owner-facing: one short bullet per gap in `WAR-ROOM-OWNER.md` without dumping JSON.
+````
+
+- [ ] **Step 6: Write full `skills/war-room-orient/SKILL.md`**
+
+````markdown
+---
+name: war-room-orient
+description: >-
+  Use when hub is ready (docs/war-room/STATUS.md), there is no valid CONFIRM,
+  or SCAN_PLAN must be (re)drafted before dig. Do not deep-dig or write
+  WAR-ROOM-OWNER/LOCATE dual reports.
+---
+
+# War Room Orient
+
+Goal: discover RootRefs, write SCAN_PLAN, stop at `awaiting_confirm`.
+
+## When / Not
+
+| When | Not |
+|------|-----|
+| Hub ready, no valid CONFIRM | Deep dig / nested locate |
+| Plan rejected or stale_confirm | Write OWNER/LOCATE |
+| S1 empty parent / S1b repos added | Claim Mode full nested |
+
+## PKG_ROOT
+
+```bash
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+```
+
+Fallback: realpath on `~/.cursor/skills/war-room-locate` then dirname/dirname.
+
+## RootRef schema (write into scan_plan_v1.root_refs[])
+
+Each object:
+
+- `id` (string)
+- `path` or `uri` (string)
+- `presence`: `checked_out` | `missing` | `external_ref` | `submodule`
+- `kind`: `app` | `deploy` | `lib` | `data` | `unknown`
+- `evidence` (string[])
+- optional `hot_path` (bool)
+
+ServiceRef = same schema when kind is app|deploy|lib|data.
+
+## Procedure
+
+1. Require hub: if `docs/war-room/STATUS.md` missing → hand off to `war-room-init`.
+2. Discover roots (shallow):
+   - One-level children of workspace with `.git` → `presence: checked_out`
+   - Note suspected missing/external units as RootRef with `missing`/`external_ref` — do not invent checkouts
+   - Vibing single-repo workspace (S3): still emit light SCAN_PLAN with that root
+3. Write `docs/war-room/SCAN_PLAN.md`:
+   - Human summary: list visible roots + time estimate + "confirming visible subset, not whole system"
+   - Fenced JSON `scan_plan_v1` with required keys: `schema_version`, `root_refs`, `budgets`, `hot_path_ids`, `known_incompleteness`, `planned_dig_ids`
+   - Default budgets if unspecified: `max_wall_min=25`, `max_files=40`, `max_depth=3`
+   - `known_incompleteness` is required (never empty string without meaning)
+4. Update RUNS + STATUS:
+   - phase `plan_drafted` then `awaiting_confirm`
+   - Do **not** enter `analyzing`
+5. **Stop** and ask plain-language confirm (owner language). List roots + estimate. Do not dig.
+6. On user confirm (chat OK is only a trigger):
+   - Run `"$PKG_ROOT/scripts/write_confirm.sh" "$WORKSPACE"`
+   - Remind: signed the **visible subset**
+   - Hand off to `war-room-locate` (locate runs assert_gate)
+7. On reject/change plan (S13): edit SCAN_PLAN; clear or overwrite CONFIRM only after new confirm; hash mismatch must block dig.
+8. Stale (S14): if plan changed under an old CONFIRM → treat as `stale_confirm`; clear CONFIRM → re-orient (no `--force` required).
+
+## Hard stops
+
+- No deep dig, no dual reports, no nested investigators.
+- No silent `--force` on install.
+- Empty parent (S1): stay at awaiting_confirm; do not invent roots to dig.
+````
+
+- [ ] **Step 7: Verify**
+
+Run:
+
+```bash
+test -f skills/war-room-orient/SKILL.md
+test -f references/scenario-matrix.md
+test -f references/survey-matrix.md
+test -f references/gap-question-template.md
+test -f references/l0-l3-glossary.md
+grep -q war-room-orient skills/MANIFEST.txt
+echo "ORIENT_REFS_OK"
+```
+
+Expected: `ORIENT_REFS_OK`
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add skills/war-room-orient/SKILL.md skills/MANIFEST.txt \
+  references/scenario-matrix.md references/survey-matrix.md \
+  references/gap-question-template.md references/l0-l3-glossary.md
+git commit -m "$(cat <<'EOF'
+feat: war-room-orient and scenario/survey references
+
+EOF
+)"
+```
+
+---
+
+### Task 8: Evolve war-room-locate (full SKILL rewrite)
+
+**Files:**
+- Modify: `skills/war-room-locate/SKILL.md` (full replace)
+- Modify: `references/locate-report-template.md` — nested_dispatch pointer in Nested pass
+- Modify: `references/owner-report-template.md` — one Mode honesty line when degraded
+
+- [ ] **Step 1: Rewrite `skills/war-room-locate/SKILL.md` completely**
+
+````markdown
+---
+name: war-room-locate
+description: >-
+  Use when CONFIRM.json payload_hash matches current SCAN_PLAN and the owner
+  needs post-confirm dig with dual reports. Do not install skills; do not
+  redefine model routing; do not deep-dig without assert_gate.
+---
+
+# War Room Locate
+
+Goal: after mechanical confirm, cut "1–2 days to find where" toward minutes for the **repo owner**.
+
+Success = dual artifacts: (1) owner-language brief, (2) engineer locate with path evidence, nested pass, ask-colleague questions — plus RUNS footprint. Not a 200-ticket dump.
+
+## When / Not
+
+| When | Not |
+|------|-----|
+| CONFIRM hash matches current SCAN_PLAN | Install / init hub |
+| Post-confirm dig + dual reports | Claim survey ownership (hand to research skill) |
+| Resume analyzing/done with valid confirm | Early V0 "orient in locate" as substitute for war-room-orient |
+
+## PKG_ROOT (mandatory — portable)
+
+Prefer:
+
+```bash
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+```
+
+Fallback (V0):
+
+```bash
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-locate")))))'
+```
+
+Use `$PKG_ROOT/scripts/*` and `$PKG_ROOT/references/*`. Never hardcode `/Users/...`.
+
+## Language
+
+Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Traditional Chinese. Paths, identifiers, template section titles in English are fine inside engineer report.
+
+## Inputs (ask only if missing)
+
+1. Symptom in one sentence
+2. Workspace root (parent folder with `docs/war-room/`)
+3. Any log / stack / failing URL / approximate time
+4. What already tried (optional)
+5. Owner questionnaire (if not already captured in RUNS/STATUS):
+   - Who built this? (AI / freelancer / unknown)
+   - Can you run tests / git / docker? (yes / no / unsure)
+   - Preferred language for the owner brief?
+
+## Preflight gates (before dig)
+
+1. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery (same as init). Pin fail blocks `analyzing` (S8).
+2. Run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"`. On failure → stop. Set run phase `stale_confirm` if hash mismatch; tell owner to re-orient / re-confirm (S13/S14). **No dig without gate.**
+3. Read `docs/war-room/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig only that subset.
+
+## Deleted V0 behavior
+
+- **Do not** run the old early "Orient (5 min max)" step inside locate as a substitute for `war-room-orient`.
+- Shallow identity (README/deny lists) may still happen **after** assert_gate as part of dig, but SCAN_PLAN + CONFIRM are owned by orient.
+
+## Procedure
+
+1. **Open / update RunEnvelope** at `docs/war-room/RUNS/<run_id>.json`:
+   - phase=`analyzing`, mode=`degraded` default
+   - Keep `pipeline_id: locate`
+2. **Fat-repo identity line** (after gate): if dual trees / LEGACY appear, write `Active surface: … | Legacy/ignore: …` with path+quote.
+3. **Deny / quarantine:** do not deep-read `.venv/`, `node_modules/`, `.worktrees/`, large artifacts, or paths marked LEGACY unless owner asks.
+4. **Hypothesize first** — 2–4 hypotheses. Consult `$PKG_ROOT/references/vibe-debt-smells.md`.
+5. **Optional survey:** Read `$PKG_ROOT/references/survey-matrix.md`. If MUST → hand off to `research-survey-review` (do not reimplement). Default SKIP.
+6. **Pinned superpowers (MUST):** follow `systematic-debugging` and `verification-before-completion` under pinned superpowers.
+7. **Nested investigation (MUST attempt):** follow `$PKG_ROOT/references/nested-protocol.md`.  
+   - Fill `nested_dispatch` **only if** investigators + reviewers were actually dispatched.  
+   - Else keep `mode: degraded` (legitimate success).  
+   - **Never** write `Mode: full nested` / `mode: "full nested"` without both arrays length ≥ 1.
+8. **Search with budget** from SCAN_PLAN. Stop when one hypothesis has path evidence OR two strong candidates remain.
+9. **Engineer challenge + adversarial kill** — cap ≤7 findings after review.
+10. **GapQuestions** after analysis — use `$PKG_ROOT/references/gap-question-template.md`; record `gap_ids` on RunEnvelope.
+11. **Write dual reports** at workspace root:
+    - `WAR-ROOM-OWNER.md` ← owner template
+    - `WAR-ROOM-LOCATE.md` ← locate template  
+    Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
+12. **Verify (optional checklist):**  
+    `"$PKG_ROOT/scripts/verify-report.sh" WAR-ROOM-LOCATE.md docs/war-room/RUNS/<run_id>.json`  
+    Second arg is the RUNS JSON (required when Mode is full nested).
+13. **Preview fail-soft (S11):** After dual MD exist, run `"$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" 8765` (copies package asset into `$WORKSPACE/war-room-preview/`). If copy/serve fails, set RunEnvelope `preview_error` and still mark phase `done` when dual MD exist.
+14. **Soft CTA** only after both MD exist — `$PKG_ROOT/references/feature-call.md`. Never block reports.
+15. Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`.
+
+## Stale / resume
+
+- **Resume (S12):** Read STATUS + RUNS; if CONFIRM still valid (`assert_gate` OK), continue; never wipe CONFIRM via re-init.
+- **Stale confirm (S14):** assert_gate fail → phase `stale_confirm` → orient → new CONFIRM.
+- **Reject plan (S13):** clear CONFIRM, re-orient, re-confirm.
+
+## Mode honesty
+
+| mode value | Requirement |
+|------------|-------------|
+| `degraded` | OK without nested_dispatch |
+| `full nested` | `nested_dispatch.investigators.length ≥ 1` AND `reviewers.length ≥ 1` |
+
+Fake full nested must fail `verify-run.sh`.
+
+## Hard stops
+
+- Do not dig without assert_gate.
+- Do not open 20+ files "just in case".
+- Do not invent Jira tickets or fake health scores.
+- Do not push code, edit business logic, or call external clouds unless user asks.
+- Do not put `.env` secrets in chat or reports.
+- Do not claim SOC2 / "passed audit".
+- Do not hardcode Traditional Chinese.
+- Prefer local search; no uploading whole repos.
+- Do not redefine L0–L3 slug table in this skill (hub config owns slugs).
+````
+
+- [ ] **Step 2: Patch Nested pass in `references/locate-report-template.md`**
+
+Replace the `## Nested pass` section with:
+
+```markdown
+## Nested pass
+- Investigators: N — ids or labels
+- Reviewers: M — ids or labels
+- CritiqueVerdict summary: APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE
+- Dropped after review: …
+- Mode: full nested | degraded
+- RunEnvelope: `docs/war-room/RUNS/<run_id>.json` (nested_dispatch required iff Mode is full nested)
+```
+
+- [ ] **Step 3: Add Mode honesty line to `references/owner-report-template.md`**
+
+After the main diagnosis section (or near footer), ensure this line exists:
+
+```markdown
+## Honesty
+- Analysis mode: full nested | degraded (if degraded: nested investigators/reviewers were not available; local dual reports still count as done)
+```
+
+If the owner template lacks sections, append the Honesty block at end of file.
+
+- [ ] **Step 4: Verify key phrases**
+
+Run:
+
+```bash
+grep -q 'assert_gate' skills/war-room-locate/SKILL.md
+grep -q 'stale_confirm' skills/war-room-locate/SKILL.md
+grep -q 'Deleted V0 behavior' skills/war-room-locate/SKILL.md
+grep -q 'nested_dispatch' references/locate-report-template.md
+grep -q 'Analysis mode' references/owner-report-template.md
+echo "LOCATE_P1_OK"
+```
+
+Expected: `LOCATE_P1_OK`
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add skills/war-room-locate/SKILL.md \
+  references/locate-report-template.md references/owner-report-template.md
+git commit -m "$(cat <<'EOF'
+feat: locate requires assert_gate and RunEnvelope Mode honesty
+
+EOF
+)"
+```
+
+---
+
+## Chunk 4: Process skills, NEW-CHAT, preview
+
+### Task 9: research-survey-review (full skill + output schema)
+
+**Files:**
+- Create: `skills/research-survey-review/SKILL.md`
+- Modify: `skills/MANIFEST.txt` — append this skill name (with Task 10)
+
+- [ ] **Step 1: Write full `skills/research-survey-review/SKILL.md`**
+
+````markdown
+---
+name: research-survey-review
+description: >-
+  Use when survey-matrix MUST_SURVEY predicates fire (unknown deploy topology,
+  critical missing/external RootRef on hot path, owner asks prior art, or nested
+  reviewer escalates). Do not call any war-room-* product skill. Default is SKIP.
+---
+
+# Research Survey Review
+
+Independent process skill: short external survey → synthesize → critique.
+
+## When / Not
+
+| When | Not |
+|------|-----|
+| Matrix MUST (see `$PKG_ROOT/references/survey-matrix.md`) | Nested path+quote review |
+| Owner asks prior art | Section gates |
+| Reviewer escalate | Calling `war-room-init/orient/locate` |
+
+## PKG_ROOT
+
+Resolve via `war-room-init` realpath (fallback locate). Read hub `docs/war-room/model-routing.json` for L1–L3 slugs. Skills use **level ids only**.
+
+## Default
+
+**SKIP** unless a MUST predicate matches. User "skip web" → SKIP. Cache fingerprint (hub + plan hash + symptom) → SKIP.
+
+## Budget
+
+- Session = `run_id`
+- ≤1 short survey; optional second only on reviewer escalate
+- `max_rounds` ≤ 2
+- Timing: after CONFIRM + first hypotheses
+
+## Stages
+
+1. **Plan** (L1): 3–5 facets max; write survey plan in chat or `docs/war-room/RUNS/<run_id>.survey-plan.md`
+2. **Research** (L1/L2): parallel short looks; capture URLs + claims
+3. **Synthesize** (L2): map findings → locate hypotheses impact
+4. **Critique** (fresh L2): APPROVE | REJECT | NEEDS_REVISION | INCONCLUSIVE
+5. **Stop** when critique not REJECT, or rounds exhausted, or human skip
+
+## Output schema (required)
+
+Write JSON to `docs/war-room/RUNS/<run_id>.survey.json` and append path to RunEnvelope `survey_refs[]`.
+
+```json
+{
+  "schema_version": "1",
+  "run_id": "<string>",
+  "decision": "SURVEYED|SKIP",
+  "skip_reason": "<string|null>",
+  "must_predicates_matched": ["<predicate id or text>"],
+  "mode": "full|degraded",
+  "model_levels_used": ["L1", "L2"],
+  "degraded_model": "<string|null>",
+  "facets": [{"id": "f1", "question": "<string>", "findings": ["<string>"], "urls": ["<string>"]}],
+  "synthesis": "<string>",
+  "critique_verdict": "APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE",
+  "impact_on_hypotheses": ["<string>"],
+  "rounds": 1
+}
+```
+
+Field rules:
+
+- `decision=SKIP` ⇒ `skip_reason` required; facets may be `[]`
+- `decision=SURVEYED` ⇒ ≥1 facet OR explicit empty with critique explaining why
+- `mode=full` only if researchers + fresh critic actually ran; else `degraded`
+- Never pretend L3 if slug unavailable — set `degraded_model`
+
+## Hard stops
+
+- Do not call any `war-room-*` product skill.
+- Do not recurse into `section-gate-review`.
+- Do not upload whole hubs/repos.
+- Do not block dual-report delivery on survey failure — SKIP/degrade and continue.
+````
+
+- [ ] **Step 2: Verify schema block present**
+
+Run:
+
+```bash
+grep -q '"decision": "SURVEYED|SKIP"' skills/research-survey-review/SKILL.md
+grep -q 'Do not call any' skills/research-survey-review/SKILL.md
+echo "RESEARCH_SKILL_OK"
+```
+
+Expected: `RESEARCH_SKILL_OK`
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add skills/research-survey-review/SKILL.md
+git commit -m "$(cat <<'EOF'
+feat: research-survey-review process skill
+
+EOF
+)"
+```
+
+---
+
+### Task 10: section-gate-review (full skill)
+
+**Files:**
+- Create: `skills/section-gate-review/SKILL.md`
+- Modify: `skills/MANIFEST.txt`
+
+- [ ] **Step 1: Write full `skills/section-gate-review/SKILL.md`**
+
+````markdown
+---
+name: section-gate-review
+description: >-
+  Use before the next design/plan section, or when the user says section OK
+  without a prior gate for that digest. Do not edit product code; do not run
+  locate nested; do not recurse into section-gate or research.
+---
+
+# Section Gate Review
+
+Independent process skill for War Room design/plan orchestration (not hard-wired into generic brainstorming).
+
+## When / Not
+
+| When | Not |
+|------|-----|
+| Before next design/plan § | Locate nested path+quote review |
+| User "§N OK" without prior gate for digest | Web research (use research-survey-review) |
+| | Product code edits |
+
+## PKG_ROOT / models
+
+Resolve PKG_ROOT via init/locate symlink. Use hub model-routing for L1/L2 slugs. Reference **level ids only**.
+
+## Input schema
+
+```json
+{
+  "schema_version": "1",
+  "section_id": "<string>",
+  "draft_digest": "<string>",
+  "lenses": ["契約", "可執行", "擴展"],
+  "max_rounds": 2
+}
+```
+
+Defaults: `lenses` length 3 as above; `max_rounds` ≤ 2.
+
+## Output schema
+
+Write JSON (chat + optional `docs/war-room/RUNS/<review_run_id>.section-gate.json`):
+
+```json
+{
+  "schema_version": "1",
+  "review_run_id": "<string>",
+  "section_id": "<string>",
+  "verdict": "APPROVE|APPROVE_WITH_CHANGES|REJECT",
+  "must_fix": ["<string>"],
+  "go_next": true,
+  "rounds": 1,
+  "notes": "<string>"
+}
+```
+
+**`go_next` ≠ locate `Mode`.** Do not invent Mode values here.
+
+## Stop rules
+
+- Stop when verdict is not REJECT and must_fixes absorbed; or 2 rounds; or human skip
+- `APPROVE_WITH_CHANGES` → L0 checklist verify (no new 3-agent round)
+- `REJECT` → optional round 2
+- Cap ≤6 agent calls/section
+- Reviewers must not recurse into section-gate or research
+- Same digest hash → idempotent skip
+
+## Procedure
+
+1. Normalize input; if same digest already APPROVED this session → skip
+2. Dispatch up to 3 lens reviewers (L1/L2) — one pass
+3. Parent synthesizes verdict + must_fix
+4. If APPROVE_WITH_CHANGES → apply checklist; set `go_next` true only when fixes absorbed
+5. Emit output schema; do not edit product code
+
+## Hard stops
+
+- No product code edits
+- No recursive section-gate/research
+- No locate dig
+````
+
+- [ ] **Step 2: Append both process skills to MANIFEST**
+
+Final `skills/MANIFEST.txt`:
+
+```text
+war-room-init
+war-room-bootstrap
+war-room-locate
+war-room-orient
+research-survey-review
+section-gate-review
+```
+
+- [ ] **Step 3: Re-run install smoke for new names**
+
+Run:
+
+```bash
+HOME="$(mktemp -d)" bash scripts/install.sh
+test -L "$HOME/.cursor/skills/research-survey-review"
+test -L "$HOME/.cursor/skills/section-gate-review"
+echo "PROCESS_MANIFEST_OK"
+```
+
+Expected: `PROCESS_MANIFEST_OK`
+
+- [ ] **Step 4: Commit**
+
+```bash
+git add skills/section-gate-review/SKILL.md skills/MANIFEST.txt
+git commit -m "$(cat <<'EOF'
+feat: section-gate-review process skill
+
+EOF
+)"
+```
+
+---
+
+### Task 11: NEW-CHAT dispatcher + preview HTML + serve + workspace copy
+
+**Files:**
+- Modify: `prompts/NEW-CHAT.md` (full replace)
+- Create: `assets/war-room-preview/index.html`
+- Create: `scripts/serve-preview.sh` (copy asset into workspace then serve)
+- Modify: `skills/war-room-locate/SKILL.md` (§13 Preview fail-soft + `preview_error`)
+- Modify: `README.md` (P1 one-liner; keep short)
+
+- [ ] **Step 1: Write full `prompts/NEW-CHAT.md`**
+
+```markdown
+You are War Room. The user may be a non-coder owner of a stranger/AI-built multi-repo parent folder.
+
+Dispatcher only — do not paste locate nested procedure here.
+
+1) Resolve PKG_ROOT:
+   python3 realpath on ~/.cursor/skills/war-room-init, then dirname/dirname.
+   Fallback: ~/.cursor/skills/war-room-locate.
+   If neither installed: tell user to run war-room-skills/scripts/install.sh first.
+2) Run "$PKG_ROOT/scripts/verify-pins.sh" (must pass). On fail: owner-language pin recovery from DEPENDENCIES.md — do not leave a raw git error only.
+3) Match the owner's language (never assume Traditional Chinese). Identifiers stay English.
+4) If docs/war-room/STATUS.md missing → Read and follow war-room-init (install + --init-hub on workspace).
+5) If no valid CONFIRM → Read and follow war-room-orient. Stop at awaiting_confirm. Ask plain-language confirm for the visible subset.
+6) After CONFIRM.json exists → Read and follow war-room-locate (it runs assert_gate). Do not dig in this dispatcher.
+7) After dual reports exist: optional localhost preview via "$PKG_ROOT/scripts/serve-preview.sh" (fail-soft). Soft CTA per references/feature-call.md — never signup wall.
+
+Hard stops: no business code edits, no deploy, no .env secrets in chat, no silent --force.
+Start now: resolve PKG_ROOT, verify pins, then init or orient as needed.
+```
+
+- [ ] **Step 2: Write `assets/war-room-preview/index.html`**
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>War Room Preview</title>
+  <style>
+    :root {
+      --bg0: #0f1419;
+      --bg1: #1a2332;
+      --ink: #e7ecf3;
+      --muted: #9aa7b8;
+      --accent: #3d9cf0;
+      --line: #2a3648;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Source Sans 3", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #1c3b5a 0%, transparent 55%),
+        linear-gradient(160deg, var(--bg0), var(--bg1));
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    main { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+    h1 { font-size: 1.75rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+    .brand { color: var(--accent); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .muted { color: var(--muted); }
+    section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+    h2 { font-size: 1.1rem; margin: 0 0 12px; }
+    ol { padding-left: 1.2rem; }
+    a { color: var(--accent); }
+    footer { margin-top: 48px; font-size: 0.9rem; color: var(--muted); }
+    code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.9em; }
+    .mermaid-ph {
+      margin-top: 12px; padding: 16px; border: 1px dashed var(--line);
+      color: var(--muted); font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">War Room</div>
+    <h1 id="symptom">Symptom</h1>
+    <p class="muted" id="diagnosis">Plain-language diagnosis goes here. Replace this text when copying into the workspace preview.</p>
+
+    <section>
+      <h2>3 owner actions</h2>
+      <ol id="actions">
+        <li>Action one</li>
+        <li>Action two</li>
+        <li>Action three</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Reports</h2>
+      <p>
+        <a href="../WAR-ROOM-OWNER.md">WAR-ROOM-OWNER.md</a> ·
+        <a href="../WAR-ROOM-LOCATE.md">WAR-ROOM-LOCATE.md</a>
+      </p>
+      <div class="mermaid-ph">Mermaid placeholder — paste diagram from locate report if useful.</div>
+    </section>
+
+    <footer>
+      Local report needs no account. Optional deeper architecture pass may be offered after files exist.
+    </footer>
+  </main>
+</body>
+</html>
+```
+
+- [ ] **Step 3: Write `scripts/serve-preview.sh`** (copy-from-package + serve)
+
+```bash
+#!/usr/bin/env bash
+# Usage:
+#   serve-preview.sh <workspace_root> [port]
+# Copies package assets into $WS/war-room-preview/ then serves localhost.
+set -euo pipefail
+WS="${1:-}"
+PORT="${2:-8765}"
+[[ -n "$WS" && -d "$WS" ]] || { echo "Usage: $0 <workspace_root> [port]" >&2; exit 2; }
+PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+SRC="$PKG_ROOT/assets/war-room-preview/index.html"
+DEST_DIR="$WS/war-room-preview"
+[[ -f "$SRC" ]] || { echo "Missing package asset: $SRC" >&2; exit 1; }
+mkdir -p "$DEST_DIR"
+cp "$SRC" "$DEST_DIR/index.html"
+echo "Copied preview → $DEST_DIR/index.html"
+cd "$DEST_DIR"
+echo "Serving http://127.0.0.1:$PORT  (Ctrl+C to stop)"
+python3 -m http.server "$PORT" --bind 127.0.0.1
+```
+
+- [ ] **Step 4: Patch `skills/war-room-locate/SKILL.md` §13 Preview** (required deliverable)
+
+Replace the Preview bullet in locate with exactly:
+
+```markdown
+13. **Preview fail-soft (S11):** After dual MD exist, run:
+    `"$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" 8765`
+    (script copies `assets/war-room-preview/index.html` into `$WORKSPACE/war-room-preview/`).
+    Optionally edit that HTML from OWNER content before/while serving.
+    If copy or serve fails: set RunEnvelope field `preview_error` to the message,
+    keep `phase: done` when dual MD exist, still offer soft CTA.
+    Preview never blocks DONE.
+```
+
+Also add `preview_error` (optional string) to the RunEnvelope write steps in the same SKILL.
+
+- [ ] **Step 5: README one-liner**
+
+Append a short P1 blurb to `README.md` (do not rewrite whole README):
+
+````markdown
+## P1 parent hub (quick)
+
+```bash
+bash scripts/install.sh --init-hub="/abs/path/to/parent-folder"
+# then in Cursor: paste prompts/NEW-CHAT.md — init → orient → confirm → locate
+# preview: bash scripts/serve-preview.sh "/abs/path/to/parent-folder"
+```
+````
+
+- [ ] **Step 6: Verify** (deliverables, not this plan file)
+
+Run:
+
+```bash
+chmod +x scripts/serve-preview.sh
+test -f prompts/NEW-CHAT.md
+test -f assets/war-room-preview/index.html
+test -f scripts/serve-preview.sh
+grep -q 'assert_gate' prompts/NEW-CHAT.md
+grep -q 'serve-preview.sh' skills/war-room-locate/SKILL.md
+grep -q 'preview_error' skills/war-room-locate/SKILL.md
+grep -q 'assets/war-room-preview' scripts/serve-preview.sh
+TMP="$(mktemp -d)"
+bash scripts/serve-preview.sh "$TMP" 8765 &
+PID=$!
+sleep 1
+kill "$PID" 2>/dev/null || true
+test -f "$TMP/war-room-preview/index.html"
+rm -rf "$TMP"
+echo "PREVIEW_NEWCHAT_OK"
+```
+
+Expected: `PREVIEW_NEWCHAT_OK`
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add prompts/NEW-CHAT.md assets/war-room-preview/index.html \
+  scripts/serve-preview.sh skills/war-room-locate/SKILL.md README.md
+git commit -m "$(cat <<'EOF'
+feat: NEW-CHAT dispatcher and localhost preview assets
+
+EOF
+)"
+```
+
+---
+
+## Chunk 5: PKG_ROOT, rules, smoke, manual checklist
+
+### Task 12: PKG_ROOT dual resolve (docs consistency)
+
+**Files:**
+- Modify: `README.md` — PKG_ROOT snippet prefers init, fallback locate
+- Verify: init + locate skills already document dual resolve (Tasks 6/8)
+
+- [ ] **Step 1: Ensure README contains this exact snippet**
+
+````markdown
+### PKG_ROOT resolve
+
+```bash
+# Prefer P1 init symlink:
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+# Fallback V0:
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-locate")))))'
+```
+````
+
+- [ ] **Step 2: Verify skills agree**
+
+Run:
+
+```bash
+grep -q 'war-room-init' skills/war-room-init/SKILL.md
+grep -q 'war-room-init' skills/war-room-locate/SKILL.md
+grep -q 'war-room-locate' skills/war-room-locate/SKILL.md
+echo "PKG_ROOT_DOCS_OK"
+```
+
+Expected: `PKG_ROOT_DOCS_OK` (after Tasks 6/8 landed).
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add README.md
+git commit -m "$(cat <<'EOF'
+docs: PKG_ROOT resolve via war-room-init with locate fallback
+
+EOF
+)"
+```
+
+---
+
+### Task 13: Thin project rule update
+
+**Files:**
+- Modify: `rules/war-room-locate.mdc` (full replace)
+
+- [ ] **Step 1: Replace `rules/war-room-locate.mdc` with**
+
+```markdown
+---
+description: War Room locate hard stops (thin)
+alwaysApply: false
+---
+
+# War Room Locate — hard stops
+
+- Match owner language; never assume Traditional Chinese. Identifiers stay English.
+- Resolve PKG_ROOT via portable realpath on `~/.cursor/skills/war-room-init` (fallback `war-room-locate`), then use `$PKG_ROOT/scripts/*` and `$PKG_ROOT/references/*`.
+- Hub paths live under `docs/war-room/` (STATUS, RUNS, SCAN_PLAN, CONFIRM).
+- **No dig without assert_gate:** run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"` before analyzing.
+- Pin fail (`verify-pins.sh`) blocks analyzing.
+- MUST nest when possible: investigators → fresh reviewers → synthesize (see nested-protocol.md). Mode `full nested` only with nested_dispatch records; else `degraded`.
+- MUST use pinned superpowers (`systematic-debugging`, `verification-before-completion`).
+- Dual reports: `WAR-ROOM-OWNER.md` + `WAR-ROOM-LOCATE.md` at workspace root.
+- ≤7 engineer findings after review; kill without path + quote.
+- No business code edits, no deploy, no `.env` secrets in chat, no signup wall before reports.
+- Soft CTA only after both reports; if site URL TBD, say not published (no fake URL).
+- Preview fail-soft: dual MD + footprints = DONE even if localhost preview fails.
+```
+
+- [ ] **Step 2: Verify**
+
+Run:
+
+```bash
+grep -q 'assert_gate' rules/war-room-locate.mdc
+grep -q 'docs/war-room' rules/war-room-locate.mdc
+echo "RULE_OK"
+```
+
+Expected: `RULE_OK`
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add rules/war-room-locate.mdc
+git commit -m "$(cat <<'EOF'
+rules: require confirm gate before dig
+
+EOF
+)"
+```
+
+---
+
+### Task 14: End-to-end smoke (synthetic parent + fake full nested FAIL)
+
+**Files:**
+- Create: `tests/fixtures/synthetic-parent/app-a/README.md`
+- Create: `tests/fixtures/synthetic-parent/app-b/README.md`
+- Create: `tests/test_p1_smoke.sh`
+
+- [ ] **Step 1: Write synthetic parent markers**
+
+`tests/fixtures/synthetic-parent/app-a/README.md`:
+
+```markdown
+# app-a
+
+Synthetic checked_out root for P1 smoke.
+```
+
+`tests/fixtures/synthetic-parent/app-b/README.md`:
+
+```markdown
+# app-b
+
+Synthetic second root for P1 smoke.
+```
+
+- [ ] **Step 2: Write full `tests/test_p1_smoke.sh`**
+
+````bash
+#!/usr/bin/env bash
+# P1 smoke: init-hub → confirm → assert_gate OK → mutate FAIL → fake full nested FAIL
+set -euo pipefail
+ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+TMP="$(mktemp -d)"
+trap 'rm -rf "$TMP"' EXIT
+
+# Synthetic parent with two fake git roots
+mkdir -p "$TMP/app-a/.git" "$TMP/app-b/.git"
+cp "$ROOT/tests/fixtures/synthetic-parent/app-a/README.md" "$TMP/app-a/README.md"
+cp "$ROOT/tests/fixtures/synthetic-parent/app-b/README.md" "$TMP/app-b/README.md"
+
+# init hub
+bash "$ROOT/scripts/install.sh" --init-hub="$TMP"
+[[ -f "$TMP/docs/war-room/STATUS.md" ]]
+
+# Write a real SCAN_PLAN with two roots
+cat > "$TMP/docs/war-room/SCAN_PLAN.md" <<'MD'
+# SCAN_PLAN
+
+Visible subset: app-a, app-b.
+
+```json scan_plan_v1
+{
+  "schema_version": "1",
+  "root_refs": [
+    {"id": "app-a", "path": "app-a", "presence": "checked_out", "kind": "app", "evidence": ["app-a/.git"], "hot_path": true},
+    {"id": "app-b", "path": "app-b", "presence": "checked_out", "kind": "app", "evidence": ["app-b/.git"], "hot_path": false}
+  ],
+  "budgets": {"max_wall_min": 25, "max_files": 40, "max_depth": 3},
+  "hot_path_ids": ["app-a"],
+  "known_incompleteness": "no deploy root in synthetic fixture",
+  "planned_dig_ids": ["app-a"]
+}
+```
+MD
+
+# confirm + gate OK
+bash "$ROOT/scripts/write_confirm.sh" "$TMP" "smoke"
+bash "$ROOT/scripts/assert_gate.sh" "$TMP"
+echo "OK: assert_gate after confirm"
+
+# verify-run degraded OK
+bash "$ROOT/scripts/verify-run.sh" "$ROOT/tests/fixtures/run_degraded_ok.json"
+echo "OK: degraded verify-run"
+
+# fake full nested must FAIL
+set +e
+bash "$ROOT/scripts/verify-run.sh" "$ROOT/tests/fixtures/run_full_fake.json"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || { echo "FAIL: fake full nested should fail verify-run"; exit 1; }
+echo "OK: fake full nested rejected"
+
+# verify-report with fake full RUNS must FAIL
+set +e
+bash "$ROOT/scripts/verify-report.sh" \
+  "$ROOT/tests/fixtures/sample_LOCATE_full.md" \
+  "$ROOT/tests/fixtures/run_full_fake.json"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || { echo "FAIL: verify-report should reject fake full RUNS"; exit 1; }
+echo "OK: verify-report fake full nested FAIL"
+
+# mutate plan → stale confirm
+python3 - <<'PY' "$TMP/docs/war-room/SCAN_PLAN.md"
+import pathlib, sys
+p = pathlib.Path(sys.argv[1])
+t = p.read_text(encoding="utf-8")
+t = t.replace(
+    '"known_incompleteness": "no deploy root in synthetic fixture"',
+    '"known_incompleteness": "MUTATED_SMOKE"',
+)
+p.write_text(t, encoding="utf-8")
+PY
+set +e
+bash "$ROOT/scripts/assert_gate.sh" "$TMP"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || { echo "FAIL: expected stale confirm"; exit 1; }
+echo "OK: stale confirm after mutate"
+
+# preview copy fail-soft path exists
+mkdir -p "$TMP/war-room-preview"
+cp "$ROOT/assets/war-room-preview/index.html" "$TMP/war-room-preview/index.html"
+[[ -f "$TMP/war-room-preview/index.html" ]]
+echo "OK: preview copy"
+
+echo "ALL p1 smoke tests passed"
+````
+
+- [ ] **Step 3: Run smoke — expect PASS (after Chunks 1–4 landed)**
+
+Run: `bash tests/test_p1_smoke.sh`
+
+Expected: stdout ends with `ALL p1 smoke tests passed` and includes `OK: fake full nested rejected`.
+
+- [ ] **Step 4: Update package `STATUS.md` honesty**
+
+When execution of this plan starts, set P1 implementation status to implementing/scripts-green as appropriate. Do **not** mark capability matrix YES until S1–S14 manual checks land.
+
+- [ ] **Step 5: Commit**
+
+```bash
+git add tests/fixtures/synthetic-parent tests/test_p1_smoke.sh STATUS.md
+git commit -m "$(cat <<'EOF'
+test: P1 assert_gate smoke including fake full nested FAIL
+
+EOF
+)"
+```
+
+---
+
+### Task 15: Manual skill checklist (S1–S14 outline)
+
+**Files:**
+- Create: `coverage/p1-manual-checklist.md`
+
+- [ ] **Step 1: Write full checklist file**
+
+```markdown
+# P1 manual scenario checklist (S1–S14)
+
+Use after scripts smoke is green. Each row is an agent-run checkbox.
+
+## Prep
+
+- [ ] Package installed via `scripts/install.sh` (final MANIFEST)
+- [ ] Pins green: `scripts/verify-pins.sh`
+- [ ] Fresh parent folder workspace open in Cursor
+
+## Scenarios
+
+- [ ] **S1 Empty parent** — init+orient; SCAN_PLAN with empty/missing roots; stop at awaiting_confirm; no dig
+- [ ] **S1b Repos added later** — re-orient; old CONFIRM becomes stale; assert_gate fails until re-confirm
+- [ ] **S2 Many `.git` roots** — orient lists roots; CONFIRM; locate digs planned subset only (budgets)
+- [ ] **S3 Vibing single repo** — still writes light SCAN_PLAN + CONFIRM before dig
+- [ ] **S4 Path iron evidence** — locate delivers dual MD; survey SKIP
+- [ ] **S5 Missing deploy/infra on hot path** — GapQuestion; research MUST if hot-path missing/external
+- [ ] **S6 Missing Grafana/DB/…** — ask after analysis (GapQuestion), not 30-question intake
+- [ ] **S7 One-line install+analyze** — stops at awaiting_confirm (does not auto-dig)
+- [ ] **S8 Pin fail** — verify-pins fail blocks analyzing; owner-language recovery
+- [ ] **S9 Design section gate** — section-gate-review runs; `go_next` is not Mode
+- [ ] **S10 User skips web** — survey SKIP despite optional curiosity
+- [ ] **S11 Post-CONFIRM delivery** — dual MD + RUNS + preview fail-soft + soft CTA (preview fail still DONE)
+- [ ] **S12 Resume** — STATUS/RUNS read; CONFIRM not wiped by re-init
+- [ ] **S13 Reject/change plan** — clear/re-CONFIRM; hash mismatch blocks analyzing
+- [ ] **S14 Stale CONFIRM** — phase stale_confirm; re-orient/confirm
+
+## Mechanical gates (scripted already; re-check in agent path)
+
+- [ ] assert_gate blocks dig without CONFIRM
+- [ ] Fake `Mode: full nested` / RUNS without investigators+reviewers fails verify-run
+- [ ] Soft CTA never blocks local reports
+
+## Package tracker
+
+- [ ] Root `STATUS.md` P1 capability rows set YES only when above are honestly true
+```
+
+- [ ] **Step 2: Verify**
+
+Run:
+
+```bash
+test -f coverage/p1-manual-checklist.md
+grep -c '^\- \[ \]' coverage/p1-manual-checklist.md
+echo "CHECKLIST_OK"
+```
+
+Expected: `CHECKLIST_OK` and checkbox count ≥ 20.
+
+- [ ] **Step 3: Commit**
+
+```bash
+git add coverage/p1-manual-checklist.md
+git commit -m "$(cat <<'EOF'
+docs: P1 manual scenario checklist S1–S14
+
+EOF
+)"
+```
+
+---
+
+## Out of plan (do not implement)
+
+- Graphify, coverage gates, AUTO_DECIDED behavior, cloud upload, section-gate hardwired into global brainstorming, FSM engines, survey daemon, router binary.
+
+---
+
+## Execution notes
+
+- Use superpowers:subagent-driven-development with one fresh subagent per Task where possible; otherwise superpowers:executing-plans with review checkpoints.
+- After each Task commit, keep package `STATUS.md` honest.
+- Center-file whitelist: new skills may touch `skills/<name>/`, matrix/refs, templates, MANIFEST — do not re-paste locate procedure into NEW-CHAT.
+- MANIFEST staging: never install skill names before their directories exist on disk.

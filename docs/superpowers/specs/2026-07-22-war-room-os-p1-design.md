@@ -1,7 +1,7 @@
 # War Room OS + Locate Pipeline (P1) — Design
 
 **Date:** 2026-07-22  
-**Status:** Spec-review ✅ Approved (2026-07-22); awaiting human review of this file before writing-plans  
+**Status:** Spec ✅ + Plan ✅ (2026-07-22); ready to execute `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`  
 **Package SSOT:** `/Users/eric.fang/MindOwnBuz/war-room-skills`  
 **Progress tracker:** [`STATUS.md`](../../../STATUS.md) (package repo root)  
 **Sibling app (P3):** `/Users/eric.fang/MindOwnBuz/war-room-app`
