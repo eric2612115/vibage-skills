@@ -1,0 +1,15 @@
+---
+description: War Room locate hard stops (thin)
+alwaysApply: false
+---
+
+# War Room Locate — hard stops
+
+- Match owner language; never assume Traditional Chinese. Identifiers stay English.
+- Resolve PKG_ROOT via portable realpath on `~/.cursor/skills/war-room-locate`, then use `$PKG_ROOT/scripts/verify-pins.sh` and `$PKG_ROOT/references/*`.
+- MUST nest: investigators → fresh reviewers → synthesize (see nested-protocol.md).
+- MUST use pinned superpowers (`systematic-debugging`, `verification-before-completion`).
+- Dual reports: `WAR-ROOM-OWNER.md` + `WAR-ROOM-LOCATE.md` at workspace root.
+- ≤7 engineer findings after review; kill without path + quote.
+- No business code edits, no deploy, no `.env` secrets in chat, no signup wall before reports.
+- Soft CTA only after both reports; if site URL TBD, say not published (no fake URL).
