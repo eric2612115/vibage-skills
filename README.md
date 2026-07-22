@@ -4,6 +4,20 @@ Shared Cursor skills for **War Room Locate**: help non-coder owners of fat / AI-
 
 This is a **sibling package** to SelfAutoBuz (OPC hub). Product SSOT lives here; SelfAutoBuz only keeps research + install pointers.
 
+## Status / roadmap（先讀）
+
+**接續進度、Phase 邊界、能力對照表 → [`STATUS.md`](STATUS.md)。**  
+Agents starting a new session should read `STATUS.md` before expanding scope.
+
+| Phase | Meaning | Now |
+|-------|---------|-----|
+| **V0** | Single-/few-root locate + dual reports | **Shipped** (this package) |
+| **P1** | Parent-folder OS: init → scan plan → confirm → locate; footprints; local preview; survey + section-gate skills | **Designing** |
+| **P2** | Graphify-class map, coverage gates, long-task + AUTO_DECIDED | Later |
+| **P3** | Cloud Pro / richer results after signup (`war-room-app`) | Later |
+
+Do not treat Harden-2 bullets below as the full roadmap — Phase table in `STATUS.md` supersedes when they conflict.
+
 ## Install (global)
 
 ```bash
@@ -45,8 +59,10 @@ python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os
 | `scripts/verify-report.sh` | Report checklist (not proof of nested) |
 | `DEPENDENCIES.md` | Pinned `superpowers_sha=` |
 | `coverage/` | Blind-test / coverage logs |
+| `STATUS.md` | Phase map, capability matrix, design locks, next steps |
+| `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md` | P1 OS + locate pipeline design (approved draft → spec-review) |
 
-### Done in Harden / V1 must-fix
+### Done in Harden / V1 must-fix（= V0）
 
 - Capability branching in locate + owner template + NEW-CHAT
 - No-docs cold start, vibe-debt smells, verify-report, golden examples
