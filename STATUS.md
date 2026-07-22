@@ -2,7 +2,7 @@
 
 > **Agent／人類接續入口。** 進度與 Phase 邊界以本檔為準；行為細節仍以 `skills/` + 未來 spec 為準。  
 > **Date:** 2026-07-22  
-> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；plan Tasks 1–15 **scripts-green**；Chunk 6（review fixes）待做；hosted web shell＝平行規格軌道
+> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；plan Tasks 1–20 **scripts-green**（含 Chunk 6）；S1–S14 手動待跑；hosted web shell＝平行規格軌道
 
 ## 〇、一句話
 
@@ -17,7 +17,7 @@
 | Phase | 名稱 | 主要解決 | 狀態 |
 |-------|------|----------|------|
 | **V0** | Locate 儀式 | 症狀→雙報告；pin；硬停；soft CTA 文案 | **已落地** |
-| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（Tasks 1–15 ✅）；**Chunk 6 review fixes 待做**；S1–S14 手動待跑 |
+| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（Tasks 1–20 ✅／Chunk 6 已修）；S1–S14 手動待跑；合併待決 |
 | **Web shell** | Hosted `/:locale` + login + SEO 槽 | 與 skills 平行；規格在 SelfAutoBuz；**非** locate 主幹 | **待開 Chat 1（spec/plan only）** |
 | **P2** | 重裝備本地 | graphify／等價**全圖**；coverage 閘；long-task + AUTO_DECIDED；更深 service-map | **未開始** |
 | **P3** | 雲端 Pro／B | UploadManifest 上傳；加強版結果；Architecture Pass／訂閱 | **未開始**（app scaffold only） |
@@ -138,7 +138,7 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §3 | 人點頭；must_fix 已吸納 |
 | §4 | 人點頭 |
 | Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（✅ Approved） |
-| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（Tasks 1–15 ✅；checklist 已落地） |
+| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（Tasks 1–20 ✅／Chunk 6；checklist 已落地） |
 | Manual checklist | `coverage/p1-manual-checklist.md`（S1–S14 勾選待跑） |
 
 ### §3 section-gate 紀錄
@@ -173,13 +173,12 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. **Chunk 6（Tasks 16–20）**：整包 review 必修 — Mode MD↔RUNS、`--force` 安全、smoke `HOME` 隔離、preview 連結、README 對齊（見 plan）  
-2. 合併 `feature/war-room-os-p1`（修完 Chunk 6 後較妥）；重 pin `~/.cursor/skills` 若仍指向 worktree  
-3. 依 `coverage/p1-manual-checklist.md` 跑 S1–S14；全綠後才將能力表 P1 欄標 YES  
-4. **平行：** 開 Hosted web shell Chat 1（規格／計劃；Grok 4.5 三審）→ 產出  
+1. **合併** `feature/war-room-os-p1`（Chunk 6 已綠）；若 `~/.cursor/skills` 曾被舊 smoke 指到 worktree，合併後重跑 `scripts/install.sh`  
+2. 依 `coverage/p1-manual-checklist.md` 跑 S1–S14；全綠後才將能力表 P1 欄標 YES  
+3. **平行：** 開 Hosted web shell Chat 1（規格／計劃；Grok 4.5 三審）→ 產出  
    `SelfAutoBuz/docs/superpowers/specs/YYYY-MM-DD-war-room-web-shell-design.md` + plan；**本 repo 不寫 FE/BE**  
-5. Web Chat 2＝shell FE；Chat 3＝plan 標出的 API 缺口；Chat 4（可選）＝skills CTA URL 小改  
-6. 任何 Phase／成功定義變更 → **先改本 STATUS**
+4. Web Chat 2＝shell FE；Chat 3＝plan 標出的 API 缺口；Chat 4（可選）＝skills CTA URL 小改  
+5. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
 ## 九、相關路徑
 

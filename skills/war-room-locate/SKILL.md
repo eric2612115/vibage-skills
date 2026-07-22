@@ -89,7 +89,8 @@ Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Tra
     Second arg is the RUNS JSON (required when Mode is full nested).
 13. **Preview fail-soft (S11):** After dual MD exist, run:
     `"$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" 8765`
-    (script copies `assets/war-room-preview/index.html` into `$WORKSPACE/war-room-preview/`).
+    (copies asset into `$WORKSPACE/war-room-preview/`, serves `$WORKSPACE` on 127.0.0.1
+    so `../WAR-ROOM-*.md` links resolve). Open `http://127.0.0.1:8765/war-room-preview/`.
     Optionally edit that HTML from OWNER content before/while serving.
     If copy or serve fails: set RunEnvelope field `preview_error` to the message,
     keep `phase: done` when dual MD exist, still offer soft CTA.

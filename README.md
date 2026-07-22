@@ -12,7 +12,7 @@ Agents starting a new session should read `STATUS.md` before expanding scope.
 | Phase | Meaning | Now |
 |-------|---------|-----|
 | **V0** | Single-/few-root locate + dual reports | **Shipped** (this package) |
-| **P1** | Parent-folder OS: init → scan plan → confirm → locate; footprints; local preview; survey + section-gate skills | **scripts-green** (Tasks 1–15; Chunk 6 review fixes + S1–S14 manual pending — see `STATUS.md`) |
+| **P1** | Parent-folder OS: init → scan plan → confirm → locate; footprints; local preview; survey + section-gate skills | **scripts-green** (Tasks 1–20 / Chunk 6 fixed; S1–S14 manual + merge pending — see `STATUS.md`) |
 | **P2** | Graphify-class map, coverage gates, long-task + AUTO_DECIDED | Later |
 | **P3** | Cloud Pro / richer results after signup (`war-room-app`) | Later |
 
