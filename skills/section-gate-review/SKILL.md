@@ -57,7 +57,7 @@ Write JSON (chat + optional `docs/war-room/RUNS/<review_run_id>.section-gate.jso
 
 ## Stop rules
 
-- Stop when verdict is not REJECT and must_fixes absorbed; or 2 rounds; or human skip
+- Stop when verdict is not REJECT and must_fix absorbed; or 2 rounds; or human skip
 - `APPROVE_WITH_CHANGES` → L0 checklist verify (no new 3-agent round)
 - `REJECT` → optional round 2
 - Cap ≤6 agent calls/section
@@ -74,6 +74,7 @@ Write JSON (chat + optional `docs/war-room/RUNS/<review_run_id>.section-gate.jso
 
 ## Hard stops
 
+- Do not call any `war-room-*` product skill (`war-room-init`, `war-room-orient`, `war-room-locate`, `war-room-bootstrap`).
 - No product code edits
 - No recursive section-gate/research
 - No locate dig
