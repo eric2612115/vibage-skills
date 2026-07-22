@@ -2,7 +2,7 @@
 
 > **Agent／人類接續入口。** 進度與 Phase 邊界以本檔為準；行為細節仍以 `skills/` + 未來 spec 為準。  
 > **Date:** 2026-07-22  
-> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；plan Tasks 1–14 **scripts-green**
+> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；plan Tasks 1–15 **scripts-green**；Chunk 6（review fixes）待做；hosted web shell＝平行規格軌道
 
 ## 〇、一句話
 
@@ -17,7 +17,8 @@
 | Phase | 名稱 | 主要解決 | 狀態 |
 |-------|------|----------|------|
 | **V0** | Locate 儀式 | 症狀→雙報告；pin；硬停；soft CTA 文案 | **已落地** |
-| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（plan Tasks 1–15 ✅）；S1–S14 agent 手動驗收待跑 |
+| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（Tasks 1–15 ✅）；**Chunk 6 review fixes 待做**；S1–S14 手動待跑 |
+| **Web shell** | Hosted `/:locale` + login + SEO 槽 | 與 skills 平行；規格在 SelfAutoBuz；**非** locate 主幹 | **待開 Chat 1（spec/plan only）** |
 | **P2** | 重裝備本地 | graphify／等價**全圖**；coverage 閘；long-task + AUTO_DECIDED；更深 service-map | **未開始** |
 | **P3** | 雲端 Pro／B | UploadManifest 上傳；加強版結果；Architecture Pass／訂閱 | **未開始**（app scaffold only） |
 
@@ -172,16 +173,22 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. 依 `coverage/p1-manual-checklist.md` 跑 S1–S14 agent 手動驗收  
-2. manual checklist 全綠後，才將能力表 P1 欄誠實標 YES  
-3. 合併／整合 `feature/war-room-os-p1`（worktree）回主線後，再決定是否重 pin `~/.cursor/skills`  
-4. 任何 Phase／成功定義變更 → **先改本 STATUS**
+1. **Chunk 6（Tasks 16–20）**：整包 review 必修 — Mode MD↔RUNS、`--force` 安全、smoke `HOME` 隔離、preview 連結、README 對齊（見 plan）  
+2. 合併 `feature/war-room-os-p1`（修完 Chunk 6 後較妥）；重 pin `~/.cursor/skills` 若仍指向 worktree  
+3. 依 `coverage/p1-manual-checklist.md` 跑 S1–S14；全綠後才將能力表 P1 欄標 YES  
+4. **平行：** 開 Hosted web shell Chat 1（規格／計劃；Grok 4.5 三審）→ 產出  
+   `SelfAutoBuz/docs/superpowers/specs/YYYY-MM-DD-war-room-web-shell-design.md` + plan；**本 repo 不寫 FE/BE**  
+5. Web Chat 2＝shell FE；Chat 3＝plan 標出的 API 缺口；Chat 4（可選）＝skills CTA URL 小改  
+6. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
 ## 九、相關路徑
 
 | 路徑 | 角色 |
 |------|------|
-| 本 repo | 產品 SSOT |
-| `../war-room-app` | P3 |
-| `../SelfAutoBuz/docs/superpowers/specs/*war-room*` | 既有 specs |
+| 本 repo | Skills／P1 OS SSOT |
+| `docs/superpowers/plans/2026-07-22-war-room-os-p1.md` | P1 + Chunk 6 + web 平行軌道 |
+| `../war-room-app` | API／P3；`PRODUCT-LOCKS` |
+| `../war-room-web-design` | FE design locks |
+| `../SelfAutoBuz/docs/research/war-room/` | research + SEO stack |
+| `../SelfAutoBuz/docs/superpowers/specs/*war-room*` | 跨產品 specs |
 | `README.md` | 短入口 → 本檔 |
