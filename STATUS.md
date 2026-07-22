@@ -2,7 +2,7 @@
 
 > **Agent／人類接續入口。** 進度與 Phase 邊界以本檔為準；行為細節仍以 `skills/` + 未來 spec 為準。  
 > **Date:** 2026-07-22  
-> **Design chat:** §1–§4 人點頭；正式 spec 已寫入；spec-review loop 進行中
+> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；**待你確認 spec 檔後再 writing-plans**
 
 ## 〇、一句話
 
@@ -17,7 +17,7 @@
 | Phase | 名稱 | 主要解決 | 狀態 |
 |-------|------|----------|------|
 | **V0** | Locate 儀式 | 症狀→雙報告；pin；硬停；soft CTA 文案 | **已落地** |
-| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **Spec 已寫；spec-review 修訂中** |
+| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **Spec ✅；待人確認後開 plan** |
 | **P2** | 重裝備本地 | graphify／等價**全圖**；coverage 閘；long-task + AUTO_DECIDED；更深 service-map | **未開始** |
 | **P3** | 雲端 Pro／B | UploadManifest 上傳；加強版結果；Architecture Pass／訂閱 | **未開始**（app scaffold only） |
 
@@ -136,8 +136,8 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §2 | 修訂鎖＋三審通過 |
 | §3 | 人點頭；must_fix 已吸納 |
 | §4 | 人點頭 |
-| Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（spec-review 中） |
-| Implementation plan | 未寫（spec APPROVE 後 writing-plans） |
+| Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（reviewer ✅ Approved） |
+| Implementation plan | 未寫（**等人確認 spec 檔**後 writing-plans） |
 
 ### §3 section-gate 紀錄
 

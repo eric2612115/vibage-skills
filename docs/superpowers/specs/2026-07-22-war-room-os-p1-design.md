@@ -1,7 +1,7 @@
 # War Room OS + Locate Pipeline (P1) — Design
 
 **Date:** 2026-07-22  
-**Status:** Design approved in brainstorming (§1–§4); awaiting spec-review loop then implementation plan  
+**Status:** Spec-review ✅ Approved (2026-07-22); awaiting human review of this file before writing-plans  
 **Package SSOT:** `/Users/eric.fang/MindOwnBuz/war-room-skills`  
 **Progress tracker:** [`STATUS.md`](../../../STATUS.md) (package repo root)  
 **Sibling app (P3):** `/Users/eric.fang/MindOwnBuz/war-room-app`
@@ -150,7 +150,9 @@ Owner-facing summary MUST show: confirming visible subset, not whole system.
 }
 ```
 
-`id` should be Task/subagent identifier when the platform exposes one; otherwise a parent-generated unique label for this run (still required — empty investigators+reviewers ⇒ verify FAIL if Mode claims full).
+`id` should be Task/subagent identifier when the platform exposes one; otherwise a parent-generated unique label for this run.  
+**Mode literal values:** exactly `"degraded"` or `"full nested"` (not shorthand `full`).  
+**Mode=`"full nested"` requires** `investigators.length ≥ 1` **and** `reviewers.length ≥ 1`; if either array is empty/missing ⇒ verify FAIL and reports must use `"degraded"`.
 
 ### GapQuestion
 
