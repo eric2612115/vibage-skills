@@ -22,7 +22,6 @@ fi
 MODE_LINE="$(grep -iE 'Mode:[[:space:]]*(full nested|degraded)' "$LOCATE" | head -n1 || true)"
 if echo "$MODE_LINE" | grep -qiE 'full nested'; then
   [[ -n "$RUNS_JSON" && -f "$RUNS_JSON" ]] || fail "Mode full nested requires second arg: RUNS/<run_id>.json"
-  "$PKG_ROOT/scripts/verify-run.sh" "$RUNS_JSON" || fail "RUNS Mode honesty failed: $RUNS_JSON"
 fi
 if [[ -n "$RUNS_JSON" ]]; then
   [[ -f "$RUNS_JSON" ]] || fail "RUNS json not found: $RUNS_JSON"

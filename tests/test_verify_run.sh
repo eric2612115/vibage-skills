@@ -43,4 +43,20 @@ set -e
 [[ "$RC" -ne 0 ]] || { echo "FAIL: verify-report with fake full RUNS should fail"; exit 1; }
 echo "OK: verify-report rejects fake full nested RUNS"
 
+set +e
+"$ROOT/scripts/verify-report.sh" "$ROOT/tests/fixtures/sample_LOCATE_full.md"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || { echo "FAIL: verify-report full nested without RUNS should fail"; exit 1; }
+echo "OK: verify-report full nested without RUNS rejected"
+
+set +e
+"$ROOT/scripts/verify-report.sh" \
+  "$ROOT/tests/fixtures/sample_LOCATE_full.md" \
+  "$ROOT/tests/fixtures/run_full_ok.json"
+RC=$?
+set -e
+[[ "$RC" -eq 0 ]] || { echo "FAIL: verify-report full nested with ok RUNS should pass"; exit 1; }
+echo "OK: verify-report full nested with ok RUNS"
+
 echo "ALL verify-run tests passed"
