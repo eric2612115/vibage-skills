@@ -1,8 +1,84 @@
 ---
 name: war-room-init
-description: Temporary stub for MANIFEST link test; Task 6 replaces this file entirely.
+description: >-
+  Use when War Room is not installed, hub STATUS missing, user pastes NEW-CHAT,
+  or asks to install/init War Room on the parent-folder workspace.
+  Do not write WAR-ROOM-OWNER/LOCATE or deep-dig.
 ---
 
 # War Room Init
 
-Temporary stub for install symlink test. Task 6 replaces this file with the full skill.
+Goal: install package skills, create `docs/war-room/` hub skeleton, verify pins, hand off to orient.
+
+## When / Not
+
+| When | Not |
+|------|-----|
+| No hub `docs/war-room/STATUS.md` | Write locate dual reports |
+| Install unclear / NEW-CHAT cold start | Deep dig or nested investigation |
+| User asks "install War Room" | Claim survey or Mode full nested |
+
+## PKG_ROOT (mandatory — portable)
+
+Prefer init symlink (P1):
+
+```bash
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+```
+
+Fallback if init not linked yet (V0 installs):
+
+```bash
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-locate")))))'
+```
+
+If neither exists, PKG_ROOT = this package checkout (directory containing `skills/` and `scripts/`).
+
+Never hardcode `/Users/...`.
+
+## Language
+
+Match the owner's language. Never assume Traditional Chinese. Paths and identifiers stay English.
+
+## Procedure
+
+1. Confirm package layout exists: `skills/MANIFEST.txt`, `scripts/install.sh`, `DEPENDENCIES.md`, `prompts/NEW-CHAT.md`, `references/hub/`.
+2. Install (no silent `--force`):
+   - Global: `bash "$PKG_ROOT/scripts/install.sh"`
+   - Optional project rule: `--with-project-rule="$WORKSPACE"`
+   - Optional project skills: `--project-skills="$WORKSPACE"`
+   - Hub: `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$WORKSPACE"`
+3. **`--force` policy:** Do not pass `--force` unless the user explicitly approved replacing a foreign/stale project skill link. Record that approval as a human decision in `docs/war-room/DECISIONS.md` (`source: human`) before re-running with `--force`.
+4. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery:
+   1) Ensure `~/.cursor/skills/superpowers` is a git checkout of obra/superpowers (or their pin path).  
+   2) `git -C ~/.cursor/skills/superpowers fetch && git -C ~/.cursor/skills/superpowers checkout <superpowers_sha from DEPENDENCIES.md>`.  
+   3) Re-run verify-pins.
+5. Create or continue a run footprint:
+   - Pick `run_id` = `locate-YYYYMMDD-HHMMSS` (UTC).
+   - Write `docs/war-room/RUNS/<run_id>.json` with phase `installed`, mode `degraded`, empty artifacts.
+   - Update `docs/war-room/STATUS.md`: `hub_ready: true`, `focus_run_id`, `focus_pipeline_id: locate`, `phase: installed`.
+6. **Resume (S12):** If STATUS/CONFIRM already exist, do **not** wipe CONFIRM via re-init. Prefer `--init-hub` skip-existing behavior. Hand off based on phase.
+7. Hand off: instruct agent to **Read and follow** `war-room-orient` (do not dig; do not write OWNER/LOCATE here).
+
+## RunEnvelope seed (write this JSON)
+
+```json
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "<run_id>",
+  "phase": "installed",
+  "mode": "degraded",
+  "artifact_uris": [],
+  "survey_refs": [],
+  "gap_ids": []
+}
+```
+
+## Hard stops
+
+- Do not invent site URLs or commercial claims.
+- Do not require signup before local reports.
+- Do not write `WAR-ROOM-OWNER.md` / `WAR-ROOM-LOCATE.md` in init.
+- Do not deep-dig or claim nested Mode.
+- Do not use `--force` without recorded human approval.
