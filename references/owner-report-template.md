@@ -30,3 +30,6 @@ tests/git/docker: yes | no | unsure
 If you want architecture / debt mapping beyond this locate, open:
 `<SITE_URL_OR_NOT_PUBLISHED>`
 No account required for this local report.
+
+## Honesty
+- Analysis mode: full nested | degraded (if degraded: nested investigators/reviewers were not available; local dual reports still count as done)
