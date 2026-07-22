@@ -2,7 +2,7 @@
 
 > **Agent／人類接續入口。** 進度與 Phase 邊界以本檔為準；行為細節仍以 `skills/` + 未來 spec 為準。  
 > **Date:** 2026-07-22  
-> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；plan Tasks 1–20 **scripts-green**（含 Chunk 6）；S1–S14 手動待跑；hosted web shell＝平行規格軌道
+> **Design chat:** §1–§4 人點頭；spec-review ✅ Approved；plan Tasks 1–20 **scripts-green**（含 Chunk 6）；S1–S14 checklist **partial**（機械項已驗；agent dig 仍待）；hosted web shell＝平行規格軌道
 
 ## 〇、一句話
 
@@ -17,7 +17,7 @@
 | Phase | 名稱 | 主要解決 | 狀態 |
 |-------|------|----------|------|
 | **V0** | Locate 儀式 | 症狀→雙報告；pin；硬停；soft CTA 文案 | **已落地** |
-| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（Tasks 1–20 ✅／Chunk 6 已修）；S1–S14 手動待跑；合併待決 |
+| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **scripts-green**（Tasks 1–20 ✅／Chunk 6 已修）；S1–S14 checklist partial（機械已勾；live agent 待）；合併待決 |
 | **Web shell** | Hosted `/:locale` + login + SEO 槽 | 與 skills 平行；規格在 SelfAutoBuz；**非** locate 主幹 | **待開 Chat 1（spec/plan only）** |
 | **P2** | 重裝備本地 | graphify／等價**全圖**；coverage 閘；long-task + AUTO_DECIDED；更深 service-map | **未開始** |
 | **P3** | 雲端 Pro／B | UploadManifest 上傳；加強版結果；Architecture Pass／訂閱 | **未開始**（app scaffold only） |
@@ -139,7 +139,7 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §4 | 人點頭 |
 | Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（✅ Approved） |
 | Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（Tasks 1–20 ✅／Chunk 6；checklist 已落地） |
-| Manual checklist | `coverage/p1-manual-checklist.md`（S1–S14 勾選待跑） |
+| Manual checklist | `coverage/p1-manual-checklist.md`（partial：機械 S1/S1b/S2/S3/S8/S12/S13 + gates；agent dig 待） |
 
 ### §3 section-gate 紀錄
 
@@ -174,7 +174,7 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 ## 八、下一步
 
 1. **合併** `feature/war-room-os-p1`（Chunk 6 已綠）；若 `~/.cursor/skills` 曾被舊 smoke 指到 worktree，合併後重跑 `scripts/install.sh`  
-2. 依 `coverage/p1-manual-checklist.md` 跑 S1–S14；全綠後才將能力表 P1 欄標 YES  
+2. 依 `coverage/p1-manual-checklist.md` **Agent-pending**：開 fresh 母夾 workspace，跑 S4–S7／S9–S11／S14 + soft CTA 實機；全綠後才將能力表 P1 欄標 YES（**勿**提前 YES）  
 3. **平行：** 開 Hosted web shell Chat 1（規格／計劃；Grok 4.5 三審）→ 產出  
    `SelfAutoBuz/docs/superpowers/specs/YYYY-MM-DD-war-room-web-shell-design.md` + plan；**本 repo 不寫 FE/BE**  
 4. Web Chat 2＝shell FE；Chat 3＝plan 標出的 API 缺口；Chat 4（可選）＝skills CTA URL 小改  
