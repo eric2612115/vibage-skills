@@ -1,16 +1,16 @@
 ---
-name: war-room-bootstrap
+name: vibage-bootstrap
 description: >-
-  Use when the user pastes NEW-CHAT.md, asks how to install war-room-skills,
+  Use when the user pastes NEW-CHAT.md, asks how to install vibage-skills,
   or pins/install are unclear. Do not use to write locate reports yourself.
 ---
 
-# War Room Bootstrap
+# Vibage Bootstrap
 
 ## Cold start PKG_ROOT
 
 If skills are not installed yet, PKG_ROOT = this package root (directory containing `skills/` and `scripts/`).  
-After `scripts/install.sh`, resolve via python3 realpath on `~/.cursor/skills/war-room-locate` (see locate skill).
+After `scripts/install.sh`, resolve via python3 realpath on `~/.cursor/skills/vibage-locate` (see locate skill).
 
 ## Steps
 
@@ -21,7 +21,7 @@ After `scripts/install.sh`, resolve via python3 realpath on `~/.cursor/skills/wa
 3. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On fail → stop; owner-language recovery:  
    ensure `~/.cursor/skills/superpowers` exists as git repo; checkout SHA from `$PKG_ROOT/DEPENDENCIES.md` (`superpowers_sha=…`); re-run verify-pins.
 4. Ask for: symptom, workspace roots, preferred language, who built the repo, can they run tests/git/docker.
-5. Hand off: instruct agent to **Read and follow** `war-room-locate` skill (do not duplicate locate procedure here).
+5. Hand off: instruct agent to **Read and follow** `vibage-locate` skill (do not duplicate locate procedure here).
 
 ## Hard stops
 

@@ -1,14 +1,14 @@
-# War Room OS + Locate Pipeline (P1) — Design
+# Vibage OS + Locate Pipeline (P1) — Design
 
 **Date:** 2026-07-22  
-**Status:** Spec ✅ + Plan ✅ (2026-07-22); ready to execute `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`  
-**Package SSOT:** `/Users/eric.fang/MindOwnBuz/war-room-skills`  
+**Status:** Spec ✅ + Plan ✅ (2026-07-22); ready to execute `docs/superpowers/plans/2026-07-22-vibage-os-p1.md`  
+**Package SSOT:** `/Users/eric.fang/MindOwnBuz/vibage-skills`  
 **Progress tracker:** [`STATUS.md`](../../../STATUS.md) (package repo root)  
-**Sibling app (P3):** `/Users/eric.fang/MindOwnBuz/war-room-app`
+**Sibling app (P3):** `/Users/eric.fang/MindOwnBuz/vibage-app`
 
 ## Problem
 
-V0 (`war-room-locate`) helps non-coder owners locate *where* a problem lives in a single/few-root fat or AI-built repo, but:
+V0 (`vibage-locate`) helps non-coder owners locate *where* a problem lives in a single/few-root fat or AI-built repo, but:
 
 1. Multi-repo parent folders lack inventory → confirm → dig discipline.
 2. No durable footprints (what was scanned, confirmed, decided).
@@ -19,7 +19,7 @@ V0 (`war-room-locate`) helps non-coder owners locate *where* a problem lives in 
 
 ## Goals (Phase 1)
 
-1. **Parent-folder War Room hub:** Cursor opens the company parent folder; agent installs skills; writes hub artifacts under that folder.
+1. **Parent-folder Vibage hub:** Cursor opens the company parent folder; agent installs skills; writes hub artifacts under that folder.
 2. **Confirm-before-dig:** shallow orient → `SCAN_PLAN` → human CONFIRM (hash) → locate deep dig only after `assert_gate`.
 3. **Honest inventory:** `RootRef` supports `checked_out | missing | external_ref | submodule`; post-analysis `GapQuestion` (missing repo, observability, etc.).
 4. **Footprints:** STATUS (OS pointer) + per-run `RunEnvelope` in RUNS; CONFIRM; DECISIONS (human only in P1).
@@ -55,7 +55,7 @@ Capability matrix (problem × phase): see package [`STATUS.md`](../../../STATUS.
 
 ```text
 Parent folder workspace
-  docs/war-room/                 # hub SSOT (init creates)
+  docs/vibage/                 # hub SSOT (init creates)
     STATUS.md                    # OS pointer: hub_ready, focus run_id/pipeline_id
     RUNS/<run_id>.json           # RunEnvelope (machine-read; optional .md mirror later)
     SCAN_PLAN.md
@@ -63,27 +63,27 @@ Parent folder workspace
     DECISIONS.md
     model-routing.json           # optional slug map for L1–L3
     UploadManifest.stub.json     # schema only; no upload in P1
-  WAR-ROOM-OWNER.md              # dual reports stay at workspace root (V0 compat)
-  WAR-ROOM-LOCATE.md
-  war-room-preview/              # static HTML for localhost serve
+  VIBAGE-OWNER.md              # dual reports stay at workspace root (V0 compat)
+  VIBAGE-LOCATE.md
+  vibage-preview/              # static HTML for localhost serve
 
-~/.cursor/skills/war-room-*  → package (install.sh)
+~/.cursor/skills/vibage-*  → package (install.sh)
 ```
 
-`assert_gate`, resume (S12), and init skeleton **must** use `docs/war-room/` paths above. Do not scatter hub files at repo root.
+`assert_gate`, resume (S12), and init skeleton **must** use `docs/vibage/` paths above. Do not scatter hub files at repo root.
 
 ### Skills (same install box; separate SKILL.md files)
 
 | Skill | Owns | Must not |
 |-------|------|----------|
-| `war-room-init` (evolve bootstrap) | install allowlist, hub skeleton, AGENTS/rules thin entry, model slug config | dig, reports |
-| `war-room-orient` | Root discovery, SCAN_PLAN, awaiting_confirm | deep dig, OWNER/LOCATE |
-| `war-room-locate` | post-confirm dig, nested, dual reports, update run footprint | install; redefine routing table |
-| `research-survey-review` | external survey→synthesize→critique loop | call any `war-room-*` product skill |
+| `vibage-init` (evolve bootstrap) | install allowlist, hub skeleton, AGENTS/rules thin entry, model slug config | dig, reports |
+| `vibage-orient` | Root discovery, SCAN_PLAN, awaiting_confirm | deep dig, OWNER/LOCATE |
+| `vibage-locate` | post-confirm dig, nested, dual reports, update run footprint | install; redefine routing table |
+| `research-survey-review` | external survey→synthesize→critique loop | call any `vibage-*` product skill |
 | `section-gate-review` | design-section 3-lens gate | product code edits; recursive gate |
 
 **DAG:** init → orient → (CONFIRM) → locate → may call research per matrix.  
-research/section-gate never call war-room product skills.  
+research/section-gate never call vibage product skills.  
 Product skills hand off only via STATUS/RUNS/CONFIRM files.
 
 **Trigger mutex (description WHEN + NOT):**
@@ -203,7 +203,7 @@ Skills reference **level ids only**, never hardcode slugs in SKILL body.
 
 ## section-gate-review
 
-- Independent process skill; invoked by War Room design orchestration — not hard-wired into generic brainstorming.
+- Independent process skill; invoked by Vibage design orchestration — not hard-wired into generic brainstorming.
 - Trigger: before next design/plan section, or user “§N OK” without prior gate for that digest.
 - In: `section_id`, `draft_digest`, `lenses[3]`, `max_rounds≤2`.
 - Out: `APPROVE|APPROVE_WITH_CHANGES|REJECT`, `must_fix[]`, `go_next`, `review_run_id`.
@@ -237,7 +237,7 @@ Columns must not mix: `phase` ≠ `Mode` ≠ section-gate `go_next`.
 ## Happy path (non-coder)
 
 1. Open parent folder in Cursor.  
-2. “Install War Room and start analysis.”  
+2. “Install Vibage and start analysis.”  
 3. Agent: install (no silent `--force`) → plain-language root list + time estimate → ask for 確認.  
 4. User confirms → CONFIRM.json written.  
 5. Dig (optional short survey) → dual reports → localhost preview → soft CTA.
@@ -258,10 +258,10 @@ Columns must not mix: `phase` ≠ `Mode` ≠ section-gate `go_next`.
 
 | Item | Path / note |
 |------|-------------|
-| Skills | `skills/war-room-init/`, `orient/`, evolve `locate/`, `research-survey-review/`, `section-gate-review/` |
+| Skills | `skills/vibage-init/`, `orient/`, evolve `locate/`, `research-survey-review/`, `section-gate-review/` |
 | Scripts | `assert_gate`, install MANIFEST/allowlist, verify Mode honesty |
 | References | scenario matrix, L0–L3 glossary, GapQuestion template, hub templates, UploadManifest stub |
-| Preview | `war-room-preview` assets + serve instructions (localhost) |
+| Preview | `vibage-preview` assets + serve instructions (localhost) |
 | NEW-CHAT | dispatcher only |
 | STATUS (package) | keep root `STATUS.md` updated when phase/success changes |
 | Center-file whitelist | new skill may touch: `skills/<name>/`, matrix row, optional template, MANIFEST — not locate body / NEW-CHAT procedure copies |

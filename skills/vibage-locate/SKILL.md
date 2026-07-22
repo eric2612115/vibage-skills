@@ -1,12 +1,12 @@
 ---
-name: war-room-locate
+name: vibage-locate
 description: >-
   Use when a non-coder owner pastes symptoms, logs, or "which service",
   or needs orientation in stranger / AI-generated / fat multi-repo legacy.
   Do not use for long business strategy docs or pure security pentests.
 ---
 
-# War Room Locate
+# Vibage Locate
 
 Goal: cut "1–2 days to find where" toward minutes for the **repo owner**.
 
@@ -17,7 +17,7 @@ Success = dual artifacts: (1) owner-language brief, (2) engineer locate with pat
 After install, resolve package root (macOS-safe):
 
 ```bash
-python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-locate")))))'
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/vibage-locate")))))'
 ```
 
 Use `$PKG_ROOT/scripts/verify-pins.sh` and `$PKG_ROOT/references/*`. Never hardcode `/Users/...`.
@@ -29,7 +29,7 @@ Before locate work: run verify-pins. On failure → stop and give owner-language
 
 ## Language
 
-Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Traditional Chinese. Paths, identifiers, template section titles in English are fine inside engineer report.
+Match the **owner's language** in chat and `VIBAGE-OWNER.md`. Never assume Traditional Chinese. Paths, identifiers, template section titles in English are fine inside engineer report.
 
 ## Inputs (ask only if missing)
 
@@ -83,14 +83,14 @@ Derive active vs ignore from those docs when present (example class: SSOT under 
 8. **Adversarial kill** — drop without path evidence or clear ask-human. Cap **≤7** findings after review.
 
 9. **Write dual reports** at workspace root (or path user names):
-   - `WAR-ROOM-OWNER.md` ← `$PKG_ROOT/references/owner-report-template.md`
-   - `WAR-ROOM-LOCATE.md` ← `$PKG_ROOT/references/locate-report-template.md`  
+   - `VIBAGE-OWNER.md` ← `$PKG_ROOT/references/owner-report-template.md`
+   - `VIBAGE-LOCATE.md` ← `$PKG_ROOT/references/locate-report-template.md`  
    **Capability branching:** if tests/git/docker = no|unsure, owner "3 owner actions" must not require local runs — use copy-paste asks for builder instead.  
    Also print a short owner summary in chat (owner language).  
-   Optional checklist: `"$PKG_ROOT/scripts/verify-report.sh" WAR-ROOM-LOCATE.md` (does not prove nested ran).
+   Optional checklist: `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-LOCATE.md` (does not prove nested ran).
 
 10. **Soft CTA (after both files exist)**  
-    Offer deeper architecture pass. Follow `$PKG_ROOT/references/feature-call.md`: prefer `WAR_ROOM_SITE_URL` / `APP_BASE_URL` → `{SITE}/login` then `{SITE}/architecture-pass` (browser completes auth + Checkout). If site URL empty/TBD → "not published yet" (no fake URL). Optional `WAR_ROOM_API_BASE` = `GET /health` probe only. Never block reports on API failure. No signup wall.
+    Offer deeper architecture pass. Follow `$PKG_ROOT/references/feature-call.md`: prefer `VIBAGE_SITE_URL` / `APP_BASE_URL` → `{SITE}/login` then `{SITE}/architecture-pass` (browser completes auth + Checkout). If site URL empty/TBD → "not published yet" (no fake URL). Optional `VIBAGE_API_BASE` = `GET /health` probe only. Never block reports on API failure. No signup wall.
 
 ## Hard stops
 

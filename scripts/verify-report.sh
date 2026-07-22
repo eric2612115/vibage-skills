@@ -3,7 +3,7 @@
 set -euo pipefail
 LOCATE="${1:-}"
 if [[ -z "$LOCATE" || ! -f "$LOCATE" ]]; then
-  echo "Usage: $0 /path/to/WAR-ROOM-LOCATE.md" >&2
+  echo "Usage: $0 /path/to/VIBAGE-LOCATE.md" >&2
   exit 2
 fi
 fail() { echo "VERIFY_REPORT_FAIL: $*" >&2; exit 1; }

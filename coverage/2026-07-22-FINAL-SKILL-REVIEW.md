@@ -1,6 +1,6 @@
 # Final skill review report — 2026-07-22
 
-Eric offline run: brainstorm → spec → plan → implement Harden + war-room-app → FINAL blind 3 → must-fix → re-blind 3.
+Eric offline run: brainstorm → spec → plan → implement Harden + vibage-app → FINAL blind 3 → must-fix → re-blind 3.
 
 ## Scores
 
@@ -22,22 +22,22 @@ REBLIND: YES / YES / YES
 
 ## Package state
 
-- SSOT: `/Users/eric.fang/MindOwnBuz/war-room-skills`
+- SSOT: `/Users/eric.fang/MindOwnBuz/vibage-skills`
 - `verify-report` + `verify-pins` green on synthetic example
 
 ## Sibling app
 
-- `/Users/eric.fang/MindOwnBuz/war-room-app` — Vite React + FastAPI `/health`
+- `/Users/eric.fang/MindOwnBuz/vibage-app` — Vite React + FastAPI `/health`
 - Pricing next phase documented: Free / Architecture Pass / DFY (`[TBD — Eric to fill]`)
 - No skill body embed; no Stripe Day-1
 
 ## Specs / plans (SelfAutoBuz)
 
-- `docs/superpowers/specs/2026-07-22-war-room-skills-harden-design.md`
-- `docs/superpowers/specs/2026-07-22-war-room-app-design.md`
-- `docs/superpowers/plans/2026-07-22-war-room-skills-harden.md`
-- `docs/superpowers/plans/2026-07-22-war-room-app-scaffold.md`
-- `docs/superpowers/plans/2026-07-22-war-room-skills-v1-mustfix.md`
+- `docs/superpowers/specs/2026-07-22-vibage-skills-harden-design.md`
+- `docs/superpowers/specs/2026-07-22-vibage-app-design.md`
+- `docs/superpowers/plans/2026-07-22-vibage-skills-harden.md`
+- `docs/superpowers/plans/2026-07-22-vibage-app-scaffold.md`
+- `docs/superpowers/plans/2026-07-22-vibage-skills-v1-mustfix.md`
 
 ## Assumed while Eric away
 

@@ -1,4 +1,4 @@
-# War Room Locate — 2026-07-22 (synthetic example)
+# Vibage Locate — 2026-07-22 (synthetic example)
 
 ## Symptom
 Dashboard empty; owner fears live trading.

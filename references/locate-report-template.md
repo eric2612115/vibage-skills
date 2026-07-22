@@ -1,4 +1,4 @@
-# War Room Locate — <date>
+# Vibage Locate — <date>
 
 ## Symptom
 <one sentence>

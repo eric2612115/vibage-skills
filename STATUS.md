@@ -1,4 +1,4 @@
-# War Room Skills — STATUS
+# Vibage Skills — STATUS
 
 > **Agent／人類接續入口。** 進度與 Phase 邊界以本檔為準；行為細節仍以 `skills/` + 未來 spec 為準。  
 > **Date:** 2026-07-22  
@@ -8,7 +8,7 @@
 
 **V0（現況）**＝單倉／少根 locate 雙報告。  
 **目標**＝母夾 OS（P1）→ 重裝備本地（P2）→ 雲端 Pro／B（P3）。  
-**P1 設計 spec：** [`docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`](docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md)
+**P1 設計 spec：** [`docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md`](docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md)
 
 **P1 形狀釘死：** skill MD + hub 檔案契約 + 僅三腳本（`assert_gate`／install allowlist／verify degraded-aware）。禁止 FSM 引擎、survey daemon、上傳實作、router binary。
 
@@ -28,7 +28,7 @@
 
 ### P1 成功定義（可驗收 YES）
 
-1. 雙報告 `WAR-ROOM-OWNER.md` + `WAR-ROOM-LOCATE.md`  
+1. 雙報告 `VIBAGE-OWNER.md` + `VIBAGE-LOCATE.md`  
 2. STATUS／RUNS 更新（足跡續跑）  
 3. localhost preview：**fail-soft**（失敗不擋 DONE；MD+足跡仍算成功）  
 4. soft CTA：站點 TBD **不擋**成功；本地免註冊  
@@ -136,8 +136,8 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §2 | 修訂鎖＋三審通過 |
 | §3 | 人點頭；must_fix 已吸納 |
 | §4 | 人點頭 |
-| Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（✅ Approved） |
-| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（chunk review ✅；**待執行**） |
+| Spec | `docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md`（✅ Approved） |
+| Implementation plan | `docs/superpowers/plans/2026-07-22-vibage-os-p1.md`（chunk review ✅；**待執行**） |
 
 ### §3 section-gate 紀錄
 
@@ -152,7 +152,7 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 ### 小白一句話快樂路徑
 
 1. Cursor 開母資料夾  
-2. 「幫我安裝 War Room 然後開始分析」  
+2. 「幫我安裝 Vibage 然後開始分析」  
 3. Agent：install（禁擅自 `--force`）→ 人話列出將掃的 folders＋時間 →「回確認開始」  
 4. 用戶：確認  
 5. 深挖（可選短 survey；可說跳過上網）→ 雙報告 → 開 localhost preview → 軟 CTA  
@@ -171,7 +171,7 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. 執行 P1 plan（subagent-driven-development）：`docs/superpowers/plans/2026-07-22-war-room-os-p1.md`  
+1. 執行 P1 plan（subagent-driven-development）：`docs/superpowers/plans/2026-07-22-vibage-os-p1.md`  
 2. 腳本／skill 落地後更新本檔 P1 列與能力表誠實度  
 3. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
@@ -180,6 +180,6 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | 路徑 | 角色 |
 |------|------|
 | 本 repo | 產品 SSOT |
-| `../war-room-app` | P3 |
-| `../SelfAutoBuz/docs/superpowers/specs/*war-room*` | 既有 specs |
+| `../vibage-app` | P3 |
+| `../SelfAutoBuz/docs/superpowers/specs/*vibage*` | 既有 specs |
 | `README.md` | 短入口 → 本檔 |
