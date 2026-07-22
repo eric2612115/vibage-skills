@@ -2,15 +2,17 @@
 # P1 smoke: init-hub → confirm → assert_gate OK → mutate FAIL → fake full nested FAIL
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+TMP_HOME="$(mktemp -d)"
 TMP="$(mktemp -d)"
-trap 'rm -rf "$TMP"' EXIT
+trap 'rm -rf "$TMP_HOME" "$TMP"' EXIT
+export HOME="$TMP_HOME"
 
 # Synthetic parent with two fake git roots
 mkdir -p "$TMP/app-a/.git" "$TMP/app-b/.git"
 cp "$ROOT/tests/fixtures/synthetic-parent/app-a/README.md" "$TMP/app-a/README.md"
 cp "$ROOT/tests/fixtures/synthetic-parent/app-b/README.md" "$TMP/app-b/README.md"
 
-# init hub
+# init hub (isolated HOME so install does not touch real ~/.cursor/skills)
 bash "$ROOT/scripts/install.sh" --init-hub="$TMP"
 [[ -f "$TMP/docs/war-room/STATUS.md" ]]
 

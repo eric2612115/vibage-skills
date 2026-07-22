@@ -21,4 +21,4 @@ Graphify / other tools: not required for v1.
 ## first_party
 
 - war-room-init, war-room-orient, war-room-locate, war-room-bootstrap
-- research-survey-review, section-gate-review (same release; added in later chunks)
+- research-survey-review, section-gate-review (same release; process skills shipped with P1)
