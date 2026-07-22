@@ -1,0 +1,15 @@
+{
+  "schema_version": "1",
+  "path_allowlist": [
+    "WAR-ROOM-OWNER.md",
+    "WAR-ROOM-LOCATE.md",
+    "docs/war-room/STATUS.md",
+    "docs/war-room/RUNS/",
+    "docs/war-room/SCAN_PLAN.md",
+    "docs/war-room/CONFIRM.json"
+  ],
+  "redaction_policy": "strip_env_secrets_and_credentials",
+  "forbid_whole_hub_upload": true,
+  "upload_implemented": false,
+  "notes": "P1 stub only — no upload behavior."
+}
