@@ -20,12 +20,18 @@ if ! grep -qE '`[^`]+/[A-Za-z0-9_.-]+`|/[A-Za-z0-9_./-]+\.(ts|tsx|js|jsx|py|go|m
   fail "no path-like evidence line found"
 fi
 MODE_LINE="$(grep -iE 'Mode:[[:space:]]*(full nested|degraded)' "$LOCATE" | head -n1 || true)"
+MD_FULL_NESTED=0
 if echo "$MODE_LINE" | grep -qiE 'full nested'; then
+  MD_FULL_NESTED=1
   [[ -n "$RUNS_JSON" && -f "$RUNS_JSON" ]] || fail "Mode full nested requires second arg: RUNS/<run_id>.json"
 fi
 if [[ -n "$RUNS_JSON" ]]; then
   [[ -f "$RUNS_JSON" ]] || fail "RUNS json not found: $RUNS_JSON"
   "$PKG_ROOT/scripts/verify-run.sh" "$RUNS_JSON" || fail "RUNS Mode honesty failed: $RUNS_JSON"
+  if [[ "$MD_FULL_NESTED" -eq 1 ]]; then
+    RUNS_MODE="$(python3 -c 'import json,sys; print(json.load(open(sys.argv[1],encoding="utf-8")).get("mode",""))' "$RUNS_JSON")"
+    [[ "$RUNS_MODE" == "full nested" ]] || fail "Mode MD full nested requires RUNS mode == \"full nested\" (got: ${RUNS_MODE:-empty})"
+  fi
 fi
 echo "VERIFY_REPORT_OK: $LOCATE"
 exit 0

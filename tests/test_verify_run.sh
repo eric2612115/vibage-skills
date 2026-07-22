@@ -59,4 +59,14 @@ set -e
 [[ "$RC" -eq 0 ]] || { echo "FAIL: verify-report full nested with ok RUNS should pass"; exit 1; }
 echo "OK: verify-report full nested with ok RUNS"
 
+# MD Mode full nested + degraded RUNS must FAIL (Mode cross-check)
+set +e
+"$ROOT/scripts/verify-report.sh" \
+  "$ROOT/tests/fixtures/sample_LOCATE_full.md" \
+  "$ROOT/tests/fixtures/run_degraded_ok.json"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || { echo "FAIL: verify-report full MD + degraded RUNS should fail"; exit 1; }
+echo "OK: verify-report rejects Mode MD vs RUNS mismatch"
+
 echo "ALL verify-run tests passed"
