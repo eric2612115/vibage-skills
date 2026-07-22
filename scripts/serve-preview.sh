@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Usage:
 #   serve-preview.sh <workspace_root> [port]
-# Copies package assets into $WS/war-room-preview/ then serves localhost.
+# Copies package assets into $WS/war-room-preview/ then serves $WS on localhost
+# so ../WAR-ROOM-*.md links resolve. Open /war-room-preview/.
 set -euo pipefail
 WS="${1:-}"
 PORT="${2:-8765}"
@@ -13,6 +14,6 @@ DEST_DIR="$WS/war-room-preview"
 mkdir -p "$DEST_DIR"
 cp "$SRC" "$DEST_DIR/index.html"
 echo "Copied preview → $DEST_DIR/index.html"
-cd "$DEST_DIR"
-echo "Serving http://127.0.0.1:$PORT  (Ctrl+C to stop)"
+cd "$WS"
+echo "Serving http://127.0.0.1:$PORT/war-room-preview/  (Ctrl+C to stop)"
 python3 -m http.server "$PORT" --bind 127.0.0.1
