@@ -1,143 +1,70 @@
 # Vibage
 
-**Find where a problem lives** in a fat / AI-built multi-repo folder — without drowning the owner in tickets.
+**Find where a problem lives** across many messy / AI-built app folders — in plain language.
 
-For non-coder owners and agents on **Cursor**, **Claude Code**, and **Codex**.
+Works with **Cursor**, **Claude Code**, and **Codex**.
 
-## Owner path (no bash)
+## What you say (no typing commands)
 
-**One-time install — say only this** (agent runs all scripts):
+**First time — install:**
 
 > 幫我裝 Vibage
 
-Details: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · fixture: [`tests/fixtures/install-vibage-phrase.md`](tests/fixtures/install-vibage-phrase.md)
+The agent installs everything and wires this **parent** folder.  
+Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`
 
-Then:
+**Then — find the problem:**
 
-1. Stay in the **parent** folder chat (the folder that holds your many apps).  
-2. Say what hurts in plain language.  
-3. Agent follows **using-vibage** → prepare → ask your OK on the scan plan → find where it lives → two reports.  
-4. You only answer confirm questions (**CONFIRM** = your OK on the scan plan).  
-5. When reports exist, agent offers preview / stop — no sign-up links.
+1. Stay in the parent folder chat (the folder that contains your apps).  
+2. Describe what hurts in everyday words.  
+3. Confirm the scan plan when asked (**CONFIRM** = your OK).  
+4. Get two reports: one for you, one for engineers (with file paths).  
+5. Agent offers preview or stop — no sign-up links.
 
-Evidence: [`tests/fixtures/owner-zero-bash-path.md`](tests/fixtures/owner-zero-bash-path.md) · checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md) · maps for agents: [`docs/maps/AI-FIRST.md`](docs/maps/AI-FIRST.md) · extend pack: [`docs/EXTENDING.md`](docs/EXTENDING.md)
+You should not type bash. The agent runs scripts.
 
-## 60-second start (operator / agent)
+## What you get
 
-One-time setup commands — **not** what the owner must type. Replace paths with your checkout and **parent** workspace (not each child repo):
+| You get | Plain meaning |
+|---------|----------------|
+| Scan plan | “We’ll look here — OK?” |
+| Owner report | Short brief you can read |
+| Engineer report | Paths and evidence for a fixer |
+| Optional later | Fix helpers / architecture glance — only if you ask |
 
-```bash
-# 1) Install skills (Cursor + Claude + Codex)
-bash /path/to/vibage-skills/scripts/install.sh
+## Checks (for agents / operators)
 
-# 2) Parent session routers (required — global skills alone are not enough)
-bash /path/to/vibage-skills/scripts/install.sh \
-  --with-project-rule=/path/to/parent-workspace
+| Check | Command / link | OK token |
+|-------|----------------|----------|
+| Install phrase | `tests/test_install_phrase_e2e.sh` | `INSTALL_PHRASE_E2E_OK` |
+| Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
+| Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
+| Capability table | [`STATUS.md`](STATUS.md) | — |
+| Per IDE | [`docs/install/`](docs/install/) | — |
+| Maps (agents) | [`docs/maps/AI-FIRST.md`](docs/maps/AI-FIRST.md) | — |
+| Add a skill | [`docs/EXTENDING.md`](docs/EXTENDING.md) | — |
 
-# 3) Prove routers are on disk
-bash /path/to/vibage-skills/scripts/verify-project-entry.sh \
-  /path/to/parent-workspace
-# expect: PROJECT_ENTRY_OK
-```
-
-Optional paste for agents: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md).
-
-Per-surface notes: [`docs/install/CURSOR.md`](docs/install/CURSOR.md) · [`docs/install/CLAUDE.md`](docs/install/CLAUDE.md) · [`docs/install/CODEX.md`](docs/install/CODEX.md)
-
-### What you get
-
-1. Scan plan you can confirm in plain language  
-2. Dual reports: owner brief + engineer locate (paths / evidence)  
-3. Optional later: issue-fix / 架構檢視 (not required for locate done)
-
-### Honesty (short)
-
-- Local proof ship gate: `bash scripts/test-tier0.sh` → `TIER0_OK`  
-- Pack health (pins + parent entry + entry docs): `bash scripts/pack-health.sh /path/to/parent` → `PACK_HEALTH_OK` (**≠** Tier-0)  
-- Capability truth: [`STATUS.md`](STATUS.md) (not this README)  
-- Checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md) · optional proof: [`SAT-optional-proof`](docs/superpowers/specs/satellites/SAT-optional-proof.md)  
-- SaaS / register: **blank** — [`SAT-saas-blank`](docs/superpowers/specs/satellites/SAT-saas-blank.md) · ≠ SaaS shipped  
-- GitHub + Actions Tier-0: `https://github.com/eric2612115/vibage-skills` · repo visibility / marketplace / “publish-ready” **deferred** until after SaaS wave (your call)  
-
-
-- `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”
+**Honesty:** SaaS/sign-up is blank. Making the GitHub repo public, plugin store, or “officially launched” waits until after your SaaS wave. `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”.
 
 ---
 
-## Status / deeper docs
+## Deeper (agents)
 
-**Capability / phase SSOT → [`STATUS.md`](STATUS.md).**  
-Agents must read package `STATUS.md` before expanding scope from this README.
+- Spec: `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
+- Plans: `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`  
+- Optional paste: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md)  
+- Hard stops: [`references/hard-stops.md`](references/hard-stops.md)  
+- GitHub + CI: `https://github.com/eric2612115/vibage-skills`  
 
-Do **not** treat README as a second phase table. Plan-index ids live under `docs/superpowers/plans/`. For letter C, path-to-B, letter B, maps, remote CI Proven, SaaS blank — see `STATUS.md` only.
-
-**Spec:** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
-**Plans:** `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`
-
-This package is a **sibling** to SelfAutoBuz (OPC hub). Product SSOT lives here.
-
-## Install (details)
+### Operator commands (owner should not need these)
 
 ```bash
 bash /path/to/vibage-skills/scripts/install.sh
-# default --surfaces=cursor,claude,codex
-
-bash /path/to/vibage-skills/scripts/install.sh \
-  --with-project-rule=/path/to/parent-workspace \
-  --project-skills=/path/to/parent-workspace \
-  --init-hub=/path/to/parent-workspace
-
-bash /path/to/vibage-skills/scripts/verify-pins.sh
-bash /path/to/vibage-skills/scripts/resolve-pkg-root.sh
+bash /path/to/vibage-skills/scripts/install.sh --with-project-rule=/path/to/parent
+bash /path/to/vibage-skills/scripts/verify-project-entry.sh /path/to/parent
+# PROJECT_ENTRY_OK
 ```
 
-| Surface | Global skills | Thin parent entry |
-|---------|---------------|-------------------|
-| Cursor | `~/.cursor/skills/` | `.cursor/rules/vibage.mdc` + sessionStart hooks + `AGENTS.md` block |
-| Claude Code | `~/.claude/skills/` | `CLAUDE.md` block + `.claude/vibage-entry.md` |
-| Codex | `$HOME/.agents/skills/` | `AGENTS.md` block |
+### License
 
-- Global skill links refresh via `ln -sfn`.
-- Project skills: skip + **WARN** if stale/foreign; `--force` only replaces package-owned stale **symlinks**.
-- Superpowers: one git checkout at pin SHA; `verify-pins.sh` probes all three homes.
-- Host-best session injection: [`references/host-best-session-entry.md`](references/host-best-session-entry.md).
-
-## Skill routing (agents)
-
-1. No hub `docs/vibage/STATUS.md` → `vibage-init`  
-2. Hub ready, no valid CONFIRM (= owner OK on the scan plan) → `vibage-orient`  
-3. CONFIRM OK → `vibage-issue-locate`  
-4. Unclear install → `vibage-bootstrap` → init · session pointer → `using-vibage`  
-5. Optional: `vibage-issue-fix`, `vibage-arch-review`
-
-Package capability SSOT is root `STATUS.md` (not the hub file).
-
-**Rename note:** skill dir is `vibage-issue-locate`. Legacy symlink `vibage-locate` remains for one release.
-
-Hard stops: [`references/hard-stops.md`](references/hard-stops.md).
-
-## Layout
-
-| Path | Role |
-|------|------|
-| `skills/` + `MANIFEST.txt` | using-vibage, init, bootstrap, issue-locate, orient, optional fix/arch, survey, section-gate |
-| `adapters/` | Cursor `.mdc` + hooks, Claude / AGENTS thin entries |
-| `prompts/NEW-CHAT.md` | Optional owner paste dispatcher |
-| `docs/install/` | Per-surface short install |
-| `references/` | hard-stops, host-best, hub templates, report templates |
-| `scripts/install.sh` | Multi-surface install + parent entry |
-| `scripts/verify-project-entry.sh` | Parent routers green |
-| `scripts/test-tier0.sh` | Local ship gate |
-| `STATUS.md` | Capability / phase SSOT (package) |
-| `DEPENDENCIES.md` | Pinned `superpowers_sha=` |
-
-## Hard product locks
-
-- Match owner language; never hardcode zh-TW.
-- Nested investigators → reviewers when platform allows; else honest `Mode: degraded`.
-- Dual artifacts after reports; no register CTA on local happy path.
-- No customer cloud root keys; Markdown SSOT.
-
-## License
-
-MIT — see `LICENSE`. Copyright holder: Eric Fang.
+MIT — [`LICENSE`](LICENSE). Copyright (c) 2026 Eric Fang.

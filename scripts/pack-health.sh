@@ -37,6 +37,9 @@ bash "$PKG_ROOT/tests/test_owner_zero_bash.sh"
 echo "== pack-health: test_install_phrase =="
 bash "$PKG_ROOT/tests/test_install_phrase.sh"
 
+echo "== pack-health: test_install_phrase_e2e =="
+bash "$PKG_ROOT/tests/test_install_phrase_e2e.sh"
+
 cat <<EOF
 PACK_HEALTH_OK parent=$PARENT
 Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ remote CI ≠ letter B.

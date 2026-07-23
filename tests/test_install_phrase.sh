@@ -22,5 +22,7 @@ grep -Fq 'docs/EXTENDING.md' skills/using-vibage/SKILL.md || fail "using-vibage 
 [[ -f docs/EXTENDING.md ]] || fail "missing EXTENDING.md"
 grep -Fq 'verify-service-map' docs/maps/AI-FIRST.md || fail "AI-FIRST must name verify-service-map"
 grep -Fq 'MANIFEST.txt' docs/EXTENDING.md || fail "EXTENDING must mention MANIFEST"
+[[ -f tests/test_install_phrase_e2e.sh ]] || fail "missing test_install_phrase_e2e.sh"
+[[ -f tests/fixtures/install-vibage-agent-transcript.md ]] || fail "missing agent transcript fixture"
 
 echo "INSTALL_PHRASE_OK"

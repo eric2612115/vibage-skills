@@ -33,11 +33,13 @@ fi
 grep -Fq 'STATUS.md' "$README" || fail "README must point at STATUS.md"
 grep -Fq 'STATUS.md' "$NEWCHAT" || fail "NEW-CHAT must point at package STATUS.md"
 
-# Stranger hero / Plan-S W2
-grep -Fq '60-second start' "$README" || fail "README must have 60-second start hero"
-grep -Fq 'docs/install/CURSOR.md' "$README" || fail "README must link docs/install/CURSOR.md"
-grep -Fq 'docs/install/CLAUDE.md' "$README" || fail "README must link docs/install/CLAUDE.md"
-grep -Fq 'docs/install/CODEX.md' "$README" || fail "README must link docs/install/CODEX.md"
+# Stranger hero — chat-first, not bash-first
+grep -Fq '## What you say' "$README" || fail "README must have What you say hero"
+grep -Fq '幫我裝 Vibage' "$README" || fail "README must show install phrase"
+grep -Fq 'docs/install/' "$README" || fail "README must link docs/install/"
+if grep -Eiq 'CI SKIPPED|no git remote here' "$README"; then
+  fail "README must not keep stale CI SKIPPED / no-remote wording"
+fi
 for f in docs/install/CURSOR.md docs/install/CLAUDE.md docs/install/CODEX.md; do
   [[ -f "$f" ]] || fail "missing $f"
   grep -Fq 'PROJECT_ENTRY_OK' "$f" || fail "$f must mention PROJECT_ENTRY_OK"

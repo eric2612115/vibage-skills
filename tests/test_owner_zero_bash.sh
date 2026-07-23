@@ -14,11 +14,13 @@ FIX=tests/fixtures/owner-zero-bash-path.md
 grep -Fq 'does not require the owner to type bash' "$FIX" || fail "fixture missing 0-bash claim"
 grep -Fq 'Agent runs' "$FIX" || fail "fixture missing Agent runs"
 
-owner_line="$(grep -n '## Owner path' README.md | head -1 | cut -d: -f1)"
-bash_line="$(grep -n '## 60-second start' README.md | head -1 | cut -d: -f1)"
-[[ -n "$owner_line" && -n "$bash_line" ]] || fail "README missing Owner path or 60-second sections"
-[[ "$owner_line" -lt "$bash_line" ]] || fail "Owner path must appear before 60-second bash section"
-grep -Fq 'tests/fixtures/owner-zero-bash-path.md' README.md || fail "README must link 0-bash fixture"
+say_line="$(grep -n '## What you say' README.md | head -1 | cut -d: -f1)"
+ops_line="$(grep -n 'Operator commands' README.md | head -1 | cut -d: -f1)"
+[[ -n "$say_line" && -n "$ops_line" ]] || fail "README missing What you say or Operator commands"
+[[ "$say_line" -lt "$ops_line" ]] || fail "What you say must appear before Operator commands"
+grep -Fq '幫我裝 Vibage' README.md || fail "README must show install phrase"
+grep -Fq 'You should not type bash' README.md || fail "README must say owner should not type bash"
+grep -Fq 'test_install_phrase_e2e.sh' README.md || fail "README must point install phrase e2e"
 
 grep -Fq 'do not type bash' skills/using-vibage/SKILL.md \
   || fail "using-vibage missing owner no-bash"

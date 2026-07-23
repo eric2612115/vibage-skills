@@ -29,7 +29,9 @@ Agent **must** (owner: do not type bash):
 5. `bash "$PKG_ROOT/scripts/verify-pins.sh"`; on fail use owner-language recovery from `DEPENDENCIES.md`.
 6. Stop. Tell the owner install is ready; ask what hurts in plain language. **Do not dig yet.**
 
-Canonical paste: `prompts/SAY-INSTALL-VIBAGE.md`. Fixture: `tests/fixtures/install-vibage-phrase.md`.
+Canonical paste: `prompts/SAY-INSTALL-VIBAGE.md`.  
+Fixtures: `tests/fixtures/install-vibage-phrase.md`, `tests/fixtures/install-vibage-agent-transcript.md`.  
+Re-run proof: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
 ## Owner path (non-coder)
 

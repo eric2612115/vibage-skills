@@ -9,7 +9,8 @@
 |--------------------|-----------|-----|
 | `bash scripts/test-tier0.sh` → `TIER0_OK` | Core locate ship gate green | pin · parent entry · letter B · remote CI |
 | `bash scripts/pack-health.sh <parent>` → `PACK_HEALTH_OK` | pins + parent entry + entry-docs + owner/install phrase checks | Tier-0 · letter B · remote CI |
-| `bash tests/test_install_phrase.sh` → `INSTALL_PHRASE_OK` | 「幫我裝 Vibage」path documented + wired | agent E2E video · dig |
+| `bash tests/test_install_phrase.sh` → `INSTALL_PHRASE_OK` | 「幫我裝 Vibage」docs + markers | dig |
+| `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK` | Agent-equivalent install steps on temp parent | screen recording · dig |
 | `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` | Parent Cursor/Claude/Codex routers on disk | CONFIRM · locate DONE |
 | `bash tests/test_issue_fix_usable.sh` | issue-fix unlock gates script-usable | letter B · fix quality |
 | `bash tests/test_arch_review_usable.sh` | service_map qualification script-usable | Architecture Pass · letter B alone |
