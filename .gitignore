@@ -6,3 +6,6 @@
 
 __pycache__/
 *.py[cod]
+
+# Focus agent-pressure evidence packs (SAT-agent-pressure §5 / A7)
+tests/artifacts/agent-pressure/

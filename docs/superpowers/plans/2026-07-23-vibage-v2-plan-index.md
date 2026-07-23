@@ -22,6 +22,7 @@
 | 6 | `P5-skill-rename` | same file §P5 | Optional cleanup |
 | 7 | `P6-focus-stub` | same file §P6 | Deferred Focus row |
 | 8 | `P7-ci-when-remote` | same file §P7 | Only if `git remote` exists |
+| 9 | `Focus-agent-pressure` | [2026-07-23-vibage-focus-agent-pressure.md](./2026-07-23-vibage-focus-agent-pressure.md) | After P6 stub + SAT-agent-pressure; Approach 1 thin harness — fixtures/smoke/runbook first; dual-phase agent RED→GREEN deferred; Proven-green only from scorer-PASS (not Tier-0) |
 
 ## Satellites (thick docs; not blocking P0–P2 ship)
 
