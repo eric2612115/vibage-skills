@@ -19,7 +19,7 @@ homes = [
     os.path.expanduser("~/.claude/skills"),
     os.path.expanduser("~/.agents/skills"),
 ]
-names = ("vibage-init", "vibage-locate")
+names = ("vibage-init", "vibage-issue-locate", "vibage-locate")
 for home in homes:
     for name in names:
         p = os.path.join(home, name)
@@ -33,4 +33,4 @@ PY
 
 Or: `"$KNOWN_CHECKOUT/scripts/resolve-pkg-root.sh"` which prints PKG_ROOT and exits 0/1.
 
-Probe order: Cursor → Claude → Codex skill homes; within each home `vibage-init` then `vibage-locate`.
+Probe order: Cursor → Claude → Codex skill homes; within each home `vibage-init` then `vibage-issue-locate` (legacy `vibage-locate` redirect OK).

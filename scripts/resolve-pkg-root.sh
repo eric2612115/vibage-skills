@@ -10,7 +10,7 @@ homes = [
     os.path.expanduser("~/.claude/skills"),
     os.path.expanduser("~/.agents/skills"),
 ]
-names = ("vibage-init", "vibage-locate")
+names = ("vibage-init", "vibage-issue-locate", "vibage-locate")
 for home in homes:
     for name in names:
         path = os.path.join(home, name)

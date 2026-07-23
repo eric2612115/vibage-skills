@@ -10,13 +10,20 @@ export HOME="$TMP_HOME"
 # Install into fake HOME.
 bash "$ROOT/scripts/install.sh" --init-hub="$TMP_WS"
 
-for name in vibage-init vibage-bootstrap vibage-locate; do
+for name in vibage-init vibage-bootstrap vibage-issue-locate; do
   link="$HOME/.cursor/skills/$name"
   [[ -L "$link" ]] || { echo "FAIL: missing symlink $link"; exit 1; }
   resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$link")"
   expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/skills/$name")"
   [[ "$resolved" == "$expected" ]] || { echo "FAIL: bad target $resolved"; exit 1; }
 done
+
+# One-release redirect: vibage-locate → vibage-issue-locate
+legacy="$HOME/.cursor/skills/vibage-locate"
+[[ -L "$legacy" ]] || { echo "FAIL: missing legacy redirect $legacy"; exit 1; }
+legacy_resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$legacy")"
+issue_expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/skills/vibage-issue-locate")"
+[[ "$legacy_resolved" == "$issue_expected" ]] || { echo "FAIL: bad legacy redirect $legacy_resolved"; exit 1; }
 
 [[ -f "$TMP_WS/docs/vibage/STATUS.md" ]] || { echo "FAIL: hub STATUS missing"; exit 1; }
 [[ -f "$TMP_WS/docs/vibage/DECISIONS.md" ]] || { echo "FAIL: hub DECISIONS missing"; exit 1; }

@@ -1,6 +1,6 @@
 vibage-init
 vibage-bootstrap
-vibage-locate
+vibage-issue-locate
 vibage-orient
 research-survey-review
 section-gate-review

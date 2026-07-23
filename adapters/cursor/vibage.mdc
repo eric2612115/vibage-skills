@@ -11,9 +11,9 @@ Product SSOT: vibage-skills package. Skills under `~/.cursor/skills/vibage-*` (a
 
 1. No `docs/vibage/STATUS.md` → **vibage-init**
 2. Hub ready, no valid CONFIRM → **vibage-orient**
-3. CONFIRM OK → **vibage-locate**
+3. CONFIRM OK → **vibage-issue-locate** (legacy install name `vibage-locate` OK)
 4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init**
-5. SelfAutoBuz hub hygiene → **docs-hygiene** (not vibage-locate)
+5. SelfAutoBuz hub hygiene → **docs-hygiene** (not vibage-issue-locate)
 
 ## PKG_ROOT
 

@@ -7,6 +7,8 @@ alwaysApply: false
 
 Prefer `adapters/cursor/vibage.mdc` (install copies to `.cursor/rules/vibage.mdc`).
 
+Skill dir is **`vibage-issue-locate`** (install may symlink legacy `vibage-locate` for one release).
+
 - Resolve PKG_ROOT via `$PKG_ROOT/scripts/resolve-pkg-root.sh` (or probe Cursor/Claude/Codex skill homes).
 - Obey `$PKG_ROOT/references/hard-stops.md`.
 - Nested: `$PKG_ROOT/references/nested-protocol.md` (capability matrix; degrade honestly).

@@ -1,12 +1,13 @@
 ---
-name: vibage-locate
+name: vibage-issue-locate
 description: >-
   Use when CONFIRM.json payload_hash matches current SCAN_PLAN and the owner
   needs post-confirm dig with dual reports. Do not install skills; do not
   redefine model routing; do not deep-dig without assert_gate.
+  (Install may still symlink legacy name vibage-locate for one release.)
 ---
 
-# Vibage Locate
+# Vibage Issue Locate
 
 Goal: after mechanical confirm, cut "1–2 days to find where" toward minutes for the **repo owner**.
 

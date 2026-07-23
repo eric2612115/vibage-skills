@@ -24,7 +24,7 @@ Goal: install package skills, create `docs/vibage/` hub skeleton, verify pins, h
 bash /path/to/vibage-skills/scripts/resolve-pkg-root.sh
 ```
 
-Probes `~/.cursor/skills` → `~/.claude/skills` → `~/.agents/skills` for `vibage-init` then `vibage-locate`.
+Probes `~/.cursor/skills` → `~/.claude/skills` → `~/.agents/skills` for `vibage-init` then `vibage-issue-locate` (legacy `vibage-locate` OK).
 See `$PKG_ROOT/references/resolve-pkg-root.md`. If unresolved, PKG_ROOT = this package checkout
 (directory containing `skills/` and `scripts/`). Never hardcode `/Users/...`.
 

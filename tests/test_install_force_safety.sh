@@ -36,7 +36,7 @@ rm -f "$PROJ/vibage-locate"
 ln -sfn "$ROOT/skills/vibage-init" "$PROJ/vibage-locate"
 bash "$ROOT/scripts/install.sh" --project-skills="$TMP_WS" --force
 resolved="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$PROJ/vibage-locate")"
-expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/skills/vibage-locate")"
+expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1]))' "$ROOT/skills/vibage-issue-locate")"
 [[ "$resolved" == "$expected" ]] || { echo "FAIL: stale package link not replaced: $resolved"; exit 1; }
 echo "OK: package-owned stale symlink replaced with --force"
 

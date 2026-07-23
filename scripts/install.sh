@@ -69,12 +69,14 @@ project_skill_home() {
 
 STALE_NAMES=(war-room-locate war-room-bootstrap war-room-init war-room-orient)
 
+# link_global_skill SURFACE DEST_NAME [SRC_NAME]
+# SRC_NAME defaults to DEST_NAME. Used for one-release vibage-locate redirect.
 link_global_skill() {
-  local surface="$1" name="$2"
+  local surface="$1" dest_name="$2" src_name="${3:-$2}"
   local home src dest
   home="$(global_skill_home "$surface")"
-  src="$PKG_ROOT/skills/$name"
-  dest="$home/$name"
+  src="$PKG_ROOT/skills/$src_name"
+  dest="$home/$dest_name"
   [[ -d "$src" ]] || { echo "MANIFEST skill missing on disk: $src" >&2; exit 1; }
   mkdir -p "$home"
   ln -sfn "$src" "$dest"
@@ -95,12 +97,13 @@ cleanup_stale_global() {
   done
 }
 
+# link_project_skill SURFACE DEST_NAME [SRC_NAME]
 link_project_skill() {
-  local surface="$1" name="$2"
+  local surface="$1" dest_name="$2" src_name="${3:-$2}"
   local home src dest resolved expected pkg_skills
   home="$(project_skill_home "$PROJECT_SKILLS" "$surface")"
-  src="$PKG_ROOT/skills/$name"
-  dest="$home/$name"
+  src="$PKG_ROOT/skills/$src_name"
+  dest="$home/$dest_name"
   mkdir -p "$home"
   if [[ ! -e "$dest" && ! -L "$dest" ]]; then
     ln -sfn "$src" "$dest"
@@ -250,6 +253,10 @@ for surface in cursor claude codex; do
     [[ -z "$name" || "$name" =~ ^# ]] && continue
     link_global_skill "$surface" "$name"
   done < "$MANIFEST"
+  # One-release redirect: legacy vibage-locate → vibage-issue-locate
+  if [[ -d "$PKG_ROOT/skills/vibage-issue-locate" ]]; then
+    link_global_skill "$surface" "vibage-locate" "vibage-issue-locate"
+  fi
   cleanup_stale_global "$surface"
 done
 
@@ -267,6 +274,10 @@ if [[ -n "$PROJECT_SKILLS" ]]; then
       [[ -z "$name" || "$name" =~ ^# ]] && continue
       link_project_skill "$surface" "$name"
     done < "$MANIFEST"
+    # One-release redirect: legacy vibage-locate → vibage-issue-locate
+    if [[ -d "$PKG_ROOT/skills/vibage-issue-locate" ]]; then
+      link_project_skill "$surface" "vibage-locate" "vibage-issue-locate"
+    fi
     cleanup_stale_project "$surface"
   done
 fi

@@ -76,7 +76,7 @@ Rules:
 6. On user confirm (chat OK is only a trigger) — **confirm** milestone dual-write:
    - Run `"$PKG_ROOT/scripts/write_confirm.sh" "$WORKSPACE"`
    - Remind: signed the **visible subset**
-   - Hand off to `vibage-locate` (locate runs assert_gate)
+   - Hand off to `vibage-issue-locate` (locate runs assert_gate)
 7. On reject/change plan (S13): edit SCAN_PLAN; clear or overwrite CONFIRM only after new confirm; hash mismatch must block dig.
 8. Stale (S14): if plan changed under an old CONFIRM → treat as `stale_confirm`; clear CONFIRM → re-orient (no `--force` required). Dual-write STOP + handoff; no dual reports.
 

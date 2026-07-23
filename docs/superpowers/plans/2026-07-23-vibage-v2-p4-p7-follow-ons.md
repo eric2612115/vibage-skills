@@ -58,17 +58,17 @@ EOF
 - Move: `skills/vibage-locate` → `skills/vibage-issue-locate`
 - Modify: `scripts/install.sh`, `MANIFEST.txt`, `rules/vibage-locate.mdc`, `prompts/NEW-CHAT.md`
 
-- [ ] **Step 1: git mv skill dir**
+- [x] **Step 1: git mv skill dir**
 
-- [ ] **Step 2: Keep install redirect** from old name for one release (document in README)
+- [x] **Step 2: Keep install redirect** from old name for one release (document in README)
 
-- [ ] **Step 3: Update rules + NEW-CHAT triggers**
+- [x] **Step 3: Update rules + NEW-CHAT triggers**
 
-- [ ] **Step 4: Run `bash scripts/test-tier0.sh`**
+- [x] **Step 4: Run `bash scripts/test-tier0.sh`**
 
 Expected: `TIER0_OK`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'

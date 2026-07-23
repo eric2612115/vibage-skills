@@ -10,7 +10,7 @@ Cold-start SSOT (live only):
    Prefer: run the package script if you know the checkout path:
      bash /path/to/vibage-skills/scripts/resolve-pkg-root.sh
    Or probe skill homes in order (~/.cursor/skills → ~/.claude/skills → ~/.agents/skills)
-   for vibage-init then vibage-locate; realpath → dirname/dirname.
+   for vibage-init then vibage-issue-locate (legacy vibage-locate OK); realpath → dirname/dirname.
    If none installed: tell user to run vibage-skills/scripts/install.sh first
    (default surfaces: cursor,claude,codex).
 2) Run "$PKG_ROOT/scripts/verify-pins.sh" (must pass). On fail: owner-language pin recovery
@@ -19,7 +19,7 @@ Cold-start SSOT (live only):
 3) Match the owner's language (never assume Traditional Chinese). Identifiers stay English.
 4) If docs/vibage/STATUS.md missing → Read and follow vibage-init (install + --init-hub on workspace).
 5) If no valid CONFIRM → Read and follow vibage-orient. Stop at awaiting_confirm. Ask plain-language confirm for the visible subset.
-6) After CONFIRM.json exists → Read and follow vibage-locate (it runs assert_gate). Do not dig in this dispatcher.
+6) After CONFIRM.json exists → Read and follow vibage-issue-locate (it runs assert_gate). Do not dig in this dispatcher.
 7) After dual reports exist: optional localhost preview via "$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE"
    (WORKSPACE = agent workspace root; fail-soft). Run serve in background — do not block local delivery.
 

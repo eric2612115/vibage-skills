@@ -58,15 +58,18 @@ Then paste [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md) into a new agent chat.
 bash /path/to/vibage-skills/scripts/resolve-pkg-root.sh
 ```
 
-Probe order: `~/.cursor/skills` → `~/.claude/skills` → `~/.agents/skills`; `vibage-init` then `vibage-locate`.
+Probe order: `~/.cursor/skills` → `~/.claude/skills` → `~/.agents/skills`; `vibage-init` then `vibage-issue-locate` (legacy `vibage-locate` redirect for one release).
 
 ## Skill routing
 
 1. No `docs/vibage/STATUS.md` → `vibage-init`
 2. Hub ready, no valid CONFIRM → `vibage-orient`
-3. CONFIRM OK → `vibage-locate`
+3. CONFIRM OK → `vibage-issue-locate`
 4. NEW-CHAT / unclear install → `vibage-bootstrap` → init
 5. SelfAutoBuz doc hygiene → `docs-hygiene` (not locate)
+6. Optional (not required for locate DONE): `vibage-issue-fix`, `vibage-arch-review` (架構檢視)
+
+**Rename note:** skill dir is `vibage-issue-locate`. `scripts/install.sh` still symlinks legacy name `vibage-locate` → `vibage-issue-locate` for one release.
 
 Hard stops SSOT: [`references/hard-stops.md`](references/hard-stops.md).
 
@@ -74,7 +77,7 @@ Hard stops SSOT: [`references/hard-stops.md`](references/hard-stops.md).
 
 | Path | Role |
 |------|------|
-| `skills/` + `MANIFEST.txt` | init, bootstrap, locate, orient, survey, section-gate |
+| `skills/` + `MANIFEST.txt` | init, bootstrap, issue-locate, orient, optional fix/arch, survey, section-gate |
 | `adapters/` | Cursor `.mdc`, Claude / AGENTS thin entries |
 | `prompts/NEW-CHAT.md` | Owner paste dispatcher |
 | `references/` | hard-stops, nested-protocol, hub templates, report templates |

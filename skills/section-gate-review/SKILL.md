@@ -78,7 +78,7 @@ Write JSON (chat + optional `docs/vibage/RUNS/<review_run_id>.section-gate.json`
 
 ## Hard stops
 
-- Do not call any `vibage-*` product skill (`vibage-init`, `vibage-orient`, `vibage-locate`, `vibage-bootstrap`).
+- Do not call any `vibage-*` product skill (`vibage-init`, `vibage-orient`, `vibage-issue-locate`, `vibage-bootstrap`).
 - No product code edits
 - No recursive section-gate/research
 - No locate dig

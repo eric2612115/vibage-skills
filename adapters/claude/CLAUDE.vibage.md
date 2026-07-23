@@ -7,14 +7,14 @@ Product SSOT lives in the vibage-skills package. Skills are linked under `~/.cla
 
 1. No `docs/vibage/STATUS.md` → Read/follow **vibage-init**.
 2. Hub ready, no valid CONFIRM → **vibage-orient** (stop at awaiting_confirm).
-3. CONFIRM OK → **vibage-locate** (`assert_gate` then dig).
+3. CONFIRM OK → **vibage-issue-locate** (`assert_gate` then dig; legacy `vibage-locate` OK).
 4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init**.
 5. SelfAutoBuz doc taxonomy → **docs-hygiene**, not locate.
 
 ## PKG_ROOT
 
 Prefer: `bash <vibage-skills>/scripts/resolve-pkg-root.sh`  
-Fallback: realpath `~/.claude/skills/vibage-init` (then `vibage-locate`) → dirname/dirname.
+Fallback: realpath `~/.claude/skills/vibage-init` (then `vibage-issue-locate`) → dirname/dirname.
 
 ## Nested / browser
 
