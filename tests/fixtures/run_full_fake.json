@@ -1,0 +1,15 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "run-full-fake",
+  "phase": "done",
+  "mode": "full nested",
+  "artifact_uris": ["VIBAGE-OWNER.md", "VIBAGE-LOCATE.md"],
+  "survey_refs": [],
+  "gap_ids": [],
+  "nested_dispatch": {
+    "investigators": [],
+    "reviewers": [],
+    "critique_verdict_summary": "APPROVE"
+  }
+}

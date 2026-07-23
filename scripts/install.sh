@@ -198,10 +198,6 @@ install_project_rules() {
     if [[ -f "$legacy" ]]; then
       echo "Note: legacy $legacy still present; prefer vibage.mdc (routing + hard-stops pointer)"
     fi
-    if [[ -f "$repo/.cursor/rules/war-room-locate.mdc" ]]; then
-      rm -f "$repo/.cursor/rules/war-room-locate.mdc"
-      echo "Removed stale project rule: war-room-locate.mdc"
-    fi
   fi
   if surface_enabled claude; then
     mkdir -p "$repo/.claude"

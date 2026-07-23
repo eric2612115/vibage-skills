@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "run-full-ok",
+  "phase": "done",
+  "mode": "full nested",
+  "artifact_uris": ["VIBAGE-OWNER.md", "VIBAGE-LOCATE.md"],
+  "survey_refs": [],
+  "gap_ids": [],
+  "nested_dispatch": {
+    "investigators": [
+      {"id": "inv-1", "label": "investigator-1", "started_at": "2026-07-22T00:00:00Z"}
+    ],
+    "reviewers": [
+      {"id": "rev-1", "label": "reviewer-1", "started_at": "2026-07-22T00:01:00Z"}
+    ],
+    "critique_verdict_summary": "APPROVE"
+  }
+}

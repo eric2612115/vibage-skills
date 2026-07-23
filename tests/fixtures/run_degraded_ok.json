@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "run-degraded-ok",
+  "phase": "done",
+  "mode": "degraded",
+  "artifact_uris": ["VIBAGE-OWNER.md", "VIBAGE-LOCATE.md"],
+  "survey_refs": [],
+  "gap_ids": []
+}
