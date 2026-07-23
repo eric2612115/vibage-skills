@@ -45,7 +45,19 @@ bash "$PKG_ROOT/scripts/verify-service-map.sh" <workspace_root>
    Exit 0 required. On FAIL → stop this track only; locate DONE unchanged.
    When the map sets `depth: "standard"`, verify also requires non-empty id-valid `edges` (see `SAT-map-schema`). Floor maps without that flag remain valid.
 4. On OK → review architecture / Service map from the qualified map. Do not edit business code. Do not solicit SaaS.
-5. Summarize for owner; do not claim letter B or agent E2E proof from this script alone.
+5. **Optional local prettier (Plan G — M Pretty-local)** after verify exits 0 (fail-soft; never undoes map usable / locate DONE; ≠ Architecture Pass; ≠ letter B):
+   - OPTIONAL Graphify: `bash "$PKG_ROOT/scripts/generate-service-map-graph.sh" <workspace_root>` — if CLI missing → exit 0 + `OK:GRAPHIFY_SKIP` + owner sentence.
+   - Thin coverage notes (optional sidecar, **not** a verify field): write/update `docs/vibage/maps/COVERAGE_NOTES.md`.
+   - REQUIRED pure-local preview: `bash "$PKG_ROOT/scripts/render-service-map-preview.sh" <workspace_root>` → `vibage-preview/service_map.html` + `.svg`. Soft skip → exit 0 + `OK:RENDER_SKIP` + owner sentence.
+6. Summarize for owner; do not claim letter B or agent E2E proof from this script alone. M Pretty-local ≠终局 (deeper Graphify/L later OK).
+
+### Thin coverage notes (optional)
+
+Write workspace `docs/vibage/maps/COVERAGE_NOTES.md` (not a `service_map.json` verify field):
+
+- List services covered vs intentionally omitted
+- Note edges present / unknown links
+- Keep narrative; **do not** treat absence as `verify-service-map` FAIL
 
 ## When / Not
 

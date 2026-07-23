@@ -49,6 +49,22 @@ Fixture proof: `tests/test_arch_review_usable.sh` (optional; **not** in Tier-0).
 
 ---
 
+## Optional local prettier (Plan G — M Pretty-local)
+
+After `verify-service-map.sh` exits 0, agents **may**:
+
+1. OPTIONAL: `bash "$PKG_ROOT/scripts/generate-service-map-graph.sh" <workspace_root>`
+   - If Graphify CLI missing → expect exit 0, stdout contains `OK:GRAPHIFY_SKIP` and one owner sentence. **Not** a qualification failure.
+2. Thin coverage: write/update workspace `docs/vibage/maps/COVERAGE_NOTES.md` (services/edges coverage narrative). **Not** verified by `verify-service-map.sh`.
+3. REQUIRED local preview (pure local, no external binary):  
+   `bash "$PKG_ROOT/scripts/render-service-map-preview.sh" <workspace_root>`  
+   → `vibage-preview/service_map.html` + `vibage-preview/service_map.svg`.  
+   On soft skip/failure → exit 0 + `OK:RENDER_SKIP` + owner sentence; does not undo map usable / locate DONE.
+
+Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. M Pretty-local ≠终局 (deeper Graphify/L later OK).
+
+---
+
 ## 4. Locate independence
 
 | Case | Behavior |
@@ -80,6 +96,6 @@ Fixture proof: `tests/test_arch_review_usable.sh` (optional; **not** in Tier-0).
 ## 7. Out of scope (this wave / deferred — not forever-forbidden)
 
 - Agent E2E / Focus agent-pressure cards for 架構檢視
-- Graphify wiring, coverage deep gates, map rendering = **deferred this wave** for local deeper maps — **not** forever-forbidden. Cloud whole-repo upload/analysis remains out of this track’s job.
-- Wiring `test_arch_review_usable.sh` into Tier-0
+- Option **L** deeper Graphify-class platform / coverage gates / interactive dashboard (M Pretty-local ≠终局; `deferred-closed ≠ forever-forbidden`). Cloud whole-repo upload/analysis remains out of this track’s job.
+- Wiring `test_arch_review_usable.sh` or `test_prettier_maps.sh` into Tier-0
 - SaaS / register CTA

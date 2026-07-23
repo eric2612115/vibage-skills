@@ -94,8 +94,21 @@ Print clear `OK:` / `FAIL:` lines. Fixture proof: `tests/test_arch_review_usable
 
 ---
 
-## 6. Out of scope (this wave / deferred — not forever-forbidden)
+## 6. Out of scope / adjacent local prettier (Plan G)
 
-- Graphify wiring, coverage gates, map rendering = **deferred this wave** for local deeper maps — **not** forever-forbidden. Cloud whole-repo upload/analysis remains out of this plan’s job (do not rewrite PRODUCT-LOCKS).
+**Verify (`scripts/verify-service-map.sh`) still does not require** Graphify, coverage notes, or preview artifacts. Missing prettier sidecars must not fail map qualification.
+
+**Plan G (M Pretty-local) unlocks locally (optional / fail-soft):**
+
+| Piece | Contract |
+|-------|----------|
+| Render | `scripts/render-service-map-preview.sh` → workspace `vibage-preview/service_map.html` (+ `.svg`); pure local; no external binary on success path |
+| Graphify | `scripts/generate-service-map-graph.sh` OPTIONAL; if CLI missing → exit 0 + `OK:GRAPHIFY_SKIP` + owner sentence; may write sidecar under `docs/vibage/maps/` when present |
+| Coverage | Sidecar `docs/vibage/maps/COVERAGE_NOTES.md` (or skill-written section) — **not** a verify field; not a floor gate |
+
+**Honesty:** M Pretty-local **≠终局**. Deeper local Graphify / coverage / render (option **L**) may open later. `deferred-closed ≠ forever-forbidden`. Cloud whole-repo upload/analysis and Architecture Pass remain out of scope (do not rewrite PRODUCT-LOCKS to a forever local ban).
+
+**Still out of this wave (adjacent):**
+
 - Agent E2E / Focus cards for 架構檢視
 - Changing Tier-0 to require `test_arch_review_usable.sh`
