@@ -9,7 +9,7 @@ fail() { echo "FAIL: $*"; exit 1; }
 [[ -f .cursor-plugin/plugin.json ]] || fail "missing .cursor-plugin/plugin.json"
 [[ -f .claude-plugin/plugin.json ]] || fail "missing .claude-plugin/plugin.json"
 [[ -f .claude-plugin/marketplace.json ]] || fail "missing .claude-plugin/marketplace.json"
-[[ -f assets/logo.svg ]] || fail "missing assets/logo.svg"
+[[ -f assets/logo.png ]] || fail "missing assets/logo.png"
 [[ -f docs/install/MARKETPLACE.md ]] || fail "missing docs/install/MARKETPLACE.md"
 
 python3 - <<'PY' || fail "manifest JSON / path checks failed"

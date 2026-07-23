@@ -17,7 +17,7 @@
     "debugging",
     "parent-workspace"
   ],
-  "logo": "assets/logo.svg",
+  "logo": "assets/logo.png",
   "skills": "./skills/",
   "rules": "./adapters/cursor/vibage.mdc"
 }
