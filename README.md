@@ -41,13 +41,14 @@ You should not type bash. The agent runs scripts.
 | Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
 | Capability table | [`STATUS.md`](STATUS.md) | — |
 | Per IDE | [`docs/install/`](docs/install/) | — |
+| Plugin manifests | [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md) | `PLUGIN_MANIFESTS_OK` |
 | Maps (agents) | [`docs/maps/AI-FIRST.md`](docs/maps/AI-FIRST.md) | — |
 | Add a skill | [`docs/EXTENDING.md`](docs/EXTENDING.md) | — |
 
 **Honesty (do not conflate):**
 - **SaaS / sign-up** = blank (no register CTA in this pack).
 - **Public GitHub** = share/clone the skill pack; **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
-- Marketplace listing is a **separate** submit/review step (needs public repo + plugin manifest — not claimed done here).
+- Plugin manifests are on-tree (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). **≠** store listing until you submit and pass review.
 - `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”.
 
 ---

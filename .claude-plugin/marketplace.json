@@ -1,0 +1,33 @@
+{
+  "name": "vibage",
+  "description": "Vibage skill pack — find where problems live in fat multi-app workspaces",
+  "owner": {
+    "name": "Eric Fang"
+  },
+  "metadata": {
+    "description": "Local locate skill pack. Public git ≠ Cursor marketplace approval ≠ SaaS.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "vibage",
+      "description": "Find where a problem lives across messy multi-app folders. Plain-language locate reports for owners and engineers.",
+      "version": "1.0.0",
+      "source": "./",
+      "author": {
+        "name": "Eric Fang"
+      },
+      "homepage": "https://github.com/eric2612115/vibage-skills",
+      "repository": "https://github.com/eric2612115/vibage-skills",
+      "license": "MIT",
+      "keywords": [
+        "vibage",
+        "locate",
+        "multi-repo",
+        "skills"
+      ],
+      "category": "productivity",
+      "tags": ["locate", "multi-repo", "debugging"]
+    }
+  ]
+}

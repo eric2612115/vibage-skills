@@ -41,8 +41,12 @@ bash "$PKG_ROOT/tests/test_install_phrase.sh"
 echo "== pack-health: test_install_phrase_e2e =="
 bash "$PKG_ROOT/tests/test_install_phrase_e2e.sh"
 
+echo "== pack-health: test_plugin_manifests =="
+bash "$PKG_ROOT/tests/test_plugin_manifests.sh"
+
 cat <<EOF
 PACK_HEALTH_OK parent=$PARENT
 Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ remote CI ≠ letter B.
 Capability SSOT: package STATUS.md (not this script).
+Plugin manifests on-tree ≠ Cursor/Claude store listing approved.
 EOF

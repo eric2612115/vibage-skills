@@ -1,0 +1,19 @@
+{
+  "name": "vibage",
+  "description": "Find where a problem lives across messy multi-app folders. Plain-language locate reports for owners and engineers. Not a ticket/log/SaaS platform.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Eric Fang"
+  },
+  "homepage": "https://github.com/eric2612115/vibage-skills",
+  "repository": "https://github.com/eric2612115/vibage-skills",
+  "license": "MIT",
+  "keywords": [
+    "vibage",
+    "locate",
+    "multi-repo",
+    "skills",
+    "debugging",
+    "parent-workspace"
+  ]
+}

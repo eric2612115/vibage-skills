@@ -3,6 +3,16 @@
 **Parent workspace only** — not each child repo.  
 Commands below are for operator/agent; owner can ask in plain language after setup.
 
+Plugin + marketplace catalog: `.claude-plugin/plugin.json` + `marketplace.json`.  
+After repo is public:
+
+```text
+/plugin marketplace add eric2612115/vibage-skills
+/plugin install vibage@vibage
+```
+
+Details: [`MARKETPLACE.md`](MARKETPLACE.md). Plugin install ≠ `PROJECT_ENTRY_OK`.
+
 ## Install
 
 ```bash

@@ -3,6 +3,9 @@
 **Parent workspace only** — do not install routers into every child repo.  
 Commands below are for operator/agent; owner can ask in plain language after setup.
 
+Plugin manifest: `.cursor-plugin/plugin.json` (skills + `adapters/cursor/vibage.mdc`).  
+Marketplace submit steps: [`MARKETPLACE.md`](MARKETPLACE.md). Plugin install ≠ `PROJECT_ENTRY_OK`.
+
 ## Install
 
 ```bash

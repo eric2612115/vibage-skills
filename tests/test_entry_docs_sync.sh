@@ -52,6 +52,11 @@ for f in docs/install/CURSOR.md docs/install/CLAUDE.md docs/install/CODEX.md; do
   grep -Fq 'PROJECT_ENTRY_OK' "$f" || fail "$f must mention PROJECT_ENTRY_OK"
   grep -Fq 'parent' "$f" || fail "$f must say parent workspace"
 done
+[[ -f docs/install/MARKETPLACE.md ]] || fail "missing docs/install/MARKETPLACE.md"
+grep -Fq 'MARKETPLACE.md' docs/install/CURSOR.md || fail "CURSOR.md must link MARKETPLACE.md"
+grep -Fq 'MARKETPLACE.md' docs/install/CLAUDE.md || fail "CLAUDE.md must link MARKETPLACE.md"
+grep -Fq '.cursor-plugin' "$README" || fail "README must mention .cursor-plugin"
+grep -Fq '.claude-plugin' "$README" || fail "README must mention .claude-plugin"
 
 # Dual-STATUS: NEW-CHAT must name package STATUS as capability SSOT (not only hub path)
 grep -Eiq 'package[[:space:]]+`?STATUS\.md`?|capability SSOT' "$NEWCHAT" \
@@ -78,6 +83,8 @@ grep -Fq 'INSTALL_PHRASE_OK' "$STATUS" \
   || fail "STATUS pack-health layer must name INSTALL_PHRASE_OK"
 grep -Fq 'INSTALL_PHRASE_E2E_OK' "$STATUS" \
   || fail "STATUS pack-health layer must name INSTALL_PHRASE_E2E_OK"
+grep -Fq 'PLUGIN_MANIFESTS_OK' "$STATUS" \
+  || fail "STATUS pack-health layer must name PLUGIN_MANIFESTS_OK"
 
 # Thin SAT contract markers
 grep -Eiq 'no local CTA|no register' "$SAT" || fail "SAT-saas-blank must lock no local CTA"
