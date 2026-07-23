@@ -49,19 +49,21 @@ Fixture proof: `tests/test_arch_review_usable.sh` (optional; **not** in Tier-0).
 
 ---
 
-## Optional local prettier (Plan G — M Pretty-local)
+## Optional local prettier (Plan G → Plan-L local-maps deepen)
 
 After `verify-service-map.sh` exits 0, agents **may**:
 
 1. OPTIONAL: `bash "$PKG_ROOT/scripts/generate-service-map-graph.sh" <workspace_root>`
-   - If Graphify CLI missing → expect exit 0, stdout contains `OK:GRAPHIFY_SKIP` and one owner sentence. **Not** a qualification failure.
-2. Thin coverage: write/update workspace `docs/vibage/maps/COVERAGE_NOTES.md` (services/edges coverage narrative). **Not** verified by `verify-service-map.sh`.
-3. REQUIRED local preview (pure local, no external binary):  
+   - When hub map present → expect non-empty `docs/vibage/maps/graph.mmd` and stdout `OK:MERMAID`.
+   - Auto-writes `docs/vibage/maps/COVERAGE_NOTES.md` counts (`services_count` / `edges_count`) — **single writer**; **not** a verify field.
+   - If Graphify CLI missing → exit 0 + `OK:GRAPHIFY_SKIP` + owner sentence = **CLI path skipped only** (Mermaid artifact still present). **Not** a qualification failure.
+   - If CLI present → best-effort or honest limitation; never empty-overwrite of `graph.mmd`; never claim `OK:GRAPHIFY wrote` for a stub.
+2. REQUIRED local preview (pure local, no external binary):  
    `bash "$PKG_ROOT/scripts/render-service-map-preview.sh" <workspace_root>`  
    → `vibage-preview/service_map.html` + `vibage-preview/service_map.svg`.  
    On soft skip/failure → exit 0 + `OK:RENDER_SKIP` + owner sentence; does not undo map usable / locate DONE.
 
-Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. M Pretty-local ≠终局 (deeper Graphify/L later OK).
+Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. Plan-L local-maps deepen ≠终局 ≠ SAT option-L platform (deferred≠forever-ban).
 
 ---
 

@@ -94,19 +94,27 @@ Print clear `OK:` / `FAIL:` lines. Fixture proof: `tests/test_arch_review_usable
 
 ---
 
-## 6. Out of scope / adjacent local prettier (Plan G)
+## 6. Out of scope / adjacent local prettier (Plan G → Plan-L)
 
-**Verify (`scripts/verify-service-map.sh`) still does not require** Graphify, coverage notes, or preview artifacts. Missing prettier sidecars must not fail map qualification.
+**Verify (`scripts/verify-service-map.sh`) still does not require** Graphify, coverage notes, Mermaid, or preview artifacts. Missing prettier sidecars must not fail map qualification.
 
 **Plan G (M Pretty-local) unlocks locally (optional / fail-soft):**
 
 | Piece | Contract |
 |-------|----------|
 | Render | `scripts/render-service-map-preview.sh` → workspace `vibage-preview/service_map.html` (+ `.svg`); pure local; no external binary on success path |
-| Graphify | `scripts/generate-service-map-graph.sh` OPTIONAL; if CLI missing → exit 0 + `OK:GRAPHIFY_SKIP` + owner sentence; may write sidecar under `docs/vibage/maps/` when present |
-| Coverage | Sidecar `docs/vibage/maps/COVERAGE_NOTES.md` (or skill-written section) — **not** a verify field; not a floor gate |
+| Graphify wrapper | `scripts/generate-service-map-graph.sh` OPTIONAL fail-soft |
+| Coverage | Sidecar `docs/vibage/maps/COVERAGE_NOTES.md` — **not** a verify field; not a floor gate |
 
-**Honesty:** M Pretty-local **≠终局**. Deeper local Graphify / coverage / render (option **L**) may open later. `deferred-closed ≠ forever-forbidden`. Cloud whole-repo upload/analysis and Architecture Pass remain out of scope (do not rewrite PRODUCT-LOCKS to a forever local ban).
+**Plan-L (local-maps deepen)** deepens the generator (still local / fail-soft; still not a verify gate):
+
+| Piece | Contract |
+|-------|----------|
+| Mermaid | When hub `service_map.json` is present, always emit non-empty `docs/vibage/maps/graph.mmd` from JSON; stdout `OK:MERMAID` on success |
+| Graphify CLI | `OK:GRAPHIFY_SKIP` = **CLI path skipped only** — never means “no graph artifact”. CLI present → best-effort or honest limitation (`OK:GRAPHIFY_LIMITATION`). **Never** overwrite `graph.mmd` with empty; **never** claim `OK:GRAPHIFY wrote` for an empty stub |
+| Coverage | Auto-written by the same generate script (single writer) with at least `services_count` / `edges_count` from JSON |
+
+**Honesty:** Plan-G M Pretty-local **≠终局**. Plan-L **local-maps deepen ≠终局**; **≠** SAT platform option-L (coverage gates / interactive dashboard); **≠** Architecture Pass; **≠** letter B. `deferred-closed ≠ forever-forbidden`. Cloud whole-repo upload/analysis remain out of scope (do not rewrite PRODUCT-LOCKS to a forever local ban).
 
 **Still out of this wave (adjacent):**
 
