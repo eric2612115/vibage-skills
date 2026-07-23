@@ -6,13 +6,21 @@ For non-coder owners and agents on **Cursor**, **Claude Code**, and **Codex**.
 
 ## Owner path (no bash)
 
-1. Open a chat on your **parent** folder (after someone ran one-time setup below — that someone can be the agent).  
-2. Say what hurts in plain language.  
-3. The agent follows **using-vibage**, runs pins/verify scripts, and routes init → orient → locate.  
-4. You only answer confirm questions (CONFIRM = your OK on the scan plan).  
-5. When dual reports exist, the agent offers finishing options (preview / stop) — still no register CTA.
+**One-time install — say only this** (agent runs all scripts):
 
-Evidence contract: [`tests/fixtures/owner-zero-bash-path.md`](tests/fixtures/owner-zero-bash-path.md) · checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md)
+> 幫我裝 Vibage
+
+Details: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · fixture: [`tests/fixtures/install-vibage-phrase.md`](tests/fixtures/install-vibage-phrase.md)
+
+Then:
+
+1. Stay in the **parent** folder chat (the folder that holds your many apps).  
+2. Say what hurts in plain language.  
+3. Agent follows **using-vibage** → prepare → ask your OK on the scan plan → find where it lives → two reports.  
+4. You only answer confirm questions (**CONFIRM** = your OK on the scan plan).  
+5. When reports exist, agent offers preview / stop — no sign-up links.
+
+Evidence: [`tests/fixtures/owner-zero-bash-path.md`](tests/fixtures/owner-zero-bash-path.md) · checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md) · maps for agents: [`docs/maps/AI-FIRST.md`](docs/maps/AI-FIRST.md) · extend pack: [`docs/EXTENDING.md`](docs/EXTENDING.md)
 
 ## 60-second start (operator / agent)
 
@@ -49,7 +57,8 @@ Per-surface notes: [`docs/install/CURSOR.md`](docs/install/CURSOR.md) · [`docs/
 - Capability truth: [`STATUS.md`](STATUS.md) (not this README)  
 - Checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md) · optional proof: [`SAT-optional-proof`](docs/superpowers/specs/satellites/SAT-optional-proof.md)  
 - SaaS / register: **blank** — [`SAT-saas-blank`](docs/superpowers/specs/satellites/SAT-saas-blank.md) · ≠ SaaS shipped  
-- Public git: `https://github.com/eric2612115/vibage-skills` · CI mirrors Tier-0 via Actions · ≠ publish-ready until you decide  
+- GitHub + Actions Tier-0: `https://github.com/eric2612115/vibage-skills` · repo visibility / marketplace / “publish-ready” **deferred** until after SaaS wave (your call)  
+
 
 - `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”
 

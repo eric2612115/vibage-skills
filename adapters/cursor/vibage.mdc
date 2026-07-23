@@ -10,6 +10,7 @@ Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` i
 Thin entry only — do not paste nested locate procedure.
 Session routing: follow **using-vibage** (pointer skill). Parent routers remain SSOT — no second state machine.
 Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA.
+If owner says **幫我裝 Vibage** / install Vibage → follow using-vibage § Install phrase (then stop; no dig yet).
 
 ## Skill routing
 

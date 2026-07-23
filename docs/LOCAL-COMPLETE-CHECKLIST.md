@@ -5,6 +5,9 @@ Grep-able OK tokens only. Capability SSOT remains [`STATUS.md`](../STATUS.md).
 | Step | Command / path | Token / evidence |
 |------|----------------|------------------|
 | 0 Owner chat path | README **Owner path** + `tests/fixtures/owner-zero-bash-path.md` | no owner-typed bash (`OWNER_ZERO_BASH_OK`) |
+| 0b Install phrase | `prompts/SAY-INSTALL-VIBAGE.md` + `tests/fixtures/install-vibage-phrase.md` | `INSTALL_PHRASE_OK` |
+| 0c Map AI-first | `docs/maps/AI-FIRST.md` | agents use JSON + `graph.mmd` |
+| 0d Extending | `docs/EXTENDING.md` | add optional skill without marketplace |
 | 1 Ship gate | `bash scripts/test-tier0.sh` | `TIER0_OK` |
 | 2 Pack health | `bash scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | 3 Parent entry | (included in pack-health) | `PROJECT_ENTRY_OK` |

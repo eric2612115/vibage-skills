@@ -9,6 +9,7 @@ Cold-start SSOT (live only):
 - Spec: docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md
 - Plans: docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md
 - Parent entry should already exist via --with-project-rule; run verify-project-entry and expect PROJECT_ENTRY_OK
+- If owner says 幫我裝 Vibage / install Vibage → follow using-vibage Install phrase (prompts/SAY-INSTALL-VIBAGE.md); do not ask them to type bash
 
 Plain words:
 - CONFIRM = the owner's OK on the scan plan (file: docs/vibage/CONFIRM.json)
