@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "service_map",
+  "scale": "Tiny",
+  "quality_bar": "MEDIUM",
+  "depth": "deeper",
+  "services": [{"id": "api"}],
+  "edges": [{"from": "api", "to": "MISSING_OK_ON_NON_STANDARD"}]
+}

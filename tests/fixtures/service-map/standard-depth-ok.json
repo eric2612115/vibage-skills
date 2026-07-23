@@ -1,0 +1,14 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "service_map",
+  "scale": "Subset",
+  "quality_bar": "MEDIUM",
+  "depth": "standard",
+  "services": [
+    {"id": "web", "name": "Web frontend"},
+    {"id": "billing", "name": "Billing service"}
+  ],
+  "edges": [
+    {"from": "web", "to": "billing"}
+  ]
+}

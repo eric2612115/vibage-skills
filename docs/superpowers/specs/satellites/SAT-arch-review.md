@@ -31,6 +31,8 @@ bash "$PKG_ROOT/scripts/verify-service-map.sh" <workspace_root>
 
 Exit **0** = map present and qualified. Exit **non-zero** = block this track only.
 
+When hub map sets `depth: "standard"`, `verify-service-map.sh` requires non-empty id-valid `edges` (see `SAT-map-schema`). Floor maps without `depth` remain valid.
+
 Fixture proof: `tests/test_arch_review_usable.sh` (optional; **not** in Tier-0). Do **not** call verify from `test_optional_track_gates.sh` / `test-tier0.sh` (thin rg contracts OK in optional gates).
 
 **Honesty:** Proven-green(script) = gates verifiable. ≠ letter B alone; ≠ agent E2E; ≠ Architecture Pass.
@@ -78,6 +80,6 @@ Fixture proof: `tests/test_arch_review_usable.sh` (optional; **not** in Tier-0).
 ## 7. Out of scope (this wave / deferred — not forever-forbidden)
 
 - Agent E2E / Focus agent-pressure cards for 架構檢視
-- Graphify / full-graph / coverage deep gates / map rendering / cloud upload
+- Graphify wiring, coverage deep gates, map rendering = **deferred this wave** for local deeper maps — **not** forever-forbidden. Cloud whole-repo upload/analysis remains out of this track’s job.
 - Wiring `test_arch_review_usable.sh` into Tier-0
 - SaaS / register CTA

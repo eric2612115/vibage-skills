@@ -2,9 +2,9 @@
 
 > **For agentic workers:** Execute plans **in order**. Do not start `Pn` until `P(n-1)` DoD is green (except noted parallels). Use `@superpowers:subagent-driven-development` per plan file. Spec SSOT: `@docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`.
 
-**Goal:** Ship local complete **C** (Tier-0 script green + honest docs) on a single clean trunk; leave B-path and Focus agent-pressure as later plans.
+**Goal:** Ship local complete **C** (Tier-0 script green + honest docs) on a single clean trunk; then optional path-to-B script tracks; then map-depth (Plan M) and B-path agent-proven Focus cards (Plan F).
 
-**Architecture:** Approach 1 thin runtime — merge p1 gate/tests onto vibage trunk, archive conflicting docs, then rename reports, wire `test-tier0.sh`, handoff dual-write, optional tracks.
+**Architecture:** Approach 1 thin runtime — merge p1 gate/tests onto vibage trunk, archive conflicting docs, then rename reports, wire `test-tier0.sh`, handoff dual-write, optional tracks, additive `depth:standard` edges verify, append-only Focus cards.
 
 **Tech Stack:** Bash, Python 3, pytest, Markdown skills/templates, Cursor skills install.
 
@@ -23,6 +23,8 @@
 | 7 | `P6-focus-stub` | same file §P6 | Deferred Focus row |
 | 8 | `P7-ci-when-remote` | same file §P7 | Only if `git remote` exists |
 | 9 | `Focus-agent-pressure` | [2026-07-23-vibage-focus-agent-pressure.md](./2026-07-23-vibage-focus-agent-pressure.md) | After P6 stub + SAT-agent-pressure; Approach 1 thin harness — fixtures/smoke/runbook first; dual-phase agent RED→GREEN deferred; Proven-green only from scorer-PASS (not Tier-0) |
+| 10 | `Plan-M` (map-depth) | [2026-07-23-vibage-map-depth.md](./2026-07-23-vibage-map-depth.md) | After path-to-B script-usable; **before** Plan-F. `depth==="standard"` (string) requires non-empty id-valid `edges`; non-string depth FAIL; non-standard edges not validated. Graphify/coverage/render = deferred local (not forever-ban). **Honesty:** Plan M alone ≠ letter B agent-proven; do not touch Focus locate Proven-green / Tier-0 |
+| 11 | `Plan-F` (B-path agent-pressure) | [2026-07-23-vibage-focus-b-path-agent-pressure.md](./2026-07-23-vibage-focus-b-path-agent-pressure.md) | After Plan-M + Focus locate C1–C3 Proven-green. Claim id **`B-path agent-proven set`** = `AP-C4-issue-fix` (`issue-fix`) + `AP-C5-service-map` (`service-map`) — **never** call these “this-wave required-set”. **Honesty:** letter B agent-proven ⇔ both dual-PHASE scorer-PASS; claim only after M+F Done; do not redefine/reflip Focus locate Proven-green; path-to-B script-usable unchanged; ≠ fix quality ≠ SaaS ≠ Architecture Pass |)
 
 ## Satellites (thick docs; not blocking P0–P2 ship)
 

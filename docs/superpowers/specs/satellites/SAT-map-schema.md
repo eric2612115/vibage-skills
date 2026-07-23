@@ -41,13 +41,31 @@ B2 required keys — **floor** for qualification. Unknown / extra keys **must no
 | `quality_bar` | exact string `"MEDIUM"` |
 | `services` | non-empty list; **each** item is an object with non-empty string `id` |
 
-Optional (may be absent; presence does not fail):
+### 3.1 Optional additive fields
 
-| Key | Notes |
-|-----|-------|
+Absent OK on floor. Presence does not fail unless rules below say otherwise.
+
+| Key | Rule |
+|-----|------|
 | `notes` | free string |
 | `generated_at` | ISO-8601 string recommended |
-| `edges` / Graphify / coverage / render fields | **deferred** this wave — additive later; **not** forever-forbidden |
+| `depth` | If present: **must be a string**. Non-string → FAIL. If string equals exactly `"standard"` → edges rules below. Any other string → **do not** validate `edges`. |
+| `edges` | Array of objects `{ "from": string, "to": string }`. On floor / non-`standard` depth: may be absent or present; **not validated**. |
+| `services[].name` | Recommended string; **not** required on floor. |
+
+**When `depth === "standard"` (string equality only):**
+
+1. `edges` must be a **non-empty** array.
+2. Each element must be an object with string `from` and `to`.
+3. Every `from` and `to` must be ∈ the set of `services[].id` values.
+4. Else → FAIL (underqualified for this verify).
+
+**Explicit:**
+
+- `depth` missing → B2 floor only (current behavior).
+- `depth: "deeper"` / `"tiny"` / any non-`standard` string → B2 floor; if `edges` present, **skip** edges validation (may be garbage; still OK for this wave).
+- `depth: 1` / `true` / `null` (JSON null as value) / object → FAIL (non-string).
+- Unknown keys still must not fail.
 
 Forward-compat: richer maps may add keys or bump `schema_version` later. Verify must stay additive-friendly (unknown keys OK).
 
@@ -59,9 +77,9 @@ Forward-compat: richer maps may add keys or bump `schema_version` later. Verify 
 bash "$PKG_ROOT/scripts/verify-service-map.sh" <workspace_root>
 ```
 
-Exit **0** only when hub `docs/vibage/maps/service_map.json` exists and passes the floor schema above.
+Exit **0** only when hub `docs/vibage/maps/service_map.json` exists and passes the floor schema above, and — when `depth === "standard"` — the edges rules in §3.1.
 
-Exit **non-zero** for: missing file, unreadable JSON, wrong `pipeline_id`, `quality_bar` ≠ `MEDIUM`, bad/missing `scale`, empty `services`, any service lacking non-empty string `id`.
+Exit **non-zero** for: missing file, unreadable JSON, wrong `pipeline_id`, `quality_bar` ≠ `MEDIUM`, bad/missing `scale`, empty `services`, any service lacking non-empty string `id`, non-string `depth`, or `depth === "standard"` with missing/empty/id-invalid `edges`.
 
 Print clear `OK:` / `FAIL:` lines. Fixture proof: `tests/test_arch_review_usable.sh` (optional track; **not** wired into Tier-0).
 
@@ -78,6 +96,6 @@ Print clear `OK:` / `FAIL:` lines. Fixture proof: `tests/test_arch_review_usable
 
 ## 6. Out of scope (this wave / deferred — not forever-forbidden)
 
-- Graphify wiring, edge graphs, coverage gates, map rendering, cloud upload
+- Graphify wiring, coverage gates, map rendering = **deferred this wave** for local deeper maps — **not** forever-forbidden. Cloud whole-repo upload/analysis remains out of this plan’s job (do not rewrite PRODUCT-LOCKS).
 - Agent E2E / Focus cards for 架構檢視
 - Changing Tier-0 to require `test_arch_review_usable.sh`

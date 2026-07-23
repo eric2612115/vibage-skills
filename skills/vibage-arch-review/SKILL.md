@@ -43,6 +43,7 @@ bash "$PKG_ROOT/scripts/verify-service-map.sh" <workspace_root>
 ```
 
    Exit 0 required. On FAIL → stop this track only; locate DONE unchanged.
+   When the map sets `depth: "standard"`, verify also requires non-empty id-valid `edges` (see `SAT-map-schema`). Floor maps without that flag remain valid.
 4. On OK → review architecture / Service map from the qualified map. Do not edit business code. Do not solicit SaaS.
 5. Summarize for owner; do not claim letter B or agent E2E proof from this script alone.
 

@@ -61,6 +61,38 @@ for i, item in enumerate(services):
     if not isinstance(sid, str) or not sid.strip():
         die(f"services[{i}].id must be a non-empty string")
 
+depth = obj.get("depth", None)
+if depth is not None and not isinstance(depth, str):
+    die("depth must be a string when present")
+
+service_ids = {
+    item["id"].strip()
+    for item in services
+    if isinstance(item, dict)
+    and isinstance(item.get("id"), str)
+    and item["id"].strip()
+}
+
+if depth == "standard":
+    edges = obj.get("edges")
+    if not isinstance(edges, list) or len(edges) < 1:
+        die('depth="standard" requires non-empty edges array')
+    for i, edge in enumerate(edges):
+        if not isinstance(edge, dict):
+            die(f"edges[{i}] must be an object")
+        frm = edge.get("from")
+        to = edge.get("to")
+        if not isinstance(frm, str) or not frm.strip():
+            die(f"edges[{i}].from must be a non-empty string")
+        if not isinstance(to, str) or not to.strip():
+            die(f"edges[{i}].to must be a non-empty string")
+        if frm not in service_ids:
+            die(f"edges[{i}].from {frm!r} not in services[].id")
+        if to not in service_ids:
+            die(f"edges[{i}].to {to!r} not in services[].id")
+    print("OK: depth=standard edges valid")
+# else: non-standard / absent depth → do NOT validate edges (even if present)
+
 print("OK: service_map.json present")
 print("OK: pipeline_id=service_map")
 print("OK: quality_bar=MEDIUM")

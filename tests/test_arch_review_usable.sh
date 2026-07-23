@@ -125,6 +125,36 @@ WS8="$TMP/example"
 install_map "$WS8" "$MAP_EX"
 expect_rc "example.json qualifies" 0 "$WS8"
 
+# standard depth PASS
+WS9="$TMP/std_ok"
+install_map "$WS9" "$ROOT/tests/fixtures/service-map/standard-depth-ok.json"
+expect_rc "standard depth ok" 0 "$WS9"
+
+# standard missing edges FAIL
+WS10="$TMP/std_miss"
+install_map "$WS10" "$ROOT/tests/fixtures/service-map/standard-depth-missing-edges.json"
+expect_rc "standard missing edges" 1 "$WS10"
+
+# standard empty edges FAIL
+WS11="$TMP/std_empty"
+install_map "$WS11" "$ROOT/tests/fixtures/service-map/standard-depth-empty-edges.json"
+expect_rc "standard empty edges" 1 "$WS11"
+
+# standard bad edge id FAIL
+WS12="$TMP/std_bad"
+install_map "$WS12" "$ROOT/tests/fixtures/service-map/standard-depth-bad-edge-id.json"
+expect_rc "standard bad edge id" 1 "$WS12"
+
+# non-string depth FAIL
+WS13="$TMP/depth_ns"
+install_map "$WS13" "$ROOT/tests/fixtures/service-map/depth-non-string.json"
+expect_rc "non-string depth" 1 "$WS13"
+
+# non-standard depth: edges not validated → PASS
+WS14="$TMP/deeper"
+install_map "$WS14" "$ROOT/tests/fixtures/service-map/depth-deeper-with-edges.json"
+expect_rc "non-standard depth edges ignored" 0 "$WS14"
+
 # Thin shared contracts (must NOT invoke verify-service-map inside optional gates)
 bash "$ROOT/tests/test_optional_track_gates.sh"
 

@@ -3,6 +3,7 @@
   "pipeline_id": "service_map",
   "scale": "Tiny",
   "quality_bar": "MEDIUM",
+  "depth": "standard",
   "services": [
     {
       "id": "api",
@@ -12,6 +13,9 @@
       "id": "worker",
       "name": "Background worker"
     }
+  ],
+  "edges": [
+    {"from": "api", "to": "worker"}
   ],
   "notes": "Example qualified map — copy to docs/vibage/maps/service_map.json",
   "generated_at": "2026-07-23T00:00:00Z"
