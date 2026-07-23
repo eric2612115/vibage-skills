@@ -69,7 +69,7 @@ Per-surface notes: [`docs/install/CURSOR.md`](docs/install/CURSOR.md) · [`docs/
 **Capability / phase SSOT → [`STATUS.md`](STATUS.md).**  
 Agents must read package `STATUS.md` before expanding scope from this README.
 
-Do **not** treat README as a second phase table. Plan-index ids live under `docs/superpowers/plans/`. For letter C, path-to-B, letter B, maps, CI SKIPPED, SaaS blank — see `STATUS.md` only.
+Do **not** treat README as a second phase table. Plan-index ids live under `docs/superpowers/plans/`. For letter C, path-to-B, letter B, maps, remote CI Proven, SaaS blank — see `STATUS.md` only.
 
 **Spec:** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
 **Plans:** `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`
