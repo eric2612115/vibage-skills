@@ -1,0 +1,27 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "locate-test-failed-1",
+  "phase": "failed",
+  "mode": "degraded",
+  "supersedes_run_id": null,
+  "stopped_at": "2026-07-23T00:00:00Z",
+  "handoff": {
+    "stop_reason": "gate_failed",
+    "progress": {
+      "steps_done": ["orient", "confirm"],
+      "dig_ids_done": [],
+      "dig_ids_pending": ["app-a"],
+      "confirm_payload_hash": "abc"
+    },
+    "blockers": [{"kind": "stale_confirm", "detail": "hash mismatch"}],
+    "next_action": {"summary": "Re-confirm SCAN_PLAN", "steps": ["re-confirm", "assert_gate"]},
+    "artifacts_ok": {
+      "SCAN_PLAN": "reuse",
+      "CONFIRM": "redo",
+      "OWNER_POLICY": "reuse"
+    },
+    "artifacts_ok_source": "script",
+    "known_incompleteness": ["no dual reports"]
+  }
+}

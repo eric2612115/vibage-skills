@@ -1,0 +1,35 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "locate-example-mint-1",
+  "phase": "analyzing",
+  "mode": "degraded",
+  "supersedes_run_id": "locate-example-failed-0",
+  "stopped_at": null,
+  "handoff": {
+    "stop_reason": "resumed",
+    "progress": {
+      "steps_done": ["orient", "confirm", "assert_gate"],
+      "dig_ids_done": [],
+      "dig_ids_pending": ["app-a"],
+      "confirm_payload_hash": "<payload_hash>",
+      "notes": "Terminal-then-mint: root supersedes_run_id is SSOT"
+    },
+    "blockers": [],
+    "next_action": {
+      "summary": "Continue dig for planned_dig_ids",
+      "steps": ["dig", "dual_reports_on_success_only"]
+    },
+    "artifacts_ok": {
+      "SCAN_PLAN": "reuse",
+      "CONFIRM": "reuse",
+      "OWNER_POLICY": "unknown"
+    },
+    "artifacts_ok_source": "script",
+    "known_incompleteness": [],
+    "prior_run_id": "locate-example-failed-0"
+  },
+  "artifact_uris": [],
+  "survey_refs": [],
+  "gap_ids": []
+}

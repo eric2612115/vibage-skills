@@ -1,0 +1,27 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "locate",
+  "run_id": "locate-test-mint-2",
+  "phase": "analyzing",
+  "mode": "degraded",
+  "supersedes_run_id": "locate-test-failed-1",
+  "handoff": {
+    "stop_reason": "resumed",
+    "progress": {
+      "steps_done": ["orient", "confirm", "assert_gate"],
+      "dig_ids_done": [],
+      "dig_ids_pending": ["app-a"],
+      "confirm_payload_hash": "abc"
+    },
+    "blockers": [],
+    "next_action": {"summary": "Continue dig", "steps": ["dig"]},
+    "artifacts_ok": {
+      "SCAN_PLAN": "reuse",
+      "CONFIRM": "reuse",
+      "OWNER_POLICY": "unknown"
+    },
+    "artifacts_ok_source": "script",
+    "known_incompleteness": [],
+    "prior_run_id": "locate-test-failed-1"
+  }
+}
