@@ -10,4 +10,4 @@ Prefer `adapters/cursor/vibage.mdc` (install copies to `.cursor/rules/vibage.mdc
 - Resolve PKG_ROOT via `$PKG_ROOT/scripts/resolve-pkg-root.sh` (or probe Cursor/Claude/Codex skill homes).
 - Obey `$PKG_ROOT/references/hard-stops.md`.
 - Nested: `$PKG_ROOT/references/nested-protocol.md` (capability matrix; degrade honestly).
-- Dual reports: `VIBAGE-OWNER.md` + `VIBAGE-LOCATE.md` at workspace root after gates.
+- Dual reports: `VIBAGE-ISSUE-OWNER.md` + `VIBAGE-ISSUE-LOCATE.md` at workspace root after gates.
