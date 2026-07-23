@@ -40,11 +40,15 @@ grep -Fq 'docs/install/' "$README" || fail "README must link docs/install/"
 if grep -Eiq 'CI SKIPPED|no git remote here' "$README"; then
   fail "README must not keep stale CI SKIPPED / no-remote wording"
 fi
-# Public ≠ marketplace ≠ SaaS (owner may flip GitHub visibility without claiming store/SaaS)
+# Public ≠ marketplace ≠ SaaS (repo is public; still must not claim store/SaaS)
 if grep -Eiq 'Making the GitHub repo public.*waits until after.*SaaS|repo public / marketplace / publish-ready \*\*deferred until after SaaS' "$README" "$STATUS"; then
   fail "stale honesty: public git must not be blocked behind SaaS wave"
 fi
-grep -Eiq 'Public GitHub|public git' "$README" || fail "README must name Public GitHub honesty"
+grep -Fq 'github.com/eric2612115/vibage-skills' "$README" || fail "README must link public GitHub URL"
+grep -Fq 'git clone https://github.com/eric2612115/vibage-skills.git' "$README" \
+  || fail "README must show public git clone"
+grep -Eiq 'This GitHub repo is public|repo is \*\*public\*\*' "$README" "$STATUS" \
+  || fail "README/STATUS must state repo is public"
 grep -Eiq 'marketplace' "$README" || fail "README must mention marketplace as separate"
 grep -Eiq 'Public GitHub' "$STATUS" || fail "STATUS must name Public GitHub ≠ marketplace ≠ SaaS"
 for f in docs/install/CURSOR.md docs/install/CLAUDE.md docs/install/CODEX.md; do

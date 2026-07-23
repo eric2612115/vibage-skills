@@ -4,6 +4,14 @@
 
 Works with **Cursor**, **Claude Code**, and **Codex**.
 
+**Public repo:** [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) (MIT)
+
+```bash
+git clone https://github.com/eric2612115/vibage-skills.git
+```
+
+Then open the **parent** folder that contains your apps, and say the install line below (or see [`docs/install/`](docs/install/) / [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md) for plugin paths).
+
 ## What you say (no typing commands)
 
 **First time — install:**
@@ -47,7 +55,7 @@ You should not type bash. The agent runs scripts.
 
 **Honesty (do not conflate):**
 - **SaaS / sign-up** = blank (no register CTA in this pack).
-- **Public GitHub** = share/clone the skill pack; **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
+- **This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
 - Plugin manifests are on-tree (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). **≠** store listing until you submit and pass review.
 - `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”.
 

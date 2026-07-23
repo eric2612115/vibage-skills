@@ -52,8 +52,8 @@ claude plugin validate .
 
 ## Owner checklist (you, not the agent)
 
-- [ ] GitHub repo **Public**
-- [ ] Cursor: submit URL + accept Publisher Terms
+- [x] GitHub repo **Public** (`https://github.com/eric2612115/vibage-skills`)
+- [ ] Cursor: submit URL + accept Publisher Terms → [marketplace/publish](https://cursor.com/marketplace/publish)
 - [ ] Claude: share `marketplace add` / `install` lines with users (community official catalog is a separate Anthropic process)
 - [ ] Do **not** claim “on Cursor Marketplace” until the listing is live
 - [ ] SaaS / website still out of this pack
