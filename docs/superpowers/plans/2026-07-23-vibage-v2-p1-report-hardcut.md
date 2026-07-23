@@ -35,7 +35,7 @@
 - Create: `tests/test_report_names.sh`
 - Modify: `scripts/verify-report.sh` (later)
 
-- [ ] **Step 1: Write failing test**
+- [x] **Step 1: Write failing test**
 
 Create `tests/test_report_names.sh`:
 
@@ -58,7 +58,7 @@ rg -n 'VIBAGE-ISSUE-LOCATE\.md' "$ROOT/skills/vibage-locate/SKILL.md" \
 echo "OK: hard-cut names present; legacy absent"
 ```
 
-- [ ] **Step 2: Run test — expect FAIL**
+- [x] **Step 2: Run test — expect FAIL**
 
 ```bash
 chmod +x tests/test_report_names.sh
@@ -67,7 +67,7 @@ bash tests/test_report_names.sh
 
 Expected: FAIL (legacy names still present or new names missing).
 
-- [ ] **Step 3: Update templates + skill**
+- [x] **Step 3: Update templates + skill**
 
 In `references/owner-report-template.md`, `references/locate-report-template.md`, `skills/vibage-locate/SKILL.md`:
 
@@ -75,7 +75,7 @@ In `references/owner-report-template.md`, `references/locate-report-template.md`
 - Ensure LOCATE template has **Assumption-challenge** section (2–5 bullet slots)
 - Header notes two status lines: 找問題 / 架構檢視
 
-- [ ] **Step 4: Re-run test — expect PASS**
+- [x] **Step 4: Re-run test — expect PASS**
 
 ```bash
 bash tests/test_report_names.sh
@@ -83,7 +83,7 @@ bash tests/test_report_names.sh
 
 Expected: `OK: hard-cut names present; legacy absent`
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add tests/test_report_names.sh references/owner-report-template.md references/locate-report-template.md skills/vibage-locate/SKILL.md
@@ -103,15 +103,15 @@ EOF
 - Modify: `tests/fixtures/*LOCATE*`, `tests/fixtures/*OWNER*` if named legacy
 - Modify: `assets/vibage-preview/index.html` if it labels files
 
-- [ ] **Step 1: Add verify check for filename args**
+- [x] **Step 1: Add verify check for filename args**
 
 In `scripts/verify-report.sh`, when paths are passed, if basename is `VIBAGE-OWNER.md` or `VIBAGE-LOCATE.md`, exit non-zero with plain message preferring `VIBAGE-ISSUE-*`.
 
-- [ ] **Step 2: Update fixtures / smoke callers**
+- [x] **Step 2: Update fixtures / smoke callers**
 
 Rename or retarget fixture filenames in tests that pass report paths into `verify-report.sh`.
 
-- [ ] **Step 3: Run related tests**
+- [x] **Step 3: Run related tests**
 
 ```bash
 bash tests/test_verify_run.sh
@@ -121,7 +121,7 @@ bash tests/test_report_names.sh
 
 Expected: all exit 0.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add scripts/verify-report.sh tests assets
@@ -136,7 +136,7 @@ EOF
 
 ### Task 3: P1 DoD
 
-- [ ] **Step 1: Acceptance**
+- [x] **Step 1: Acceptance**
 
 ```bash
 bash tests/test_report_names.sh
@@ -146,4 +146,4 @@ rg -n 'VIBAGE-OWNER\.md|VIBAGE-LOCATE\.md' skills references scripts tests asset
 
 Expected: `legacy_clear` and name test OK.
 
-- [ ] **Step 2: Hand off to P2**
+- [x] **Step 2: Hand off to P2**
