@@ -76,6 +76,20 @@ set -e
 [[ "$RC" -ne 0 ]] || fail "pipeline_id inside handoff should fail"
 pass "rejects pipeline_id inside handoff"
 
+# RED: non-locate root pipeline_id (locate-wave only)
+python3 - "$ROOT/tests/fixtures/run_failed_handoff.json" "$TMP/bad_root_pipe.json" <<'PY'
+import json, sys
+obj = json.load(open(sys.argv[1], encoding="utf-8"))
+obj["pipeline_id"] = "issue_fix"
+json.dump(obj, open(sys.argv[2], "w", encoding="utf-8"))
+PY
+set +e
+"$VERIFY" "$TMP/bad_root_pipe.json"
+RC=$?
+set -e
+[[ "$RC" -ne 0 ]] || fail "non-locate pipeline_id should fail"
+pass "rejects non-locate root pipeline_id"
+
 # RED: missing required handoff key
 python3 - "$ROOT/tests/fixtures/run_failed_handoff.json" "$TMP/missing_key.json" <<'PY'
 import json, sys

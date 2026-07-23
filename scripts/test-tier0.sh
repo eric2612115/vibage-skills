@@ -19,6 +19,9 @@ bash tests/test_report_names.sh
 echo "== tier0: handoff =="
 bash tests/test_handoff.sh
 
+echo "== tier0: optional track gates =="
+bash tests/test_optional_track_gates.sh
+
 echo "== tier0: p1 smoke (gate RED after mutate) =="
 bash tests/test_p1_smoke.sh
 

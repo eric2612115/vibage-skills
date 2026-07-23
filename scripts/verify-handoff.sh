@@ -59,6 +59,9 @@ for key in ROOT_REQUIRED:
     if key not in obj:
         die(f"missing root field: {key}")
 
+if obj.get("pipeline_id") != "locate":
+    die("pipeline_id must be locate (locate-wave only)")
+
 handoff = obj.get("handoff")
 if not isinstance(handoff, dict):
     die("handoff must be a nested object")
