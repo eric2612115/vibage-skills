@@ -40,6 +40,6 @@ This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
 
 **Focus carve-out (scope=agent):** On-tree may become YES when card templates exist; Proven-green is never set by Tier-0, smoke, or ordinary verify scripts — only after this-wave required-set dual-phase agent scorer-PASS. Fixture/smoke presence ≠ agent proof. locate DONE ⊥ Focus.
 
-**P7 / CI (SKIPPED):** `git remote -v` has **no origin** on this checkout → remote CI workflow **skipped** / **SKIPPED** (no `.github/workflows/*.yml` this wave). Contract: `docs/superpowers/specs/satellites/SAT-ci-remote.md`. Local Tier-0 green (`bash scripts/test-tier0.sh`) is allowed and is **≠** remote CI success. No remote ≠ publish-ready.
+**P7 / CI:** `origin` present (`git@github.com:eric2612115/vibage-skills.git` via SSH host alias). Workflow on-tree: `.github/workflows/tier0.yml` (runs **only** `bash scripts/test-tier0.sh`). Contract: `docs/superpowers/specs/satellites/SAT-ci-remote.md`. Remote CI Proven-green = **pending first Actions green** (local `TIER0_OK` ≠ remote Proven). Still ≠ publish-ready. (Historical no-origin state was SKIPPED — superseded now that origin exists.)
 
 Update On-tree / Proven-green only when scripts say so — **except** Focus row (`scope=agent`): see Focus carve-out above. Never YES without proof.

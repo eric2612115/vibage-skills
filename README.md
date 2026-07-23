@@ -49,7 +49,8 @@ Per-surface notes: [`docs/install/CURSOR.md`](docs/install/CURSOR.md) · [`docs/
 - Capability truth: [`STATUS.md`](STATUS.md) (not this README)  
 - Checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md) · optional proof: [`SAT-optional-proof`](docs/superpowers/specs/satellites/SAT-optional-proof.md)  
 - SaaS / register: **blank** — [`SAT-saas-blank`](docs/superpowers/specs/satellites/SAT-saas-blank.md) · ≠ SaaS shipped  
-- No git remote here → remote CI **SKIPPED** · ≠ publish-ready  
+- Public git: `https://github.com/eric2612115/vibage-skills` · CI mirrors Tier-0 via Actions · ≠ publish-ready until you decide  
+
 - `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”
 
 ---

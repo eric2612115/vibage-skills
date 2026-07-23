@@ -1,0 +1,15 @@
+name: tier0
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  tier0:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tier-0 ship gate
+        run: bash scripts/test-tier0.sh
