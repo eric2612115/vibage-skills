@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Usage: verify-handoff.sh <RunEnvelope.json>
 # Exit 0 if §8.3 handoff structural rules pass.
+#
+# Scope: locate-wave shaped only (pipeline_id locate + locate artifacts keys).
+# Not pipeline-agnostic — do not reuse as a generic handoff verifier for fix /
+# 架構檢視 / other pipelines without a dedicated contract.
+# artifacts_ok does not cross pipelines by default (umbrella §8.4).
 set -euo pipefail
 RUN="${1:-}"
 [[ -n "$RUN" && -f "$RUN" ]] || { echo "Usage: $0 <RunEnvelope.json>" >&2; exit 2; }
