@@ -10,8 +10,8 @@ Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA
 ## Skill routing
 
 1. No `docs/vibage/STATUS.md` → **vibage-init** (install + hub; no dig, no dual reports).
-2. Hub ready, no valid `docs/vibage/CONFIRM.json` → **vibage-orient** (SCAN_PLAN; stop at awaiting_confirm).
-3. CONFIRM OK → **vibage-issue-locate** (runs `assert_gate`; nested dig + dual reports; legacy `vibage-locate` OK).
+2. Hub ready, no valid CONFIRM (= owner OK on the scan plan; file `docs/vibage/CONFIRM.json`) → **vibage-orient** (stop until owner confirms).
+3. CONFIRM OK → **vibage-issue-locate** (runs gate; nested dig + dual reports; legacy `vibage-locate` OK).
 4. Paste NEW-CHAT / unclear install → **vibage-bootstrap** or **vibage-init** (then using-vibage).
 5. Optional (not required for locate DONE): **vibage-issue-fix**, **vibage-arch-review**.
 

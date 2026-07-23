@@ -33,9 +33,23 @@ fi
 grep -Fq 'STATUS.md' "$README" || fail "README must point at STATUS.md"
 grep -Fq 'STATUS.md' "$NEWCHAT" || fail "NEW-CHAT must point at package STATUS.md"
 
+# Stranger hero / Plan-S W2
+grep -Fq '60-second start' "$README" || fail "README must have 60-second start hero"
+grep -Fq 'docs/install/CURSOR.md' "$README" || fail "README must link docs/install/CURSOR.md"
+grep -Fq 'docs/install/CLAUDE.md' "$README" || fail "README must link docs/install/CLAUDE.md"
+grep -Fq 'docs/install/CODEX.md' "$README" || fail "README must link docs/install/CODEX.md"
+for f in docs/install/CURSOR.md docs/install/CLAUDE.md docs/install/CODEX.md; do
+  [[ -f "$f" ]] || fail "missing $f"
+  grep -Fq 'PROJECT_ENTRY_OK' "$f" || fail "$f must mention PROJECT_ENTRY_OK"
+  grep -Fq 'parent' "$f" || fail "$f must say parent workspace"
+done
+
 # Dual-STATUS: NEW-CHAT must name package STATUS as capability SSOT (not only hub path)
 grep -Eiq 'package[[:space:]]+`?STATUS\.md`?|capability SSOT' "$NEWCHAT" \
   || fail "NEW-CHAT must name package STATUS.md as capability SSOT"
+grep -Fq 'using-vibage' "$NEWCHAT" || fail "NEW-CHAT must name using-vibage"
+grep -Eiq "CONFIRM = .*owner" "$NEWCHAT" || fail "NEW-CHAT must plain-word CONFIRM"
+grep -Fq 'do not type bash' "$NEWCHAT" || fail "NEW-CHAT must say owner do not type bash"
 
 # Anti-fake-green: forbid stale README P2 Graphify/Later collision with plan P2-tier0-entry
 if grep -Eiq '\*\*P2\*\*.*Graphify|\*\*P2\*\*.*Later' "$README"; then
@@ -79,6 +93,16 @@ for f in "${ENTRY_FILES[@]}"; do
   if grep -Fq 'docs-hygiene' "$f"; then
     fail "remove docs-hygiene from vibage entry $f (SelfAutoBuz lives elsewhere)"
   fi
+done
+
+# Adapter plain gloss for CONFIRM (Plan-S W2)
+for f in \
+  "$ROOT/adapters/cursor/vibage.mdc" \
+  "$ROOT/adapters/claude/CLAUDE.vibage.md" \
+  "$ROOT/adapters/shared/AGENTS.vibage.md" \
+  "$ROOT/adapters/codex/AGENTS.vibage.md"
+do
+  grep -Fq 'owner OK on the scan plan' "$f" || fail "missing CONFIRM plain gloss in $f"
 done
 
 echo "ENTRY_DOCS_SYNC_OK"

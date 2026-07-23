@@ -14,7 +14,7 @@ Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA
 ## Skill routing
 
 1. No `docs/vibage/STATUS.md` → **vibage-init**
-2. Hub ready, no valid CONFIRM → **vibage-orient**
+2. Hub ready, no valid CONFIRM (= owner OK on the scan plan) → **vibage-orient**
 3. CONFIRM OK → **vibage-issue-locate** (legacy install name `vibage-locate` OK)
 4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init** (then using-vibage)
 5. Optional (not required for locate DONE): **vibage-issue-fix**, **vibage-arch-review**
