@@ -1,6 +1,6 @@
 # P2 — Tier-0 entry `scripts/test-tier0.sh` Implementation Plan
 
-> **For agentic workers:** REQUIRED: Use `@superpowers:subagent-driven-development` or `@superpowers:executing-plans`. Steps use checkbox (`- [ ]`) syntax.
+> **For agentic workers:** REQUIRED: Use `@superpowers:subagent-driven-development` or `@superpowers:executing-plans`. Steps use checkbox (`- [x]`) syntax.
 
 **Goal:** Single local ship command `bash scripts/test-tier0.sh` that proves gate RED→GREEN, verify green, and hard-cut report names — this-wave **ship** (SHIP_MEANS_TIER0_ONLY).
 
@@ -33,7 +33,7 @@
 - Create: `scripts/test-tier0.sh`
 - Create: `tests/test_tier0_entry.sh`
 
-- [ ] **Step 1: Write meta test first (fails until wrapper exists)**
+- [x] **Step 1: Write meta test first (fails until wrapper exists)**
 
 Create `tests/test_tier0_entry.sh`:
 
@@ -62,7 +62,7 @@ bash tests/test_tier0_entry.sh
 
 Expected: FAIL (`missing …/test-tier0.sh`).
 
-- [ ] **Step 2: Create wrapper**
+- [x] **Step 2: Create wrapper**
 
 Create `scripts/test-tier0.sh` with exact body:
 
@@ -103,7 +103,7 @@ echo "TIER0_OK"
 chmod +x scripts/test-tier0.sh
 ```
 
-- [ ] **Step 3: Verify smoke contains mutate→gate RED**
+- [x] **Step 3: Verify smoke contains mutate→gate RED**
 
 ```bash
 grep -q 'MUTATED_SMOKE\|assert_gate' tests/test_p1_smoke.sh
@@ -115,7 +115,7 @@ echo "SMOKE_RED_SEGMENT_OK"
 
 Expected: `SMOKE_RED_SEGMENT_OK`. If FAIL: stop and restore mutate block from `.worktrees/vibage-os-p1/tests/test_p1_smoke.sh` lines covering “mutate plan → stale confirm” through non-zero `assert_gate` (do not invent a weaker check).
 
-- [ ] **Step 4: Run meta + entry — expect PASS**
+- [x] **Step 4: Run meta + entry — expect PASS**
 
 ```bash
 bash tests/test_tier0_entry.sh
@@ -124,7 +124,7 @@ bash scripts/test-tier0.sh
 
 Expected: `ENTRY_CONTRACT_OK` then `TIER0_OK`, exit 0. Fix child suites until green; never `|| true` around ship suites.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add scripts/test-tier0.sh tests/test_tier0_entry.sh tests
@@ -142,7 +142,7 @@ EOF
 **Files:**
 - Modify: `STATUS.md`, `README.md`
 
-- [ ] **Step 1: Update STATUS capability row**
+- [x] **Step 1: Update STATUS capability row**
 
 Set Tier-0 row: Designed=YES, On-tree=YES, Proven-green=YES, Scope=`script`.
 
@@ -150,11 +150,11 @@ Add plain sentence:
 
 > This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
 
-- [ ] **Step 2: README one-liner**
+- [x] **Step 2: README one-liner**
 
 Document: `bash scripts/test-tier0.sh` as the local proof command.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add STATUS.md README.md
@@ -169,7 +169,7 @@ EOF
 
 ### Task 3: P2 DoD (ship)
 
-- [ ] **Step 1: Final ship check**
+- [x] **Step 1: Final ship check**
 
 ```bash
 bash scripts/test-tier0.sh
@@ -177,6 +177,6 @@ bash scripts/test-tier0.sh
 
 Expected: `TIER0_OK`
 
-- [ ] **Step 2: Hand off**
+- [x] **Step 2: Hand off**
 
 This-wave **script ship** complete. Next optional: P3 handoff dual-write. Do **not** mark Focus agent-pressure Proven-green.
