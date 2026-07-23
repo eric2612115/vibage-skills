@@ -11,15 +11,12 @@ This is a **sibling package** to SelfAutoBuz (OPC hub). Product SSOT lives here;
 
 ## Status / roadmap（先讀）
 
-**接續進度、Phase 邊界、能力對照表 → [`STATUS.md`](STATUS.md)。**  
-Agents starting a new session should read `STATUS.md` before expanding scope.
+**Capability / phase SSOT → [`STATUS.md`](STATUS.md).**  
+Agents starting a new session must read package `STATUS.md` before expanding scope from this README.
 
-| Phase | Meaning | Now |
-|-------|---------|-----|
-| **V0** | Single-/few-root locate + dual reports | **Shipped** |
-| **P1** | Parent-folder OS: init → orient → confirm → locate; footprints; preview; survey + section-gate | **Skills on MAIN** + multi-IDE install |
-| **P2** | Graphify-class map, coverage gates, long-task + AUTO_DECIDED | Later |
-| **P3** | Cloud Pro / richer results (`vibage-app`) | Later |
+Do **not** treat README as a second phase table. Plan-index ids (e.g. `P2-tier0-entry`) live under `docs/superpowers/plans/`; they are not README phase labels. For letter C, path-to-B, letter B agent-proven, maps (Plan G–L), CI SKIPPED, and SaaS **blank**, see `STATUS.md` only.
+
+SaaS / register is reserved blank — thin contract: `docs/superpowers/specs/satellites/SAT-saas-blank.md` (no local register CTA; ≠ SaaS shipped).
 
 ## Install (global — three surfaces)
 
@@ -62,12 +59,13 @@ Probe order: `~/.cursor/skills` → `~/.claude/skills` → `~/.agents/skills`; `
 
 ## Skill routing
 
-1. No `docs/vibage/STATUS.md` → `vibage-init`
+1. No hub `docs/vibage/STATUS.md` → `vibage-init`
 2. Hub ready, no valid CONFIRM → `vibage-orient`
 3. CONFIRM OK → `vibage-issue-locate`
 4. NEW-CHAT / unclear install → `vibage-bootstrap` → init
-5. SelfAutoBuz doc hygiene → `docs-hygiene` (not locate)
-6. Optional (not required for locate DONE): `vibage-issue-fix`, `vibage-arch-review` (架構檢視)
+5. Optional (not required for locate DONE): `vibage-issue-fix`, `vibage-arch-review` (架構檢視)
+
+Package capability SSOT is root `STATUS.md` (not the hub file above).
 
 **Rename note:** skill dir is `vibage-issue-locate`. `scripts/install.sh` still symlinks legacy name `vibage-locate` → `vibage-issue-locate` for one release.
 
@@ -88,7 +86,7 @@ Hard stops SSOT: [`references/hard-stops.md`](references/hard-stops.md).
 | `scripts/assert_gate.sh` / `write_confirm.sh` | Orient → locate gate |
 | `DEPENDENCIES.md` | Pinned `superpowers_sha=` |
 | `docs/archive/` | Retired pre-v2 docs (not live proof) |
-| `STATUS.md` | Phase map |
+| `STATUS.md` | Capability / phase SSOT (package) |
 
 ## Hard product locks
 

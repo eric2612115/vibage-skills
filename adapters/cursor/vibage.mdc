@@ -6,6 +6,7 @@ alwaysApply: true
 # Vibage (Cursor entry)
 
 Product SSOT: vibage-skills package. Skills under `~/.cursor/skills/vibage-*` (and optional project `.cursor/skills/`).
+Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` is init/orient only).
 
 ## Skill routing
 
@@ -13,7 +14,7 @@ Product SSOT: vibage-skills package. Skills under `~/.cursor/skills/vibage-*` (a
 2. Hub ready, no valid CONFIRM → **vibage-orient**
 3. CONFIRM OK → **vibage-issue-locate** (legacy install name `vibage-locate` OK)
 4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init**
-5. SelfAutoBuz hub hygiene → **docs-hygiene** (not vibage-issue-locate)
+5. Optional (not required for locate DONE): **vibage-issue-fix**, **vibage-arch-review**
 
 ## PKG_ROOT
 
@@ -25,7 +26,7 @@ Probe order includes `~/.cursor/skills`, `~/.claude/skills`, `~/.agents/skills`.
 
 ## Nested / browser
 
-Prefer Cursor Task/subagents for nested investigators→reviewers; else `Mode: degraded`. Soft CTA after dual reports via browser/MCP or human URL.
+Prefer Cursor Task/subagents for nested investigators→reviewers; else `Mode: degraded`. Preview is fail-soft localhost only — no register CTA.
 
 ## Hard stops
 
