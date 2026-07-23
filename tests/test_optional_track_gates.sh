@@ -1,16 +1,19 @@
 #!/usr/bin/env bash
-# Contract: optional track stubs expose hard gates; unlock example schema exists.
+# Contract: optional tracks expose hard gates; unlock + OWNER_POLICY examples exist.
+# Note: tests/test_issue_fix_usable.sh is optional-track proof and MUST NOT be required here.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 FIX="$ROOT/skills/vibage-issue-fix/SKILL.md"
 ARCH="$ROOT/skills/vibage-arch-review/SKILL.md"
 UNLOCK_EX="$ROOT/docs/superpowers/specs/satellites/unlock.example.json"
+POLICY_EX="$ROOT/docs/superpowers/specs/satellites/OWNER_POLICY.example.json"
 pass() { echo "OK: $*"; }
 fail() { echo "FAIL: $*" >&2; exit 1; }
 
 [[ -f "$FIX" ]] || fail "missing vibage-issue-fix SKILL"
 [[ -f "$ARCH" ]] || fail "missing vibage-arch-review SKILL"
 [[ -f "$UNLOCK_EX" ]] || fail "missing unlock.example.json"
+[[ -f "$POLICY_EX" ]] || fail "missing OWNER_POLICY.example.json"
 
 # issue-fix: dual consent + unlock + prefer branch/PR + no dig without locate report
 rg -q 'OWNER_POLICY' "$FIX" || fail "issue-fix missing OWNER_POLICY"
@@ -37,6 +40,17 @@ if missing:
 if not isinstance(obj["allowed_paths"], list):
     raise SystemExit("allowed_paths must be a list")
 print("OK: unlock.example.json keys")
+PY
+
+# OWNER_POLICY.example required key fix_preference ∈ {YES,NO}
+python3 - "$POLICY_EX" <<'PY'
+import json, sys
+path = sys.argv[1]
+obj = json.load(open(path, encoding="utf-8"))
+pref = obj.get("fix_preference")
+if pref not in ("YES", "NO"):
+    raise SystemExit(f"OWNER_POLICY.example.json fix_preference must be YES|NO, got {pref!r}")
+print("OK: OWNER_POLICY.example.json fix_preference")
 PY
 
 # MANIFEST marks optional tracks (present + commented optional)

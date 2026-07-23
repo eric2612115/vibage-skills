@@ -13,12 +13,14 @@
 | Tier-0 `scripts/test-tier0.sh` | YES | YES | YES | script |
 | Report hard-cut VIBAGE-ISSUE-* | YES | YES | YES | script |
 | Handoff dual-write | YES | YES | YES | script |
-| Optional: issue-fix | YES | stub | NO | optional track (locate DONE independent) |
+| Optional: issue-fix | YES | YES | YES | script (dual-consent+unlock gates; locate DONE independent) |
 | Optional: 架構檢視 | YES | stub | NO | optional track (map-qualified; locate DONE independent) |
 | Focus: agent-pressure | YES | YES | YES | agent (meta row — **not** a pipeline_id; see SAT-agent-pressure) |
 | SaaS / register | blank | — | — | — |
 
 This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
+
+**Optional issue-fix honesty:** On-tree=YES + Proven-green=YES (scope=`script`) means dual-consent + unlock gates are verifiable via `scripts/verify-issue-fix-unlock.sh` and `tests/test_issue_fix_usable.sh`. That is **not** letter **B** complete, and **not** an agent fix E2E / quality guarantee. `test_issue_fix_usable.sh` is **not** wired into Tier-0.
 
 **Handoff note:** `verify-handoff.sh` is locate-wave shaped only (not pipeline-agnostic). `artifacts_ok` does **not** cross pipelines by default (umbrella §8.4).
 
