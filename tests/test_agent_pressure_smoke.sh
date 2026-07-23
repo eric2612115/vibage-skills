@@ -10,8 +10,9 @@ fail() { echo "FAIL: $*"; exit 1; }
 grep -q 'tests/artifacts/agent-pressure/' .gitignore \
   || fail "missing gitignore for tests/artifacts/agent-pressure/"
 
-# card templates frozen
-for card in AP-C1-happy AP-C2-gate-RED AP-C3-handoff-resume; do
+# card templates frozen (locate this-wave + B-path set; presence ≠ Proven / ≠ letter B)
+for card in AP-C1-happy AP-C2-gate-RED AP-C3-handoff-resume \
+            AP-C4-issue-fix AP-C5-service-map; do
   for f in card.md checklist.md oracle.md; do
     [[ -f "tests/fixtures/agent-pressure/cards/$card/$f" ]] \
       || fail "missing $card/$f"
@@ -35,6 +36,12 @@ fi
 if grep -Ei 'Proven-green[[:space:]]*=[[:space:]]*YES' tests/test_agent_pressure_smoke.sh \
   | grep -Eivq 'MUST NOT|never|not[[:space:]]+flip|do[[:space:]]+not|≠|!=|forbid'; then
   fail "smoke must not assert Proven-green=YES"
+fi
+
+# hard: smoke must not claim letter B agent-proven (structural presence only)
+if grep -Ei 'letter[[:space:]]+B[[:space:]]+agent-proven' tests/test_agent_pressure_smoke.sh \
+  | grep -Eivq 'MUST NOT|never|not[[:space:]]+flip|do[[:space:]]+not|≠|!=|forbid|presence'; then
+  fail "smoke must not assert letter B agent-proven"
 fi
 
 echo "AGENT_PRESSURE_SMOKE_OK"

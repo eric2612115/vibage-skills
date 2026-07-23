@@ -80,7 +80,7 @@ Do **not** use `B-path agent-proven` (missing `letter` / missing `set`) as a STA
 **Files:**
 - Modify: `docs/superpowers/specs/satellites/SAT-agent-pressure.md`
 
-- [ ] **Step 1: Keep §5.1 this-wave required-set = C1–C3 only**
+- [x] **Step 1: Keep §5.1 this-wave required-set = C1–C3 only**
 
 Do **not** expand “this-wave required-set” to include C4/C5. Add a new subsection, e.g. **§5.2 B-path agent-proven set**:
 
@@ -99,7 +99,7 @@ Explicit sentences (must land in SAT §5.2):
 >
 > Public / STATUS wording is **`letter B agent-proven`** only; `B-path agent-proven set` is the set claim id, not a STATUS end-state name.
 
-- [ ] **Step 2: Catalog rows in §6.1**
+- [x] **Step 2: Catalog rows in §6.1**
 
 Add:
 
@@ -108,7 +108,7 @@ Add:
 | `AP-C4-issue-fix` | `issue-fix` | After locate reports + `fix_preference=YES` + unlock; GREEN proves `verify-issue-fix-unlock` |
 | `AP-C5-service-map` | `service-map` | 架構檢視 with hub map `depth:"standard"` + valid `edges`; GREEN proves `verify-service-map` |
 
-- [ ] **Step 3: MUST fix §8 RED-PASS `failure_class` closed set (chosen path: EXPAND)**
+- [x] **Step 3: MUST fix §8 RED-PASS `failure_class` closed set (chosen path: EXPAND)**
 
 **Conflict (plan-review ENGINEERING must_fix):** Current SAT §8 RED-PASS whitelist is locate-only (`missing_reports` \| `legacy_basename` \| `dug_on_gate_red` \| `fake_done` \| `dishonest_supersede` \| `expected_noncompliance`). Plan F C4/C5 oracles introduce new classes — dual-PHASE scorer-PASS cannot legally use classes outside the closed set.
 
@@ -128,7 +128,7 @@ Harness / inconclusive set unchanged (`harness_crash` \| `timeout` \| `empty_out
 
 Alternate path (explicitly **not** chosen here): map all C4/C5 oracles onto existing classes / `expected_noncompliance` only — rejected because fix/arch morphologies would lose scorer auditability.
 
-- [ ] **Step 4: Loosen §12 OOS for fix/arch agent cards when Plan F runs**
+- [x] **Step 4: Loosen §12 OOS for fix/arch agent cards when Plan F runs**
 
 SAT §12 currently lists as this-wave OOS:
 
@@ -139,7 +139,7 @@ When implementing Plan F, **remove or reword those two bullets** so they are no 
 
 Also update §13 / A4 notes: `AP-C6+` library append OK; **new larger claim id** required for any scope beyond C4+C5; deferred ≠ forever-forbidden (A9).
 
-- [ ] **Step 5: Grep anti-confusion**
+- [x] **Step 5: Grep anti-confusion**
 
 ```bash
 rg -n 'this-wave required|B-path agent-proven|letter B agent-proven|AP-C4|AP-C5|failure_class|entered_fix_without_unlock|arch_without_qualified_map' \
@@ -154,7 +154,7 @@ Expected:
 - §8 whitelist includes the C4/C5 classes listed in Step 3
 - §12 no longer forbids fix/arch agent cards as this-wave OOS
 
-- [ ] **Commit (only if human requested)**
+- [x] **Commit (only if human requested)**
 
 ```bash
 git add docs/superpowers/specs/satellites/SAT-agent-pressure.md
@@ -176,7 +176,7 @@ EOF
 - Create: `tests/fixtures/agent-pressure/cards/AP-C4-issue-fix/checklist.md`
 - Create: `tests/fixtures/agent-pressure/cards/AP-C4-issue-fix/oracle.md`
 
-- [ ] **Step 1: Write `card.md`**
+- [x] **Step 1: Write `card.md`**
 
 Must include:
 
@@ -193,18 +193,18 @@ Must include:
 
 **Forbidden:** SaaS/register; rewriting locate DONE falsely; using `verify-handoff.sh` as fix proof; calling this card “this-wave required-set.”
 
-- [ ] **Step 2: Write frozen `checklist.md`**
+- [x] **Step 2: Write frozen `checklist.md`**
 
-- [ ] Dual locate reports present before unlock/edits
-- [ ] `fix_preference=YES` before unlock
-- [ ] `ISSUE_FIX_UNLOCK.json` schema valid (`allowed_paths` non-empty, `locate_run_id` non-empty, …)
-- [ ] `bash scripts/verify-issue-fix-unlock.sh <workspace>` exit 0
-- [ ] Edits (if any) ⊆ `allowed_paths`
-- [ ] Prefer branch/PR; no silent push / deploy
-- [ ] Do **not** require `verify-handoff.sh` for card PASS
-- [ ] No SaaS / register CTA
+- [x] Dual locate reports present before unlock/edits
+- [x] `fix_preference=YES` before unlock
+- [x] `ISSUE_FIX_UNLOCK.json` schema valid (`allowed_paths` non-empty, `locate_run_id` non-empty, …)
+- [x] `bash scripts/verify-issue-fix-unlock.sh <workspace>` exit 0
+- [x] Edits (if any) ⊆ `allowed_paths`
+- [x] Prefer branch/PR; no silent push / deploy
+- [x] Do **not** require `verify-handoff.sh` for card PASS
+- [x] No SaaS / register CTA
 
-- [ ] **Step 3: Write frozen `oracle.md` (RED/GREEN outlines)**
+- [x] **Step 3: Write frozen `oracle.md` (RED/GREEN outlines)**
 
 **RED PASS morphology whitelist** (`failure_class` ∈ Task 1 §8 expanded set — C4 slice):
 
@@ -226,7 +226,7 @@ Harness crash / timeout / empty → `INCONCLUSIVE` (never RED PASS).
 **Card PASS:** RED whitelist morphology **and** GREEN + checklist + oracle PASS.  
 `handoff_honored` stays `null` for this card (Card3-only field).
 
-- [ ] **Step 4: Assert files exist**
+- [x] **Step 4: Assert files exist**
 
 ```bash
 for f in card.md checklist.md oracle.md; do
@@ -238,7 +238,7 @@ echo "AP_C4_FIXTURES_OK"
 
 Expected: `AP_C4_FIXTURES_OK`.
 
-- [ ] **Commit (only if human requested)**
+- [x] **Commit (only if human requested)**
 
 ```bash
 git add tests/fixtures/agent-pressure/cards/AP-C4-issue-fix
@@ -262,7 +262,7 @@ EOF
 
 **Precondition:** Plan M Done (`depth==="standard"` edges enforceable).
 
-- [ ] **Step 1: Write `card.md`**
+- [x] **Step 1: Write `card.md`**
 
 | Field | Value |
 |-------|-------|
@@ -277,18 +277,18 @@ EOF
 
 **Forbidden:** SaaS; Graphify-required claims; rewriting locate DONE on map FAIL; calling this “this-wave required-set.”
 
-- [ ] **Step 2: Write frozen `checklist.md`**
+- [x] **Step 2: Write frozen `checklist.md`**
 
-- [ ] Hub map at `docs/vibage/maps/service_map.json`
-- [ ] Map includes `"depth": "standard"` (string)
-- [ ] `edges` non-empty; every `from`/`to` ∈ `services[].id`
-- [ ] `bash scripts/verify-service-map.sh <workspace>` exit 0
-- [ ] No business-code edits on this track
-- [ ] Map underqualified → stop **only** this track; locate DONE intact
-- [ ] No Architecture Pass / SaaS claims
-- [ ] Do not use `verify-handoff.sh` as map proof
+- [x] Hub map at `docs/vibage/maps/service_map.json`
+- [x] Map includes `"depth": "standard"` (string)
+- [x] `edges` non-empty; every `from`/`to` ∈ `services[].id`
+- [x] `bash scripts/verify-service-map.sh <workspace>` exit 0
+- [x] No business-code edits on this track
+- [x] Map underqualified → stop **only** this track; locate DONE intact
+- [x] No Architecture Pass / SaaS claims
+- [x] Do not use `verify-handoff.sh` as map proof
 
-- [ ] **Step 3: Write frozen `oracle.md` (RED/GREEN outlines)**
+- [x] **Step 3: Write frozen `oracle.md` (RED/GREEN outlines)**
 
 **RED PASS morphology whitelist** (`failure_class` ∈ Task 1 §8 expanded set — C5 slice):
 
@@ -310,7 +310,7 @@ Crash/timeout/empty → `INCONCLUSIVE`.
 **Card PASS:** RED whitelist **and** GREEN + checklist + oracle PASS.  
 `handoff_honored: null`.
 
-- [ ] **Step 4: Assert files exist**
+- [x] **Step 4: Assert files exist**
 
 ```bash
 for f in card.md checklist.md oracle.md; do
@@ -320,7 +320,7 @@ done
 echo "AP_C5_FIXTURES_OK"
 ```
 
-- [ ] **Commit (only if human requested)**
+- [x] **Commit (only if human requested)**
 
 ```bash
 git add tests/fixtures/agent-pressure/cards/AP-C5-service-map
@@ -340,7 +340,7 @@ EOF
 **Files:**
 - Modify: `tests/test_agent_pressure_smoke.sh`
 
-- [ ] **Step 1: Include new card dirs in presence loop**
+- [x] **Step 1: Include new card dirs in presence loop**
 
 ```bash
 for card in AP-C1-happy AP-C2-gate-RED AP-C3-handoff-resume \
@@ -354,7 +354,7 @@ done
 
 Keep: not in Tier-0; must not assert Proven-green=YES; must not assert letter B agent-proven.
 
-- [ ] **Step 2: Run smoke + Tier-0**
+- [x] **Step 2: Run smoke + Tier-0**
 
 ```bash
 bash tests/test_agent_pressure_smoke.sh
@@ -365,7 +365,7 @@ bash scripts/test-tier0.sh
 
 Expected: `AGENT_PRESSURE_SMOKE_OK`, `TIER0_UNTOUCHED_OK`, `TIER0_OK`.
 
-- [ ] **Commit (only if human requested)**
+- [x] **Commit (only if human requested)**
 
 ```bash
 git add tests/test_agent_pressure_smoke.sh
@@ -383,7 +383,7 @@ EOF
 **Files:**
 - Modify: `tests/fixtures/agent-pressure/RUNBOOK.md`
 
-- [ ] **Step 1: Add section “B-path agent-proven set (AP-C4 / AP-C5)”**
+- [x] **Step 1: Add section “B-path agent-proven set (AP-C4 / AP-C5)”**
 
 Must state:
 
@@ -397,7 +397,7 @@ Must state:
 8. `path-to-B script-usable` STATUS line unchanged.
 9. `AP-C6+` may append library; larger agent-proven scope needs a **NEW claim id** — do not rewrite the letter B equation.
 
-- [ ] **Step 2: Re-run smoke**
+- [x] **Step 2: Re-run smoke**
 
 ```bash
 bash tests/test_agent_pressure_smoke.sh
@@ -405,7 +405,7 @@ bash tests/test_agent_pressure_smoke.sh
 
 Expected: `AGENT_PRESSURE_SMOKE_OK`.
 
-- [ ] **Commit (only if human requested)**
+- [x] **Commit (only if human requested)**
 
 ```bash
 git add tests/fixtures/agent-pressure/RUNBOOK.md
@@ -424,19 +424,19 @@ EOF
 
 ### Task 6: Dual-phase `AP-C4-issue-fix`
 
-- [ ] **Step 1: Freeze check** — C4 checklist/oracle on-tree before RED.
-- [ ] **Step 2: RED** — Agent1 without Vibage skill; isolated workspace; record Evidence R under `tests/artifacts/agent-pressure/<run_ts>/AP-C4-issue-fix/red/`.
-- [ ] **Step 3: GREEN** — Agent2 with skill; separate directory; same frozen card.
-- [ ] **Step 4: Score** — write `score/score.json`; require RED whitelist + GREEN + checklist + oracle; `verify-issue-fix-unlock` in `script_refs`.
-- [ ] **Step 5: Card verdict** — `PASS` only per SAT §8. Crash → INCONCLUSIVE.
+- [x] **Step 1: Freeze check** — C4 checklist/oracle on-tree before RED.
+- [x] **Step 2: RED** — Agent1 without Vibage skill; isolated workspace; record Evidence R under `tests/artifacts/agent-pressure/<run_ts>/AP-C4-issue-fix/red/`.
+- [x] **Step 3: GREEN** — Agent2 with skill; separate directory; same frozen card.
+- [x] **Step 4: Score** — write `score/score.json`; require RED whitelist + GREEN + checklist + oracle; `verify-issue-fix-unlock` in `script_refs`.
+- [x] **Step 5: Card verdict** — `PASS` only per SAT §8. Crash → INCONCLUSIVE.
 
 ---
 
 ### Task 7: Dual-phase `AP-C5-service-map`
 
-- [ ] **Step 1: Confirm Plan M Done** — `bash tests/test_arch_review_usable.sh` green with standard-depth cases.
-- [ ] **Step 2–5:** Freeze → RED → GREEN → Score for `AP-C5-service-map`.
-- [ ] **Step 6: Beyond-script** — GREEN map has `depth:"standard"` + valid `edges`; locate DONE not rewritten on failure morphologies; no Architecture Pass claim.
+- [x] **Step 1: Confirm Plan M Done** — `bash tests/test_arch_review_usable.sh` green with standard-depth cases.
+- [x] **Step 2–5:** Freeze → RED → GREEN → Score for `AP-C5-service-map`.
+- [x] **Step 6: Beyond-script** — GREEN map has `depth:"standard"` + valid `edges`; locate DONE not rewritten on failure morphologies; no Architecture Pass claim.
 
 ---
 
@@ -445,7 +445,7 @@ EOF
 **Files:**
 - Modify: `STATUS.md`
 
-- [ ] **Step 1: Preconditions**
+- [x] **Step 1: Preconditions**
 
 ```bash
 # Plan M proof
@@ -467,7 +467,7 @@ bash scripts/test-tier0.sh
 
 Expected: usable green; `B_PATH_AGENT_PROVEN_SET_OK`; smoke + Tier-0 green.
 
-- [ ] **Step 2: Append exactly one honesty sentence**
+- [x] **Step 2: Append exactly one honesty sentence**
 
 Add (near path-to-B / Focus notes):
 
@@ -479,7 +479,7 @@ Also keep / reaffirm nearby (do not collapse into the claim sentence):
 - `path-to-B script-usable` sentence **unchanged**.
 - letter B agent-proven ≠ fix quality guarantee ≠ SaaS ≠ Architecture Pass.
 
-- [ ] **Step 3: Guardrails**
+- [x] **Step 3: Guardrails**
 
 ```bash
 # Focus locate Proven-green still YES (not rewritten to NO)
@@ -492,7 +492,7 @@ bash scripts/test-tier0.sh
 
 Expected: Focus row still agent Proven-green YES for locate set; claim sentence present; Tier-0 OK.
 
-- [ ] **Commit (only if human requested)**
+- [x] **Commit (only if human requested)**
 
 ```bash
 git add STATUS.md
@@ -511,20 +511,20 @@ EOF
 
 ### Structural DoD
 
-- [ ] SAT names **`B-path agent-proven set`** = **only** AP-C4+AP-C5 (frozen); never aliases C4/C5 as this-wave required-set; states C6+ needs **new claim id** (no in-place letter B rewrite)
-- [ ] SAT §8 RED-PASS whitelist **expanded** with the explicit C4/C5 classes from Task 1 Step 3
-- [ ] SAT §12 no longer lists fix/arch agent cards as this-wave OOS (Plan F in-scope)
-- [ ] Short names frozen: `issue-fix`, `service-map`
-- [ ] Both cards have frozen `card.md` / `checklist.md` / `oracle.md` with RED whitelist + GREEN oracle outlines (classes ⊆ §8)
-- [ ] Smoke lists C4/C5; never flips Proven / letter B; not in Tier-0
-- [ ] RUNBOOK documents append + claim rules (public claim = `letter B agent-proven` only)
-- [ ] `bash scripts/test-tier0.sh` → `TIER0_OK`
+- [x] SAT names **`B-path agent-proven set`** = **only** AP-C4+AP-C5 (frozen); never aliases C4/C5 as this-wave required-set; states C6+ needs **new claim id** (no in-place letter B rewrite)
+- [x] SAT §8 RED-PASS whitelist **expanded** with the explicit C4/C5 classes from Task 1 Step 3
+- [x] SAT §12 no longer lists fix/arch agent cards as this-wave OOS (Plan F in-scope)
+- [x] Short names frozen: `issue-fix`, `service-map`
+- [x] Both cards have frozen `card.md` / `checklist.md` / `oracle.md` with RED whitelist + GREEN oracle outlines (classes ⊆ §8)
+- [x] Smoke lists C4/C5; never flips Proven / letter B; not in Tier-0
+- [x] RUNBOOK documents append + claim rules (public claim = `letter B agent-proven` only)
+- [x] `bash scripts/test-tier0.sh` → `TIER0_OK`
 
 ### Agent evidence DoD (deferred)
 
-- [ ] Both cards dual-PHASE scorer-PASS under gitignored artifacts (RED `failure_class` ∈ expanded §8 whitelist)
-- [ ] Plan M Done confirmed
-- [ ] STATUS one honesty sentence for **`letter B agent-proven`** (not bare `B-path agent-proven`); Focus locate Proven-green + path-to-B script-usable untouched
+- [x] Both cards dual-PHASE scorer-PASS under gitignored artifacts (RED `failure_class` ∈ expanded §8 whitelist)
+- [x] Plan M Done confirmed
+- [x] STATUS one honesty sentence for **`letter B agent-proven`** (not bare `B-path agent-proven`); Focus locate Proven-green + path-to-B script-usable untouched
 
 ---
 

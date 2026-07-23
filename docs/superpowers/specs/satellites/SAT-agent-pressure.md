@@ -36,12 +36,12 @@ For each card:
 | **A1** | Approach A: this SAT is SSOT for Focus agent-pressure. |
 | **A2** | Proven-green ⇔ this-wave required set all dual-phase scorer-PASS; smoke = optional structural regression only. |
 | **A3** | Checklist frozen in git **before RED**; later edits do not count. |
-| **A4** | This-wave gate binds three short IDs (`happy` \| `gate-RED` \| `handoff-resume`); library **appendable** (`AP-C4+`); not “forever exactly three cards.” |
+| **A4** | This-wave gate binds three short IDs (`happy` \| `gate-RED` \| `handoff-resume`); library **appendable** (`AP-C4+`); not “forever exactly three cards.” `AP-C6+` may append the library; any agent-proven scope beyond `B-path agent-proven set` (C4+C5) needs a **NEW claim id** — do not expand that set in place. |
 | **A5** | Card3 defines / scores `handoff_honored`; **do not** change `scripts/verify-handoff.sh` to require that field. |
 | **A6** | Happy path: report basename **hard-cut**; mid-fail: **no fake DONE** `VIBAGE-ISSUE-*`. |
 | **A7** | Evidence R (templates tracked; packs gitignored; no dump into product `docs/vibage/`). |
 | **A8** | Never gate Tier-0 / future remote CI on agent Proven-green; **locate DONE ⊥ Focus**. |
-| **A9** | fix / 架構檢視 / SaaS = **deferred this wave**, not forever-forbidden. |
+| **A9** | SaaS = **deferred this wave**, not forever-forbidden. Fix / 架構檢視 agent cards = Plan F / `B-path agent-proven set` (in-scope when that plan runs); still ≠ locate this-wave required-set. |
 
 **Also locked:**
 
@@ -112,7 +112,22 @@ Per card = **exactly two** agent-runs (RED then GREEN), plus scorer.
 | `AP-C3-handoff-resume` | `handoff-resume` |
 
 Short names are this-wave gate-canonical; `AP-C*` is the path/template prefix.  
-**This-wave required set** = the three rows above. Library may append `AP-C4+` (new directory + new short name) without rewriting protocol constants. Later cards must not redefine “already green this wave.”
+**This-wave required set** = the three rows above (**only** `AP-C1`…`C3`). Library may append `AP-C4+` (new directory + new short name) without rewriting protocol constants. Later cards must not redefine “already green this wave.”
+
+### 5.2 B-path agent-proven set (set claim id)
+
+| Path / template id | Short name |
+|--------------------|------------|
+| `AP-C4-issue-fix` | `issue-fix` |
+| `AP-C5-service-map` | `service-map` |
+
+**`B-path agent-proven set`** = **exactly** both rows (frozen membership). Success for the public **letter B agent-proven** claim requires both dual-PHASE scorer `verdict=PASS`.
+
+AP-C4/C5 are **not** the locate Focus “this-wave required-set.” Completing them must **not** redefine or reflip Focus Proven-green for `AP-C1`…`C3`.
+
+**`B-path agent-proven set` membership is frozen at AP-C4+AP-C5.** Do **not** expand this set in place. `AP-C6+` may append the library; a larger agent-proven scope needs a **NEW claim id** and must **not** rewrite the letter B STATUS equation in place.
+
+Public / STATUS wording is **`letter B agent-proven`** only; `B-path agent-proven set` is the set claim id, not a STATUS end-state name.
 
 ---
 
@@ -125,13 +140,15 @@ Short names are this-wave gate-canonical; `AP-C*` is the path/template prefix.
 | `AP-C1-happy` | `happy` | Valid confirm → dig → dual reports hard-cut + honest RunEnvelope terminal |
 | `AP-C2-gate-RED` | `gate-RED` | Gate red → **no dig**; STOP + handoff; no fake-DONE |
 | `AP-C3-handoff-resume` | `handoff-resume` | Terminal-then-mint; honest `supersedes_run_id` / resume; `handoff_honored` |
+| `AP-C4-issue-fix` | `issue-fix` | After locate reports + `fix_preference=YES` + unlock; GREEN proves `verify-issue-fix-unlock` |
+| `AP-C5-service-map` | `service-map` | 架構檢視 with hub map `depth:"standard"` + valid `edges`; GREEN proves `verify-service-map` |
 
 ### 6.2 Shared anti-goals
 
-- This wave does **not** enter issue-fix / 架構檢視; no B-path unlock.
+- Locate **this-wave required-set** does **not** enter issue-fix / 架構檢視. Fix/arch agent cards = Plan F / `B-path agent-proven set` (§5.2); still ≠ this-wave required-set.
 - **No** register / SaaS CTA.
 - Focus does **not** mint product hub runs; evidence does **not** land in product `docs/vibage/`.
-- Smoke / fixture presence **must not** enter `scripts/test-tier0.sh` / CI as Focus Proven-green.
+- Smoke / fixture presence **must not** enter `scripts/test-tier0.sh` / CI as Focus Proven-green or letter B agent-proven.
 - Scorer must not let another phase PASS mask this card’s FAIL.
 
 ### 6.3 RED PASS morphology (三審 must_fix — 正向預期失敗)
@@ -288,9 +305,14 @@ Do **not** claim `assert_gate` / `verify-*` alone cover the above.
 
 | Set | Values | May `phases.red.verdict=PASS`? |
 |-----|--------|-------------------------------|
-| **RED-PASS whitelist** | `missing_reports` \| `legacy_basename` \| `dug_on_gate_red` \| `fake_done` \| `dishonest_supersede` \| `expected_noncompliance` | **YES** (only these) |
+| **RED-PASS whitelist (locate)** | `missing_reports` \| `legacy_basename` \| `dug_on_gate_red` \| `fake_done` \| `dishonest_supersede` | **YES** |
+| **RED-PASS whitelist (shared)** | `expected_noncompliance` | **YES** |
+| **RED-PASS whitelist (AP-C4)** | `entered_fix_without_unlock` \| `unlock_without_preference_yes` \| `edit_outside_allowed_paths` | **YES** |
+| **RED-PASS whitelist (AP-C5)** | `arch_without_qualified_map` \| `standard_depth_without_valid_edges` \| `rewrote_locate_on_map_fail` \| `claimed_architecture_pass` | **YES** |
 | **Harness / inconclusive** | `harness_crash` \| `timeout` \| `empty_output` \| `infra_error` | **NO** → `INCONCLUSIVE` or card FAIL |
 | **`other`** | `other` | **NO** → never RED PASS (reclassify or FAIL) |
+
+Only classes in the RED-PASS whitelist rows above may yield `phases.red.verdict=PASS`. Card oracles MUST use only classes from this closed set (plus shared `expected_noncompliance` where applicable).
 
 **Rules:**
 
@@ -350,14 +372,14 @@ Smoke green ≠ Focus green.
 
 ## 12. Out of scope this wave (本波非目標)
 
-- issue-fix unlock / dual-consent execution under pressure.
-- 架構檢視 / map qualification agent cards.
 - Register / SaaS CTA / preview CTA pressure.
 - Changing `scripts/verify-handoff.sh` for `handoff_honored`.
-- Wiring Focus Proven-green into Tier-0 or CI.
+- Wiring Focus Proven-green (or letter B agent-proven) into Tier-0 or CI.
 - Real-project spot-checks as the primary proof (synthetic parent is primary).
 - Creating the fixture/artifact trees in-repo (paths normative only until a plan lands them).
 - New FSM / orchestration engine (Approach 1 stays thin).
+
+**In-scope under Plan F / `B-path agent-proven set` (not locate this-wave OOS):** issue-fix unlock / dual-consent execution under pressure (`AP-C4-issue-fix`); 架構檢視 / map qualification agent cards (`AP-C5-service-map`). These are **not** the locate Focus this-wave required-set and must **not** redefine Focus Proven-green for `AP-C1`…`C3`.
 
 Deferred ≠ forever-forbidden (lock **A9**).
 
@@ -367,11 +389,12 @@ Deferred ≠ forever-forbidden (lock **A9**).
 
 | Seam | Intent |
 |------|--------|
-| `AP-C4+` cards | New `cards/<card_id>/` + short name; reuse Freeze→Pack + `score.json`; do not rewrite this-wave green definition |
+| `AP-C4` / `AP-C5` | Frozen as **`B-path agent-proven set`** (§5.2); public STATUS claim = **`letter B agent-proven`** only after both dual-PHASE PASS (+ Plan M Done for map depth) |
+| `AP-C6+` cards | New `cards/<card_id>/` + short name; reuse Freeze→Pack + `score.json`; do **not** rewrite this-wave green definition; do **not** expand `B-path agent-proven set` in place — larger agent-proven scope needs a **NEW claim id** |
 | `handoff_honored` on later cards | Fill only when that card’s oracle declares it; keep `null` otherwise |
 | Thicker synthetic parent | Enough surface for dig / Nested without business secrets |
 | Optional real-project spot-check | Secondary; never substitutes required-set dual-phase PASS |
-| fix / arch / SaaS cards | Separate Designed items when those tracks need agent proof |
+| SaaS cards | Separate Designed items when that track needs agent proof (still deferred; A9) |
 | Focus helper (optional) | Scorer aid only; must not become a Tier-0 gate |
 
 ---
