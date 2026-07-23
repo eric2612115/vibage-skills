@@ -20,11 +20,11 @@
 
 **SaaS blank pointer:** reserved seam only — `docs/superpowers/specs/satellites/SAT-saas-blank.md`. Thin SAT on tree ≠ Designed/On-tree/Proven YES; no local register CTA; ≠ SaaS shipped.
 
-**Parent session entry (Plan-R + Plan-S):** Global skills ≠ project routing. Owner one-liner: **幫我裝 Vibage** (`prompts/SAY-INSTALL-VIBAGE.md`) → agent runs install + `--with-project-rule` + `verify-project-entry` → `PROJECT_ENTRY_OK` (parent only). Cursor `sessionStart` + Claude/Codex always-on (host-best). Skill: `using-vibage` (must-invoke + finishing). Maps for agents: `docs/maps/AI-FIRST.md`. Extend locally: `docs/EXTENDING.md`. Repo public / marketplace / publish-ready **deferred until after SaaS** (your call). `PROJECT_ENTRY_OK` ≠ CONFIRM / locate DONE.
+**Parent session entry (Plan-R + Plan-S):** Global skills ≠ project routing. Owner one-liner: **幫我裝 Vibage** (`prompts/SAY-INSTALL-VIBAGE.md`) → agent runs install + `--with-project-rule` + `verify-project-entry` → `PROJECT_ENTRY_OK` (parent only). Cursor `sessionStart` + Claude/Codex always-on (host-best). Skill: `using-vibage` (must-invoke + finishing). Maps for agents: `docs/maps/AI-FIRST.md`. Extend locally: `docs/EXTENDING.md`. **Public GitHub** (owner visibility flip) ≠ marketplace listing ≠ publish-ready ≠ SaaS. Marketplace submit/review is a separate wave; SaaS stays blank. `PROJECT_ENTRY_OK` ≠ CONFIRM / locate DONE.
 
 **Proof layers (do not confuse):** `TIER0_OK` (ship gate) · `PACK_HEALTH_OK` via `scripts/pack-health.sh <parent>` (pins + parent entry + entry-docs + `OWNER_ZERO_BASH_OK` + `INSTALL_PHRASE_OK` + `INSTALL_PHRASE_E2E_OK`; **≠** Tier-0 ≠ remote CI ≠ letter B) · `PROJECT_ENTRY_OK` (parent routers). Capability SSOT remains this file. Optional proof table: `docs/superpowers/specs/satellites/SAT-optional-proof.md`. Local complete checklist: `docs/LOCAL-COMPLETE-CHECKLIST.md`. Focus/B summary index: `docs/evidence/focus/SUMMARY.md`.
 
-This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
+This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready. Public git clone ≠ marketplace ≠ SaaS.
 
 **Optional issue-fix honesty:** On-tree=YES + Proven-green=YES (scope=`script`) means dual-consent + unlock gates are verifiable via `scripts/verify-issue-fix-unlock.sh` and `tests/test_issue_fix_usable.sh`. That is **not** letter **B** complete, and **not** an agent fix E2E / quality guarantee. `test_issue_fix_usable.sh` is **not** wired into Tier-0.
 

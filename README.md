@@ -44,7 +44,11 @@ You should not type bash. The agent runs scripts.
 | Maps (agents) | [`docs/maps/AI-FIRST.md`](docs/maps/AI-FIRST.md) | — |
 | Add a skill | [`docs/EXTENDING.md`](docs/EXTENDING.md) | — |
 
-**Honesty:** SaaS/sign-up is blank. Making the GitHub repo public, plugin store, or “officially launched” waits until after your SaaS wave. `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”.
+**Honesty (do not conflate):**
+- **SaaS / sign-up** = blank (no register CTA in this pack).
+- **Public GitHub** = share/clone the skill pack; **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
+- Marketplace listing is a **separate** submit/review step (needs public repo + plugin manifest — not claimed done here).
+- `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”.
 
 ---
 

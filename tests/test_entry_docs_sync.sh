@@ -40,6 +40,13 @@ grep -Fq 'docs/install/' "$README" || fail "README must link docs/install/"
 if grep -Eiq 'CI SKIPPED|no git remote here' "$README"; then
   fail "README must not keep stale CI SKIPPED / no-remote wording"
 fi
+# Public ≠ marketplace ≠ SaaS (owner may flip GitHub visibility without claiming store/SaaS)
+if grep -Eiq 'Making the GitHub repo public.*waits until after.*SaaS|repo public / marketplace / publish-ready \*\*deferred until after SaaS' "$README" "$STATUS"; then
+  fail "stale honesty: public git must not be blocked behind SaaS wave"
+fi
+grep -Eiq 'Public GitHub|public git' "$README" || fail "README must name Public GitHub honesty"
+grep -Eiq 'marketplace' "$README" || fail "README must mention marketplace as separate"
+grep -Eiq 'Public GitHub' "$STATUS" || fail "STATUS must name Public GitHub ≠ marketplace ≠ SaaS"
 for f in docs/install/CURSOR.md docs/install/CLAUDE.md docs/install/CODEX.md; do
   [[ -f "$f" ]] || fail "missing $f"
   grep -Fq 'PROJECT_ENTRY_OK' "$f" || fail "$f must mention PROJECT_ENTRY_OK"
