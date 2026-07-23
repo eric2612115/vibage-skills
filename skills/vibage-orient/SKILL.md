@@ -3,7 +3,7 @@ name: vibage-orient
 description: >-
   Use when hub is ready (docs/vibage/STATUS.md), there is no valid CONFIRM,
   or SCAN_PLAN must be (re)drafted before dig. Do not deep-dig or write
-  VIBAGE-OWNER/LOCATE dual reports.
+  VIBAGE-ISSUE-OWNER/LOCATE dual reports.
 ---
 
 # Vibage Orient

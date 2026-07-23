@@ -4,7 +4,7 @@ Shared DO NOT / MUST for all surfaces (Cursor, Claude Code, Codex). Thin IDE ada
 
 ## Language
 
-- Match the **owner's language** in chat and `VIBAGE-OWNER.md`. Never assume Traditional Chinese.
+- Match the **owner's language** in chat and `VIBAGE-ISSUE-OWNER.md`. Never assume Traditional Chinese.
 - Paths, identifiers, template section titles stay English inside engineer artifacts.
 
 ## Install / hub

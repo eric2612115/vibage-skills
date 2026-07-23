@@ -58,7 +58,7 @@ Investigator report:
 Return: CritiqueVerdict = APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE; per_finding {id, SUPPORT|WEAK|CONTRADICT|UNVERIFIABLE, path, quote_span, kill_reason?}; evidence_gaps; must_fix. No recursive spawn except optional one leaf verifier if verdict NEEDS_REVISION.
 ```
 
-## Evidence in VIBAGE-LOCATE.md (required fields)
+## Evidence in VIBAGE-ISSUE-LOCATE.md (required fields)
 
 ```markdown
 ## Nested pass
@@ -69,7 +69,7 @@ Return: CritiqueVerdict = APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE; per_findin
 - Mode: full nested | degraded
 ```
 
-Optional after write: `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-LOCATE.md` (checklist only; does not prove subagents ran).
+Optional after write: `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-ISSUE-LOCATE.md` (checklist only; does not prove subagents ran).
 
 ## Failure modes / degrade
 

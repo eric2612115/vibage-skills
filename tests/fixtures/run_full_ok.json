@@ -4,7 +4,7 @@
   "run_id": "run-full-ok",
   "phase": "done",
   "mode": "full nested",
-  "artifact_uris": ["VIBAGE-OWNER.md", "VIBAGE-LOCATE.md"],
+  "artifact_uris": ["VIBAGE-ISSUE-OWNER.md", "VIBAGE-ISSUE-LOCATE.md"],
   "survey_refs": [],
   "gap_ids": [],
   "nested_dispatch": {

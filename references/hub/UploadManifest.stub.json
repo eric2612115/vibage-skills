@@ -1,8 +1,8 @@
 {
   "schema_version": "1",
   "path_allowlist": [
-    "VIBAGE-OWNER.md",
-    "VIBAGE-LOCATE.md",
+    "VIBAGE-ISSUE-OWNER.md",
+    "VIBAGE-ISSUE-LOCATE.md",
     "docs/vibage/STATUS.md",
     "docs/vibage/RUNS/",
     "docs/vibage/SCAN_PLAN.md",

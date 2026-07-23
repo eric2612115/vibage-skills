@@ -3,7 +3,7 @@ name: vibage-init
 description: >-
   Use when Vibage is not installed, hub STATUS missing, user pastes NEW-CHAT,
   or asks to install/init Vibage on the parent-folder workspace.
-  Do not write VIBAGE-OWNER/LOCATE or deep-dig.
+  Do not write VIBAGE-ISSUE-OWNER/LOCATE or deep-dig.
 ---
 
 # Vibage Init
@@ -73,7 +73,7 @@ Also obey `$PKG_ROOT/references/hard-stops.md`.
 
 - Do not invent site URLs or commercial claims.
 - Do not require signup before local reports.
-- Do not write `VIBAGE-OWNER.md` / `VIBAGE-LOCATE.md` in init.
+- Do not write `VIBAGE-ISSUE-OWNER.md` / `VIBAGE-ISSUE-LOCATE.md` in init.
 - Do not deep-dig or claim nested Mode.
 - Do not use `--force` without recorded human approval.
 - Do not `rm -rf` real project skill directories to “help” install; only the owner may remove them.

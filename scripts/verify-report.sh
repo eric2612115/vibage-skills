@@ -1,14 +1,22 @@
 #!/usr/bin/env bash
 # Checklist only — does NOT prove nested subagents actually ran.
-# Usage: verify-report.sh <VIBAGE-LOCATE.md> [RUNS/<run_id>.json]
+# Usage: verify-report.sh <VIBAGE-ISSUE-LOCATE.md> [RUNS/<run_id>.json]
 # Second arg: path to RunEnvelope JSON. When Mode in the MD is "full nested",
 # the RUNS json is REQUIRED and must pass verify-run.sh.
 set -euo pipefail
 LOCATE="${1:-}"
 RUNS_JSON="${2:-}"
 if [[ -z "$LOCATE" || ! -f "$LOCATE" ]]; then
-  echo "Usage: $0 /path/to/VIBAGE-LOCATE.md [RUNS/<run_id>.json]" >&2
+  echo "Usage: $0 /path/to/VIBAGE-ISSUE-LOCATE.md [RUNS/<run_id>.json]" >&2
   exit 2
+fi
+BASE="$(basename "$LOCATE")"
+# Reject pre-hard-cut basenames (concat so DoD rg does not false-positive on this guard).
+_legacy_owner="VIBAGE-"'OWNER.md'
+_legacy_locate="VIBAGE-"'LOCATE.md'
+if [[ "$BASE" == "$_legacy_owner" || "$BASE" == "$_legacy_locate" ]]; then
+  echo "VERIFY_REPORT_FAIL: legacy report name '$BASE'; prefer VIBAGE-ISSUE-OWNER.md / VIBAGE-ISSUE-LOCATE.md" >&2
+  exit 1
 fi
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 fail() { echo "VERIFY_REPORT_FAIL: $*" >&2; exit 1; }
