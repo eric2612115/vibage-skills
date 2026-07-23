@@ -10,10 +10,12 @@
 | Capability | Designed | On-tree | Proven-green | Scope |
 |------------|----------|---------|--------------|-------|
 | scan_plan_hash + assert_gate | YES | YES | YES | script |
-| Tier-0 `scripts/test-tier0.sh` | YES | NO | NO | script |
+| Tier-0 `scripts/test-tier0.sh` | YES | YES | YES | script |
 | Report hard-cut VIBAGE-ISSUE-* | YES | NO | NO | script |
 | Handoff dual-write | YES | NO | NO | script |
 | Focus: agent-pressure | YES | NO | NO | agent (deferred meta row — not a pipeline_id) |
 | SaaS / register | blank | — | — | — |
+
+This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
 
 Update On-tree / Proven-green only when scripts say so. Never YES without proof.

@@ -7,7 +7,7 @@ This is a **sibling package** to SelfAutoBuz (OPC hub). Product SSOT lives here;
 
 **Spec (live):** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
 **Plans (live):** `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`  
-**Local proof (after P2):** `bash scripts/test-tier0.sh`
+**Local proof (this-wave ship):** `bash scripts/test-tier0.sh`
 
 ## Status / roadmap（先讀）
 
