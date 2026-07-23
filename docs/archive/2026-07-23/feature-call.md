@@ -1,3 +1,5 @@
+> **DO NOT USE FOR DEV** — Archived 2026-07-23. See v2 umbrella spec.
+
 # Feature call — Soft CTA → web (not agent cookies)
 
 Agent sessions **usually do not** hold the site's httpOnly session cookie. Paid Architecture Pass is completed in the **browser** (or the host's browser/computer-use tool). If the agent cannot open a browser, give the owner the URL.

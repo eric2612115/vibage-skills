@@ -1,3 +1,5 @@
+> **DO NOT USE FOR DEV** — Archived 2026-07-23. See v2 umbrella spec.
+
 # Final skill review report — 2026-07-22
 
 Eric offline run: brainstorm → spec → plan → implement Harden + vibage-app → FINAL blind 3 → must-fix → re-blind 3.

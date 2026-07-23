@@ -1,3 +1,5 @@
+> **DO NOT USE FOR DEV** — Archived 2026-07-23. See v2 umbrella spec.
+
 # Vibage OS + Locate Pipeline (P1) — Design
 
 **Date:** 2026-07-22  

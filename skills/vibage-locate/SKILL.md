@@ -85,10 +85,10 @@ Match the **owner's language** in chat and `VIBAGE-OWNER.md`. Never assume Tradi
     so `../VIBAGE-*.md` links resolve). Open `http://127.0.0.1:8765/vibage-preview/`.
     Optionally edit that HTML from OWNER content before/while serving.
     If copy or serve fails: set RunEnvelope field `preview_error` to the message,
-    keep `phase: done` when dual MD exist, still offer soft CTA.
+    keep `phase: done` when dual MD exist.
     Preview never blocks DONE.
-    Start serve in background (or copy-only, then tell the human the URL) so steps 14–15 are not blocked by http.server.
-14. **Soft CTA** only after both MD exist — `$PKG_ROOT/references/feature-call.md`. Never block reports.
+    Start serve in background (or copy-only, then tell the human the URL) so later steps are not blocked by http.server.
+14. Local delivery ends at dual Markdown reports + optional preview. Cloud deepening is out of scope this phase.
 15. Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`.
 
 ## Stale / resume

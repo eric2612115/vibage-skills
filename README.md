@@ -5,6 +5,10 @@ Shared skills for **Vibage**: help non-coder owners of fat / AI-built repos find
 **First-wave surfaces:** Cursor, Claude Code, Codex (shared SSOT + thin adapters).  
 This is a **sibling package** to SelfAutoBuz (OPC hub). Product SSOT lives here; SelfAutoBuz only keeps research + install pointers.
 
+**Spec (live):** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
+**Plans (live):** `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`  
+**Local proof (after P2):** `bash scripts/test-tier0.sh`
+
 ## Status / roadmap（先讀）
 
 **接續進度、Phase 邊界、能力對照表 → [`STATUS.md`](STATUS.md)。**  
@@ -15,7 +19,7 @@ Agents starting a new session should read `STATUS.md` before expanding scope.
 | **V0** | Single-/few-root locate + dual reports | **Shipped** |
 | **P1** | Parent-folder OS: init → orient → confirm → locate; footprints; preview; survey + section-gate | **Skills on MAIN** + multi-IDE install |
 | **P2** | Graphify-class map, coverage gates, long-task + AUTO_DECIDED | Later |
-| **P3** | Cloud Pro / richer results after signup (`vibage-app`) | Later |
+| **P3** | Cloud Pro / richer results (`vibage-app`) | Later |
 
 ## Install (global — three surfaces)
 
@@ -80,14 +84,14 @@ Hard stops SSOT: [`references/hard-stops.md`](references/hard-stops.md).
 | `scripts/verify-pins.sh` | Superpowers pin (multi-home) |
 | `scripts/assert_gate.sh` / `write_confirm.sh` | Orient → locate gate |
 | `DEPENDENCIES.md` | Pinned `superpowers_sha=` |
-| `coverage/` | Blind-test / multi-IDE checklists |
+| `docs/archive/` | Retired pre-v2 docs (not live proof) |
 | `STATUS.md` | Phase map |
 
 ## Hard product locks
 
 - Match owner language; never hardcode zh-TW.
 - Nested investigators → fresh reviewers → synthesize when platform allows; else honest `Mode: degraded`.
-- Dual artifacts; soft CTA after reports; no signup wall; TBD site → graceful degrade.
+- Dual artifacts after reports; no cloud wall on local delivery; TBD site → graceful degrade.
 - No customer cloud root keys; Markdown SSOT.
 
 ## License

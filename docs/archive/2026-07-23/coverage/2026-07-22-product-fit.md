@@ -1,3 +1,5 @@
+> **DO NOT USE FOR DEV** — Archived 2026-07-23. See v2 umbrella spec.
+
 # Product fit eval — 2026-07-22
 
 Plan: SelfAutoBuz `docs/superpowers/plans/2026-07-22-vibage-skills-product-fit-eval.md`  

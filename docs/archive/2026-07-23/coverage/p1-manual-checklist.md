@@ -1,3 +1,5 @@
+> **DO NOT USE FOR DEV** — Archived 2026-07-23. See v2 umbrella spec.
+
 # P1 manual scenario checklist (S1–S14)
 
 Use after scripts smoke is green. Each row is an agent-run checkbox.
