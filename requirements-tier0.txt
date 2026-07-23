@@ -1,0 +1,2 @@
+# Minimal deps for scripts/test-tier0.sh (CI + local).
+pytest>=8,<9

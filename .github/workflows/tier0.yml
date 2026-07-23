@@ -11,5 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install Tier-0 Python deps
+        run: python3 -m pip install --upgrade pip -r requirements-tier0.txt
       - name: Tier-0 ship gate
         run: bash scripts/test-tier0.sh
