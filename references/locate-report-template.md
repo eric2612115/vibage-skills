@@ -1,4 +1,8 @@
 # Vibage Locate — <date>
+<!-- Deliverable filename: VIBAGE-ISSUE-LOCATE.md -->
+
+Status — 找問題: open | done | blocked — …
+Status — 架構檢視: not started | in progress | done | n/a — …
 
 ## Symptom
 <one sentence>
@@ -15,6 +19,12 @@
 ## Call
 - Likely: code bug | config/env | human/process gap | unknown
 - Confidence: high|medium|low
+
+## Assumption-challenge
+(2–5 bullets: challenge each load-bearing assumption with evidence or a kill condition.)
+- …
+- …
+- …
 
 ## Ask colleagues (max 5)
 - [ ] <person/role?> <question> — why it unlocks progress

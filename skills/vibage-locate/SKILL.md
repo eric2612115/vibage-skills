@@ -30,7 +30,7 @@ See `$PKG_ROOT/references/resolve-pkg-root.md`. Use `$PKG_ROOT/scripts/*` and `$
 
 ## Language
 
-Match the **owner's language** in chat and `VIBAGE-OWNER.md`. Never assume Traditional Chinese. Paths, identifiers, template section titles in English are fine inside engineer report.
+Match the **owner's language** in chat and `VIBAGE-ISSUE-OWNER.md`. Never assume Traditional Chinese. Paths, identifiers, template section titles in English are fine inside engineer report.
 
 ## Inputs (ask only if missing)
 
@@ -73,16 +73,16 @@ Match the **owner's language** in chat and `VIBAGE-OWNER.md`. Never assume Tradi
 9. **Engineer challenge + adversarial kill** — cap ≤7 findings after review.
 10. **GapQuestions** after analysis — use `$PKG_ROOT/references/gap-question-template.md`; record `gap_ids` on RunEnvelope.
 11. **Write dual reports** at workspace root:
-    - `VIBAGE-OWNER.md` ← owner template
-    - `VIBAGE-LOCATE.md` ← locate template  
+    - `VIBAGE-ISSUE-OWNER.md` ← owner template
+    - `VIBAGE-ISSUE-LOCATE.md` ← locate template  
     Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
 12. **Verify (optional checklist):**  
-    `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-LOCATE.md docs/vibage/RUNS/<run_id>.json`  
+    `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-ISSUE-LOCATE.md docs/vibage/RUNS/<run_id>.json`  
     Second arg is the RUNS JSON (required when Mode is full nested).
 13. **Preview fail-soft (S11):** After dual MD exist, run:
     `"$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" 8765`
     (copies asset into `$WORKSPACE/vibage-preview/`, serves `$WORKSPACE` on 127.0.0.1
-    so `../VIBAGE-*.md` links resolve). Open `http://127.0.0.1:8765/vibage-preview/`.
+    so `../VIBAGE-ISSUE-*.md` links resolve). Open `http://127.0.0.1:8765/vibage-preview/`.
     Optionally edit that HTML from OWNER content before/while serving.
     If copy or serve fails: set RunEnvelope field `preview_error` to the message,
     keep `phase: done` when dual MD exist.
