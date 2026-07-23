@@ -42,6 +42,7 @@ Write under `docs/superpowers/specs/satellites/` when starting the matching plan
 | `SAT-agent-pressure` | With Focus execution (after P6 stub) |
 | `SAT-ci-remote` | With P7 |
 | `SAT-saas-blank` | Anytime; no local CTA |
+| `SAT-optional-proof` | With Plan-S W3; command→YES→not table (∉ Tier-0) |
 
 ## Do not execute from
 

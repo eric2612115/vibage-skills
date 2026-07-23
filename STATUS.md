@@ -20,7 +20,9 @@
 
 **SaaS blank pointer:** reserved seam only — `docs/superpowers/specs/satellites/SAT-saas-blank.md`. Thin SAT on tree ≠ Designed/On-tree/Proven YES; no local register CTA; ≠ SaaS shipped.
 
-**Parent session entry (Plan-R + Plan-S W1):** Global skills ≠ project routing. Install parent routers with `bash scripts/install.sh --with-project-rule=<parent>` then `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` (Cursor + Claude + Codex on that parent only — not each child repo). Cursor also gets project `sessionStart` hook; Claude/Codex use always-on blocks (host-best — see `references/host-best-session-entry.md`). Session pointer skill: `using-vibage`. After locate DONE → finishing required. Owner: do not type bash (agent runs scripts). `PROJECT_ENTRY_OK` ≠ CONFIRM / locate DONE. Plans: session-entry-routing + scorecard-to-nine.
+**Parent session entry (Plan-R + Plan-S):** Global skills ≠ project routing. Install parent routers with `bash scripts/install.sh --with-project-rule=<parent>` then `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` (Cursor + Claude + Codex on that parent only — not each child repo). Cursor also gets project `sessionStart` hook; Claude/Codex use always-on blocks (host-best — see `references/host-best-session-entry.md`). Session pointer skill: `using-vibage`. After locate DONE → finishing required. Owner: do not type bash (agent runs scripts). `PROJECT_ENTRY_OK` ≠ CONFIRM / locate DONE.
+
+**Proof layers (do not confuse):** `TIER0_OK` (ship gate) · `PACK_HEALTH_OK` via `scripts/pack-health.sh <parent>` (pins + parent entry + entry-docs; **≠** Tier-0 ≠ remote CI ≠ letter B) · `PROJECT_ENTRY_OK` (parent routers). Capability SSOT remains this file. Optional proof table: `docs/superpowers/specs/satellites/SAT-optional-proof.md`. Local complete checklist: `docs/LOCAL-COMPLETE-CHECKLIST.md`. Focus/B summary index: `docs/evidence/focus/SUMMARY.md`.
 
 This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
 

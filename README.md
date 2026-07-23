@@ -4,11 +4,19 @@
 
 For non-coder owners and agents on **Cursor**, **Claude Code**, and **Codex**.
 
-## 60-second start
+## Owner path (no bash)
 
-**After setup, talk in plain language** — you should not need to type bash; ask the agent to install/verify and find where the problem lives.
+1. Open a chat on your **parent** folder (after someone ran one-time setup below — that someone can be the agent).  
+2. Say what hurts in plain language.  
+3. The agent follows **using-vibage**, runs pins/verify scripts, and routes init → orient → locate.  
+4. You only answer confirm questions (CONFIRM = your OK on the scan plan).  
+5. When dual reports exist, the agent offers finishing options (preview / stop) — still no register CTA.
 
-First-time setup (operator or agent runs these — not something the owner must memorize). Replace paths with your checkout and **parent** workspace (not each child repo):
+Evidence contract: [`tests/fixtures/owner-zero-bash-path.md`](tests/fixtures/owner-zero-bash-path.md) · checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md)
+
+## 60-second start (operator / agent)
+
+One-time setup commands — **not** what the owner must type. Replace paths with your checkout and **parent** workspace (not each child repo):
 
 ```bash
 # 1) Install skills (Cursor + Claude + Codex)
@@ -24,8 +32,7 @@ bash /path/to/vibage-skills/scripts/verify-project-entry.sh \
 # expect: PROJECT_ENTRY_OK
 ```
 
-Then open a chat on the **parent** folder. The agent should follow **using-vibage** (and parent rules).  
-Optional: paste [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md) if routing feels unclear.
+Optional paste for agents: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md).
 
 Per-surface notes: [`docs/install/CURSOR.md`](docs/install/CURSOR.md) · [`docs/install/CLAUDE.md`](docs/install/CLAUDE.md) · [`docs/install/CODEX.md`](docs/install/CODEX.md)
 
@@ -38,7 +45,9 @@ Per-surface notes: [`docs/install/CURSOR.md`](docs/install/CURSOR.md) · [`docs/
 ### Honesty (short)
 
 - Local proof ship gate: `bash scripts/test-tier0.sh` → `TIER0_OK`  
+- Pack health (pins + parent entry + entry docs): `bash scripts/pack-health.sh /path/to/parent` → `PACK_HEALTH_OK` (**≠** Tier-0)  
 - Capability truth: [`STATUS.md`](STATUS.md) (not this README)  
+- Checklist: [`docs/LOCAL-COMPLETE-CHECKLIST.md`](docs/LOCAL-COMPLETE-CHECKLIST.md) · optional proof: [`SAT-optional-proof`](docs/superpowers/specs/satellites/SAT-optional-proof.md)  
 - SaaS / register: **blank** — [`SAT-saas-blank`](docs/superpowers/specs/satellites/SAT-saas-blank.md) · ≠ SaaS shipped  
 - No git remote here → remote CI **SKIPPED** · ≠ publish-ready  
 - `PROJECT_ENTRY_OK` ≠ “scan confirmed” ≠ “locate finished”

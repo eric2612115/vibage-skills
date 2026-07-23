@@ -12,8 +12,8 @@ Thin router only. **Parent project entry** (`.cursor/rules/vibage.mdc` / `CLAUDE
 
 ## Owner path (non-coder)
 
-- Owner should **not** type bash. The agent runs install/verify/pins scripts.
-- Prefer opening a chat on the **parent** workspace after `install.sh --with-project-rule=<parent>`.
+- Owner: do not type bash. The agent runs install/verify/pins scripts.
+- Prefer opening a chat on the **parent** workspace after `install.sh --with-project-rule=<parent>` (agent/operator runs that once).
 - Pasting `prompts/NEW-CHAT.md` is optional when session entry + this skill already route.
 
 ## On session start / unclear intent

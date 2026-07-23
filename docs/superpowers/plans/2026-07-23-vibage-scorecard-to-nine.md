@@ -5,7 +5,7 @@
 
 **Goal:** Raise every scorecard dimension that is currently **&lt; 9** to **≥ 9**, **except** the remote/CI class (git origin, GitHub Actions mirroring Tier-0, publish-ready claims). **Marketplace = Plan-P only** (zero marketplace implementation in Plan-S).
 
-**Status:** Hardened S1–S12 absorbed. **W1 done.** **W2 implemented** (stranger README + per-surface install + NEW-CHAT plain words). W3 pending. Final ≥9 claim only after W3 re-scorecard.
+**Status:** **W1+W2+W3 done.** Post-W3 re-scorecard: all non-exempt dims ≥9 (dim4 closed at 9 after OWNER_ZERO_BASH_OK); dim13 EXEMPT (~3). Plan-S success claim **ALLOWED** with explicit remote/CI exemption.
 
 **Architecture:** Three implementation waves (W1 auto-trigger + pack feel → W2 stranger/owner UX + clarity → W3 local pack-health + map/handoff polish). Each wave has evidence DoD (no “plausibly ≥9”). Do **not** flip STATUS capability greens without proof. Do **not** put pack-health into `test-tier0.sh`.
 
