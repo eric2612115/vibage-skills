@@ -1,6 +1,6 @@
-war-room-init
-war-room-bootstrap
-war-room-locate
-war-room-orient
+vibage-init
+vibage-bootstrap
+vibage-locate
+vibage-orient
 research-survey-review
 section-gate-review

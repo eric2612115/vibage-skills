@@ -1,4 +1,4 @@
-# War Room — Owner Brief — <date>
+# Vibage — Owner Brief — <date>
 
 ## Symptom (owner words)
 …

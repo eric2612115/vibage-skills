@@ -20,5 +20,5 @@ Graphify / other tools: not required for v1.
 
 ## first_party
 
-- war-room-init, war-room-orient, war-room-locate, war-room-bootstrap
+- vibage-init, vibage-orient, vibage-locate, vibage-bootstrap
 - research-survey-review, section-gate-review (same release; process skills shipped with P1)

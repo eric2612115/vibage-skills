@@ -14,4 +14,4 @@ Write unanswered gaps after analysis (and optionally during orient as known_inco
 }
 ```
 
-Owner-facing: one short bullet per gap in `WAR-ROOM-OWNER.md` without dumping JSON.
+Owner-facing: one short bullet per gap in `VIBAGE-OWNER.md` without dumping JSON.

@@ -56,7 +56,7 @@ Still need a **live Cursor agent** (fresh parent workspace) for:
 | ID | Needed |
 |----|--------|
 | Prep | Open a fresh parent-folder workspace in Cursor (not just tmp fixtures). |
-| S1 | Live `war-room-orient` stop at `awaiting_confirm` (no dig) on empty parent. |
+| S1 | Live `vibage-orient` stop at `awaiting_confirm` (no dig) on empty parent. |
 | S1b | Add real repos after first CONFIRM; agent re-orient; human re-confirm. |
 | S2 | Live orient root listing + locate dig **only** `planned_dig_ids` under budgets. |
 | S3 | Agent drafts light SCAN_PLAN+CONFIRM on vibing single-repo (not skip gate). |

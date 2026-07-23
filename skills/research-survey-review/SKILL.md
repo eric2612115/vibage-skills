@@ -3,7 +3,7 @@ name: research-survey-review
 description: >-
   Use when survey-matrix MUST_SURVEY predicates fire (unknown deploy topology,
   critical missing/external RootRef on hot path, owner asks prior art, or nested
-  reviewer escalates). Do not call any war-room-* product skill. Default is SKIP.
+  reviewer escalates). Do not call any vibage-* product skill. Default is SKIP.
 ---
 
 # Research Survey Review
@@ -16,11 +16,11 @@ Independent process skill: short external survey → synthesize → critique.
 |------|-----|
 | Matrix MUST (see `$PKG_ROOT/references/survey-matrix.md`) | Nested path+quote review |
 | Owner asks prior art | Section gates |
-| Reviewer escalate | Calling `war-room-init/orient/locate` |
+| Reviewer escalate | Calling `vibage-init/orient/locate` |
 
 ## PKG_ROOT
 
-Resolve via `war-room-init` realpath (fallback locate). Read hub `docs/war-room/model-routing.json` for L1–L3 slugs. Skills use **level ids only**.
+Resolve via `vibage-init` realpath (fallback locate). Read hub `docs/vibage/model-routing.json` for L1–L3 slugs. Skills use **level ids only**.
 
 ## Default
 
@@ -35,7 +35,7 @@ Resolve via `war-room-init` realpath (fallback locate). Read hub `docs/war-room/
 
 ## Stages
 
-1. **Plan** (L1): 3–5 facets max; write survey plan in chat or `docs/war-room/RUNS/<run_id>.survey-plan.md`
+1. **Plan** (L1): 3–5 facets max; write survey plan in chat or `docs/vibage/RUNS/<run_id>.survey-plan.md`
 2. **Research** (L1/L2): parallel short looks; capture URLs + claims
 3. **Synthesize** (L2): map findings → locate hypotheses impact
 4. **Critique** (fresh L2): APPROVE | REJECT | NEEDS_REVISION | INCONCLUSIVE
@@ -43,7 +43,7 @@ Resolve via `war-room-init` realpath (fallback locate). Read hub `docs/war-room/
 
 ## Output schema (required)
 
-Write JSON to `docs/war-room/RUNS/<run_id>.survey.json` and append path to RunEnvelope `survey_refs[]`.
+Write JSON to `docs/vibage/RUNS/<run_id>.survey.json` and append path to RunEnvelope `survey_refs[]`.
 
 ```json
 {
@@ -72,7 +72,7 @@ Field rules:
 
 ## Hard stops
 
-- Do not call any `war-room-*` product skill.
+- Do not call any `vibage-*` product skill.
 - Do not recurse into `section-gate-review`.
 - Do not upload whole hubs/repos.
 - Do not block dual-report delivery on survey failure — SKIP/degrade and continue.

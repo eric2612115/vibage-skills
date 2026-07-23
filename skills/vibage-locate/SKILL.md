@@ -1,12 +1,12 @@
 ---
-name: war-room-locate
+name: vibage-locate
 description: >-
   Use when CONFIRM.json payload_hash matches current SCAN_PLAN and the owner
   needs post-confirm dig with dual reports. Do not install skills; do not
   redefine model routing; do not deep-dig without assert_gate.
 ---
 
-# War Room Locate
+# Vibage Locate
 
 Goal: after mechanical confirm, cut "1–2 days to find where" toward minutes for the **repo owner**.
 
@@ -18,32 +18,32 @@ Success = dual artifacts: (1) owner-language brief, (2) engineer locate with pat
 |------|-----|
 | CONFIRM hash matches current SCAN_PLAN | Install / init hub |
 | Post-confirm dig + dual reports | Claim survey ownership (hand to research skill) |
-| Resume analyzing/done with valid confirm | Early V0 "orient in locate" as substitute for war-room-orient |
+| Resume analyzing/done with valid confirm | Early V0 "orient in locate" as substitute for vibage-orient |
 
 ## PKG_ROOT (mandatory — portable)
 
 Prefer:
 
 ```bash
-python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/vibage-init")))))'
 ```
 
 Fallback (V0):
 
 ```bash
-python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-locate")))))'
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/vibage-locate")))))'
 ```
 
 Use `$PKG_ROOT/scripts/*` and `$PKG_ROOT/references/*`. Never hardcode `/Users/...`.
 
 ## Language
 
-Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Traditional Chinese. Paths, identifiers, template section titles in English are fine inside engineer report.
+Match the **owner's language** in chat and `VIBAGE-OWNER.md`. Never assume Traditional Chinese. Paths, identifiers, template section titles in English are fine inside engineer report.
 
 ## Inputs (ask only if missing)
 
 1. Symptom in one sentence
-2. Workspace root (parent folder with `docs/war-room/`)
+2. Workspace root (parent folder with `docs/vibage/`)
 3. Any log / stack / failing URL / approximate time
 4. What already tried (optional)
 5. Owner questionnaire (if not already captured in RUNS/STATUS):
@@ -55,16 +55,16 @@ Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Tra
 
 1. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery (same as init). Pin fail blocks `analyzing` (S8).
 2. Run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"`. On failure → stop. Set run phase `stale_confirm` if hash mismatch; tell owner to re-orient / re-confirm (S13/S14). **No dig without gate.**
-3. Read `docs/war-room/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig only that subset.
+3. Read `docs/vibage/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig only that subset.
 
 ## Deleted V0 behavior
 
-- **Do not** run the old early "Orient (5 min max)" step inside locate as a substitute for `war-room-orient`.
+- **Do not** run the old early "Orient (5 min max)" step inside locate as a substitute for `vibage-orient`.
 - Shallow identity (README/deny lists) may still happen **after** assert_gate as part of dig, but SCAN_PLAN + CONFIRM are owned by orient.
 
 ## Procedure
 
-1. **Open / update RunEnvelope** at `docs/war-room/RUNS/<run_id>.json`:
+1. **Open / update RunEnvelope** at `docs/vibage/RUNS/<run_id>.json`:
    - phase=`analyzing`, mode=`degraded` default
    - Keep `pipeline_id: locate`
    - Optional: `preview_error` (string) — set when preview copy/serve fails (S11)
@@ -81,16 +81,16 @@ Match the **owner's language** in chat and `WAR-ROOM-OWNER.md`. Never assume Tra
 9. **Engineer challenge + adversarial kill** — cap ≤7 findings after review.
 10. **GapQuestions** after analysis — use `$PKG_ROOT/references/gap-question-template.md`; record `gap_ids` on RunEnvelope.
 11. **Write dual reports** at workspace root:
-    - `WAR-ROOM-OWNER.md` ← owner template
-    - `WAR-ROOM-LOCATE.md` ← locate template  
+    - `VIBAGE-OWNER.md` ← owner template
+    - `VIBAGE-LOCATE.md` ← locate template  
     Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
 12. **Verify (optional checklist):**  
-    `"$PKG_ROOT/scripts/verify-report.sh" WAR-ROOM-LOCATE.md docs/war-room/RUNS/<run_id>.json`  
+    `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-LOCATE.md docs/vibage/RUNS/<run_id>.json`  
     Second arg is the RUNS JSON (required when Mode is full nested).
 13. **Preview fail-soft (S11):** After dual MD exist, run:
     `"$PKG_ROOT/scripts/serve-preview.sh" "$WORKSPACE" 8765`
-    (copies asset into `$WORKSPACE/war-room-preview/`, serves `$WORKSPACE` on 127.0.0.1
-    so `../WAR-ROOM-*.md` links resolve). Open `http://127.0.0.1:8765/war-room-preview/`.
+    (copies asset into `$WORKSPACE/vibage-preview/`, serves `$WORKSPACE` on 127.0.0.1
+    so `../VIBAGE-*.md` links resolve). Open `http://127.0.0.1:8765/vibage-preview/`.
     Optionally edit that HTML from OWNER content before/while serving.
     If copy or serve fails: set RunEnvelope field `preview_error` to the message,
     keep `phase: done` when dual MD exist, still offer soft CTA.

@@ -5,8 +5,8 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d)"
 trap 'rm -rf "$TMP"' EXIT
 
-mkdir -p "$TMP/docs/war-room"
-cp "$ROOT/tests/fixtures/sample_SCAN_PLAN.md" "$TMP/docs/war-room/SCAN_PLAN.md"
+mkdir -p "$TMP/docs/vibage"
+cp "$ROOT/tests/fixtures/sample_SCAN_PLAN.md" "$TMP/docs/vibage/SCAN_PLAN.md"
 
 # Case A: missing CONFIRM → FAIL
 set +e
@@ -25,7 +25,7 @@ echo "OK: missing confirm rejected (rc=$RC)"
 echo "OK: matching confirm accepted"
 
 # Case C: mutate plan → mismatch FAIL
-python3 - <<'PY' "$TMP/docs/war-room/SCAN_PLAN.md"
+python3 - <<'PY' "$TMP/docs/vibage/SCAN_PLAN.md"
 import pathlib, sys
 p = pathlib.Path(sys.argv[1])
 text = p.read_text(encoding="utf-8")

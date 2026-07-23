@@ -1,6 +1,6 @@
 # L0–L3 model levels (SSOT)
 
-Skills reference **level ids only**, never hardcode slugs in SKILL body. Slugs live in hub `docs/war-room/model-routing.json` (from init template).
+Skills reference **level ids only**, never hardcode slugs in SKILL body. Slugs live in hub `docs/vibage/model-routing.json` (from init template).
 
 | Level | Meaning | Default slug source |
 |-------|---------|---------------------|

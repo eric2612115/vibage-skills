@@ -4,7 +4,7 @@
   "run_id": "run-degraded-ok",
   "phase": "done",
   "mode": "degraded",
-  "artifact_uris": ["WAR-ROOM-OWNER.md", "WAR-ROOM-LOCATE.md"],
+  "artifact_uris": ["VIBAGE-OWNER.md", "VIBAGE-LOCATE.md"],
   "survey_refs": [],
   "gap_ids": []
 }

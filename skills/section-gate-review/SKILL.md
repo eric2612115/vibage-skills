@@ -8,7 +8,7 @@ description: >-
 
 # Section Gate Review
 
-Independent process skill for War Room design/plan orchestration (not hard-wired into generic brainstorming).
+Independent process skill for Vibage design/plan orchestration (not hard-wired into generic brainstorming).
 
 ## When / Not
 
@@ -38,7 +38,7 @@ Defaults: `lenses` length 3 as above; `max_rounds` ≤ 2.
 
 ## Output schema
 
-Write JSON (chat + optional `docs/war-room/RUNS/<review_run_id>.section-gate.json`):
+Write JSON (chat + optional `docs/vibage/RUNS/<review_run_id>.section-gate.json`):
 
 ```json
 {
@@ -74,7 +74,7 @@ Write JSON (chat + optional `docs/war-room/RUNS/<review_run_id>.section-gate.jso
 
 ## Hard stops
 
-- Do not call any `war-room-*` product skill (`war-room-init`, `war-room-orient`, `war-room-locate`, `war-room-bootstrap`).
+- Do not call any `vibage-*` product skill (`vibage-init`, `vibage-orient`, `vibage-locate`, `vibage-bootstrap`).
 - No product code edits
 - No recursive section-gate/research
 - No locate dig

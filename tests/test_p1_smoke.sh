@@ -14,10 +14,10 @@ cp "$ROOT/tests/fixtures/synthetic-parent/app-b/README.md" "$TMP/app-b/README.md
 
 # init hub (isolated HOME so install does not touch real ~/.cursor/skills)
 bash "$ROOT/scripts/install.sh" --init-hub="$TMP"
-[[ -f "$TMP/docs/war-room/STATUS.md" ]]
+[[ -f "$TMP/docs/vibage/STATUS.md" ]]
 
 # Write a real SCAN_PLAN with two roots
-cat > "$TMP/docs/war-room/SCAN_PLAN.md" <<'MD'
+cat > "$TMP/docs/vibage/SCAN_PLAN.md" <<'MD'
 # SCAN_PLAN
 
 Visible subset: app-a, app-b.
@@ -65,7 +65,7 @@ set -e
 echo "OK: verify-report fake full nested FAIL"
 
 # mutate plan → stale confirm
-python3 - <<'PY' "$TMP/docs/war-room/SCAN_PLAN.md"
+python3 - <<'PY' "$TMP/docs/vibage/SCAN_PLAN.md"
 import pathlib, sys
 p = pathlib.Path(sys.argv[1])
 t = p.read_text(encoding="utf-8")
@@ -83,9 +83,9 @@ set -e
 echo "OK: stale confirm after mutate"
 
 # preview copy fail-soft path exists
-mkdir -p "$TMP/war-room-preview"
-cp "$ROOT/assets/war-room-preview/index.html" "$TMP/war-room-preview/index.html"
-[[ -f "$TMP/war-room-preview/index.html" ]]
+mkdir -p "$TMP/vibage-preview"
+cp "$ROOT/assets/vibage-preview/index.html" "$TMP/vibage-preview/index.html"
+[[ -f "$TMP/vibage-preview/index.html" ]]
 echo "OK: preview copy"
 
 echo "ALL p1 smoke tests passed"

@@ -1,12 +1,12 @@
 ---
-name: war-room-orient
+name: vibage-orient
 description: >-
-  Use when hub is ready (docs/war-room/STATUS.md), there is no valid CONFIRM,
+  Use when hub is ready (docs/vibage/STATUS.md), there is no valid CONFIRM,
   or SCAN_PLAN must be (re)drafted before dig. Do not deep-dig or write
-  WAR-ROOM-OWNER/LOCATE dual reports.
+  VIBAGE-OWNER/LOCATE dual reports.
 ---
 
-# War Room Orient
+# Vibage Orient
 
 Goal: discover RootRefs, write SCAN_PLAN, stop at `awaiting_confirm`.
 
@@ -21,10 +21,10 @@ Goal: discover RootRefs, write SCAN_PLAN, stop at `awaiting_confirm`.
 ## PKG_ROOT
 
 ```bash
-python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/war-room-init")))))'
+python3 -c 'import os; print(os.path.dirname(os.path.dirname(os.path.realpath(os.path.expanduser("~/.cursor/skills/vibage-init")))))'
 ```
 
-Fallback: realpath on `~/.cursor/skills/war-room-locate` then dirname/dirname.
+Fallback: realpath on `~/.cursor/skills/vibage-locate` then dirname/dirname.
 
 ## RootRef schema (write into scan_plan_v1.root_refs[])
 
@@ -41,12 +41,12 @@ ServiceRef = same schema when kind is app|deploy|lib|data.
 
 ## Procedure
 
-1. Require hub: if `docs/war-room/STATUS.md` missing → hand off to `war-room-init`.
+1. Require hub: if `docs/vibage/STATUS.md` missing → hand off to `vibage-init`.
 2. Discover roots (shallow):
    - One-level children of workspace with `.git` → `presence: checked_out`
    - Note suspected missing/external units as RootRef with `missing`/`external_ref` — do not invent checkouts
    - Vibing single-repo workspace (S3): still emit light SCAN_PLAN with that root
-3. Write `docs/war-room/SCAN_PLAN.md`:
+3. Write `docs/vibage/SCAN_PLAN.md`:
    - Human summary: list visible roots + time estimate + "confirming visible subset, not whole system"
    - Fenced JSON `scan_plan_v1` with required keys: `schema_version`, `root_refs`, `budgets`, `hot_path_ids`, `known_incompleteness`, `planned_dig_ids`
    - Default budgets if unspecified: `max_wall_min=25`, `max_files=40`, `max_depth=3`
@@ -58,7 +58,7 @@ ServiceRef = same schema when kind is app|deploy|lib|data.
 6. On user confirm (chat OK is only a trigger):
    - Run `"$PKG_ROOT/scripts/write_confirm.sh" "$WORKSPACE"`
    - Remind: signed the **visible subset**
-   - Hand off to `war-room-locate` (locate runs assert_gate)
+   - Hand off to `vibage-locate` (locate runs assert_gate)
 7. On reject/change plan (S13): edit SCAN_PLAN; clear or overwrite CONFIRM only after new confirm; hash mismatch must block dig.
 8. Stale (S14): if plan changed under an old CONFIRM → treat as `stale_confirm`; clear CONFIRM → re-orient (no `--force` required).
 

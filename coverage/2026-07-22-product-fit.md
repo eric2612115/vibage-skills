@@ -1,7 +1,7 @@
 # Product fit eval — 2026-07-22
 
-Plan: SelfAutoBuz `docs/superpowers/plans/2026-07-22-war-room-skills-product-fit-eval.md`  
-Matrix: `docs/research/war-room/product-fit-gap-matrix-2026-07-22.md`  
+Plan: SelfAutoBuz `docs/superpowers/plans/2026-07-22-vibage-skills-product-fit-eval.md`  
+Matrix: `docs/research/vibage/product-fit-gap-matrix-2026-07-22.md`  
 Model lock: `cursor-grok-4.5-high`
 
 ## Chunk B

@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 # Checklist only — does NOT prove nested subagents actually ran.
-# Usage: verify-report.sh <WAR-ROOM-LOCATE.md> [RUNS/<run_id>.json]
+# Usage: verify-report.sh <VIBAGE-LOCATE.md> [RUNS/<run_id>.json]
 # Second arg: path to RunEnvelope JSON. When Mode in the MD is "full nested",
 # the RUNS json is REQUIRED and must pass verify-run.sh.
 set -euo pipefail
 LOCATE="${1:-}"
 RUNS_JSON="${2:-}"
 if [[ -z "$LOCATE" || ! -f "$LOCATE" ]]; then
-  echo "Usage: $0 /path/to/WAR-ROOM-LOCATE.md [RUNS/<run_id>.json]" >&2
+  echo "Usage: $0 /path/to/VIBAGE-LOCATE.md [RUNS/<run_id>.json]" >&2
   exit 2
 fi
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"

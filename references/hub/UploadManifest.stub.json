@@ -1,12 +1,12 @@
 {
   "schema_version": "1",
   "path_allowlist": [
-    "WAR-ROOM-OWNER.md",
-    "WAR-ROOM-LOCATE.md",
-    "docs/war-room/STATUS.md",
-    "docs/war-room/RUNS/",
-    "docs/war-room/SCAN_PLAN.md",
-    "docs/war-room/CONFIRM.json"
+    "VIBAGE-OWNER.md",
+    "VIBAGE-LOCATE.md",
+    "docs/vibage/STATUS.md",
+    "docs/vibage/RUNS/",
+    "docs/vibage/SCAN_PLAN.md",
+    "docs/vibage/CONFIRM.json"
   ],
   "redaction_policy": "strip_env_secrets_and_credentials",
   "forbid_whole_hub_upload": true,

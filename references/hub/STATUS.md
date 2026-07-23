@@ -1,4 +1,4 @@
-# War Room Hub STATUS
+# Vibage Hub STATUS
 
 schema_version: 1
 hub_ready: true

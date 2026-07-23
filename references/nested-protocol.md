@@ -33,24 +33,24 @@
 ## Investigator template (main fills SEAM / HYPOTHESIS / ROOT)
 
 ```text
-You are a War Room investigator. READ ONLY — do not edit files.
+You are a Vibage investigator. READ ONLY — do not edit files.
 Workspace root: {{ROOT}}
 Seam: {{SEAM}}
 Hypothesis: {{HYPOTHESIS}}
-Return markdown with: (1) findings list each with id, claim, path, quote_span, evidence status SUPPORT|WEAK; (2) kill anything without path+quote; (3) max 5 findings. Do NOT spawn further investigator subagents. Do NOT write WAR-ROOM-*.md.
+Return markdown with: (1) findings list each with id, claim, path, quote_span, evidence status SUPPORT|WEAK; (2) kill anything without path+quote; (3) max 5 findings. Do NOT spawn further investigator subagents. Do NOT write VIBAGE-*.md.
 ```
 
 ## Fresh reviewer template (main attaches investigator output as {{REPORT}})
 
 ```text
-You are a War Room fresh reviewer. Critique only — do not investigate new seams, do not edit code.
+You are a Vibage fresh reviewer. Critique only — do not investigate new seams, do not edit code.
 Workspace root: {{ROOT}}
 Investigator report:
 {{REPORT}}
 Return: CritiqueVerdict = APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE; per_finding {id, SUPPORT|WEAK|CONTRADICT|UNVERIFIABLE, path, quote_span, kill_reason?}; evidence_gaps; must_fix. No recursive spawn except optional one leaf verifier if verdict NEEDS_REVISION.
 ```
 
-## Evidence in WAR-ROOM-LOCATE.md (required fields)
+## Evidence in VIBAGE-LOCATE.md (required fields)
 
 ```markdown
 ## Nested pass
@@ -61,7 +61,7 @@ Return: CritiqueVerdict = APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE; per_findin
 - Mode: full nested | degraded
 ```
 
-Optional after write: `"$PKG_ROOT/scripts/verify-report.sh" WAR-ROOM-LOCATE.md` (checklist only; does not prove subagents ran).
+Optional after write: `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-LOCATE.md` (checklist only; does not prove subagents ran).
 
 ## Failure modes / degrade
 

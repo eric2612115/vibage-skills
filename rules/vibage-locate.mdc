@@ -1,18 +1,18 @@
 ---
-description: War Room locate hard stops (thin)
+description: Vibage locate hard stops (thin)
 alwaysApply: false
 ---
 
-# War Room Locate — hard stops
+# Vibage Locate — hard stops
 
 - Match owner language; never assume Traditional Chinese. Identifiers stay English.
-- Resolve PKG_ROOT via portable realpath on `~/.cursor/skills/war-room-init` (fallback `war-room-locate`), then use `$PKG_ROOT/scripts/*` and `$PKG_ROOT/references/*`.
-- Hub paths live under `docs/war-room/` (STATUS, RUNS, SCAN_PLAN, CONFIRM).
+- Resolve PKG_ROOT via portable realpath on `~/.cursor/skills/vibage-init` (fallback `vibage-locate`), then use `$PKG_ROOT/scripts/*` and `$PKG_ROOT/references/*`.
+- Hub paths live under `docs/vibage/` (STATUS, RUNS, SCAN_PLAN, CONFIRM).
 - **No dig without assert_gate:** run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"` before analyzing.
 - Pin fail (`verify-pins.sh`) blocks analyzing.
 - MUST nest when possible: investigators → fresh reviewers → synthesize (see nested-protocol.md). Mode `full nested` only with nested_dispatch records; else `degraded`.
 - MUST use pinned superpowers (`systematic-debugging`, `verification-before-completion`).
-- Dual reports: `WAR-ROOM-OWNER.md` + `WAR-ROOM-LOCATE.md` at workspace root.
+- Dual reports: `VIBAGE-OWNER.md` + `VIBAGE-LOCATE.md` at workspace root.
 - ≤7 engineer findings after review; kill without path + quote.
 - No business code edits, no deploy, no `.env` secrets in chat, no signup wall before reports.
 - Soft CTA only after both reports; if site URL TBD, say not published (no fake URL).

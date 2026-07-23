@@ -1,4 +1,4 @@
-# War Room — Owner Brief — 2026-07-22 (synthetic example)
+# Vibage — Owner Brief — 2026-07-22 (synthetic example)
 
 ## Symptom (owner words)
 The dashboard looks empty and I'm afraid the bot is trading real money.

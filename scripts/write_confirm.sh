@@ -4,7 +4,7 @@ set -euo pipefail
 WS="${1:-}"
 BY="${2:-owner}"
 [[ -n "$WS" && -d "$WS" ]] || { echo "Usage: $0 <workspace_root> [confirmed_by]" >&2; exit 2; }
-HUB="$WS/docs/war-room"
+HUB="$WS/docs/vibage"
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 PLAN="$HUB/SCAN_PLAN.md"
 [[ -f "$PLAN" ]] || { echo "missing $PLAN" >&2; exit 1; }
@@ -16,7 +16,7 @@ path, h, by = sys.argv[1], sys.argv[2], sys.argv[3]
 obj = {
     "schema_version": "1",
     "confirm_kind": "scan_plan",
-    "subject_ref": "docs/war-room/SCAN_PLAN.md",
+    "subject_ref": "docs/vibage/SCAN_PLAN.md",
     "payload_hash": h,
     "hash_alg": "sha256",
     "timestamp": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

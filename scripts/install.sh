@@ -13,7 +13,7 @@ usage() {
 Usage: $0 [options]
   --with-project-rule=/path/to/repo   Copy thin rule if missing
   --project-skills=/path/to/repo      Symlink MANIFEST skills under repo .cursor/skills
-  --init-hub=/abs/path                Copy references/hub/* into path/docs/war-room/
+  --init-hub=/abs/path                Copy references/hub/* into path/docs/vibage/
   --force                             Replace package-owned stale project skill symlinks only
   --force-hub                         Overwrite existing hub files (still never deletes CONFIRM unless --force-hub)
   -h|--help
@@ -53,11 +53,16 @@ done < "$MANIFEST"
 
 if [[ -n "$PROJECT_RULE" ]]; then
   mkdir -p "$PROJECT_RULE/.cursor/rules"
-  if [[ -f "$PROJECT_RULE/.cursor/rules/war-room-locate.mdc" ]]; then
+  if [[ -f "$PROJECT_RULE/.cursor/rules/vibage-locate.mdc" ]]; then
     echo "Skip rule: already exists"
   else
-    cp "$PKG_ROOT/rules/war-room-locate.mdc" "$PROJECT_RULE/.cursor/rules/war-room-locate.mdc"
+    cp "$PKG_ROOT/rules/vibage-locate.mdc" "$PROJECT_RULE/.cursor/rules/vibage-locate.mdc"
     echo "Copied project rule"
+  fi
+  # Drop stale war-room rule name after vibage copy (intentional leftover string).
+  if [[ -f "$PROJECT_RULE/.cursor/rules/war-room-locate.mdc" ]]; then
+    rm -f "$PROJECT_RULE/.cursor/rules/war-room-locate.mdc"
+    echo "Removed stale project rule: war-room-locate.mdc"
   fi
 fi
 
@@ -116,7 +121,7 @@ fi
 
 init_hub() {
   local ws="$1"
-  local hub="$ws/docs/war-room"
+  local hub="$ws/docs/vibage"
   local src="$PKG_ROOT/references/hub"
   [[ -d "$src" ]] || { echo "Missing hub templates: $src" >&2; exit 1; }
   mkdir -p "$hub/RUNS"
@@ -153,7 +158,27 @@ if [[ -n "$INIT_HUB" ]]; then
   init_hub "$INIT_HUB"
 fi
 
+# Drop stale war-room-* global skill names only (never remove vibage-* just linked above).
+for stale in war-room-locate war-room-bootstrap war-room-init war-room-orient; do
+  if [[ -L "$HOME/.cursor/skills/$stale" || -e "$HOME/.cursor/skills/$stale" ]]; then
+    rm -f "$HOME/.cursor/skills/$stale"
+    echo "Removed stale global skill: $HOME/.cursor/skills/$stale"
+  fi
+done
+if [[ -n "$PROJECT_SKILLS" ]]; then
+  for stale in war-room-locate war-room-bootstrap war-room-init war-room-orient; do
+    dest="$PROJECT_SKILLS/.cursor/skills/$stale"
+    if [[ -L "$dest" || -e "$dest" ]]; then
+      rm -f "$dest"
+      echo "Removed stale project skill: $dest"
+    fi
+  done
+fi
+
 echo "Installed. PKG_ROOT=$PKG_ROOT"
 echo "MANIFEST skills linked under ~/.cursor/skills/"
 echo "Pin check: $PKG_ROOT/scripts/verify-pins.sh"
-echo "PKG_ROOT resolve: python3 realpath on ~/.cursor/skills/war-room-init then dirname/dirname"
+echo "PKG_ROOT resolve: python3 realpath on ~/.cursor/skills/vibage-init then dirname/dirname"
+echo "Note: prefer MAIN package install for vibage-locate/bootstrap SSOT:"
+echo "      $(cd "$PKG_ROOT/../.." && pwd)/scripts/install.sh"
+echo "      (re-run MAIN after this worktree install to point those two at MAIN)."

@@ -1,4 +1,4 @@
-# War Room Skills — STATUS
+# Vibage Skills — STATUS
 
 > **Agent／人類接續入口。** 進度與 Phase 邊界以本檔為準；行為細節仍以 `skills/` + 未來 spec 為準。  
 > **Date:** 2026-07-22  
@@ -8,7 +8,7 @@
 
 **V0（現況）**＝單倉／少根 locate 雙報告。  
 **目標**＝母夾 OS（P1）→ 重裝備本地（P2）→ 雲端 Pro／B（P3）。  
-**P1 設計 spec：** [`docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`](docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md)
+**P1 設計 spec：** [`docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md`](docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md)
 
 **P1 形狀釘死：** skill MD + hub 檔案契約 + 僅三腳本（`assert_gate`／install allowlist／verify degraded-aware）。禁止 FSM 引擎、survey daemon、上傳實作、router binary。
 
@@ -29,7 +29,7 @@
 
 ### P1 成功定義（可驗收 YES）
 
-1. 雙報告 `WAR-ROOM-OWNER.md` + `WAR-ROOM-LOCATE.md`  
+1. 雙報告 `VIBAGE-OWNER.md` + `VIBAGE-LOCATE.md`  
 2. STATUS／RUNS 更新（足跡續跑）  
 3. localhost preview：**fail-soft**（失敗不擋 DONE；MD+足跡仍算成功）  
 4. soft CTA：站點 TBD **不擋**成功；本地免註冊  
@@ -137,8 +137,8 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | §2 | 修訂鎖＋三審通過 |
 | §3 | 人點頭；must_fix 已吸納 |
 | §4 | 人點頭 |
-| Spec | `docs/superpowers/specs/2026-07-22-war-room-os-p1-design.md`（✅ Approved） |
-| Implementation plan | `docs/superpowers/plans/2026-07-22-war-room-os-p1.md`（Tasks 1–20 ✅／Chunk 6；checklist 已落地） |
+| Spec | `docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md`（✅ Approved） |
+| Implementation plan | `docs/superpowers/plans/2026-07-22-vibage-os-p1.md`（Tasks 1–20 ✅／Chunk 6；checklist 已落地） |
 | Manual checklist | `coverage/p1-manual-checklist.md`（partial：機械 S1/S1b/S2/S3/S8/S12/S13 + gates；agent dig 待） |
 
 ### §3 section-gate 紀錄
@@ -154,7 +154,7 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 ### 小白一句話快樂路徑
 
 1. Cursor 開母資料夾  
-2. 「幫我安裝 War Room 然後開始分析」  
+2. 「幫我安裝 Vibage 然後開始分析」  
 3. Agent：install（禁擅自 `--force`）→ 人話列出將掃的 folders＋時間 →「回確認開始」  
 4. 用戶：確認  
 5. 深挖（可選短 survey；可說跳過上網）→ 雙報告 → 開 localhost preview → 軟 CTA  
@@ -173,10 +173,10 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. **合併** `feature/war-room-os-p1`（Chunk 6 已綠）；若 `~/.cursor/skills` 曾被舊 smoke 指到 worktree，合併後重跑 `scripts/install.sh`  
+1. **合併** `feature/vibage-os-p1`（Chunk 6 已綠）；若 `~/.cursor/skills` 曾被舊 smoke 指到 worktree，合併後重跑 `scripts/install.sh`  
 2. 依 `coverage/p1-manual-checklist.md` **Agent-pending**：開 fresh 母夾 workspace，跑 S4–S7／S9–S11／S14 + soft CTA 實機；全綠後才將能力表 P1 欄標 YES（**勿**提前 YES）  
 3. **平行：** 開 Hosted web shell Chat 1（規格／計劃；Grok 4.5 三審）→ 產出  
-   `SelfAutoBuz/docs/superpowers/specs/YYYY-MM-DD-war-room-web-shell-design.md` + plan；**本 repo 不寫 FE/BE**  
+   `SelfAutoBuz/docs/superpowers/specs/YYYY-MM-DD-vibage-web-shell-design.md` + plan；**本 repo 不寫 FE/BE**  
 4. Web Chat 2＝shell FE；Chat 3＝plan 標出的 API 缺口；Chat 4（可選）＝skills CTA URL 小改  
 5. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
@@ -185,9 +185,9 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 | 路徑 | 角色 |
 |------|------|
 | 本 repo | Skills／P1 OS SSOT |
-| `docs/superpowers/plans/2026-07-22-war-room-os-p1.md` | P1 + Chunk 6 + web 平行軌道 |
-| `../war-room-app` | API／P3；`PRODUCT-LOCKS` |
-| `../war-room-web-design` | FE design locks |
-| `../SelfAutoBuz/docs/research/war-room/` | research + SEO stack |
-| `../SelfAutoBuz/docs/superpowers/specs/*war-room*` | 跨產品 specs |
+| `docs/superpowers/plans/2026-07-22-vibage-os-p1.md` | P1 + Chunk 6 + web 平行軌道 |
+| `../vibage-app` | API／P3；`PRODUCT-LOCKS` |
+| `../vibage-web-design` | FE design locks |
+| `../SelfAutoBuz/docs/research/vibage/` | research + SEO stack |
+| `../SelfAutoBuz/docs/superpowers/specs/*vibage*` | 跨產品 specs |
 | `README.md` | 短入口 → 本檔 |

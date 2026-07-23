@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Usage: assert_gate.sh <workspace_root>
-# Exit 0 if docs/war-room/CONFIRM.json payload_hash matches SCAN_PLAN.
+# Exit 0 if docs/vibage/CONFIRM.json payload_hash matches SCAN_PLAN.
 set -euo pipefail
 WS="${1:-}"
 [[ -n "$WS" && -d "$WS" ]] || { echo "Usage: $0 <workspace_root>" >&2; exit 2; }
-HUB="$WS/docs/war-room"
+HUB="$WS/docs/vibage"
 PLAN="$HUB/SCAN_PLAN.md"
 CONF="$HUB/CONFIRM.json"
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"

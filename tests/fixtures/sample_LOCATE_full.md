@@ -1,4 +1,4 @@
-# War Room Locate — test
+# Vibage Locate — test
 
 ## Nested pass
 - Investigators: 1 — inv-1
