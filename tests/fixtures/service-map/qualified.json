@@ -1,0 +1,22 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "service_map",
+  "scale": "Subset",
+  "quality_bar": "MEDIUM",
+  "services": [
+    {
+      "id": "web",
+      "name": "Web frontend"
+    },
+    {
+      "id": "billing",
+      "name": "Billing service"
+    }
+  ],
+  "notes": "qualified fixture",
+  "generated_at": "2026-07-23T12:00:00Z",
+  "edges": [
+    {"from": "web", "to": "billing"}
+  ],
+  "extra_future_key": {"ok": true}
+}

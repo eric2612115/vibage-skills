@@ -1,0 +1,11 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "architecture_pass",
+  "scale": "Tiny",
+  "quality_bar": "MEDIUM",
+  "services": [
+    {
+      "id": "api"
+    }
+  ]
+}

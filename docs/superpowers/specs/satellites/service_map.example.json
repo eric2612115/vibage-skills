@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "service_map",
+  "scale": "Tiny",
+  "quality_bar": "MEDIUM",
+  "services": [
+    {
+      "id": "api",
+      "name": "API gateway"
+    },
+    {
+      "id": "worker",
+      "name": "Background worker"
+    }
+  ],
+  "notes": "Example qualified map — copy to docs/vibage/maps/service_map.json",
+  "generated_at": "2026-07-23T00:00:00Z"
+}

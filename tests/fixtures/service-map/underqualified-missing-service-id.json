@@ -1,0 +1,11 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "service_map",
+  "scale": "Large",
+  "quality_bar": "MEDIUM",
+  "services": [
+    {
+      "name": "no-id-here"
+    }
+  ]
+}
