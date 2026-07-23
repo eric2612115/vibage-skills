@@ -11,7 +11,8 @@ After repo is public:
 /plugin install vibage@vibage
 ```
 
-Details: [`MARKETPLACE.md`](MARKETPLACE.md). Plugin install ≠ `PROJECT_ENTRY_OK`.
+Details: [`MARKETPLACE.md`](MARKETPLACE.md). Plugin install ≠ `PROJECT_ENTRY_OK`.  
+Missing Cursor hooks is **not** a Claude failure. Continuum: entry → init-hub → pile-index → ticket.
 
 ## Install
 

@@ -68,8 +68,9 @@ Rules:
 ## Preflight gates (before dig)
 
 1. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery (same as init). Pin fail blocks `analyzing` (S8). Dual-write STOP + handoff; no dual reports.
-2. Run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"`. On failure → stop. Set run phase `stale_confirm` if hash mismatch; tell owner to re-orient / re-confirm (S13/S14). **No dig without gate.** Dual-write STOP + handoff; **never** write `VIBAGE-ISSUE-*` on gate fail.
-3. Read `docs/vibage/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig only that subset.
+2. **Map gate (F16 / S05):** Run `"$PKG_ROOT/scripts/verify-service-map.sh" "$WORKSPACE"`. On failure → stop unless owner recorded explicit `MAP_SKIP` in `docs/vibage/DECISIONS.md`. Do not dig on half-written maps. Hand to `vibage-pile-index` when appropriate.
+3. Run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"`. On failure → stop. Set run phase `stale_confirm` if hash mismatch; tell owner to re-orient / re-confirm (S13/S14). **No dig without gate.** Dual-write STOP + handoff; **never** write `VIBAGE-ISSUE-*` on gate fail.
+4. Read `docs/vibage/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig **only** that subset (S10). Do not pick two “interesting” repos. Do not deep-read all map services. Do **not** require Graphify / service_map pretty preview before dual reports.
 
 ## Deleted V0 behavior
 
@@ -99,6 +100,7 @@ Rules:
     - `VIBAGE-ISSUE-OWNER.md` ← owner template
     - `VIBAGE-ISSUE-LOCATE.md` ← locate template  
     Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
+    **OWNER must plain-list** unchecked external gaps (DB / log / container / not connected) — S06. Do not claim code-only completeness when externals were named.
 12. **Verify (optional checklist):**  
     `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-ISSUE-LOCATE.md docs/vibage/RUNS/<run_id>.json`  
     Second arg is the RUNS JSON (required when Mode is full nested).
@@ -137,6 +139,7 @@ Also obey `$PKG_ROOT/references/hard-stops.md`.
 - Do not dig without assert_gate.
 - Do not open 20+ files "just in case".
 - Do not invent Jira tickets or fake health scores.
+- Do not push register / sign-up / pairing / API-key / Architecture Pass upsell (S10).
 - Do not push code, edit business logic, or call external clouds unless user asks.
 - Do not put `.env` secrets in chat or reports.
 - Do not claim SOC2 / "passed audit".

@@ -33,6 +33,10 @@ AGENTS_MD="$PARENT/AGENTS.md"
 [[ -f "$CLAUDE_ENTRY" ]] || fail "missing Claude entry: $CLAUDE_ENTRY"
 [[ -f "$AGENTS_MD" ]] || fail "missing AGENTS.md: $AGENTS_MD"
 
+# F12 / S08: alwaysApply mdc is the reliable router (hooks may race)
+grep -Eq '^alwaysApply:[[:space:]]*true[[:space:]]*$' "$MDC" \
+  || fail "Cursor vibage.mdc must set alwaysApply: true (S08 reliable router)"
+
 grep -Fq '<!-- vibage:start -->' "$CLAUDE_MD" || fail "CLAUDE.md missing vibage:start marker"
 grep -Fq '<!-- vibage:end -->' "$CLAUDE_MD" || fail "CLAUDE.md missing vibage:end marker"
 grep -Fq '<!-- vibage:start -->' "$AGENTS_MD" || fail "AGENTS.md missing vibage:start marker"
@@ -41,6 +45,7 @@ grep -Fq '<!-- vibage:end -->' "$AGENTS_MD" || fail "AGENTS.md missing vibage:en
 # Marker SSOT (adapters must include these strings)
 REQUIRED=(
   'vibage-init'
+  'vibage-pile-index'
   'vibage-orient'
   'vibage-issue-locate'
   'using-vibage'

@@ -1,6 +1,7 @@
 using-vibage
 vibage-init
 vibage-bootstrap
+vibage-pile-index
 vibage-issue-locate
 vibage-orient
 research-survey-review

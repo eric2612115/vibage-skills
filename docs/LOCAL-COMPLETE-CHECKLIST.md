@@ -10,6 +10,7 @@ Grep-able OK tokens only. Capability SSOT remains [`STATUS.md`](../STATUS.md).
 | 0c Map AI-first | `docs/maps/AI-FIRST.md` | agents use JSON + `graph.mmd` |
 | 0d Extending | `docs/EXTENDING.md` | add optional skill without marketplace |
 | 0e Plugin manifests | `tests/test_plugin_manifests.sh` | `PLUGIN_MANIFESTS_OK` (≠ store listing) |
+| 0f Pile index | `bash scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` (≠ Architecture Pass) |
 | 1 Ship gate | `bash scripts/test-tier0.sh` | `TIER0_OK` |
 | 2 Pack health | `bash scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | 3 Parent entry | (included in pack-health) | `PROJECT_ENTRY_OK` |

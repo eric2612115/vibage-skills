@@ -57,28 +57,46 @@ Rules:
 - Mid-fail / abort: STOP + handoff only — do **not** write dual reports (`VIBAGE-ISSUE-OWNER.md` / `VIBAGE-ISSUE-LOCATE.md`).
 - See `$PKG_ROOT/references/hub/STATUS.md` STOP template and `RunEnvelope.example.json`.
 
+## Intake (first-class — before drafting)
+
+Consider **before** writing SCAN_PLAN:
+
+1. Ticket text in chat (if only a URL / empty body → say plainly “I cannot read the ticket body”; ask for a short symptom summary — S07; never invent ticket fields; never freeze waiting for Jira API).
+2. Qualified map at `docs/vibage/maps/service_map.json` — if missing/underqualified and owner did **not** say `MAP_SKIP` → hand to **`vibage-pile-index`** first (S05).
+3. Owner-stated repos / deps = **hot-path correction only** (F10). Never shrink the full child index to “the two they named.” Named-but-missing checkouts → `missing` / `external_ref` still listed.
+4. Owner-stated DB / log / container → `external_ref` + `known_incompleteness` + later OWNER gaps (S06).
+
 ## Procedure
 
 1. Require hub: if `docs/vibage/STATUS.md` missing → hand off to `vibage-init`.
-2. Discover roots (shallow):
-   - One-level children of workspace with `.git` → `presence: checked_out`
-   - Note suspected missing/external units as RootRef with `missing`/`external_ref` — do not invent checkouts
-   - Vibing single-repo workspace (S3): still emit light SCAN_PLAN with that root
-3. Write `docs/vibage/SCAN_PLAN.md`:
-   - Human summary: list visible roots + time estimate + "confirming visible subset, not whole system"
+2. Require map (F16): run `bash "$PKG_ROOT/scripts/verify-service-map.sh" "$WORKSPACE"` or hand to pile-index — unless owner explicit `MAP_SKIP` (record in `docs/vibage/DECISIONS.md`).
+3. Discover roots (shallow) **and** merge map services:
+   - One-level children with `.git` → `presence: checked_out`
+   - Map service ids/paths feed `root_refs` / candidates for `planned_dig_ids`
+   - Note missing/external units — do not invent checkouts
+4. Propose hot path = **map × ticket keywords × owner corrections** (not random two repos).
+5. Write `docs/vibage/SCAN_PLAN.md`:
+   - Human summary: hot-path apps + external gaps + time estimate + “map covered N apps; digging this hot path, not all N unless you say so”
    - Fenced JSON `scan_plan_v1` with required keys: `schema_version`, `root_refs`, `budgets`, `hot_path_ids`, `known_incompleteness`, `planned_dig_ids`
-   - Default budgets if unspecified: `max_wall_min=25`, `max_files=40`, `max_depth=3`
+   - Budgets (wide owner / large map):
+
+| Dig targets N | max_wall_min | max_files |
+|---------------|--------------|-----------|
+| 1–2 | 25 | 40 |
+| 3–6 | 40 | 80 |
+| 7+ | 55 | 120 |
+
+   - Budget ↑ does **not** authorize dropping owner externals or map services from incompleteness notes.
    - `known_incompleteness` is required (never empty string without meaning)
-4. Update RUNS + STATUS (**orient done** milestone dual-write):
+6. Update RUNS + STATUS (**orient done** milestone dual-write):
    - phase `plan_drafted` then `awaiting_confirm`
    - Do **not** enter `analyzing`
-5. **Stop** and ask plain-language confirm (owner language). List roots + estimate. Do not dig.
-6. On user confirm (chat OK is only a trigger) — **confirm** milestone dual-write:
+7. **Stop** and ask plain-language confirm. List dig targets + DB/log/container gaps. Do not dig. No jargon (no SCAN_PLAN/RootRef/hash in owner sentences).
+8. On user confirm (chat OK is only a trigger) — **confirm** milestone dual-write:
    - Run `"$PKG_ROOT/scripts/write_confirm.sh" "$WORKSPACE"`
-   - Remind: signed the **visible subset**
-   - Hand off to `vibage-issue-locate` (locate runs assert_gate)
-7. On reject/change plan (S13): edit SCAN_PLAN; clear or overwrite CONFIRM only after new confirm; hash mismatch must block dig.
-8. Stale (S14): if plan changed under an old CONFIRM → treat as `stale_confirm`; clear CONFIRM → re-orient (no `--force` required). Dual-write STOP + handoff; no dual reports.
+   - Hand off to `vibage-issue-locate` (locate runs assert_gate + map check)
+9. On reject/change plan (S13): edit SCAN_PLAN; clear or overwrite CONFIRM only after new confirm; hash mismatch must block dig.
+10. Stale (S14): if plan changed under an old CONFIRM → treat as `stale_confirm`; clear CONFIRM → re-orient (no `--force` required). Dual-write STOP + handoff; no dual reports.
 
 ## Hard stops
 

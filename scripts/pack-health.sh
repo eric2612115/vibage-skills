@@ -44,9 +44,13 @@ bash "$PKG_ROOT/tests/test_install_phrase_e2e.sh"
 echo "== pack-health: test_plugin_manifests =="
 bash "$PKG_ROOT/tests/test_plugin_manifests.sh"
 
+echo "== pack-health: test_pile_index =="
+bash "$PKG_ROOT/tests/test_pile_index.sh"
+
 cat <<EOF
 PACK_HEALTH_OK parent=$PARENT
 Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ remote CI ≠ letter B.
 Capability SSOT: package STATUS.md (not this script).
 Plugin manifests on-tree ≠ Cursor/Claude store listing approved.
+PILE_INDEX_OK ≠ Architecture Pass ≠ locate DONE.
 EOF

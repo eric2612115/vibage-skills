@@ -12,6 +12,8 @@
 | `bash tests/test_install_phrase.sh` → `INSTALL_PHRASE_OK` | 「幫我裝 Vibage」docs + markers | dig |
 | `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK` | Agent-equivalent install steps on temp parent | screen recording · dig |
 | `bash tests/test_plugin_manifests.sh` → `PLUGIN_MANIFESTS_OK` | Cursor + Claude plugin/marketplace JSON on-tree | store listing approved · SaaS |
+| `bash scripts/pile-index.sh <parent>` → `PILE_INDEX_OK` | Shallow map of one-level child git checkouts | Architecture Pass · locate DONE · Graphify required |
+| `bash tests/test_pile_index.sh` → `PILE_INDEX_TEST_OK` | Script + skill + 3-app fixture | Tier-0 |
 | `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` | Parent Cursor/Claude/Codex routers on disk | CONFIRM · locate DONE |
 | `bash tests/test_issue_fix_usable.sh` | issue-fix unlock gates script-usable | letter B · fix quality |
 | `bash tests/test_arch_review_usable.sh` | service_map qualification script-usable | Architecture Pass · letter B alone |

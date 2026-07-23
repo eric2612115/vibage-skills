@@ -6,6 +6,9 @@ Commands below are for operator/agent; owner can ask in plain language after set
 Plugin manifest: `.cursor-plugin/plugin.json` (skills + `adapters/cursor/vibage.mdc`).  
 Marketplace submit steps: [`MARKETPLACE.md`](MARKETPLACE.md). Plugin install ≠ `PROJECT_ENTRY_OK`.
 
+After parent entry: agent continuum is init-hub → `pile-index.sh` (`PILE_INDEX_OK`) → ask ticket.  
+`vibage.mdc` must stay `alwaysApply: true` (verify enforces this).
+
 ## Install
 
 ```bash

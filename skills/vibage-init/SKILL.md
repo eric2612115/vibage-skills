@@ -50,7 +50,7 @@ Match the owner's language. Never assume Traditional Chinese. Paths and identifi
    - Write `docs/vibage/RUNS/<run_id>.json` with phase `installed`, mode `degraded`, empty artifacts.
    - Update `docs/vibage/STATUS.md`: `hub_ready: true`, `focus_run_id`, `focus_pipeline_id: locate`, `phase: installed`.
 6. **Resume (S12):** If STATUS/CONFIRM already exist, do **not** wipe CONFIRM via re-init. Prefer `--init-hub` skip-existing behavior. Hand off based on phase.
-7. Hand off: instruct agent to **Read and follow** `vibage-orient` (do not dig; do not write OWNER/LOCATE here).
+7. Hand off: instruct agent to **Read and follow** `vibage-pile-index` next (map-first), then `vibage-orient`. Do not dig; do not write OWNER/LOCATE here. Do not ask “which repos?” instead of indexing.
 
 ## RunEnvelope seed (write this JSON)
 

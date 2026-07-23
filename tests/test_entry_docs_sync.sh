@@ -89,6 +89,18 @@ grep -Fq 'INSTALL_PHRASE_E2E_OK' "$STATUS" \
   || fail "STATUS pack-health layer must name INSTALL_PHRASE_E2E_OK"
 grep -Fq 'PLUGIN_MANIFESTS_OK' "$STATUS" \
   || fail "STATUS pack-health layer must name PLUGIN_MANIFESTS_OK"
+grep -Fq 'PILE_INDEX_OK' "$STATUS" \
+  || fail "STATUS must name PILE_INDEX_OK"
+grep -Fq 'vibage-pile-index' "$STATUS" \
+  || fail "STATUS must name vibage-pile-index"
+grep -Fq 'Stranger start' "$README" || fail "README must have Stranger start"
+grep -Fq 'PILE_INDEX_OK' "$README" || fail "README must name PILE_INDEX_OK"
+grep -Fq 'vibage-pile-index' adapters/cursor/vibage.mdc \
+  || fail "cursor adapter must mention vibage-pile-index"
+# Cold stop forbidden in adapters
+if grep -Eiq 'Install phrase \(then stop' adapters/cursor/vibage.mdc adapters/claude/CLAUDE.vibage.md adapters/shared/AGENTS.vibage.md; then
+  fail "adapters must not use cold then-stop install wording"
+fi
 
 # Thin SAT contract markers
 grep -Eiq 'no local CTA|no register' "$SAT" || fail "SAT-saas-blank must lock no local CTA"

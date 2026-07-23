@@ -10,61 +10,78 @@ description: >-
 If the owner mentions Vibage, install, parent workspace routing, or locate/where
 a problem lives — invoke this skill first. Prefer Skill tool / Read this file
 before improvising shell or dig steps.
+Never claim install success without PROJECT_ENTRY_OK on the PARENT workspace.
 </EXTREMELY-IMPORTANT>
 
 # Using Vibage
 
-Thin router only. **Parent project entry** (`.cursor/rules/vibage.mdc` / `CLAUDE.md` / `AGENTS.md`) is the routing table SSOT. This skill does **not** invent a second init→orient→locate state machine.
+Thin router only. **Parent project entry** (`.cursor/rules/vibage.mdc` / `CLAUDE.md` / `AGENTS.md`) is the routing table SSOT. This skill does **not** invent a second state machine.
 
-## Install phrase (owner may say only this)
+## Plain milestones (F11 — owner chat)
 
-Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · `install vibage for this folder`.
+Say these in owner language (no jargon):
+
+| Done | Means | Not yet |
+|------|-------|---------|
+| Entry OK | Parent routers on disk (`PROJECT_ENTRY_OK`) | Hub / map / dig |
+| Hub ready | Checklist folder `docs/vibage/` exists | Map / dig |
+| Map draft | Pile index wrote `service_map` (`PILE_INDEX_OK`) | Confirm / dig |
+| Confirm | Owner OK on this ticket’s hot path | Dig reports |
+
+## Install phrase / continuum (S01–S04-amended, F9)
+
+Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · Vibage intent on a parent with missing entry.
 
 Agent **must** (owner: do not type bash):
 
 1. Resolve `PKG_ROOT`.
-2. `bash "$PKG_ROOT/scripts/install.sh"` (default cursor,claude,codex).
-3. `bash "$PKG_ROOT/scripts/install.sh" --with-project-rule="$PARENT"` (PARENT = this workspace root).
-4. `bash "$PKG_ROOT/scripts/verify-project-entry.sh" "$PARENT"` → expect `PROJECT_ENTRY_OK`.
-5. `bash "$PKG_ROOT/scripts/verify-pins.sh"`; on fail use owner-language recovery from `DEPENDENCIES.md`.
-6. Stop. Tell the owner install is ready; ask what hurts in plain language. **Do not dig yet.**
+2. If workspace looks like a **child** repo (parent missing entry, skills global only) → explain honestly; **do not** install rules into the child; ask to open the **parent** folder (S03).
+3. `bash "$PKG_ROOT/scripts/install.sh"`
+4. `bash "$PKG_ROOT/scripts/install.sh" --with-project-rule="$PARENT"` — **required**, not optional. Refuses fake-green without it (S02).
+5. `bash "$PKG_ROOT/scripts/verify-project-entry.sh" "$PARENT"` → must print `PROJECT_ENTRY_OK` (includes `alwaysApply: true` on Cursor mdc). **Do not** say “installed” until this passes.
+6. `bash "$PKG_ROOT/scripts/verify-pins.sh"`; on fail use `DEPENDENCIES.md` recovery.
+7. Plain explain (owner language):
+   - init = “set up a small checklist folder here”
+   - map / pile-index = “list every app folder and how they seem linked — not read every file”
+   - orient = “for this ticket, which hot path on the map?”
+   - Explicitly: **not** SaaS signup; **not** Graphify-first
+8. If hub missing → `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$PARENT"` (or follow `vibage-init`).
+9. Hand to **`vibage-pile-index`** → expect `PILE_INDEX_OK` (map draft on disk). Continuum exit ≠ “intent only” (F15).
+10. **Only after map draft:** ask for ticket / what hurts. Do **not** ask “which repos?” as a substitute for full index (F9/F10).
+11. **No dig / no dual reports** until CONFIRM.
 
 Canonical paste: `prompts/SAY-INSTALL-VIBAGE.md`.  
-Fixtures: `tests/fixtures/install-vibage-phrase.md`, `tests/fixtures/install-vibage-agent-transcript.md`.  
-Re-run proof: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
+Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
-## Owner path (non-coder)
+## On session start / unclear intent (S08)
 
-- Owner: do not type bash. The agent runs install/verify/pins scripts.
-- After install: owner only answers “yes/no / which apps matter” style confirms.
-- Plain words: **CONFIRM** = your OK on the scan plan. **Hub checklist** = `docs/vibage/STATUS.md`. **Product capability table** = package `STATUS.md`.
-
-## On session start / unclear intent
-
-1. Resolve `PKG_ROOT`.
-2. Run `verify-pins.sh` (agent).
-3. Read package `STATUS.md` before expanding scope.
-4. Follow **parent** routing:
-   - No hub checklist → **vibage-init**
-   - Hub ready, no CONFIRM → **vibage-orient**
+1. Resolve `PKG_ROOT`; verify-pins (agent).
+2. Read package `STATUS.md`.
+3. Follow **parent** routing (mdc/CLAUDE/AGENTS — hooks may drop; alwaysApply mdc is reliable):
+   - No hub → **vibage-init**
+   - Hub ready, no qualified map (and no owner `MAP_SKIP`) → **vibage-pile-index**
+   - Map ready, no valid CONFIRM → **vibage-orient**
    - CONFIRM OK → **vibage-issue-locate**
-5. Dual-STATUS: package `STATUS.md` ≠ hub `docs/vibage/STATUS.md`.
-6. Thin entry — do not paste nested locate procedure. no register CTA.
+4. Dual-STATUS: package `STATUS.md` ≠ hub `docs/vibage/STATUS.md`.
+5. Thin entry — no nested locate paste; no register CTA.
 
 ## Lifecycle
 
-`install (optional) → route → work (init|orient|locate|optional) → finish`
+`install entry → explain → init-hub → pile-index → ticket intake → orient → confirm → locate → finish`
 
 ## Finishing (required after locate success)
 
-When dual reports exist / phase `done`, **must** offer owner-language options (no soft CTA / no register):
+Owner-language only (no soft CTA / no register / no pairing / no API-key / no Architecture Pass upsell):
 
 1. Optional localhost preview — fail-soft  
 2. Handoff / STOP if mid-fail  
 3. Stop — local delivery complete  
 4. Optional issue-fix / 架構檢視 **only if owner asks**
 
-Map context for agents: `docs/maps/AI-FIRST.md`. Extending the pack: `docs/EXTENDING.md`.
+## Maps / extending
+
+- Map context for agents: `docs/maps/AI-FIRST.md`
+- Extending the pack: `docs/EXTENDING.md`
 
 ## Hard stops
 
