@@ -43,11 +43,13 @@ REQUIRED=(
   'vibage-init'
   'vibage-orient'
   'vibage-issue-locate'
+  'using-vibage'
   'STATUS.md'
   'docs/vibage/STATUS.md'
   'do not paste nested locate procedure'
   'no register CTA'
   'hard-stops.md'
+  'do not type bash'
 )
 
 ENTRY_FILES=("$MDC" "$CLAUDE_MD" "$CLAUDE_ENTRY" "$AGENTS_MD")
@@ -66,5 +68,15 @@ for f in "${ENTRY_FILES[@]}"; do
   fi
 done
 
+# Cursor host-best: sessionStart hook files (Claude/Codex must NOT be required to have these)
+HOOK_JSON="$PARENT/.cursor/hooks.json"
+HOOK_SH="$PARENT/.cursor/hooks/vibage-session-start.sh"
+[[ -f "$HOOK_JSON" ]] || fail "missing Cursor hooks.json: $HOOK_JSON"
+[[ -f "$HOOK_SH" ]] || fail "missing Cursor hook script: $HOOK_SH"
+[[ -x "$HOOK_SH" ]] || fail "Cursor hook script not executable: $HOOK_SH"
+grep -Fq 'vibage-session-start' "$HOOK_JSON" || fail "hooks.json missing vibage-session-start command"
+grep -Fq 'sessionStart' "$HOOK_JSON" || fail "hooks.json missing sessionStart"
+
 echo "PROJECT_ENTRY_OK parent=$PARENT"
 echo "Note: PROJECT_ENTRY_OK ≠ hub CONFIRM / locate DONE."
+echo "Note: Cursor hooks installed; Claude/Codex use always-on blocks (host-best). See references/host-best-session-entry.md"

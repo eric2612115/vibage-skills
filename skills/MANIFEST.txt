@@ -1,3 +1,4 @@
+using-vibage
 vibage-init
 vibage-bootstrap
 vibage-issue-locate

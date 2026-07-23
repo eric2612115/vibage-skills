@@ -8,16 +8,21 @@ alwaysApply: true
 Product SSOT: vibage-skills package. Skills under `~/.cursor/skills/vibage-*` (and optional project `.cursor/skills/`).
 Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` is init/orient only).
 Thin entry only — do not paste nested locate procedure.
+Session routing: follow **using-vibage** (pointer skill). Parent routers remain SSOT — no second state machine.
+Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA.
 
 ## Skill routing
 
 1. No `docs/vibage/STATUS.md` → **vibage-init**
 2. Hub ready, no valid CONFIRM → **vibage-orient**
 3. CONFIRM OK → **vibage-issue-locate** (legacy install name `vibage-locate` OK)
-4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init**
+4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init** (then using-vibage)
 5. Optional (not required for locate DONE): **vibage-issue-fix**, **vibage-arch-review**
 
 Read package `STATUS.md` first (capability SSOT) before expanding scope.
+After locate DONE → finishing options in **using-vibage** (required).
+
+Host-best note: project `.cursor/hooks.json` sessionStart may inject context; if the host drops it, this rule still routes. See `references/host-best-session-entry.md`.
 
 ## PKG_ROOT
 

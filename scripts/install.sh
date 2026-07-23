@@ -18,7 +18,7 @@ Usage: $0 [options]
   --with-project-rule=/path/to/parent-workspace
       Parent workspace only (not each child repo). Always writes ALL three
       platforms (ignores --surfaces for these files):
-      Cursor: overwrite .cursor/rules/vibage.mdc
+      Cursor: overwrite .cursor/rules/vibage.mdc + upsert sessionStart hooks
       Claude: upsert CLAUDE.md vibage block + .claude/vibage-entry.md
       Codex: upsert AGENTS.md from adapters/shared/AGENTS.vibage.md
       Verify: bash scripts/verify-project-entry.sh /path/to/parent-workspace
@@ -198,6 +198,46 @@ print(f"{action} vibage block: {target}")
 PY
 }
 
+install_cursor_session_hooks() {
+  # Parent-only Cursor sessionStart (host-best). Does not touch Claude/Codex hook files.
+  local repo="$1"
+  local hook_dir hook_sh
+  hook_dir="$repo/.cursor/hooks"
+  mkdir -p "$hook_dir"
+  hook_sh="$hook_dir/vibage-session-start.sh"
+  cp "$PKG_ROOT/adapters/cursor/hooks/vibage-session-start.sh" "$hook_sh"
+  chmod +x "$hook_sh"
+  echo "Wrote Cursor hook script: $hook_sh"
+  python3 - "$repo" "$PKG_ROOT/adapters/cursor/hooks/hooks.json" <<'PY'
+import json, pathlib, sys
+repo = pathlib.Path(sys.argv[1])
+template = json.loads(pathlib.Path(sys.argv[2]).read_text(encoding="utf-8"))
+target = repo / ".cursor" / "hooks.json"
+cmd = ".cursor/hooks/vibage-session-start.sh"
+data = {"version": 1, "hooks": {}}
+if target.exists():
+    try:
+        data = json.loads(target.read_text(encoding="utf-8"))
+    except json.JSONDecodeError as e:
+        raise SystemExit(f"invalid existing hooks.json: {target}: {e}")
+if not isinstance(data, dict):
+    raise SystemExit(f"hooks.json root must be object: {target}")
+data.setdefault("version", template.get("version", 1))
+hooks = data.setdefault("hooks", {})
+if not isinstance(hooks, dict):
+    raise SystemExit(f"hooks.json hooks must be object: {target}")
+ss = hooks.get("sessionStart") or []
+if not isinstance(ss, list):
+    ss = []
+ss = [h for h in ss if isinstance(h, dict) and "vibage-session-start" not in str(h.get("command", ""))]
+ss.append({"command": cmd})
+hooks["sessionStart"] = ss
+target.parent.mkdir(parents=True, exist_ok=True)
+target.write_text(json.dumps(data, indent=2) + "\n", encoding="utf-8")
+print(f"Upserted Cursor hooks.json sessionStart: {target}")
+PY
+}
+
 install_project_rules() {
   # Parent workspace only. Always refresh all three platforms (ignore --surfaces).
   local repo="$1"
@@ -210,6 +250,7 @@ install_project_rules() {
   if [[ -f "$legacy" ]]; then
     echo "Note: legacy $legacy still present; prefer vibage.mdc (routing + hard-stops pointer)"
   fi
+  install_cursor_session_hooks "$repo"
 
   mkdir -p "$repo/.claude"
   cp "$PKG_ROOT/adapters/claude/CLAUDE.vibage.md" "$repo/.claude/vibage-entry.md"

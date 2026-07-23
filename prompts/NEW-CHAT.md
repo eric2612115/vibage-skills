@@ -4,8 +4,10 @@ Dispatcher only — do not paste locate nested procedure here.
 
 Cold-start SSOT (live only):
 - Package capability SSOT: STATUS.md (read this first after PKG_ROOT / pins — before expanding scope)
+- Session router skill: using-vibage (pointer only; parent entry files remain routing SSOT)
 - Spec: docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md
 - Plans: docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md
+- Parent entry (Cursor/Claude/Codex) should already be installed via --with-project-rule; agent runs verify-project-entry. Owner: do not type bash.
 
 Dual-STATUS rule:
 - Package `STATUS.md` = capability / phase truth (Designed / On-tree / Proven-green).

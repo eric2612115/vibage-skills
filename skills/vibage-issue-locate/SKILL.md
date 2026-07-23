@@ -113,6 +113,7 @@ Rules:
     Start serve in background (or copy-only, then tell the human the URL) so later steps are not blocked by http.server.
 14. Local delivery ends at dual Markdown reports + optional preview. Cloud deepening is out of scope this phase.
 15. **locate end / success or stop** milestone: Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`. On `failed`|`aborted` fill STATUS STOP + `handoff` and do **not** write dual reports. Plain chat only — never dump JSON.
+16. **Finishing (required on success path):** After dual reports exist / phase `done`, **must** follow `using-vibage` finishing options (owner language): optional localhost preview (fail-soft), handoff/STOP if needed, or stop — local delivery complete. Optional issue-fix / 架構檢視 only if owner asks. **No soft CTA / no register.** Do not skip this step after DONE.
 
 ## Stale / resume
 

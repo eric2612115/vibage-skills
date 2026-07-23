@@ -20,7 +20,7 @@
 
 **SaaS blank pointer:** reserved seam only — `docs/superpowers/specs/satellites/SAT-saas-blank.md`. Thin SAT on tree ≠ Designed/On-tree/Proven YES; no local register CTA; ≠ SaaS shipped.
 
-**Parent session entry (Plan-R):** Global skills ≠ project routing. Install parent routers with `bash scripts/install.sh --with-project-rule=<parent>` then `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` (Cursor + Claude + Codex on that parent only — not each child repo). `PROJECT_ENTRY_OK` ≠ CONFIRM / locate DONE. Design: `docs/superpowers/specs/2026-07-23-vibage-session-entry-routing-design.md`.
+**Parent session entry (Plan-R + Plan-S W1):** Global skills ≠ project routing. Install parent routers with `bash scripts/install.sh --with-project-rule=<parent>` then `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` (Cursor + Claude + Codex on that parent only — not each child repo). Cursor also gets project `sessionStart` hook; Claude/Codex use always-on blocks (host-best — see `references/host-best-session-entry.md`). Session pointer skill: `using-vibage`. After locate DONE → finishing required. Owner: do not type bash (agent runs scripts). `PROJECT_ENTRY_OK` ≠ CONFIRM / locate DONE. Plans: session-entry-routing + scorecard-to-nine.
 
 This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
 

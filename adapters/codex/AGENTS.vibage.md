@@ -4,16 +4,21 @@
 Product SSOT: vibage-skills package (skills + `references/`). Thin entry only — follow the skill bodies.
 Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` is init/orient only).
 Thin entry only — do not paste nested locate procedure.
+Session routing: follow **using-vibage** (pointer skill). Parent routers remain SSOT — no second state machine.
+Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA.
 
 ## Skill routing
 
 1. No `docs/vibage/STATUS.md` → **vibage-init** (install + hub; no dig, no dual reports).
 2. Hub ready, no valid `docs/vibage/CONFIRM.json` → **vibage-orient** (SCAN_PLAN; stop at awaiting_confirm).
 3. CONFIRM OK → **vibage-issue-locate** (runs `assert_gate`; nested dig + dual reports; legacy `vibage-locate` OK).
-4. Paste NEW-CHAT / unclear install → **vibage-bootstrap** or **vibage-init**.
+4. Paste NEW-CHAT / unclear install → **vibage-bootstrap** or **vibage-init** (then using-vibage).
 5. Optional (not required for locate DONE): **vibage-issue-fix**, **vibage-arch-review**.
 
 Read package `STATUS.md` first (capability SSOT) before expanding scope.
+After locate DONE → finishing options in **using-vibage** (required).
+
+Best-available on Codex/AGENTS: this always-on block (Cursor-only hook files are **not** required). See `references/host-best-session-entry.md`.
 
 ## PKG_ROOT
 
