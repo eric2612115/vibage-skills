@@ -15,11 +15,15 @@
 | Handoff dual-write | YES | YES | YES | script |
 | Optional: issue-fix | YES | stub | NO | optional track (locate DONE independent) |
 | Optional: 架構檢視 | YES | stub | NO | optional track (map-qualified; locate DONE independent) |
-| Focus: agent-pressure | YES | stub | NO | agent (meta row — not a pipeline_id) |
+| Focus: agent-pressure | YES | stub | NO | agent (meta row — **not** a pipeline_id; see SAT-agent-pressure) |
 | SaaS / register | blank | — | — | — |
 
 This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
 
 **Handoff note:** `verify-handoff.sh` is locate-wave shaped only (not pipeline-agnostic). `artifacts_ok` does **not** cross pipelines by default (umbrella §8.4).
+
+**Focus:** Designed=YES, On-tree=stub, Proven-green=NO. Do not run agent RED→GREEN in follow-on stubs. Not a `pipeline_id`.
+
+**P7 / CI:** `git remote -v` has **no origin** on this checkout → CI workflow **skipped**. No remote ≠ publish-ready; do not invent fake CI green.
 
 Update On-tree / Proven-green only when scripts say so. Never YES without proof.

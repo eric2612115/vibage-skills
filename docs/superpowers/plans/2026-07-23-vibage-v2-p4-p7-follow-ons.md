@@ -88,11 +88,11 @@ EOF
 - Modify: `STATUS.md`
 - Create: `docs/superpowers/specs/satellites/SAT-agent-pressure.md` outline (protocol pointer; no scenarios yet)
 
-- [ ] **Step 1: Ensure STATUS lists Focus: agent-pressure** with Designed=YES, On-tree=stub, Proven-green=NO, Scope=`agent`, note **not a pipeline_id**
+- [x] **Step 1: Ensure STATUS lists Focus: agent-pressure** with Designed=YES, On-tree=stub, Proven-green=NO, Scope=`agent`, note **not a pipeline_id**
 
-- [ ] **Step 2: Do not run agent RED→GREEN in this plan**
+- [x] **Step 2: Do not run agent RED→GREEN in this plan**
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'
@@ -111,7 +111,7 @@ EOF
 **Files:**
 - Create: `.github/workflows/tier0.yml` (only if `git remote -v` shows origin)
 
-- [ ] **Step 1: Check remote**
+- [x] **Step 1: Check remote**
 
 ```bash
 git remote -v
@@ -119,7 +119,9 @@ git remote -v
 
 If empty: **stop** — document “no remote ≠ publish-ready” in STATUS; do not invent CI green.
 
-- [ ] **Step 2: Workflow runs**
+**Result (this checkout):** no `origin` → **SKIPPED** creating `.github/workflows/tier0.yml`. Documented in `STATUS.md`.
+
+- [ ] **Step 2: Workflow runs** — N/A (no remote)
 
 ```yaml
 # .github/workflows/tier0.yml
@@ -136,21 +138,13 @@ jobs:
       - run: bash scripts/test-tier0.sh
 ```
 
-- [ ] **Step 3: Commit only with remote present**
-
-```bash
-git commit -m "$(cat <<'EOF'
-ci: mirror Tier-0 entry on push/PR
-
-EOF
-)"
-```
+- [ ] **Step 3: Commit only with remote present** — N/A (skipped)
 
 ---
 
 ## Follow-on DoD
 
-- [ ] P4 stubs do not make locate DONE depend on fix/架構  
-- [ ] P5 Tier-0 still green  
-- [ ] P6 Focus not marked agent Proven-green  
-- [ ] P7 skipped honestly if no remote  
+- [x] P4 stubs do not make locate DONE depend on fix/架構  
+- [x] P5 Tier-0 still green  
+- [x] P6 Focus not marked agent Proven-green  
+- [x] P7 skipped honestly if no remote  
