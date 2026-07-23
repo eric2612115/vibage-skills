@@ -64,6 +64,14 @@ grep -Eiq 'SaaS.*/.*blank|SaaS / register' "$STATUS" \
 grep -Fq 'SAT-saas-blank' "$STATUS" \
   || fail "STATUS must point to SAT-saas-blank"
 
+# pack-health composition must stay aligned with scripts/pack-health.sh
+grep -Fq 'OWNER_ZERO_BASH_OK' "$STATUS" \
+  || fail "STATUS pack-health layer must name OWNER_ZERO_BASH_OK"
+grep -Fq 'INSTALL_PHRASE_OK' "$STATUS" \
+  || fail "STATUS pack-health layer must name INSTALL_PHRASE_OK"
+grep -Fq 'INSTALL_PHRASE_E2E_OK' "$STATUS" \
+  || fail "STATUS pack-health layer must name INSTALL_PHRASE_E2E_OK"
+
 # Thin SAT contract markers
 grep -Eiq 'no local CTA|no register' "$SAT" || fail "SAT-saas-blank must lock no local CTA"
 grep -Fq 'UploadManifest.stub.json' "$SAT" || fail "SAT must name UploadManifest stub SSOT"

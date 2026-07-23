@@ -13,7 +13,8 @@ FAIL: parent workspace path required.
 
 Usage: $0 /path/to/parent-workspace
 
-This is a composite check (pins + parent entry + entry-docs sync).
+This is a composite check (pins + parent entry + entry-docs +
+owner-zero-bash + install-phrase + install-phrase-e2e).
 PACK_HEALTH_OK ≠ TIER0_OK ≠ remote CI ≠ letter B.
 Capability SSOT remains package STATUS.md.
 EOF
