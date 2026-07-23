@@ -39,7 +39,7 @@
 - Modify: conflicted paths as needed
 - Verify: `scripts/lib/scan_plan_hash.py` exists on current branch after merge
 
-- [ ] **Step 1: Record tips**
+- [x] **Step 1: Record tips**
 
 ```bash
 cd /Users/eric.fang/MindOwnBuz/vibage-skills
@@ -51,7 +51,7 @@ test ! -f scripts/lib/scan_plan_hash.py && echo "trunk missing hash (expected be
 
 Expected: trunk missing `scripts/lib/scan_plan_hash.py`; p1 has it.
 
-- [ ] **Step 2: If p1 worktree has uncommitted vibage renames, commit them on p1 first**
+- [x] **Step 2: If p1 worktree has uncommitted vibage renames, commit them on p1 first**
 
 Only if `git -C .worktrees/vibage-os-p1 status` shows relevant changes. Commit on that branch with message:
 
@@ -66,7 +66,7 @@ EOF
 
 If clean, skip.
 
-- [ ] **Step 3: Merge p1 into current branch**
+- [x] **Step 3: Merge p1 into current branch**
 
 ```bash
 git checkout feature/vibage-v2-superpowers-grade
@@ -79,7 +79,7 @@ EOF
 
 On conflict: **keep vibage live paths** (`docs/vibage/`, `vibage-*` skills). Discard resurrecting live `war-room-*` skills/rules as SSOT. Prefer p1 for `scripts/lib/**` and `tests/**` if trunk lacks them.
 
-- [ ] **Step 4: Path rewrite sweep**
+- [x] **Step 4: Path rewrite sweep**
 
 Rewrite map (live paths only; never under `docs/archive/`):
 
@@ -112,7 +112,7 @@ Expected: `PATH_REWRITE_OK`
 
 High-risk conflict winners: keep trunk vibage wording in `scripts/assert_gate.sh` / `scripts/write_confirm.sh` hub paths (`docs/vibage`); take p1 `scripts/lib/**` and `tests/**` if trunk lacks them.
 
-- [ ] **Step 5: Prove hash import works**
+- [x] **Step 5: Prove hash import works**
 
 ```bash
 python3 scripts/lib/scan_plan_hash.py --help 2>/dev/null || python3 -c "import runpy; runpy.run_path('scripts/lib/scan_plan_hash.py')" 
@@ -128,7 +128,7 @@ PY
 
 Expected: `import_ok` (or module runs as CLI per p1 `__main__`).
 
-- [ ] **Step 6: Commit merge resolution if needed**
+- [x] **Step 6: Commit merge resolution if needed**
 
 ```bash
 git add -A
@@ -150,7 +150,7 @@ Skip empty commit if merge commit already clean.
 - Test: `tests/test_assert_gate.sh`, `tests/test_scan_plan_hash.py`
 - Modify: only if paths still wrong
 
-- [ ] **Step 1: Run hash unit tests**
+- [x] **Step 1: Run hash unit tests**
 
 ```bash
 cd /Users/eric.fang/MindOwnBuz/vibage-skills
@@ -159,7 +159,7 @@ python3 -m pytest tests/test_scan_plan_hash.py -v
 
 Expected: PASS (all tests).
 
-- [ ] **Step 2: Run assert_gate bash test**
+- [x] **Step 2: Run assert_gate bash test**
 
 ```bash
 bash tests/test_assert_gate.sh
@@ -167,7 +167,7 @@ bash tests/test_assert_gate.sh
 
 Expected: exit 0; includes mismatch FAIL path inside script.
 
-- [ ] **Step 3: Manual RED check (dig forbidden signal)**
+- [x] **Step 3: Manual RED check (dig forbidden signal)**
 
 ```bash
 TMP=$(mktemp -d)
@@ -186,7 +186,7 @@ echo "RED_OK"
 
 Expected: `RED_OK` (non-zero exit **and** output contains `ASSERT_GATE_FAIL`).
 
-- [ ] **Step 4: Commit any test path fixes**
+- [x] **Step 4: Commit any test path fixes**
 
 ```bash
 git add tests scripts
