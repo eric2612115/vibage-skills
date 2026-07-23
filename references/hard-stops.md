@@ -19,9 +19,7 @@ Shared DO NOT / MUST for all surfaces (Cursor, Claude Code, Codex). Thin IDE ada
 - MUST attempt nested investigators → fresh reviewers → synthesize (`references/nested-protocol.md`).
 - `Mode: full nested` / `mode: "full nested"` **only** when investigators and reviewers were actually dispatched and recorded. Otherwise `Mode: degraded` (legitimate success).
 - Engineer findings ≤ 7 after review; kill anything without `path` + evidence quote.
-- Soft CTA only **after** both `VIBAGE-OWNER.md` and `VIBAGE-LOCATE.md` exist.
-- If site URL empty/TBD → say not published yet (no fake URL).
-- No signup wall before free local reports.
+- Local delivery ends at dual Markdown reports + optional preview (fail-soft).
 - No whole-repo upload.
 
 ## Safety

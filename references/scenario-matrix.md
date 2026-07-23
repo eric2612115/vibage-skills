@@ -13,7 +13,7 @@
 | S8 | Pin fail | block analyzing |
 | S9 | Design section gate | section-gate; `go_next` ≠ Mode |
 | S10 | User skips web | survey SKIP |
-| S11 | Post-CONFIRM delivery | dual MD + RUNS + preview fail-soft + soft CTA |
+| S11 | Post-CONFIRM delivery | dual MD + RUNS + preview fail-soft |
 | S12 | Resume | read STATUS/RUNS; do not wipe CONFIRM via re-init |
 | S13 | Reject/change plan | clear/re-CONFIRM; hash mismatch blocks analyzing |
 | S14 | Stale CONFIRM | phase stale_confirm; re-orient/confirm |

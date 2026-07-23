@@ -20,7 +20,6 @@
 | Need | Cursor | Claude Code | Codex | If missing |
 |------|--------|-------------|-------|------------|
 | Nested investigators → fresh reviewers | Task / subagents | Agent tool / subagents | subagents | `Mode: degraded` |
-| Soft CTA open site | browser / MCP | MCP / give human URL | computer-use / give human URL | paste URL only; never block reports |
 
 Use whichever spawn API the host exposes. Record platform ids when available; otherwise parent-generated labels in `nested_dispatch`.
 
