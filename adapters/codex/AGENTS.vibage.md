@@ -3,6 +3,7 @@
 
 Product SSOT: vibage-skills package (skills + `references/`). Thin entry only — follow the skill bodies.
 Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` is init/orient only).
+Thin entry only — do not paste nested locate procedure.
 
 ## Skill routing
 
@@ -11,6 +12,8 @@ Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` i
 3. CONFIRM OK → **vibage-issue-locate** (runs `assert_gate`; nested dig + dual reports; legacy `vibage-locate` OK).
 4. Paste NEW-CHAT / unclear install → **vibage-bootstrap** or **vibage-init**.
 5. Optional (not required for locate DONE): **vibage-issue-fix**, **vibage-arch-review**.
+
+Read package `STATUS.md` first (capability SSOT) before expanding scope.
 
 ## PKG_ROOT
 
@@ -22,5 +25,5 @@ Or probe `~/.cursor/skills` → `~/.claude/skills` → `~/.agents/skills` for `v
 
 ## Hard stops
 
-Read and obey `$PKG_ROOT/references/hard-stops.md`. No register CTA (SaaS reserved blank).
+Read and obey `$PKG_ROOT/references/hard-stops.md`. no register CTA (SaaS reserved blank).
 <!-- vibage:end -->

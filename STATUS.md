@@ -20,6 +20,8 @@
 
 **SaaS blank pointer:** reserved seam only — `docs/superpowers/specs/satellites/SAT-saas-blank.md`. Thin SAT on tree ≠ Designed/On-tree/Proven YES; no local register CTA; ≠ SaaS shipped.
 
+**Parent session entry (Plan-R):** Global skills ≠ project routing. Install parent routers with `bash scripts/install.sh --with-project-rule=<parent>` then `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` (Cursor + Claude + Codex on that parent only — not each child repo). `PROJECT_ENTRY_OK` ≠ CONFIRM / locate DONE. Design: `docs/superpowers/specs/2026-07-23-vibage-session-entry-routing-design.md`.
+
 This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready.
 
 **Optional issue-fix honesty:** On-tree=YES + Proven-green=YES (scope=`script`) means dual-consent + unlock gates are verifiable via `scripts/verify-issue-fix-unlock.sh` and `tests/test_issue_fix_usable.sh`. That is **not** letter **B** complete, and **not** an agent fix E2E / quality guarantee. `test_issue_fix_usable.sh` is **not** wired into Tier-0.

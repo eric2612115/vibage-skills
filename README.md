@@ -49,6 +49,18 @@ bash /path/to/vibage-skills/scripts/resolve-pkg-root.sh
 
 Then paste [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md) into a new agent chat.
 
+**Parent workspace routing (required for session auto-route):** install thin Cursor/Claude/Codex entry on the **parent** folder only (not each child repo), then verify:
+
+```bash
+bash /path/to/vibage-skills/scripts/install.sh \
+  --with-project-rule=/path/to/parent-workspace
+bash /path/to/vibage-skills/scripts/verify-project-entry.sh \
+  /path/to/parent-workspace
+# expect: PROJECT_ENTRY_OK
+```
+
+Global skills alone ≠ project routing. `PROJECT_ENTRY_OK` ≠ hub CONFIRM / locate DONE.
+
 ## PKG_ROOT
 
 ```bash

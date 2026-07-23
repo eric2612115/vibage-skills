@@ -3,6 +3,7 @@
 
 Product SSOT lives in the vibage-skills package. Skills are linked under `~/.claude/skills/` and optionally `.claude/skills/`.
 Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` is init/orient only).
+Thin entry only — do not paste nested locate procedure.
 
 ## Skill routing
 
@@ -11,6 +12,8 @@ Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` i
 3. CONFIRM OK → **vibage-issue-locate** (`assert_gate` then dig; legacy `vibage-locate` OK).
 4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init**.
 5. Optional (not required for locate DONE): **vibage-issue-fix**, **vibage-arch-review**.
+
+Read package `STATUS.md` first (capability SSOT) before expanding scope.
 
 ## PKG_ROOT
 

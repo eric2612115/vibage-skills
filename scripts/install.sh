@@ -8,16 +8,21 @@ PROJECT_SKILLS=""
 INIT_HUB=""
 FORCE=0
 FORCE_HUB=0
+FORCE_PROJECT_ENTRY=0
 SURFACES="cursor,claude,codex"
 
 usage() {
   cat <<EOF
 Usage: $0 [options]
   --surfaces=cursor,claude,codex   Which skill homes to link (default: all three)
-  --with-project-rule=/path/to/repo
-      Cursor: copy adapters/cursor/vibage.mdc → .cursor/rules/
-      Claude: upsert <!-- vibage --> block in CLAUDE.md (+ .claude/vibage-entry.md)
-      Codex/shared: upsert <!-- vibage --> block in AGENTS.md
+  --with-project-rule=/path/to/parent-workspace
+      Parent workspace only (not each child repo). Always writes ALL three
+      platforms (ignores --surfaces for these files):
+      Cursor: overwrite .cursor/rules/vibage.mdc
+      Claude: upsert CLAUDE.md vibage block + .claude/vibage-entry.md
+      Codex: upsert AGENTS.md from adapters/shared/AGENTS.vibage.md
+      Verify: bash scripts/verify-project-entry.sh /path/to/parent-workspace
+  --force-project-entry            Must be paired with --with-project-rule=… (refresh is default)
   --project-skills=/path/to/repo   Symlink MANIFEST skills under each surface's project skills dir
   --init-hub=/abs/path             Copy references/hub/* into path/docs/vibage/
   --force                          Replace package-owned stale project skill symlinks only
@@ -31,6 +36,7 @@ for arg in "$@"; do
   case "$arg" in
     --surfaces=*) SURFACES="${arg#*=}" ;;
     --with-project-rule=*) PROJECT_RULE="${arg#*=}" ;;
+    --force-project-entry) FORCE_PROJECT_ENTRY=1 ;;
     --project-skills=*) PROJECT_SKILLS="${arg#*=}" ;;
     --init-hub=*) INIT_HUB="${arg#*=}" ;;
     --force) FORCE=1 ;;
@@ -41,6 +47,12 @@ for arg in "$@"; do
 done
 
 [[ -f "$MANIFEST" ]] || { echo "Missing MANIFEST: $MANIFEST" >&2; exit 1; }
+
+if [[ "$FORCE_PROJECT_ENTRY" -eq 1 && -z "$PROJECT_RULE" ]]; then
+  echo "ERROR: --force-project-entry requires --with-project-rule=/path/to/parent-workspace" >&2
+  echo "(Refresh is already the default when --with-project-rule is set.)" >&2
+  exit 2
+fi
 
 surface_enabled() {
   local name="$1"
@@ -187,31 +199,25 @@ PY
 }
 
 install_project_rules() {
+  # Parent workspace only. Always refresh all three platforms (ignore --surfaces).
   local repo="$1"
-  if surface_enabled cursor; then
-    mkdir -p "$repo/.cursor/rules"
-    local mdc="$repo/.cursor/rules/vibage.mdc"
-    local legacy="$repo/.cursor/rules/vibage-locate.mdc"
-    if [[ -f "$mdc" ]]; then
-      echo "Skip Cursor rule: already exists ($mdc)"
-    else
-      cp "$PKG_ROOT/adapters/cursor/vibage.mdc" "$mdc"
-      echo "Copied Cursor rule: $mdc"
-    fi
-    if [[ -f "$legacy" ]]; then
-      echo "Note: legacy $legacy still present; prefer vibage.mdc (routing + hard-stops pointer)"
-    fi
+  local mdc legacy
+  mkdir -p "$repo/.cursor/rules"
+  mdc="$repo/.cursor/rules/vibage.mdc"
+  legacy="$repo/.cursor/rules/vibage-locate.mdc"
+  cp "$PKG_ROOT/adapters/cursor/vibage.mdc" "$mdc"
+  echo "Wrote Cursor rule: $mdc"
+  if [[ -f "$legacy" ]]; then
+    echo "Note: legacy $legacy still present; prefer vibage.mdc (routing + hard-stops pointer)"
   fi
-  if surface_enabled claude; then
-    mkdir -p "$repo/.claude"
-    cp "$PKG_ROOT/adapters/claude/CLAUDE.vibage.md" "$repo/.claude/vibage-entry.md"
-    echo "Wrote: $repo/.claude/vibage-entry.md"
-    upsert_marked_block "$repo/CLAUDE.md" "$PKG_ROOT/adapters/claude/CLAUDE.vibage.md"
-  fi
-  if surface_enabled codex || surface_enabled cursor; then
-    # Shared AGENTS.md block helps Codex and Cursor AGENTS.md readers
-    upsert_marked_block "$repo/AGENTS.md" "$PKG_ROOT/adapters/shared/AGENTS.vibage.md"
-  fi
+
+  mkdir -p "$repo/.claude"
+  cp "$PKG_ROOT/adapters/claude/CLAUDE.vibage.md" "$repo/.claude/vibage-entry.md"
+  echo "Wrote: $repo/.claude/vibage-entry.md"
+  upsert_marked_block "$repo/CLAUDE.md" "$PKG_ROOT/adapters/claude/CLAUDE.vibage.md"
+
+  # Codex + Cursor AGENTS readers — SSOT body is adapters/shared only
+  upsert_marked_block "$repo/AGENTS.md" "$PKG_ROOT/adapters/shared/AGENTS.vibage.md"
 }
 
 init_hub() {
