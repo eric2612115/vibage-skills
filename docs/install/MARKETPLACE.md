@@ -13,7 +13,6 @@ Capability SSOT: package [`STATUS.md`](../../STATUS.md).
 | `.claude-plugin/plugin.json` | Claude Code plugin identity |
 | `.claude-plugin/marketplace.json` | Claude marketplace catalog (`source: ./`) |
 | `assets/logo.png` | **Canonical** listing mark (landing-aligned V + locate pin) |
-| `assets/logo.svg` | Optional vector sketch — do not prefer over PNG (looks different) |
 | `skills/` | Discovered by both hosts |
 
 Parent routers / Cursor `sessionStart` hooks still come from `install.sh --with-project-rule=<parent>` (see [`CURSOR.md`](CURSOR.md) / [`CLAUDE.md`](CLAUDE.md)).
