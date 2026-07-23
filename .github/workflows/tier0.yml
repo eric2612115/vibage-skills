@@ -14,7 +14,13 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Install OS deps (ripgrep)
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
       - name: Install Tier-0 Python deps
         run: python3 -m pip install --upgrade pip -r requirements-tier0.txt
+      - name: Prove tools on PATH
+        run: |
+          which rg
+          python3 -m pytest --version
       - name: Tier-0 ship gate
         run: bash scripts/test-tier0.sh
