@@ -1,0 +1,32 @@
+---
+description: Vibage skill routing and hard stops (thin entry)
+alwaysApply: true
+---
+
+# Vibage (Cursor entry)
+
+Product SSOT: vibage-skills package. Skills under `~/.cursor/skills/vibage-*` (and optional project `.cursor/skills/`).
+
+## Skill routing
+
+1. No `docs/vibage/STATUS.md` → **vibage-init**
+2. Hub ready, no valid CONFIRM → **vibage-orient**
+3. CONFIRM OK → **vibage-locate**
+4. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init**
+5. SelfAutoBuz hub hygiene → **docs-hygiene** (not vibage-locate)
+
+## PKG_ROOT
+
+```bash
+bash /path/to/vibage-skills/scripts/resolve-pkg-root.sh
+```
+
+Probe order includes `~/.cursor/skills`, `~/.claude/skills`, `~/.agents/skills`.
+
+## Nested / browser
+
+Prefer Cursor Task/subagents for nested investigators→reviewers; else `Mode: degraded`. Soft CTA after dual reports via browser/MCP or human URL.
+
+## Hard stops
+
+Read `$PKG_ROOT/references/hard-stops.md`. Do not duplicate long DO NOT lists here.

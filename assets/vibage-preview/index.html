@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Vibage Preview</title>
+  <style>
+    :root {
+      --bg0: #0f1419;
+      --bg1: #1a2332;
+      --ink: #e7ecf3;
+      --muted: #9aa7b8;
+      --accent: #3d9cf0;
+      --line: #2a3648;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", "Source Sans 3", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #1c3b5a 0%, transparent 55%),
+        linear-gradient(160deg, var(--bg0), var(--bg1));
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+    main { max-width: 720px; margin: 0 auto; padding: 48px 20px 80px; }
+    h1 { font-size: 1.75rem; margin: 0 0 8px; letter-spacing: -0.02em; }
+    .brand { color: var(--accent); font-weight: 700; font-size: 0.85rem; letter-spacing: 0.08em; text-transform: uppercase; }
+    .muted { color: var(--muted); }
+    section { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--line); }
+    h2 { font-size: 1.1rem; margin: 0 0 12px; }
+    ol { padding-left: 1.2rem; }
+    a { color: var(--accent); }
+    footer { margin-top: 48px; font-size: 0.9rem; color: var(--muted); }
+    code { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 0.9em; }
+    .mermaid-ph {
+      margin-top: 12px; padding: 16px; border: 1px dashed var(--line);
+      color: var(--muted); font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="brand">Vibage</div>
+    <h1 id="symptom">Symptom</h1>
+    <p class="muted" id="diagnosis">Plain-language diagnosis goes here. Replace this text when copying into the workspace preview.</p>
+
+    <section>
+      <h2>3 owner actions</h2>
+      <ol id="actions">
+        <li>Action one</li>
+        <li>Action two</li>
+        <li>Action three</li>
+      </ol>
+    </section>
+
+    <section>
+      <h2>Reports</h2>
+      <p>
+        <a href="../VIBAGE-OWNER.md">VIBAGE-OWNER.md</a> ·
+        <a href="../VIBAGE-LOCATE.md">VIBAGE-LOCATE.md</a>
+      </p>
+      <div class="mermaid-ph">Mermaid placeholder — paste diagram from locate report if useful.</div>
+    </section>
+
+    <footer>
+      Local report needs no account. Optional deeper architecture pass may be offered after files exist.
+    </footer>
+  </main>
+</body>
+</html>

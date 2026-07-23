@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "levels": {
+    "L1": "composer-2.5-fast",
+    "L2": "claude-sonnet-4-thinking-high",
+    "L3": "cursor-grok-4.5-high-fast"
+  },
+  "notes": "Skills reference level ids only. If a slug is unavailable, degrade and record degraded_model."
+}

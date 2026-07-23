@@ -1,0 +1,15 @@
+{
+  "schema_version": "1",
+  "path_allowlist": [
+    "VIBAGE-OWNER.md",
+    "VIBAGE-LOCATE.md",
+    "docs/vibage/STATUS.md",
+    "docs/vibage/RUNS/",
+    "docs/vibage/SCAN_PLAN.md",
+    "docs/vibage/CONFIRM.json"
+  ],
+  "redaction_policy": "strip_env_secrets_and_credentials",
+  "forbid_whole_hub_upload": true,
+  "upload_implemented": false,
+  "notes": "P1 stub only — no upload behavior."
+}

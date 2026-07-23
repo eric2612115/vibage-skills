@@ -8,12 +8,21 @@
 | Fat / multi-identity (dual trees / many services) | 3 | 2 |
 | Hard cap | 4 | 2 |
 
-- Cursor depth ≤ 2; investigators **must not** recursively spawn further investigators.
+- Nesting depth ≤ 2; investigators **must not** recursively spawn further investigators.
 - Reviewer may spawn **1** leaf verifier only if CritiqueVerdict is `NEEDS_REVISION`.
 - Kill finding without `path` + evidence quote.
 - Engineer findings ≤ 7 after review.
 - Language: match owner; identifiers English.
 - Max wall time for nested phase: ~15–20 min unless owner extends.
+
+## Platform capability matrix
+
+| Need | Cursor | Claude Code | Codex | If missing |
+|------|--------|-------------|-------|------------|
+| Nested investigators → fresh reviewers | Task / subagents | Agent tool / subagents | subagents | `Mode: degraded` |
+| Soft CTA open site | browser / MCP | MCP / give human URL | computer-use / give human URL | paste URL only; never block reports |
+
+Use whichever spawn API the host exposes. Record platform ids when available; otherwise parent-generated labels in `nested_dispatch`.
 
 ## CritiqueVerdict (enum)
 
@@ -68,4 +77,4 @@ Optional after write: `"$PKG_ROOT/scripts/verify-report.sh" VIBAGE-LOCATE.md` (c
 - Nested unavailable or timeout → **do not silently skip**. Set `Mode: degraded` in Nested pass; state reason in **both** owner + locate reports.
 - **Forbidden:** writing `Mode: full nested` unless investigators and fresh reviewers were actually dispatched in this run.
 - Degraded path: parent runs single-pass hot-path search using pinned `systematic-debugging`; still require path+quote; still ≤7 findings.
-- Pin verify fails → stop locate until owner upgrades or re-pins (owner-language steps in locate/bootstrap skills).
+- Pin verify fails → stop locate until owner upgrades or re-pins (owner-language steps in locate/init skills).

@@ -28,6 +28,7 @@
 - CritiqueVerdict summary: APPROVE|REJECT|NEEDS_REVISION|INCONCLUSIVE
 - Dropped after review: …
 - Mode: full nested | degraded
+- RunEnvelope: `docs/vibage/RUNS/<run_id>.json` (nested_dispatch required iff Mode is full nested)
 
 ## Out of scope / deferred
 - …

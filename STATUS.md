@@ -17,7 +17,7 @@
 | Phase | 名稱 | 主要解決 | 狀態 |
 |-------|------|----------|------|
 | **V0** | Locate 儀式 | 症狀→雙報告；pin；硬停；soft CTA 文案 | **已落地** |
-| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **Spec ✅；待人確認後開 plan** |
+| **P1** | 母夾 OS + 薄流水線 | init→orient→CONFIRM→locate；足跡；preview；survey／section-gate；routing B；硬閘門 | **Skills on MAIN；multi-IDE install (Cursor/Claude/Codex)** |
 | **P2** | 重裝備本地 | graphify／等價**全圖**；coverage 閘；long-task + AUTO_DECIDED；更深 service-map | **未開始** |
 | **P3** | 雲端 Pro／B | UploadManifest 上傳；加強版結果；Architecture Pass／訂閱 | **未開始**（app scaffold only） |
 
@@ -151,11 +151,22 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ### 小白一句話快樂路徑
 
-1. Cursor 開母資料夾  
-2. 「幫我安裝 Vibage 然後開始分析」  
-3. Agent：install（禁擅自 `--force`）→ 人話列出將掃的 folders＋時間 →「回確認開始」  
-4. 用戶：確認  
-5. 深挖（可選短 survey；可說跳過上網）→ 雙報告 → 開 localhost preview → 軟 CTA  
+1. 用 Cursor / Claude Code / Codex 開母資料夾  
+2. 跑 `scripts/install.sh`（預設三端）或貼 `prompts/NEW-CHAT.md`  
+3. 「幫我安裝 Vibage 然後開始分析」  
+4. Agent：install（禁擅自 `--force`）→ 人話列出將掃的 folders＋時間 →「回確認開始」  
+5. 用戶：確認  
+6. 深挖（可選短 survey；可說跳過上網）→ 雙報告 → 開 localhost preview → 軟 CTA  
+
+### Multi-IDE（第一波）
+
+| 表面 | skills home | 薄入口 |
+|------|-------------|--------|
+| Cursor | `~/.cursor/skills` | `.cursor/rules/vibage.mdc` + `AGENTS.md` |
+| Claude Code | `~/.claude/skills` | `CLAUDE.md` + `.claude/vibage-entry.md` |
+| Codex | `$HOME/.agents/skills` | `AGENTS.md` |
+
+詳見 `coverage/2026-07-22-multi-ide.md`。第二波（未做）：Copilot／Windsurf。
 
 ### 降級表
 
@@ -171,8 +182,8 @@ MUST 若且唯若其一：未知部署拓撲且會改假設；關鍵 RootRef=`mi
 
 ## 八、下一步
 
-1. 執行 P1 plan（subagent-driven-development）：`docs/superpowers/plans/2026-07-22-vibage-os-p1.md`  
-2. 腳本／skill 落地後更新本檔 P1 列與能力表誠實度  
+1. 持續對齊 P1 plan 剩餘腳本驗收：`docs/superpowers/plans/2026-07-22-vibage-os-p1.md`  
+2. Multi-IDE coverage：`coverage/2026-07-22-multi-ide.md`  
 3. 任何 Phase／成功定義變更 → **先改本 STATUS**
 
 ## 九、相關路徑
