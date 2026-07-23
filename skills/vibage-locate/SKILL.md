@@ -43,10 +43,31 @@ Match the **owner's language** in chat and `VIBAGE-ISSUE-OWNER.md`. Never assume
    - Can you run tests / git / docker? (yes / no / unsure)
    - Preferred language for the owner brief?
 
+## Milestone dual-write (MUST)
+
+On these milestones — not every tool call — write **both**:
+
+| Milestone | Chat (owner) | Disk |
+|-----------|--------------|------|
+| gate (assert_gate) | Plain: ok to dig, or plan changed / re-confirm | RunEnvelope progress; on fail → STOP + `handoff` |
+| locate start | Plain: starting dig on planned subset | STATUS focus + RunEnvelope phase `analyzing` |
+| locate end / success | Plain brief that dual reports exist | STATUS + RunEnvelope `done` + `VIBAGE-ISSUE-*` |
+| stop / mid-fail / abort | Plain STOP + next step | STATUS STOP + `handoff`; **no** dual reports |
+
+Rules:
+
+- Chat = plain language only. **Never** paste RunEnvelope JSON / hashes / internal fields to the owner.
+- Disk = `docs/vibage/STATUS.md` + `RUNS/<run_id>.json` (and dual reports **only** on success path).
+- No hub homework on the happy path.
+- Mid-fail / abort / gate fail: do **not** write `VIBAGE-ISSUE-OWNER.md` / `VIBAGE-ISSUE-LOCATE.md`.
+- Terminal-then-mint: new `run_id` MUST set root `supersedes_run_id` (SSOT); `handoff.prior_run_id` optional mirror (equal or absent).
+- Verify handoff shape: `"$PKG_ROOT/scripts/verify-handoff.sh" docs/vibage/RUNS/<run_id>.json`
+- See `$PKG_ROOT/references/hub/STATUS.md` STOP template and `RunEnvelope.example.json`.
+
 ## Preflight gates (before dig)
 
-1. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery (same as init). Pin fail blocks `analyzing` (S8).
-2. Run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"`. On failure → stop. Set run phase `stale_confirm` if hash mismatch; tell owner to re-orient / re-confirm (S13/S14). **No dig without gate.**
+1. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery (same as init). Pin fail blocks `analyzing` (S8). Dual-write STOP + handoff; no dual reports.
+2. Run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"`. On failure → stop. Set run phase `stale_confirm` if hash mismatch; tell owner to re-orient / re-confirm (S13/S14). **No dig without gate.** Dual-write STOP + handoff; **never** write `VIBAGE-ISSUE-*` on gate fail.
 3. Read `docs/vibage/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig only that subset.
 
 ## Deleted V0 behavior
@@ -56,9 +77,10 @@ Match the **owner's language** in chat and `VIBAGE-ISSUE-OWNER.md`. Never assume
 
 ## Procedure
 
-1. **Open / update RunEnvelope** at `docs/vibage/RUNS/<run_id>.json`:
+1. **Open / update RunEnvelope** at `docs/vibage/RUNS/<run_id>.json` (**locate start** milestone):
    - phase=`analyzing`, mode=`degraded` default
    - Keep `pipeline_id: locate`
+   - If minting after a terminal run: set root `supersedes_run_id` to prior `run_id` (SSOT); optional `handoff.prior_run_id` mirror
    - Optional: `preview_error` (string) — set when preview copy/serve fails (S11)
 2. **Fat-repo identity line** (after gate): if dual trees / LEGACY appear, write `Active surface: … | Legacy/ignore: …` with path+quote.
 3. **Deny / quarantine:** do not deep-read `.venv/`, `node_modules/`, `.worktrees/`, large artifacts, or paths marked LEGACY unless owner asks.
@@ -72,7 +94,7 @@ Match the **owner's language** in chat and `VIBAGE-ISSUE-OWNER.md`. Never assume
 8. **Search with budget** from SCAN_PLAN. Stop when one hypothesis has path evidence OR two strong candidates remain.
 9. **Engineer challenge + adversarial kill** — cap ≤7 findings after review.
 10. **GapQuestions** after analysis — use `$PKG_ROOT/references/gap-question-template.md`; record `gap_ids` on RunEnvelope.
-11. **Write dual reports** at workspace root:
+11. **Write dual reports** at workspace root (**success path only** — never on mid-fail):
     - `VIBAGE-ISSUE-OWNER.md` ← owner template
     - `VIBAGE-ISSUE-LOCATE.md` ← locate template  
     Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
@@ -89,12 +111,12 @@ Match the **owner's language** in chat and `VIBAGE-ISSUE-OWNER.md`. Never assume
     Preview never blocks DONE.
     Start serve in background (or copy-only, then tell the human the URL) so later steps are not blocked by http.server.
 14. Local delivery ends at dual Markdown reports + optional preview. Cloud deepening is out of scope this phase.
-15. Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`.
+15. **locate end / success or stop** milestone: Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`. On `failed`|`aborted` fill STATUS STOP + `handoff` and do **not** write dual reports. Plain chat only — never dump JSON.
 
 ## Stale / resume
 
-- **Resume (S12):** Read STATUS + RUNS; if CONFIRM still valid (`assert_gate` OK), continue; never wipe CONFIRM via re-init.
-- **Stale confirm (S14):** assert_gate fail → phase `stale_confirm` → orient → new CONFIRM.
+- **Resume (S12):** Read STATUS + RUNS; if CONFIRM still valid (`assert_gate` OK), continue; never wipe CONFIRM via re-init. After terminal (`done|failed|aborted|stale_confirm`), mint a **new** `run_id` with `supersedes_run_id` set (never rewrite old failed→done).
+- **Stale confirm (S14):** assert_gate fail → phase `stale_confirm` → STOP + handoff (no `VIBAGE-ISSUE-*`) → orient → new CONFIRM.
 - **Reject plan (S13):** clear CONFIRM, re-orient, re-confirm.
 
 ## Mode honesty

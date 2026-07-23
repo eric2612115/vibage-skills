@@ -11,8 +11,8 @@
 |------------|----------|---------|--------------|-------|
 | scan_plan_hash + assert_gate | YES | YES | YES | script |
 | Tier-0 `scripts/test-tier0.sh` | YES | YES | YES | script |
-| Report hard-cut VIBAGE-ISSUE-* | YES | NO | NO | script |
-| Handoff dual-write | YES | NO | NO | script |
+| Report hard-cut VIBAGE-ISSUE-* | YES | YES | YES | script |
+| Handoff dual-write | YES | YES | YES | script |
 | Focus: agent-pressure | YES | NO | NO | agent (deferred meta row — not a pipeline_id) |
 | SaaS / register | blank | — | — | — |
 
