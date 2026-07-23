@@ -24,21 +24,21 @@
 - Create: `docs/superpowers/specs/satellites/SAT-issue-fix-unlock.md` (short) before deep unlock behavior
 - Create: `docs/superpowers/specs/satellites/SAT-arch-review.md` + `SAT-map-schema.md` before map depth
 
-- [ ] **Step 1: Mark tracks optional in MANIFEST / STATUS**
+- [x] **Step 1: Mark tracks optional in MANIFEST / STATUS**
 
 Locate DONE independent. Preference NO blocks fix (umbrella §4.1).
 
-- [ ] **Step 2: Stub skills with hard gates only**
+- [x] **Step 2: Stub skills with hard gates only**
 
 issue-fix SKILL must state: require OWNER_POLICY YES + unlock file; prefer branch/PR; no dig without locate report.
 
 架構檢視 SKILL must state: require qualified map; failure does not undo locate DONE.
 
-- [ ] **Step 3: Contract tests (no full agent)**
+- [x] **Step 3: Contract tests (no full agent)**
 
 Add `tests/test_optional_track_gates.sh` asserting skill text / tiny JSON unlock schema exists.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'

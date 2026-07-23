@@ -4,3 +4,6 @@ vibage-locate
 vibage-orient
 research-survey-review
 section-gate-review
+# optional tracks — locate DONE independent; preference NO blocks fix (umbrella §4.1)
+vibage-issue-fix
+vibage-arch-review

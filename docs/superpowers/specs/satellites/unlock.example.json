@@ -1,0 +1,7 @@
+{
+  "schema_version": "1",
+  "locate_run_id": "run_example",
+  "allowed_paths": ["app/example.py"],
+  "confirmed_at": "2026-07-23T00:00:00Z",
+  "confirmed_by": "owner"
+}
