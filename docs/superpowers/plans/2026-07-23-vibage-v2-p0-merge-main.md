@@ -208,7 +208,7 @@ EOF
 - Move: `coverage/**`, `docs/superpowers/plans/2026-07-22-vibage-os-p1.md`, `docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md` (banner or move), conflicting coverage reviews
 - Modify: `references/feature-call.md` → move or add banner then unlink
 
-- [ ] **Step 1: Create archive root + INDEX**
+- [x] **Step 1: Create archive root + INDEX**
 
 ```bash
 mkdir -p docs/archive/2026-07-23
@@ -232,7 +232,7 @@ Moved conflicting pre-v2 docs. Live SSOT:
 | `references/feature-call.md` | Soft CTA / register path — not this-wave happy path |
 ```
 
-- [ ] **Step 2: Snapshot old STATUS then move files**
+- [x] **Step 2: Snapshot old STATUS then move files**
 
 ```bash
 mkdir -p docs/archive/2026-07-23/coverage
@@ -261,7 +261,7 @@ while IFS= read -r f; do
 done < <(find docs/archive/2026-07-23 -type f -name '*.md')
 ```
 
-- [ ] **Step 3: Unlink from entrypoints (do not rewrite STATUS body here — Task 4)**
+- [x] **Step 3: Unlink from entrypoints (do not rewrite STATUS body here — Task 4)**
 
 **`prompts/NEW-CHAT.md`:** remove any line linking `references/feature-call.md` or register/soft CTA; point cold-start to v2 umbrella + plan index.
 
@@ -283,7 +283,7 @@ Local delivery ends at dual Markdown reports + optional preview. Cloud deepening
 
 Leave full `STATUS.md` rewrite to Task 4.
 
-- [ ] **Step 4: Verify no live happy-path CTA**
+- [x] **Step 4: Verify no live happy-path CTA**
 
 ```bash
 # Ban live signup/CTA pointers (do not ban the word "SaaS" alone)
@@ -297,7 +297,7 @@ echo "CTA_UNLINK_OK"
 
 Expected: `CTA_UNLINK_OK`
 
-- [ ] **Step 5: Commit archive**
+- [x] **Step 5: Commit archive**
 
 ```bash
 git add docs/archive README.md prompts/NEW-CHAT.md skills/vibage-locate/SKILL.md references
@@ -315,7 +315,7 @@ EOF
 **Files:**
 - Modify: `STATUS.md` (package root)
 
-- [ ] **Step 1: Rewrite STATUS.md to thin SSOT**
+- [x] **Step 1: Rewrite STATUS.md to thin SSOT**
 
 Replace progress claims with a table like:
 
@@ -343,7 +343,7 @@ Update On-tree / Proven-green only when scripts say so. Never YES without proof.
 
 Fill On-tree/Proven for gate from Task 2 results.
 
-- [ ] **Step 2: Commit STATUS**
+- [x] **Step 2: Commit STATUS**
 
 ```bash
 git add STATUS.md
@@ -360,7 +360,7 @@ EOF
 
 **Files:** none (verification only)
 
-- [ ] **Step 1: P0 acceptance checklist**
+- [x] **Step 1: P0 acceptance checklist**
 
 ```bash
 test -f scripts/lib/scan_plan_hash.py
@@ -381,12 +381,12 @@ echo "P0_DOD_OK"
 
 Expected: `P0_DOD_OK`; re-run Task 2 Step 3 RED check once.
 
-- [ ] **Step 2: Final P0 commit only if dirty**
+- [x] **Step 2: Final P0 commit only if dirty**
 
 ```bash
 git status -sb
 ```
 
-- [ ] **Step 3: Hand off**
+- [x] **Step 3: Hand off**
 
 Announce P0 complete. Next: `@docs/superpowers/plans/2026-07-23-vibage-v2-p1-report-hardcut.md`
