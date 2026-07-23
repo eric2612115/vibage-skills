@@ -130,4 +130,4 @@ Hard stops: [`references/hard-stops.md`](references/hard-stops.md).
 
 ## License
 
-MIT — see `LICENSE`. Copyright holder: `[TBD — Eric to fill]`.
+MIT — see `LICENSE`. Copyright holder: Eric Fang.
