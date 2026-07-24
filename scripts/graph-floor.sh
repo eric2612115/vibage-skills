@@ -339,4 +339,145 @@ if [[ "$svc_count" -lt 1 ]]; then
   fail "service_count=$svc_count < 1"
 fi
 
+# Floor ledger: floor_identity + floor_deps per repo (proven when verifiable, else failed+ROLLUP)
+python3 - "$PARENT" "$MAP" "$PKG_ROOT" <<'PY'
+import hashlib, json, subprocess, sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+parent = Path(sys.argv[1]).resolve()
+map_path = Path(sys.argv[2])
+pkg_root = Path(sys.argv[3])
+append_sh = pkg_root / "scripts" / "ledger-append.sh"
+
+obj = json.load(open(map_path, encoding="utf-8"))
+repos = obj.get("repos") or []
+edges = obj.get("edges") or []
+now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def run_append(claim: dict) -> None:
+    raw = json.dumps(claim, ensure_ascii=False)
+    r = subprocess.run(
+        ["bash", str(append_sh), str(parent), raw],
+        capture_output=True,
+        text=True,
+    )
+    if r.returncode != 0:
+        sys.stderr.write(r.stderr or r.stdout or "ledger-append failed\n")
+        sys.exit(r.returncode or 1)
+
+
+def ehash(*parts: str) -> str:
+    h = hashlib.sha256()
+    for p in parts:
+        h.update(p.encode("utf-8", errors="replace"))
+        h.update(b"\0")
+    return h.hexdigest()[:16]
+
+
+for repo in repos:
+    rid = repo.get("id") or ""
+    rpath = repo.get("path") or rid
+    root = parent if rpath in (".", "") else parent / rpath
+    definition = (repo.get("definition") or "").strip()
+    name = repo.get("name") or rid
+
+    # --- floor_identity ---
+    id_path = None
+    id_quote = ""
+    for cand in ("README.md", "README", "readme.md"):
+        p = root / cand
+        if p.is_file():
+            try:
+                text = p.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                text = ""
+            for line in text.splitlines():
+                if line.strip():
+                    id_quote = line.strip()[:200]
+                    break
+            id_path = f"{rpath}/{cand}" if rpath not in (".", "") else cand
+            break
+    if id_path is None:
+        id_path = rpath if rpath not in (".", "") else "."
+        id_quote = f"repo:{name}"
+
+    identity_ok = root.exists() and (root / ".git").exists()
+    statement = definition or f"Repo {name} at {rpath}"
+    claim_id = f"floor_identity:{rid}:{ehash(rid, statement, id_path)}"
+    run_append(
+        {
+            "id": claim_id,
+            "subject_type": "repo",
+            "subject_id": rid,
+            "claim_class": "floor_identity",
+            "statement": statement,
+            "pointers": [
+                {
+                    "path": id_path,
+                    "quote": id_quote or statement[:80],
+                    "branch_ref": "HEAD",
+                    "env_id": "",
+                }
+            ],
+            "state": "proven" if identity_ok else "failed",
+            "updated_at": now,
+            "evidence_hash": ehash(rid, "floor_identity", id_path, id_quote),
+        }
+    )
+
+    # --- floor_deps (present-or-absent with evidence) ---
+    compose_names = (
+        "docker-compose.yml",
+        "docker-compose.yaml",
+        "compose.yml",
+        "compose.yaml",
+    )
+    compose_rel = None
+    for fname in compose_names:
+        if (root / fname).is_file():
+            compose_rel = f"{rpath}/{fname}" if rpath not in (".", "") else fname
+            break
+
+    related = [e for e in edges if e.get("from") == rid or e.get("to") == rid]
+    if compose_rel and related:
+        deps_stmt = f"compose deps: {len(related)} edge(s)"
+        deps_quote = "depends_on present"
+        deps_path = compose_rel
+        deps_ok = True
+    elif compose_rel:
+        deps_stmt = "compose present; no cross-repo depends_on edges"
+        deps_quote = "compose file; no mapped depends_on"
+        deps_path = compose_rel
+        deps_ok = True
+    else:
+        deps_stmt = "no compose deps"
+        deps_quote = "absent"
+        deps_path = rpath if rpath not in (".", "") else "."
+        deps_ok = root.exists()
+
+    claim_id = f"floor_deps:{rid}:{ehash(rid, deps_stmt, deps_path)}"
+    run_append(
+        {
+            "id": claim_id,
+            "subject_type": "repo",
+            "subject_id": rid,
+            "claim_class": "floor_deps",
+            "statement": deps_stmt,
+            "pointers": [
+                {
+                    "path": deps_path,
+                    "quote": deps_quote,
+                    "branch_ref": "HEAD",
+                    "env_id": "",
+                }
+            ],
+            "state": "proven" if deps_ok else "failed",
+            "updated_at": now,
+            "evidence_hash": ehash(rid, "floor_deps", deps_path, deps_quote),
+        }
+    )
+PY
+
 echo "OK: discover_mode=$DISCOVER_MODE services=$svc_count children=$child_count"
