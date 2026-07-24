@@ -1,6 +1,6 @@
 # Vibage C′ Graph + Brief + Evidence Ledger Implementation Plan
 
-> **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Implement the C′ understanding substrate (graph floor, evidence ledger, env/branch matrix with substantive 掃透 gates, domain/scene briefs) per the approved design — zero vector/RAG dependencies.
 
@@ -52,7 +52,7 @@
 - Create: `tests/test_c_prime_graph_floor.sh`
 - Modify: `scripts/pile-index.sh` (call graph-floor, then echo `PILE_INDEX_OK`)
 
-- [ ] **Step 1: Write failing test** (`tests/test_c_prime_graph_floor.sh`)
+- [x] **Step 1: Write failing test** (`tests/test_c_prime_graph_floor.sh`)
 
 ```bash
 #!/usr/bin/env bash
@@ -71,11 +71,11 @@ assert len(m.get("repos") or [])>=2
 PY
 ```
 
-- [ ] **Step 2: Run — expect FAIL** (`graph-floor.sh` missing)
+- [x] **Step 2: Run — expect FAIL** (`graph-floor.sh` missing)
 
 Run: `bash tests/test_c_prime_graph_floor.sh`
 
-- [ ] **Step 3: Implement `graph-floor.sh`**
+- [x] **Step 3: Implement `graph-floor.sh`**
 
 Algorithm (must implement, not “reuse vaguely”):
 1. Read optional `$PARENT/docs/vibage/OWNER_POLICY.json` (or `OWNER_POLICY` path if pack already defines one — use `docs/vibage/OWNER_POLICY.json` for C′).
@@ -85,11 +85,11 @@ Algorithm (must implement, not “reuse vaguely”):
 5. Nested depth beyond Chunk 0 unit test: covered in Chunk 3 friend-chaos (`discover_mode=nested` asserted there).
 6. After implementing, run `bash tests/test_pile_index.sh` (or pack-health subset) and keep it green.
 
-- [ ] **Step 4: Implement `verify-graph-floor.sh`** — map exists, JSON ok, `discover_mode` set, `len(repos)>=1`; else FAIL. Print `GRAPH_FLOOR_OK`.
+- [x] **Step 4: Implement `verify-graph-floor.sh`** — map exists, JSON ok, `discover_mode` set, `len(repos)>=1`; else FAIL. Print `GRAPH_FLOOR_OK`.
 
-- [ ] **Step 5: Wrapper** — `pile-index.sh` calls `graph-floor.sh "$PARENT"` then prints `PILE_INDEX_OK` on success (freeze compat).
+- [x] **Step 5: Wrapper** — `pile-index.sh` calls `graph-floor.sh "$PARENT"` then prints `PILE_INDEX_OK` on success (freeze compat).
 
-- [ ] **Step 6: Test PASS + commit**
+- [x] **Step 6: Test PASS + commit**
 
 ```bash
 git add scripts/graph-floor.sh scripts/verify-graph-floor.sh scripts/pile-index.sh tests/test_c_prime_graph_floor.sh
@@ -107,7 +107,7 @@ EOF
 - Create: `scripts/verify-ledger-slice.sh`
 - Create: `tests/test_c_prime_ledger.sh` (locked — do not fold into graph_floor test)
 
-- [ ] **Step 1: Write failing test**
+- [x] **Step 1: Write failing test**
 
 ```bash
 #!/usr/bin/env bash
@@ -125,15 +125,15 @@ if bash "$ROOT/scripts/verify-ledger-slice.sh" "$TMP" svc-b floor_identity; then
 grep -q 'svc-b' "$TMP/docs/vibage/ledger/ROLLUP.md"
 ```
 
-- [ ] **Step 2: Run — FAIL**
+- [x] **Step 2: Run — FAIL**
 
-- [ ] **Step 3: Implement `ledger-append.sh`** — append one JSON object line; pointer objects must include `path` (quote recommended); on `state=failed`, upsert subject into `ROLLUP.md` under `## Failed`.
+- [x] **Step 3: Implement `ledger-append.sh`** — append one JSON object line; pointer objects must include `path` (quote recommended); on `state=failed`, upsert subject into `ROLLUP.md` under `## Failed`.
 
-- [ ] **Step 4: Implement `verify-ledger-slice.sh`** — args: `PARENT SUBJECT_ID CLASS1,CLASS2,…` — **all** listed classes must have a claim with `state=proven` for that subject. Print `LEDGER_SLICE_PROVEN` only then. Failed claims are for rollup gaps, not this token.
+- [x] **Step 4: Implement `verify-ledger-slice.sh`** — args: `PARENT SUBJECT_ID CLASS1,CLASS2,…` — **all** listed classes must have a claim with `state=proven` for that subject. Print `LEDGER_SLICE_PROVEN` only then. Failed claims are for rollup gaps, not this token.
 
-- [ ] **Step 5: graph-floor appends** for each repo: `floor_identity` + `floor_deps` (deps present-or-absent with evidence pointer) as **proven** when verifiable, else **failed** + ROLLUP (never silent `unproven`). Role summary may live inside `floor_identity.statement` this wave.
+- [x] **Step 5: graph-floor appends** for each repo: `floor_identity` + `floor_deps` (deps present-or-absent with evidence pointer) as **proven** when verifiable, else **failed** + ROLLUP (never silent `unproven`). Role summary may live inside `floor_identity.statement` this wave.
 
-- [ ] **Step 6: PASS + commit**
+- [x] **Step 6: PASS + commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'
@@ -149,11 +149,11 @@ EOF
 - Create: `scripts/verify-understanding-rollup.sh`
 - Modify: `tests/test_c_prime_ledger.sh`
 
-- [ ] **Step 1: Extend test** — after graph-floor on TMP with 2 repos and proven floor slices for both, `verify-understanding-rollup.sh` prints `UNDERSTANDING_ROLLUP_OK` **without** any matrix file present.
+- [x] **Step 1: Extend test** — after graph-floor on TMP with 2 repos and proven floor slices for both, `verify-understanding-rollup.sh` prints `UNDERSTANDING_ROLLUP_OK` **without** any matrix file present.
 
-- [ ] **Step 2: Implement verify** — require `GRAPH_FLOOR_OK`; every repo id has `LEDGER_SLICE_PROVEN` for `floor_identity,floor_deps` **or** appears under ROLLUP Failed; no claim with `state=stale` lacking ROLLUP callout. Matrix files ignored.
+- [x] **Step 2: Implement verify** — require `GRAPH_FLOOR_OK`; every repo id has `LEDGER_SLICE_PROVEN` for `floor_identity,floor_deps` **or** appears under ROLLUP Failed; no claim with `state=stale` lacking ROLLUP callout. Matrix files ignored.
 
-- [ ] **Step 3: PASS + commit**
+- [x] **Step 3: PASS + commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'
@@ -176,20 +176,20 @@ EOF
 - Create: `scripts/verify-env-branch-matrix.sh`
 - Create: `tests/test_c_prime_matrix.sh`
 
-- [ ] **Step 1: Write failing tests in `tests/test_c_prime_matrix.sh`** covering:
+- [x] **Step 1: Write failing tests in `tests/test_c_prime_matrix.sh`** covering:
   1. Pre-seeded terminal matrix JSON (all proven/failed, zero unknown-env) → verify prints `ENV_BRANCH_MATRIX_OK` (tests verify before sweep-cell exists).
   2. All cells `missing-env-config` only → verify **fails** unless `OWNER_POLICY.json` has `env_vacancy_waiver=true` + reason → then matrix OK.
   3. `unknown-env` present → verify fails.
   4. `status=overflow` → verify fails.
   5. Extra branches beyond cap recorded as `failed`/`branch_cap` still allow OK if other rules hold (not treated as overflow).
 
-- [ ] **Step 2: Run — FAIL**
+- [x] **Step 2: Run — FAIL**
 
-- [ ] **Step 3: Implement `matrix-inventory.sh`** — bounded branches (default globs + default/current + deploy-named); real envs from compose/ci; sparse product; caps 30 / 500; overflow vs branch_cap per spec; write `docs/vibage/maps/env_branch_matrix.json` + `docs/vibage/maps/inventory_manifest.json` (1:1 rows).
+- [x] **Step 3: Implement `matrix-inventory.sh`** — bounded branches (default globs + default/current + deploy-named); real envs from compose/ci; sparse product; caps 30 / 500; overflow vs branch_cap per spec; write `docs/vibage/maps/env_branch_matrix.json` + `docs/vibage/maps/inventory_manifest.json` (1:1 rows).
 
-- [ ] **Step 4: Implement `verify-env-branch-matrix.sh`** per spec §2.3 verify list.
+- [x] **Step 4: Implement `verify-env-branch-matrix.sh`** per spec §2.3 verify list.
 
-- [ ] **Step 5: PASS for verify cases + commit**
+- [x] **Step 5: PASS for verify cases + commit**
 
 ### Task 1.2: Evidence extract + sweep-cell + substantive
 
@@ -199,15 +199,15 @@ EOF
 - Create: `scripts/verify-matrix-substantive.sh`
 - Modify: `tests/test_c_prime_matrix.sh`
 
-- [ ] **Step 1: Failing tests** — extract returns path+quote for compose env; sweep sets proven; all-failed real-env → substantive FAIL; all proven real-env → `MATRIX_SWEEP_SUBSTANTIVE_OK`; waiver never grants substantive; missing-env/unknown-env block substantive.
+- [x] **Step 1: Failing tests** — extract returns path+quote for compose env; sweep sets proven; all-failed real-env → substantive FAIL; all proven real-env → `MATRIX_SWEEP_SUBSTANTIVE_OK`; waiver never grants substantive; missing-env/unknown-env block substantive.
 
-- [ ] **Step 2: Implement extract** — input parent, repo_id, branch_ref, env_id → stdout JSON pointers. For non-current `branch_ref`, use `git show "$branch_ref:path"` (or equivalent) so quote matches that branch; pointers must include `path`, `quote`, `branch_ref`, `env_id`.
+- [x] **Step 2: Implement extract** — input parent, repo_id, branch_ref, env_id → stdout JSON pointers. For non-current `branch_ref`, use `git show "$branch_ref:path"` (or equivalent) so quote matches that branch; pointers must include `path`, `quote`, `branch_ref`, `env_id`.
 
-- [ ] **Step 3: Implement sweep-cell** — calls extract; on success state=proven; on timeout/error state=failed with reason; never leave unproven after `--sweep-started`.
+- [x] **Step 3: Implement sweep-cell** — calls extract; on success state=proven; on timeout/error state=failed with reason; never leave unproven after `--sweep-started`.
 
-- [ ] **Step 4: Implement verify-matrix-substantive.sh**
+- [x] **Step 4: Implement verify-matrix-substantive.sh**
 
-- [ ] **Step 5: PASS + commit**
+- [x] **Step 5: PASS + commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'
@@ -222,11 +222,11 @@ EOF
 **Files:**
 - Create: `scripts/c-prime-fill.sh`
 
-- [ ] **Step 1: Test** — tiny parent with 2 repos + compose envs → fill → `ENV_BRANCH_MATRIX_OK` (and substantive if all extractable).
+- [x] **Step 1: Test** — tiny parent with 2 repos + compose envs → fill → `ENV_BRANCH_MATRIX_OK` (and substantive if all extractable).
 
-- [ ] **Step 2: Implement** — graph-floor → matrix-inventory → for each cell run sweep-cell with parallelism `min(8,n)` via `xargs -P`; cell timeout → failed + continue.
+- [x] **Step 2: Implement** — graph-floor → matrix-inventory → for each cell run sweep-cell with parallelism `min(8,n)` via `xargs -P`; cell timeout → failed + continue.
 
-- [ ] **Step 3: PASS + commit**
+- [x] **Step 3: PASS + commit**
 
 ---
 
@@ -239,11 +239,11 @@ EOF
 - Create: `scripts/scene-classify.sh`
 - Create: `tests/test_c_prime_scenes.sh`
 
-- [ ] **Step 1: Failing tests** — illegal partial membership fails; exclusive+shared OK; classify matches `title|scene_id|keywords[]` (exactly one → print id exit 0; zero → exit 2; ≥2 → exit 3).
+- [x] **Step 1: Failing tests** — illegal partial membership fails; exclusive+shared OK; classify matches `title|scene_id|keywords[]` (exactly one → print id exit 0; zero → exit 2; ≥2 → exit 3).
 
-- [ ] **Step 2: Implement both scripts** reading `SCENES.json` (`keywords[]` field required in schema; may be empty only if owner always sets scene explicitly — classifier still matches title/scene_id).
+- [x] **Step 2: Implement both scripts** reading `SCENES.json` (`keywords[]` field required in schema; may be empty only if owner always sets scene explicitly — classifier still matches title/scene_id).
 
-- [ ] **Step 3: PASS + commit**
+- [x] **Step 3: PASS + commit**
 
 ### Task 2.2: scene-brief + verifies + bridges
 
@@ -253,15 +253,15 @@ EOF
 - Create: `scripts/verify-scene-brief.sh`
 - Modify: `tests/test_c_prime_scenes.sh`
 
-- [ ] **Step 1: Failing tests** for full `SCENE_BRIEF_OK` checklist: membership legal; `brief.scene_id == STATUS.active_scene`; repos ⊆ graph; hot edges terminal; `required_bridges = E_active ↔ (exclusive(other)∪shared)`; bridges listed == required and terminal via `scene_bridge` ledger claims; budget header; `scenes_draft!=true`; **matrix files absent still OK**.
+- [x] **Step 1: Failing tests** for full `SCENE_BRIEF_OK` checklist: membership legal; `brief.scene_id == STATUS.active_scene`; repos ⊆ graph; hot edges terminal; `required_bridges = E_active ↔ (exclusive(other)∪shared)`; bridges listed == required and terminal via `scene_bridge` ledger claims; budget header; `scenes_draft!=true`; **matrix files absent still OK**.
 
-- [ ] **Step 2: Implement scene-brief.sh** — writes `docs/vibage/briefs/<scene_id>.md` with YAML/header `max_tokens: 6000` and `scene_id:`; on switch deletes/marks stale prior scene brief; appends `scene_bridge` claims for required bridges (proven/failed).
+- [x] **Step 2: Implement scene-brief.sh** — writes `docs/vibage/briefs/<scene_id>.md` with YAML/header `max_tokens: 6000` and `scene_id:`; on switch deletes/marks stale prior scene brief; appends `scene_bridge` claims for required bridges (proven/failed).
 
-- [ ] **Step 3: Implement `verify-brief.sh`** — for a path or scope id, require budget header + non-empty body; print **`BRIEF_USABLE_OK`**. Add failing test that asserts this exact token.
+- [x] **Step 3: Implement `verify-brief.sh`** — for a path or scope id, require budget header + non-empty body; print **`BRIEF_USABLE_OK`**. Add failing test that asserts this exact token.
 
-- [ ] **Step 4: Implement `verify-scene-brief.sh`** (must invoke scene-validate; full checklist); print `SCENE_BRIEF_OK`.
+- [x] **Step 4: Implement `verify-scene-brief.sh`** (must invoke scene-validate; full checklist); print `SCENE_BRIEF_OK`.
 
-- [ ] **Step 5: PASS + commit**
+- [x] **Step 5: PASS + commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'
@@ -276,11 +276,11 @@ EOF
 **Files:**
 - Create: `scripts/verify-scene-cover.sh`
 
-- [ ] **Step 1: Implement cover iff** — ≥2 scenes or single_scene_waiver; SCENE_BRIEF_OK; if ≥2 and no isolation_waiver: ≥1 exclusive↔exclusive cross_scene_edge AND ≥1 terminal scene_bridge on required_bridges; shared-only edges insufficient.
+- [x] **Step 1: Implement cover iff** — ≥2 scenes or single_scene_waiver; SCENE_BRIEF_OK; if ≥2 and no isolation_waiver: ≥1 exclusive↔exclusive cross_scene_edge AND ≥1 terminal scene_bridge on required_bridges; shared-only edges insufficient.
 
-- [ ] **Step 2: Tests in test_c_prime_scenes.sh** — cover fails without cross edge; passes with fixture-shaped mini graph.
+- [x] **Step 2: Tests in test_c_prime_scenes.sh** — cover fails without cross edge; passes with fixture-shaped mini graph.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ---
 
@@ -294,19 +294,19 @@ EOF
 - Create: `tests/fixtures/c-prime/friend-chaos/setup.sh` + tree
 - Create: `tests/test_c_prime_fixtures.sh`
 
-- [ ] **Step 1: setup.sh** creates ≥10 micro-repos, **≥2 branches each** (names matching default globs), ≥2 real env configs, ≥1 nested git sample, `OWNER_POLICY.json` with `discover_nested_git=true`, **no** `env_vacancy_waiver`.
+- [x] **Step 1: setup.sh** creates ≥10 micro-repos, **≥2 branches each** (names matching default globs), ≥2 real env configs, ≥1 nested git sample, `OWNER_POLICY.json` with `discover_nested_git=true`, **no** `env_vacancy_waiver`.
 
-- [ ] **Step 2: test asserts** after `c-prime-fill`: `GRAPH_FLOOR_OK`; map `discover_mode=nested`; nested repo in `repos`; `ENV_BRANCH_MATRIX_OK`; `MATRIX_SWEEP_SUBSTANTIVE_OK`.
+- [x] **Step 2: test asserts** after `c-prime-fill`: `GRAPH_FLOOR_OK`; map `discover_mode=nested`; nested repo in `repos`; `ENV_BRANCH_MATRIX_OK`; `MATRIX_SWEEP_SUBSTANTIVE_OK`.
 
-- [ ] **Step 3: PASS + commit**
+- [x] **Step 3: PASS + commit**
 
 ### Task 3.2: local-scenes
 
-- [ ] **Step 1: Fixture** — scenes architecture/x402/quant/mindblow; `keywords[]` non-empty each; `seed_method=fixture`; `scenes_draft` false; ≥1 shared hub; ≥1 exclusive per scene; ≥1 exclusive↔exclusive edge; no isolation_waiver.
+- [x] **Step 1: Fixture** — scenes architecture/x402/quant/mindblow; `keywords[]` non-empty each; `seed_method=fixture`; `scenes_draft` false; ≥1 shared hub; ≥1 exclusive per scene; ≥1 exclusive↔exclusive edge; no isolation_waiver.
 
-- [ ] **Step 2: test** — set active_scene → scene-brief → `SCENE_BRIEF_OK` → `verify-scene-cover.sh` exit 0; switch scene → prior brief gone/stale, matrix mtime unchanged; cover still holds.
+- [x] **Step 2: test** — set active_scene → scene-brief → `SCENE_BRIEF_OK` → `verify-scene-cover.sh` exit 0; switch scene → prior brief gone/stale, matrix mtime unchanged; cover still holds.
 
-- [ ] **Step 3: PASS + commit**
+- [x] **Step 3: PASS + commit**
 
 ```bash
 git commit -m "$(cat <<'EOF'

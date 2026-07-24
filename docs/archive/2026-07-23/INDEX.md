@@ -1,8 +1,11 @@
 # Archive 2026-07-23 — DO NOT USE FOR DEV
 
-Moved conflicting pre-v2 docs. Live SSOT:
-- Spec: `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`
-- Plans: `docs/superpowers/plans/2026-07-23-vibage-v2-*.md`
+Moved conflicting pre-v2 docs.
+
+**Note (2026-07-24):** All former live `docs/superpowers/plans/*.md` were moved again to  
+`docs/archive/2026-07-24-pre-c-prime/plans/` for the C′ redesign.  
+Live stub: `docs/superpowers/plans/README.md`.  
+Active design draft: `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`.
 
 | Source | Reason |
 |--------|--------|

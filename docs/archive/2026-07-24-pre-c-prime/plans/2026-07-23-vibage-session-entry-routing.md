@@ -1,3 +1,6 @@
+> **ARCHIVED · DO NOT EXECUTE as live SSOT.**
+> Live C′ plan: `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md`
+
 # Plan-R — Session entry routing (parent workspace)
 
 > **For agentic workers:** Use subagent-driven-development or executing-plans. Checkboxes track steps.

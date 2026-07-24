@@ -1,7 +1,9 @@
 # Vibage v2 — Superpowers-grade (Local Complete) — Umbrella Design
 
 **Date:** 2026-07-23  
-**Status:** Spec ✅ Approved; human OK → writing-plans (see `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`)  
+**Status:** Spec ✅ Approved (shipped-baseline / historical).  
+**Plans:** moved to `docs/archive/2026-07-24-pre-c-prime/plans/` — not live C′ SSOT.  
+**Active design draft:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
 **Branch:** `feature/vibage-v2-superpowers-grade`  
 **Package SSOT:** `/Users/eric.fang/MindOwnBuz/vibage-skills`  
 **Doc shape:** This file is the **umbrella** contract. Thick topics get **satellite** specs; implementation is **many small plans** (not one mega-plan).  

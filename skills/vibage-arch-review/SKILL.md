@@ -26,6 +26,7 @@ description: >-
 3. Do not edit business code here (that is `vibage-issue-fix` after dual consent).
 4. Do not dig without locate/orient gates when locating is still needed; this track is not a locate substitute.
 5. English IDs: `pipeline_id` = exact `service_map` — not cloud "Architecture Pass". No SaaS / register CTA.
+6. **Thin-map floor (M07):** If there is no successful `verify-map-deepen.sh` / no `MAP_DEEPEN_OK` for this workspace, chat **must** say floor-only / nameplate inventory. **Forbid** “系統已懂 / Architecture Pass / 可安心改碼”. `verify-service-map` green = inventory qualification only, not understanding. This track does **not** unlock `issue-fix`. Plan-L Mermaid/Graphify prettier ≠ `vibage-map-deepen`.
 
 ## Usable procedure
 
@@ -44,8 +45,8 @@ bash "$PKG_ROOT/scripts/verify-service-map.sh" <workspace_root>
 
    Exit 0 required. On FAIL → stop this track only; locate DONE unchanged.
    When the map sets `depth: "standard"`, verify also requires non-empty id-valid `edges` (see `SAT-map-schema`). Floor maps without that flag remain valid.
-4. On OK → review architecture / Service map from the qualified map. Do not edit business code. Do not solicit SaaS.
-5. **Optional local prettier (Plan G → Plan-L local-maps deepen)** after verify exits 0 (fail-soft; never undoes map usable / locate DONE; ≠ Architecture Pass; ≠ letter B; ≠ SAT option-L platform):
+4. On OK → review architecture / Service map from the qualified map. If no `MAP_DEEPEN_OK`, open with anti-illusion: floor nameplate only. Do not edit business code. Do not solicit SaaS.
+5. **Optional local prettier (Plan G → Plan-L local-maps deepen)** after verify exits 0 (fail-soft; never undoes map usable / locate DONE; ≠ Architecture Pass; ≠ letter B; ≠ SAT option-L platform; **≠** cost-consented `vibage-map-deepen`):
    - OPTIONAL generate: `bash "$PKG_ROOT/scripts/generate-service-map-graph.sh" <workspace_root>`
      - Always emits non-empty `docs/vibage/maps/graph.mmd` when hub map present → expect `OK:MERMAID`.
      - Auto-writes `docs/vibage/maps/COVERAGE_NOTES.md` with `services_count` / `edges_count` (**single writer**; **not** a verify field).

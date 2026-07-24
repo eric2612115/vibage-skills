@@ -1,3 +1,6 @@
+> **ARCHIVED · DO NOT EXECUTE as live SSOT.**
+> Live C′ plan: `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md`
+
 # Plan-P — Public shell (LICENSE → origin → Tier-0 CI)
 
 > **For agentic workers:** Execute only after human provides copyright string + GitHub login/repo. Do not violate `SAT-ci-remote`: **no** `.github/workflows/*.yml` while `origin` is missing.

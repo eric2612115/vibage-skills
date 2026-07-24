@@ -72,7 +72,7 @@ flowchart TB
 | Understood floor / qualified map | `UNDERSTANDING_ROLLUP_OK` only (§2.3) — **does not** require matrix |
 | 矩陣已無漏掃（終態） | `ENV_BRANCH_MATRIX_OK` |
 | 全環境全 branch 掃透 | `MATRIX_SWEEP_SUBSTANTIVE_OK` only (§2.3; implies matrix OK + all real-env cells proven) |
-| 多領域立體場景切換 | `SCENE_BRIEF_OK` + §2.10 cover rule — **does not** require matrix complete |
+| 多領域立體場景切換 | `SCENE_BRIEF_OK` **and** `verify-scene-cover.sh` exit 0 — BRIEF alone ≠ cover; **does not** require matrix |
 
 **Gate B — Dig authorization:** orient → CONFIRM → `assert_gate` (or `MAP_SKIP`).  
 

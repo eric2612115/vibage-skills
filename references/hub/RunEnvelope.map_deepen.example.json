@@ -1,0 +1,32 @@
+{
+  "schema_version": "1",
+  "pipeline_id": "map_deepen",
+  "run_id": "map-deepen-example-1",
+  "phase": "done",
+  "mode": "degraded",
+  "scope_ids": ["svc-a", "svc-b"],
+  "original_scope_ids": ["svc-a", "svc-b"],
+  "original_scope_hash": "<sha256 of sorted scope ids joined by comma>",
+  "claim_coverage": "subset",
+  "nested_dispatch": {},
+  "stopped_at": null,
+  "handoff": {
+    "stop_reason": null,
+    "progress": {
+      "steps_done": ["cost_consent", "model_tier", "scope_freeze", "dossiers"],
+      "notes": "Optional deepen after PILE_INDEX_OK; ≠ Architecture Pass ≠ CONFIRM"
+    },
+    "blockers": [],
+    "next_action": {
+      "summary": "Hand to vibage-orient with ticket × map",
+      "steps": ["orient", "awaiting_confirm"]
+    },
+    "known_incompleteness": []
+  },
+  "artifact_uris": [
+    "docs/vibage/dossiers/svc-a.md",
+    "docs/vibage/dossiers/svc-b.md"
+  ],
+  "survey_refs": [],
+  "gap_ids": []
+}

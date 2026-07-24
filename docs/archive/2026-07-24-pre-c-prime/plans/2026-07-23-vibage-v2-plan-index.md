@@ -1,3 +1,6 @@
+> **ARCHIVED · DO NOT EXECUTE as live SSOT.**
+> Live C′ plan: `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md`
+
 # Vibage v2 — Plan Index (many small plans)
 
 > **For agentic workers:** Execute plans **in order**. Do not start `Pn` until `P(n-1)` DoD is green (except noted parallels). Use `@superpowers:subagent-driven-development` per plan file. Spec SSOT: `@docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`.

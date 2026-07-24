@@ -19,6 +19,18 @@ grep -Fq 'PILE_INDEX_OK' skills/using-vibage/SKILL.md || fail "using-vibage must
 grep -Fq 'vibage-pile-index' adapters/cursor/vibage.mdc || fail "cursor adapter must route pile-index"
 grep -Fq 'EXTREMELY-IMPORTANT' skills/using-vibage/SKILL.md || fail "using-vibage missing pack-feel MUST invoke block"
 grep -Fq '幫我裝 Vibage' adapters/cursor/vibage.mdc || fail "cursor adapter missing phrase"
+# Continuum must not skip cost/deepen ask after PILE_INDEX_OK (ask-pressure Round0 lock)
+for f in \
+  adapters/cursor/vibage.mdc \
+  adapters/claude/CLAUDE.vibage.md \
+  adapters/codex/AGENTS.vibage.md \
+  adapters/shared/AGENTS.vibage.md
+do
+  grep -Fq 'cost/deepen ask' "$f" || fail "$f continuum missing cost/deepen ask"
+  grep -Fq 'ticket paste = skip deepen' "$f" || fail "$f continuum missing ticket=skip deepen"
+done
+grep -Fq 'vibage-map-deepen' skills/using-vibage/SKILL.md || fail "using-vibage session/lifecycle must name vibage-map-deepen"
+grep -Fq 'cost/deepen ask' skills/using-vibage/SKILL.md || fail "using-vibage must name cost/deepen ask"
 grep -Fq 'docs/maps/AI-FIRST.md' skills/using-vibage/SKILL.md || fail "using-vibage must point AI-FIRST map doc"
 grep -Fq 'docs/EXTENDING.md' skills/using-vibage/SKILL.md || fail "using-vibage must point EXTENDING.md"
 [[ -f docs/maps/AI-FIRST.md ]] || fail "missing AI-FIRST.md"

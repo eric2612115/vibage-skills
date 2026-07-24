@@ -27,6 +27,7 @@ description: >-
 4. **No dig without locate report:** require workspace `VIBAGE-ISSUE-OWNER.md` + `VIBAGE-ISSUE-LOCATE.md` (or prior locate run DONE) before unlock/edits.
 5. Prefer **branch/PR** for edits; no silent push; no deploy.
 6. Stay inside unlock `allowed_paths`. Do not redefine model routing; do not claim 架構檢視 DONE.
+7. **Thin map alone never unlocks fix (M01):** `PILE_INDEX_OK` / folder-name match / thin `service_map` is **not** permission to edit business code. Never “map says checkout so patch checkout” without locate dual reports + dual consent + `verify-issue-fix-unlock.sh` green.
 
 ## Usable procedure
 
@@ -54,9 +55,9 @@ bash "$PKG_ROOT/scripts/verify-issue-fix-unlock.sh" <workspace_root>
 | When | Not |
 |------|-----|
 | OWNER_POLICY YES + valid unlock (verify OK) | Preference NO / missing unlock / bad schema |
-| After dual locate reports | Dig / orient / init as substitute |
+| After dual locate reports | Dig / orient / init / **thin pile-index map alone** as substitute |
 | Scoped edits on confirmed paths | Whole-repo rewrite; secret reads; Focus agent cards |
-| Optional after locate | Undo locate DONE; cross-pipeline `artifacts_ok` |
+| Optional after locate | Undo locate DONE; cross-pipeline `artifacts_ok`; fix-from-map-name |
 
 ## PKG_ROOT
 

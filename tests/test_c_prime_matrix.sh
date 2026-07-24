@@ -443,6 +443,103 @@ if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$MS3" >/dev/null 2>&1; the
 fi
 pass "waiver never grants substantive"
 
+# evidence_hash alone (no path+quote) must NOT grant substantive
+MS_HASH="$TMP/sub_hash"
+write_matrix "$MS_HASH" <<'EOF'
+{
+  "schema_version": "1",
+  "status": "ok",
+  "cells": [
+    {
+      "repo_id": "svc-a",
+      "branch_ref": "main",
+      "env_id": "staging",
+      "pointers": [],
+      "evidence_hash": "deadbeef",
+      "state": "proven"
+    }
+  ]
+}
+EOF
+write_manifest "$MS_HASH" <<'EOF'
+{
+  "schema_version": "1",
+  "rows": [
+    {"repo_id": "svc-a", "branch_ref": "main", "env_id": "staging"}
+  ]
+}
+EOF
+if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$MS_HASH" >/dev/null 2>&1; then
+  fail "evidence_hash alone must not grant MATRIX_SWEEP_SUBSTANTIVE_OK"
+fi
+pass "evidence_hash alone rejected for substantive"
+
+# pointer with path + evidence_hash but empty quote must fail
+MS_HQ="$TMP/sub_hq"
+write_matrix "$MS_HQ" <<'EOF'
+{
+  "schema_version": "1",
+  "status": "ok",
+  "cells": [
+    {
+      "repo_id": "svc-a",
+      "branch_ref": "main",
+      "env_id": "staging",
+      "pointers": [{"path": "a.yml", "quote": "", "branch_ref": "main", "env_id": "staging", "evidence_hash": "deadbeef"}],
+      "state": "proven"
+    }
+  ]
+}
+EOF
+write_manifest "$MS_HQ" <<'EOF'
+{
+  "schema_version": "1",
+  "rows": [
+    {"repo_id": "svc-a", "branch_ref": "main", "env_id": "staging"}
+  ]
+}
+EOF
+if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$MS_HQ" >/dev/null 2>&1; then
+  fail "path+hash without quote must not grant substantive"
+fi
+pass "path+hash without quote rejected"
+
+# invisible-only quote (U+200B) must not grant substantive even with path+hash
+MS_ZWS="$TMP/sub_zws"
+python3 - "$MS_ZWS" <<'PY'
+import json, pathlib, sys
+root = pathlib.Path(sys.argv[1])
+(root / "docs/vibage/maps").mkdir(parents=True)
+zws = "\u200b"
+matrix = {
+  "schema_version": "1",
+  "status": "ok",
+  "cells": [{
+    "repo_id": "svc-a",
+    "branch_ref": "main",
+    "env_id": "staging",
+    "pointers": [{
+      "path": "a.yml",
+      "quote": zws,
+      "branch_ref": "main",
+      "env_id": "staging",
+      "evidence_hash": "deadbeef",
+    }],
+    "state": "proven",
+  }],
+}
+manifest = {
+  "schema_version": "1",
+  "rows": [{"repo_id": "svc-a", "branch_ref": "main", "env_id": "staging"}],
+}
+(root / "docs/vibage/maps/env_branch_matrix.json").write_text(json.dumps(matrix), encoding="utf-8")
+(root / "docs/vibage/maps/inventory_manifest.json").write_text(json.dumps(manifest), encoding="utf-8")
+PY
+if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$MS_ZWS" >/dev/null 2>&1; then
+  fail "invisible-only quote must not grant MATRIX_SWEEP_SUBSTANTIVE_OK"
+fi
+pass "invisible-only quote rejected for substantive"
+
 # missing-env / unknown-env block substantive (even with some proven)
 MS4="$TMP/sub4"
 write_matrix "$MS4" <<'EOF'

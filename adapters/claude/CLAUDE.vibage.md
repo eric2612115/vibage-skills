@@ -15,7 +15,7 @@ Do not claim installed without verify. Do not dig yet. Cursor hook files are **n
 
 1. No `docs/vibage/STATUS.md` → Read/follow **vibage-init**.
 2. Hub ready, no graph floor / qualified map (unless MAP_SKIP) → **vibage-pile-index** (`GRAPH_FLOOR_OK`; then matrix sweep / `c-prime-fill`).
-3. Scene set / switch → scene-brief → `SCENE_BRIEF_OK` when claiming scene cover.
+3. Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; claiming 多領域立體場景切換 also requires `verify-scene-cover.sh` exit 0 (BRIEF alone ≠ cover).
 4. Map/graph ready, no valid CONFIRM (= owner OK on the scan plan) → **vibage-orient** (stop until owner confirms).
 5. CONFIRM OK → **vibage-issue-locate** (consume briefs/ledger; ignore deepen-as-auth; gate then dig ⊆ planned_dig_ids; legacy `vibage-locate` OK).
 6. NEW-CHAT / install unclear → **vibage-bootstrap** or **vibage-init** (then using-vibage).

@@ -1,3 +1,6 @@
+> **ARCHIVED · DO NOT EXECUTE as live SSOT.**
+> Live C′ plan: `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md`
+
 # P4–P7 — Follow-on plans (optional / deferred)
 
 > **For agentic workers:** REQUIRED: Use `@superpowers:subagent-driven-development` or `@superpowers:executing-plans`. Do **not** block this-wave ship (P2) on these. Steps use checkbox (`- [ ]`) syntax.

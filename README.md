@@ -28,7 +28,7 @@ You should not type bash. The agent runs scripts.
 
 > 幫我裝 Vibage
 
-The agent must: wire **parent** routers (`PROJECT_ENTRY_OK`) → create the checklist folder → build a **draft map of every app folder** (`PILE_INDEX_OK`) → then ask for your ticket or symptom.  
+The agent must: wire **parent** routers (`PROJECT_ENTRY_OK`) → create the checklist folder → build a **draft map of every app folder** (`PILE_INDEX_OK`) → say the map is a nameplate (not “system understood”) → tell you deepen costs more and ask if you want it (you can skip and paste a ticket) → then ask for your ticket or symptom.  
 It must **not** stop after install only, and must **not** dig yet.  
 Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`
 
@@ -46,6 +46,7 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 |---------|----------------|
 | Parent routers | Chat keeps using Vibage next time (Cursor rule always on) |
 | App map draft | Every child app folder listed — not “read every file” |
+| Optional deepen | Costlier per-app write-ups after you say yes — still not dig-all |
 | Scan plan | “We’ll dig this hot path — OK?” |
 | Owner report | Short brief you can read |
 | Engineer report | Paths and evidence for a fixer |
@@ -57,6 +58,7 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 |-------|----------------|----------|
 | Install continuum | `tests/test_install_phrase_e2e.sh` | `INSTALL_PHRASE_E2E_OK` |
 | Pile index | `scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` |
+| Optional map deepen | `scripts/verify-map-deepen.sh <parent> [RUNS.json]` | `MAP_DEEPEN_OK` |
 | Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
 | Capability table | [`STATUS.md`](STATUS.md) | — |
@@ -69,15 +71,18 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 - **SaaS / sign-up** = blank (no register CTA in this pack).
 - **This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
 - Plugin manifests are on-tree (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). **≠** store listing until you submit and pass review.
-- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `PILE_INDEX_OK` ≠ “scan confirmed” ≠ “locate finished”.
-- Pile-index map ≠ Architecture Pass; Graphify optional / fail-soft.
+- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `PILE_INDEX_OK` ≠ `MAP_DEEPEN_OK` ≠ “scan confirmed” ≠ “locate finished”.
+- Pile-index / deepen ≠ Architecture Pass; Graphify optional / fail-soft; Plan-L prettier ≠ nested deepen.
+- Cost talk stays local — no register / SaaS CTA.
 
 ---
 
 ## Deeper (agents)
 
 - Spec: `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
-- Plans: `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`  
+- Active design (C′ draft): `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`
+- Plans (live stub): `docs/superpowers/plans/README.md`
+- Archived plans: `docs/archive/2026-07-24-pre-c-prime/`  
 - Optional paste: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md)  
 - Hard stops: [`references/hard-stops.md`](references/hard-stops.md)  
 - GitHub + CI: `https://github.com/eric2612115/vibage-skills`  

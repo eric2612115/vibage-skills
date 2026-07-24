@@ -11,6 +11,7 @@ Grep-able OK tokens only. Capability SSOT remains [`STATUS.md`](../STATUS.md).
 | 0d Extending | `docs/EXTENDING.md` | add optional skill without marketplace |
 | 0e Plugin manifests | `tests/test_plugin_manifests.sh` | `PLUGIN_MANIFESTS_OK` (≠ store listing) |
 | 0f Pile index | `bash scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` (≠ Architecture Pass) |
+| 0g Optional map deepen | `bash scripts/verify-map-deepen.sh <parent> [RUNS.json]` · `tests/test_verify_map_deepen.sh` | `MAP_DEEPEN_OK` / `MAP_DEEPEN_TEST_OK` (∉ Tier-0 / pack-health) |
 | 1 Ship gate | `bash scripts/test-tier0.sh` | `TIER0_OK` |
 | 2 Pack health | `bash scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | 3 Parent entry | (included in pack-health) | `PROJECT_ENTRY_OK` |

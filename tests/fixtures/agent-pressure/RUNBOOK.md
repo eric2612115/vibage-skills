@@ -3,8 +3,8 @@
 Approach 1 honesty: **thin harness** — invoke existing `assert_gate` / `verify-*` plus scorer beyond-script asserts. **No** new FSM engine.
 
 SSOT: `docs/superpowers/specs/satellites/SAT-agent-pressure.md`  
-Plan (locate Focus): `docs/superpowers/plans/2026-07-23-vibage-focus-agent-pressure.md`  
-Plan F (B-path): `docs/superpowers/plans/2026-07-23-vibage-focus-b-path-agent-pressure.md`
+Plan (locate Focus, archived): `docs/archive/2026-07-24-pre-c-prime/plans/2026-07-23-vibage-focus-agent-pressure.md`
+Plan F (B-path, archived): `docs/archive/2026-07-24-pre-c-prime/plans/2026-07-23-vibage-focus-b-path-agent-pressure.md`
 
 ## 1. Freeze
 

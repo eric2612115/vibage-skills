@@ -1,3 +1,6 @@
+> **ARCHIVED · DO NOT EXECUTE as live SSOT.**
+> Live C′ plan: `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md`
+
 # P1 — Report hard-cut `VIBAGE-ISSUE-*` Implementation Plan
 
 > **For agentic workers:** REQUIRED: Use `@superpowers:subagent-driven-development` or `@superpowers:executing-plans`. Steps use checkbox (`- [ ]`) syntax.

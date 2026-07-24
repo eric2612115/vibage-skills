@@ -82,7 +82,7 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 3. Follow **parent** routing (mdc/CLAUDE/AGENTS — hooks may drop; alwaysApply mdc is reliable):
    - No hub → **vibage-init**
    - Hub ready, no graph floor (and no owner `MAP_SKIP`) → **vibage-pile-index** → then matrix sweep (`c-prime-fill` path)
-   - Scene set / switch → scene-brief → `SCENE_BRIEF_OK` when claiming scene cover
+   - Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; 多領域立體場景切換 also needs `verify-scene-cover.sh` exit 0
    - Map/graph ready, no valid CONFIRM → **vibage-orient**
    - CONFIRM OK → **vibage-issue-locate**
 4. Dual-STATUS: package `STATUS.md` ≠ hub `docs/vibage/STATUS.md`.

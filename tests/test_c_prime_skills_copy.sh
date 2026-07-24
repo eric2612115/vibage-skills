@@ -64,6 +64,7 @@ do
   grep -Fq 'GRAPH_FLOOR_OK' "$f" || fail "$f must name GRAPH_FLOOR_OK"
   grep -Fq 'SCENE_BRIEF_OK' "$f" || fail "$f must name SCENE_BRIEF_OK"
   grep -Fq 'MATRIX_SWEEP_SUBSTANTIVE_OK' "$f" || fail "$f must name MATRIX_SWEEP_SUBSTANTIVE_OK"
+  grep -Fq 'verify-scene-cover' "$f" || fail "$f must name verify-scene-cover (BRIEF alone ≠ cover)"
 done
 pass "continuum tokens in using-vibage + adapters"
 

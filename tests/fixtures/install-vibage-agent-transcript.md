@@ -15,10 +15,13 @@ Agent: [plain] Entry ready ≠ map ready ≠ dig. Next: checklist folder + map o
 Agent: [runs] install.sh --init-hub=<parent>
 Agent: [invokes vibage-pile-index]
 Agent: [runs] pile-index.sh → PILE_INDEX_OK
-Agent: Map draft ready (N apps). Paste a ticket or say what hurts. (Do not dig yet.)
+Agent: Nameplate map ready (N apps) — not system-understood / not Architecture Pass.
+Agent: Deeper pass costs more; skip ok — paste ticket or say deepen yes/no.
+Agent: Then ask ticket/pain if not already pasted. (Do not dig yet.)
 
 Owner: （貼票或白話症狀；仍不打 bash）
 ```
+
 
 **Honesty:** Fixture + e2e = agent-equivalent proof. Not a screen video. Not locate DONE.  
 Cold “install then halt” is **forbidden** (S04-amended).

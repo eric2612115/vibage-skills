@@ -44,6 +44,8 @@ TRANS="$ROOT/tests/fixtures/install-vibage-agent-transcript.md"
 grep -Fq '幫我裝 Vibage' "$TRANS" || fail "transcript missing owner phrase"
 grep -Fq 'PROJECT_ENTRY_OK' "$TRANS" || fail "transcript missing PROJECT_ENTRY_OK"
 grep -Fq 'PILE_INDEX_OK' "$TRANS" || fail "transcript missing PILE_INDEX_OK continuum"
+grep -Fq 'Nameplate' "$TRANS" || fail "transcript missing nameplate anti-illusion after map"
+grep -Eiq 'cost|deepen' "$TRANS" || fail "transcript missing cost/deepen ask after map"
 grep -Fq 'Do not dig' "$TRANS" || grep -Fq 'do not dig' "$TRANS" \
   || fail "transcript must forbid dig"
 grep -Fq 'pile-index' skills/using-vibage/SKILL.md || fail "using-vibage must continuum to pile-index"

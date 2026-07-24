@@ -1,3 +1,6 @@
+> **ARCHIVED · DO NOT EXECUTE as live SSOT.**
+> Live C′ plan: `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md`
+
 # Plan-S — Scorecard to ≥9 (exclude remote/CI class)
 
 > **For agentic workers:** Use subagent-driven-development or executing-plans. Checkboxes track steps.

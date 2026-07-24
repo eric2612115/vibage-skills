@@ -4,7 +4,7 @@
 **Status:** Design absorbed eng/ext must_fix; Approach **A** locked; ready for plan  
 **Package SSOT:** `/Users/eric.fang/MindOwnBuz/vibage-skills`  
 **Umbrella:** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md` (§4.4, D4, §11.1)  
-**Plan index:** `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md` (satellite row already lists `SAT-saas-blank`)  
+**Plan index (archived):** `docs/archive/2026-07-24-pre-c-prime/plans/2026-07-23-vibage-v2-plan-index.md` (satellite row already lists `SAT-saas-blank`)  
 **Package STATUS:** `STATUS.md` (capability SSOT — firewall applies)
 
 This file is the **thin design** for entry-doc honesty + reserved SaaS blank. Implementation follows a later small plan. **Do not** treat this design alone as SaaS shipped or score-slogan complete.

@@ -52,5 +52,6 @@ PACK_HEALTH_OK parent=$PARENT
 Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ remote CI ≠ letter B.
 Capability SSOT: package STATUS.md (not this script).
 Plugin manifests on-tree ≠ Cursor/Claude store listing approved.
-PILE_INDEX_OK ≠ Architecture Pass ≠ locate DONE.
+PILE_INDEX_OK ≠ MAP_DEEPEN_OK ≠ Architecture Pass ≠ locate DONE.
+MAP_DEEPEN_OK is optional and not part of this pack-health gate.
 EOF
