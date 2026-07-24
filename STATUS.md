@@ -2,8 +2,18 @@
 
 > Package progress SSOT (not hub runtime STATUS). Hub runtime lives under owner workspace `docs/vibage/STATUS.md`.
 
-**Spec:** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
-**Plans:** `docs/superpowers/plans/2026-07-23-vibage-v2-plan-index.md`
+**Active design (C′):** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
+**Active plans:** `docs/superpowers/plans/2026-07-25-vibage-c-prime-plan-index.md` → `2026-07-25-vibage-c-prime-graph-brief-ledger.md`  
+**Archived plans (pre-C′, do not execute):** `docs/archive/2026-07-24-pre-c-prime/`  
+**Shipped-baseline umbrella spec (historical):** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`
+
+> **C′ honesty banner:** Graph / Brief / Evidence ledger substrate is **On-tree** (scripts + fixtures + skills continuum) with **Proven-green=NO**.  
+> On-tree ≠ Proven-green ≠ agent letter B ≠ “understanding wave complete.”  
+> Rows below that are Proven-green are **shipped script/agent baselines** (entry, tier0, shallow map gates, Focus, …). They are **not** proof that C′ is agent-proven.  
+> **Sync deferred** (stale→reindex §2.5 not implemented this plan). Dimension fill deferred.  
+> **Not** wired into Tier-0 / pack-health. Freeze-lift: `docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md`.  
+> Continuum: `PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` → matrix sweep → (optional deferred dimension fill) → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.  
+> `PILE_INDEX_OK` remains freeze-compat wrapper echo; 掃透 only `MATRIX_SWEEP_SUBSTANTIVE_OK`; scene cover via `verify-scene-cover`.
 
 ## Capability (this wave)
 
@@ -16,15 +26,16 @@
 | Optional: issue-fix | YES | YES | YES | script (dual-consent+unlock gates; locate DONE independent) |
 | Optional: 架構檢視 | YES | YES | YES | script (map qualification gates; locate DONE independent) |
 | Focus: agent-pressure | YES | YES | YES | agent (meta row — **not** a pipeline_id; see SAT-agent-pressure) |
+| **C′ graph / brief / ledger** | YES | YES | NO | script (`2026-07-24-…-design.md`; sync deferred; ∉ Tier-0 / pack-health) |
 | SaaS / register | blank | — | — | — |
 
 **SaaS blank pointer:** reserved seam only — `docs/superpowers/specs/satellites/SAT-saas-blank.md`. Thin SAT on tree ≠ Designed/On-tree/Proven YES; no local register CTA; ≠ SaaS shipped.
 
 **Parent session entry (Plan-R + Plan-S):** Global skills ≠ project routing. Owner one-liner: **幫我裝 Vibage** (`prompts/SAY-INSTALL-VIBAGE.md`) → agent runs install + `--with-project-rule` + `verify-project-entry` → `PROJECT_ENTRY_OK` (parent only). Cursor `sessionStart` + Claude/Codex always-on (host-best). Skill: `using-vibage` (must-invoke + finishing). Maps for agents: `docs/maps/AI-FIRST.md`. Extend locally: `docs/EXTENDING.md`. **Public GitHub:** repo is **public** at `https://github.com/eric2612115/vibage-skills` — clone OK. That still ≠ marketplace listing ≠ publish-ready ≠ SaaS. Plugin manifests on-tree: `.cursor-plugin/plugin.json` + `.claude-plugin/{plugin,marketplace}.json` (see `docs/install/MARKETPLACE.md`) — **≠** Cursor/Claude store approved. SaaS stays blank.
 
-**Stranger / friend continuum:** Install claim requires `PROJECT_ENTRY_OK` (Cursor `alwaysApply: true` mdc + host-best Claude/Codex blocks). Then init-hub → **`vibage-pile-index`** / `scripts/pile-index.sh` → `PILE_INDEX_OK` before ticket intake. Map-first for unknown scope; owner names correct hot path only. Locate needs qualified map unless owner `MAP_SKIP`. `PROJECT_ENTRY_OK` ≠ hub ≠ `PILE_INDEX_OK` ≠ CONFIRM ≠ locate DONE. `PILE_INDEX_OK` ≠ Architecture Pass.
+**Stranger / friend continuum (C′):** Install claim requires `PROJECT_ENTRY_OK` (Cursor `alwaysApply: true` mdc + host-best Claude/Codex blocks). Then init-hub → **`vibage-pile-index`** / graph-floor → `GRAPH_FLOOR_OK` (`PILE_INDEX_OK` wrapper) → matrix sweep (`c-prime-fill`; 掃透 only `MATRIX_SWEEP_SUBSTANTIVE_OK`) → optional deferred dimension fill → ticket **or** scene switch → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate. Map-first for unknown scope; owner names correct hot path only. Locate needs qualified map/graph unless owner `MAP_SKIP`; consumes briefs/ledger; ignores deepen-as-auth. `PROJECT_ENTRY_OK` ≠ hub ≠ `GRAPH_FLOOR_OK` ≠ matrix 掃透 ≠ `SCENE_BRIEF_OK` ≠ CONFIRM ≠ locate DONE. `PILE_INDEX_OK` / `MAP_DEEPEN_OK` ≠ Architecture Pass ≠ full-understanding. C′ tokens ∉ Tier-0 / pack-health / `assert_gate`.
 
-**Proof layers (do not confuse):** `TIER0_OK` (ship gate) · `PACK_HEALTH_OK` via `scripts/pack-health.sh <parent>` (pins + parent entry + entry-docs + `OWNER_ZERO_BASH_OK` + `INSTALL_PHRASE_OK` + `INSTALL_PHRASE_E2E_OK` + `PLUGIN_MANIFESTS_OK` + `PILE_INDEX_TEST_OK`; **≠** Tier-0 ≠ remote CI ≠ letter B ≠ store listing) · `PROJECT_ENTRY_OK` (parent routers) · `PILE_INDEX_OK` (shallow map). Capability SSOT remains this file. Optional proof table: `docs/superpowers/specs/satellites/SAT-optional-proof.md`. Local complete checklist: `docs/LOCAL-COMPLETE-CHECKLIST.md`. Focus/B summary index: `docs/evidence/focus/SUMMARY.md`.
+**Proof layers (do not confuse):** `TIER0_OK` (ship gate) · `PACK_HEALTH_OK` via `scripts/pack-health.sh <parent>` (pins + parent entry + entry-docs + `OWNER_ZERO_BASH_OK` + `INSTALL_PHRASE_OK` + `INSTALL_PHRASE_E2E_OK` + `PLUGIN_MANIFESTS_OK` + `PILE_INDEX_TEST_OK`; **≠** Tier-0 ≠ remote CI ≠ letter B ≠ store listing) · `PROJECT_ENTRY_OK` (parent routers) · `PILE_INDEX_OK` (shallow map) · `MAP_DEEPEN_OK` (optional nested dossiers after `verify-map-deepen.sh`; **∉** Tier-0 / pack-health / assert_gate). Capability SSOT remains this file. Optional proof table: `docs/superpowers/specs/satellites/SAT-optional-proof.md`. Local complete checklist: `docs/LOCAL-COMPLETE-CHECKLIST.md`. Focus/B summary index: `docs/evidence/focus/SUMMARY.md`.
 
 This-wave 可交貨 = Plan0 + Tier-0 green. ≠ agent E2E. ≠ publish-ready. Public git clone ≠ marketplace ≠ SaaS.
 
