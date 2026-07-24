@@ -68,9 +68,10 @@ Rules:
 ## Preflight gates (before dig)
 
 1. Run `"$PKG_ROOT/scripts/verify-pins.sh"`. On failure → stop; owner-language recovery (same as init). Pin fail blocks `analyzing` (S8). Dual-write STOP + handoff; no dual reports.
-2. **Map gate (F16 / S05):** Run `"$PKG_ROOT/scripts/verify-service-map.sh" "$WORKSPACE"`. On failure → stop unless owner recorded explicit `MAP_SKIP` in `docs/vibage/DECISIONS.md`. Do not dig on half-written maps. Hand to `vibage-pile-index` when appropriate.
+2. **Map gate (F16 / S05):** Run `"$PKG_ROOT/scripts/verify-service-map.sh" "$WORKSPACE"`. On failure → stop unless owner recorded explicit `MAP_SKIP` in `docs/vibage/DECISIONS.md`. Do not dig on half-written maps. Hand to `vibage-pile-index` when appropriate. Prefer `verify-graph-floor.sh` when present (`GRAPH_FLOOR_OK`).
 3. Run `"$PKG_ROOT/scripts/assert_gate.sh" "$WORKSPACE"`. On failure → stop. Set run phase `stale_confirm` if hash mismatch; tell owner to re-orient / re-confirm (S13/S14). **No dig without gate.** Dual-write STOP + handoff; **never** write `VIBAGE-ISSUE-*` on gate fail.
-4. Read `docs/vibage/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig **only** that subset (S10). Do not pick two “interesting” repos. Do not deep-read all map services. Do **not** require Graphify / service_map pretty preview before dual reports.
+4. Read `docs/vibage/SCAN_PLAN.md` `planned_dig_ids` / budgets — dig **only** that subset (S10). Do not pick two “interesting” repos. Do not deep-read all map services. Do **not** dig all N because `MAP_DEEPEN_OK` / dossiers exist (M08: deepen ≠ CONFIRM ≠ dig-all). **Ignore deepen-as-auth** — `MAP_DEEPEN_OK` is **not** an `assert_gate` input and does not widen dig scope. Do **not** require Graphify / service_map pretty preview before dual reports.
+5. **Consume C′ briefs / ledger (when present):** Prefer `docs/vibage/briefs/` (active scene brief if `STATUS.active_scene`) and `docs/vibage/ledger/` pointers (path+quote) to guide search. Briefs/ledger enrich dig; they **do not** replace CONFIRM / `assert_gate`. Gate A tokens (`MATRIX_SWEEP_SUBSTANTIVE_OK`, `SCENE_BRIEF_OK`, cover) ≠ dig authorization.
 
 ## Deleted V0 behavior
 
@@ -86,14 +87,14 @@ Rules:
    - Optional: `preview_error` (string) — set when preview copy/serve fails (S11)
 2. **Fat-repo identity line** (after gate): if dual trees / LEGACY appear, write `Active surface: … | Legacy/ignore: …` with path+quote.
 3. **Deny / quarantine:** do not deep-read `.venv/`, `node_modules/`, `.worktrees/`, large artifacts, or paths marked LEGACY unless owner asks.
-4. **Hypothesize first** — 2–4 hypotheses. Consult `$PKG_ROOT/references/vibe-debt-smells.md`.
+4. **Hypothesize first** — 2–4 hypotheses. Consult `$PKG_ROOT/references/vibe-debt-smells.md`. Seed from brief hot path + ledger proven/failed pointers when available.
 5. **Optional survey:** Read `$PKG_ROOT/references/survey-matrix.md`. If MUST → hand off to `research-survey-review` (do not reimplement). Default SKIP.
 6. **Pinned superpowers (MUST):** follow `systematic-debugging` and `verification-before-completion` under pinned superpowers.
 7. **Nested investigation (MUST attempt):** follow `$PKG_ROOT/references/nested-protocol.md`.  
    - Fill `nested_dispatch` **only if** investigators + reviewers were actually dispatched.  
    - Else keep `mode: degraded` (legitimate success).  
    - **Never** write `Mode: full nested` / `mode: "full nested"` without both arrays length ≥ 1.
-8. **Search with budget** from SCAN_PLAN. Stop when one hypothesis has path evidence OR two strong candidates remain.
+8. **Search with budget** from SCAN_PLAN (+ brief/ledger pointers). Stop when one hypothesis has path evidence OR two strong candidates remain.
 9. **Engineer challenge + adversarial kill** — cap ≤7 findings after review.
 10. **GapQuestions** after analysis — use `$PKG_ROOT/references/gap-question-template.md`; record `gap_ids` on RunEnvelope.
 11. **Write dual reports** at workspace root (**success path only** — never on mid-fail):
