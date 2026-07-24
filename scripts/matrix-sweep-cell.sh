@@ -29,52 +29,59 @@ LOCK="${MATRIX}.lock"
 
 update_cell() {
   # stdin: JSON patch {"state","reason"?,"pointers"?}
+  # Use fcntl (portable on macOS/Linux) — `flock` CLI is often missing on Darwin.
   local patch
   patch="$(cat)"
-  (
-    if command -v flock >/dev/null 2>&1; then
-      flock -x 9
-    fi
-    python3 - "$MATRIX" "$REPO_ID" "$BRANCH_REF" "$ENV_ID" "$patch" <<'PY'
-import json, sys
+  python3 - "$MATRIX" "$LOCK" "$REPO_ID" "$BRANCH_REF" "$ENV_ID" "$patch" <<'PY'
+import fcntl
+import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
 matrix_path = Path(sys.argv[1])
-repo_id, branch_ref, env_id = sys.argv[2], sys.argv[3], sys.argv[4]
-patch = json.loads(sys.argv[5])
+lock_path = Path(sys.argv[2])
+repo_id, branch_ref, env_id = sys.argv[3], sys.argv[4], sys.argv[5]
+patch = json.loads(sys.argv[6])
 now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-obj = json.loads(matrix_path.read_text(encoding="utf-8"))
-cell = None
-for c in obj.get("cells") or []:
-    if c.get("repo_id") == repo_id and c.get("branch_ref") == branch_ref and c.get("env_id") == env_id:
-        cell = c
-        break
-if cell is None:
-    print(f"FAIL: cell not found {repo_id}@{branch_ref}/{env_id}", file=sys.stderr)
-    sys.exit(1)
-if cell.get("reason") == "branch_cap" and cell.get("state") == "failed":
-    print("OK: leave branch_cap failed cell")
-    sys.exit(0)
-if "pointers" in patch and patch["pointers"] is not None:
-    cell["pointers"] = patch["pointers"]
-if "state" in patch:
-    cell["state"] = patch["state"]
-if "reason" in patch:
-    if patch["reason"] is None:
+
+lock_path.parent.mkdir(parents=True, exist_ok=True)
+with open(lock_path, "a+", encoding="utf-8") as lf:
+    fcntl.flock(lf.fileno(), fcntl.LOCK_EX)
+    obj = json.loads(matrix_path.read_text(encoding="utf-8"))
+    cell = None
+    for c in obj.get("cells") or []:
+        if (
+            c.get("repo_id") == repo_id
+            and c.get("branch_ref") == branch_ref
+            and c.get("env_id") == env_id
+        ):
+            cell = c
+            break
+    if cell is None:
+        print(f"FAIL: cell not found {repo_id}@{branch_ref}/{env_id}", file=sys.stderr)
+        sys.exit(1)
+    if cell.get("reason") == "branch_cap" and cell.get("state") == "failed":
+        print("OK: leave branch_cap failed cell")
+        sys.exit(0)
+    if "pointers" in patch and patch["pointers"] is not None:
+        cell["pointers"] = patch["pointers"]
+    if "state" in patch:
+        cell["state"] = patch["state"]
+    if "reason" in patch:
+        if patch["reason"] is None:
+            cell.pop("reason", None)
+        else:
+            cell["reason"] = patch["reason"]
+    elif patch.get("state") == "proven":
         cell.pop("reason", None)
-    else:
-        cell["reason"] = patch["reason"]
-elif patch.get("state") == "proven":
-    cell.pop("reason", None)
-cell["updated_at"] = now
-if cell.get("state") == "unproven":
-    cell["state"] = "failed"
-    cell["reason"] = "sweep_forced_terminal"
-matrix_path.write_text(json.dumps(obj, indent=2) + "\n", encoding="utf-8")
-print(f"OK: cell {cell['state']} {repo_id}@{branch_ref}/{env_id}")
+    cell["updated_at"] = now
+    if cell.get("state") == "unproven":
+        cell["state"] = "failed"
+        cell["reason"] = "sweep_forced_terminal"
+    matrix_path.write_text(json.dumps(obj, indent=2) + "\n", encoding="utf-8")
+    print(f"OK: cell {cell['state']} {repo_id}@{branch_ref}/{env_id}")
 PY
-  ) 9>"$LOCK"
 }
 
 # Special env ids: mark failed with reason, no extract
@@ -84,13 +91,15 @@ if [[ "$ENV_ID" == "missing-env-config" || "$ENV_ID" == "unknown-env" ]]; then
   exit 0
 fi
 
+ERR_TMP="$(mktemp)"
 set +e
 ext_out="$(
   python3 "$PKG_ROOT/scripts/matrix-extract-evidence.py" \
-    "$PARENT" "$REPO_ID" "$BRANCH_REF" "$ENV_ID" 2>/tmp/vibage-matrix-extract.err
+    "$PARENT" "$REPO_ID" "$BRANCH_REF" "$ENV_ID" 2>"$ERR_TMP"
 )"
 ext_rc=$?
 set -e
+rm -f "$ERR_TMP"
 
 if [[ "$ext_rc" -eq 0 && -n "${ext_out// }" ]]; then
   printf '%s\n' "$ext_out" | python3 -c '

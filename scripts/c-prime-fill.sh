@@ -71,25 +71,28 @@ sweep_one() {
   if command -v timeout >/dev/null 2>&1; then
     if ! timeout "$CELL_TIMEOUT" bash "$PKG_ROOT/scripts/matrix-sweep-cell.sh" \
       "$PARENT" "$rid" "$br" "$eid" --sweep-started; then
-      # ensure terminal failed on timeout/kill
+      # ensure terminal failed on timeout/kill (fcntl lock — portable)
       python3 - "$PARENT/docs/vibage/maps/env_branch_matrix.json" "$rid" "$br" "$eid" <<'PY'
-import json, sys
+import fcntl, json, sys
 from datetime import datetime, timezone
 from pathlib import Path
 p = Path(sys.argv[1])
+lock = Path(str(p) + ".lock")
 rid, br, eid = sys.argv[2], sys.argv[3], sys.argv[4]
-obj = json.loads(p.read_text(encoding="utf-8"))
 now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-for c in obj.get("cells") or []:
-    if c.get("repo_id")==rid and c.get("branch_ref")==br and c.get("env_id")==eid:
-        if c.get("state") == "unproven":
-            c["state"] = "failed"
-            c["reason"] = "timeout"
-            c["updated_at"] = now
-            if not c.get("pointers"):
-                c["pointers"] = [{"path": rid, "quote": "timeout", "branch_ref": br, "env_id": eid}]
-        break
-p.write_text(json.dumps(obj, indent=2) + "\n", encoding="utf-8")
+with open(lock, "a+", encoding="utf-8") as lf:
+    fcntl.flock(lf.fileno(), fcntl.LOCK_EX)
+    obj = json.loads(p.read_text(encoding="utf-8"))
+    for c in obj.get("cells") or []:
+        if c.get("repo_id")==rid and c.get("branch_ref")==br and c.get("env_id")==eid:
+            if c.get("state") == "unproven":
+                c["state"] = "failed"
+                c["reason"] = "timeout"
+                c["updated_at"] = now
+                if not c.get("pointers"):
+                    c["pointers"] = [{"path": rid, "quote": "timeout", "branch_ref": br, "env_id": eid}]
+            break
+    p.write_text(json.dumps(obj, indent=2) + "\n", encoding="utf-8")
 PY
     fi
   else
@@ -107,27 +110,30 @@ set -e
 
 # Final: force any leftover unproven → failed (sweep started)
 python3 - "$MATRIX" <<'PY'
-import json, sys
+import fcntl, json, sys
 from datetime import datetime, timezone
 from pathlib import Path
 p = Path(sys.argv[1])
-obj = json.loads(p.read_text(encoding="utf-8"))
+lock = Path(str(p) + ".lock")
 now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-n = 0
-for c in obj.get("cells") or []:
-    if c.get("state") == "unproven":
-        c["state"] = "failed"
-        c["reason"] = c.get("reason") or "sweep_forced_terminal"
-        c["updated_at"] = now
-        if not c.get("pointers"):
-            c["pointers"] = [{
-                "path": c.get("repo_id") or ".",
-                "quote": "unproven after sweep",
-                "branch_ref": c.get("branch_ref") or "",
-                "env_id": c.get("env_id") or "",
-            }]
-        n += 1
-p.write_text(json.dumps(obj, indent=2) + "\n", encoding="utf-8")
+with open(lock, "a+", encoding="utf-8") as lf:
+    fcntl.flock(lf.fileno(), fcntl.LOCK_EX)
+    obj = json.loads(p.read_text(encoding="utf-8"))
+    n = 0
+    for c in obj.get("cells") or []:
+        if c.get("state") == "unproven":
+            c["state"] = "failed"
+            c["reason"] = c.get("reason") or "sweep_forced_terminal"
+            c["updated_at"] = now
+            if not c.get("pointers"):
+                c["pointers"] = [{
+                    "path": c.get("repo_id") or ".",
+                    "quote": "unproven after sweep",
+                    "branch_ref": c.get("branch_ref") or "",
+                    "env_id": c.get("env_id") or "",
+                }]
+            n += 1
+    p.write_text(json.dumps(obj, indent=2) + "\n", encoding="utf-8")
 print(f"OK: forced_terminal={n}")
 PY
 
