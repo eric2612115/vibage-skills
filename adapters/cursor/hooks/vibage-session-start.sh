@@ -45,7 +45,7 @@ escape_json() {
   printf '%s' "$s"
 }
 
-ctx="VIBAGE session routing (using-vibage). Parent routers SSOT: .cursor/rules/vibage.mdc. Read package STATUS.md first. Route: no hub STATUS → vibage-init; no CONFIRM → vibage-orient; CONFIRM OK → vibage-issue-locate. Thin entry — do not paste nested locate procedure. no register CTA. Owner: do not type bash; agent runs scripts. After locate DONE → finishing options in using-vibage."
+ctx="VIBAGE session routing (using-vibage). Routing scope first: out-of-scope (e.g. vibage-skills package work) → one-line disclosure; do not init/orient/locate. Unclear → ask; do not silently pick. In scope only: Parent routers SSOT .cursor/rules/vibage.mdc; no hub → vibage-init; no CONFIRM → vibage-orient; CONFIRM OK → vibage-issue-locate. Thin entry. no register CTA. Owner: do not type bash. See references/routing-scope.md + looping-review.md."
 if [[ -n "$SKILL" ]]; then
   ctx="${ctx}"$'\n\n'"--- using-vibage SKILL.md ---"$'\n'"${SKILL}"
 fi

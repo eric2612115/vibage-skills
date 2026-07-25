@@ -1,21 +1,42 @@
 ---
 name: using-vibage
 description: >-
-  Use when starting any Vibage conversation, when the owner says install Vibage
-  / 幫我裝 Vibage, or when routing is unclear. Must run before dig. Do not paste
-  nested locate procedure here.
+  Use for in-scope Vibage conversations only: install Vibage / 幫我裝 Vibage,
+  NEW-CHAT/bootstrap, cross-repo locate on a parent, or explicit
+  orient/CONFIRM/locate/pile-index/掃透. Not for vibage-skills package work,
+  single-repo named-file tasks, or research/review/Q&A/plan with no dig.
+  When unclear, ask — do not silently pick. Must run before dig when in scope.
+  Do not paste nested locate procedure here. See references/routing-scope.md.
 ---
 
 <EXTREMELY-IMPORTANT>
-If the owner mentions Vibage, install, parent workspace routing, or locate/where
-a problem lives — invoke this skill first. Prefer Skill tool / Read this file
-before improvising shell or dig steps.
+Routing scope first (`references/routing-scope.md`). Out of scope → one-line
+disclosure and proceed without init/orient/locate continuum.
+In scope only: if the owner asks install, parent workspace routing, or
+locate/where a problem lives — invoke this skill before improvising shell or dig.
 Never claim install success without PROJECT_ENTRY_OK on the PARENT workspace.
+Do not silently pick in-scope vs out-of-scope.
 </EXTREMELY-IMPORTANT>
 
 # Using Vibage
 
 Thin router only. **Parent project entry** (`.cursor/rules/vibage.mdc` / `CLAUDE.md` / `AGENTS.md`) is the routing table SSOT. This skill does **not** invent a second state machine.
+
+## Routing scope (before continuum / S08)
+
+**Vibage conversation (in scope)** = install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·掃透.
+
+**Out of scope** examples: work inside **vibage-skills** `PKG_ROOT`; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig. Gold example: workspace=`vibage-skills`, edit lab/tests/adapters → skip init even if parent lacks hub STATUS.
+
+When out of scope: one line, then do the task. When unclear: ask. **Do not silently** pick either side.
+
+Full text: `$PKG_ROOT/references/routing-scope.md`.
+
+## Looping review
+
+Plans and guarded-path edits → Plan/Impl looping review until freeze. Qualified path = `docs/evidence/reviews/<diff_id>.md` (any host). Not Cursor-Task-only. See `$PKG_ROOT/references/looping-review.md`. `verify-review-record.sh`: exit 0 ≠ `REVIEW_RECORD_OK`.
+
+**Plan loop ∉ plan todos:** freeze the plan **before** Build. Do not put `plan-loop-converge` (or “run 3 plan reviews”) inside the implementation todo list of the same plan.
 
 ## Plain milestones (F11 — owner chat)
 
@@ -46,7 +67,7 @@ Gate A ≠ Gate B (orient → CONFIRM → `assert_gate` → dig).
 
 ## Install phrase / continuum (C′)
 
-Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · Vibage intent on a parent with missing entry.
+**Only when in scope.** Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · Vibage intent on a parent with missing entry.
 
 **Authoritative continuum:**
 
@@ -95,10 +116,11 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
 ## On session start / unclear intent (S08)
 
+0. **Routing scope gate** — if out of scope (e.g. vibage-skills package work): one-line disclosure; **stop continuum**; do not run steps 3–4 init/orient/locate. If unclear: ask; **do not silently** pick.
 1. Resolve `PKG_ROOT`; verify-pins (agent).
 2. Read package `STATUS.md`.
 3. If hub present (`docs/vibage/STATUS.md`): run mother freshness check; report **`stale_count` + incomplete matrix** (stderr `stale_count=` / `incomplete_matrix=`); show any `VIBAGE_FRESHNESS_ESCALATE` lines; **do not** auto full rewrite. Continuum slogans need `FRESHNESS_OK` or waived+disclosed (exit 0 ≠ `FRESHNESS_OK`).
-4. Follow **parent** routing (mdc/CLAUDE/AGENTS — hooks may drop; alwaysApply mdc is reliable):
+4. **In scope only** — follow **parent** routing (mdc/CLAUDE/AGENTS — hooks may drop; alwaysApply mdc is reliable):
    - No hub → **vibage-init**
    - Hub ready, no graph floor (and no owner `MAP_SKIP`) → **vibage-pile-index** → then matrix sweep (`c-prime-fill` path)
    - Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; 多領域立體場景切換 also needs `verify-scene-cover.sh` exit 0

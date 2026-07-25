@@ -4,8 +4,17 @@
 Product SSOT lives in the vibage-skills package. Skills are linked under `~/.claude/skills/` and optionally `.claude/skills/`.
 Package capability SSOT: package root `STATUS.md` (hub `docs/vibage/STATUS.md` is init/orient only).
 Thin entry only — do not paste nested locate procedure.
-Session routing: follow **using-vibage** (pointer skill). Parent routers remain SSOT — no second state machine.
 Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA.
+
+## Routing scope (applies before rules 1–N)
+
+Apply Skill routing / continuum **only** when in scope (install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·掃透). Details: `$PKG_ROOT/references/routing-scope.md`.
+
+**Out of scope** (one-line disclosure, then proceed — **do not** init/orient/locate): vibage-skills package work; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig; established single work root.
+
+When unclear: ask. **Do not silently** pick either side.
+
+When **in scope** only: Session routing follows **using-vibage** (pointer skill). Parent routers remain SSOT — no second state machine.
 If owner says **幫我裝 Vibage** / install Vibage → follow using-vibage § Install continuum:
 `PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` (via **vibage-pile-index**) → matrix sweep → freshness → env-vacancy → optional deferred dimension fill → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.
 Freshness: parse stdout tokens (`FRESHNESS_OK` or WAIVED+DISCLOSED); exit 0 ≠ `FRESHNESS_OK`. Session start: disclose stale_count + incomplete_matrix (+ escalate).
@@ -13,6 +22,10 @@ Env vacancy: ANSWERED ≠ CLEAR ≠ 掃透; exit 0 ≠ 掃透.
 Do not claim installed without verify. Do not dig yet. Cursor hook files are **not** required for Claude success.
 掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `DIMENSION_FILL_*` (legacy `MAP_DEEPEN_OK` brand retired) ≠ full-understanding.
 After `PILE_INDEX_OK` / `GRAPH_FLOOR_OK`: nameplate only; cost/deepen ask (ticket paste = skip deepen).
+
+## Looping review (guarded paths / plans)
+
+Writing a plan or changing guarded paths requires Plan/Impl **looping review** until freeze — see `$PKG_ROOT/references/looping-review.md`. **Plan loop finishes before Build** — do not put plan-loop todos inside the plan body. Qualified = formatted `docs/evidence/reviews/<diff_id>.md` (any host/chat/human/model). **Not** “must use Cursor Task × 3”. Model diversity is disclosure (`diversity: ok|waived`), not a host-tool hard gate. Verify: `verify-review-record.sh` (exit 0 ≠ `REVIEW_RECORD_OK`).
 
 ## Skill routing
 

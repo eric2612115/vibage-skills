@@ -52,6 +52,17 @@ bash "$PKG_ROOT/tests/test_pile_index.sh"
 echo "== pack-health: proven-green lock =="
 bash "$PKG_ROOT/scripts/verify-proven-lock.sh" "$PKG_ROOT"
 
+echo "== pack-health: verify-review-record =="
+# Parse token: SKIP and OK both exit 0; exit 0 ≠ REVIEW_RECORD_OK.
+RR_OUT="$(bash "$PKG_ROOT/scripts/verify-review-record.sh" "$PKG_ROOT")"
+printf '%s\n' "$RR_OUT"
+if ! printf '%s\n' "$RR_OUT" | grep -Eq 'REVIEW_RECORD_(OK|SKIP)'; then
+  fail "verify-review-record missing SKIP|OK token"
+fi
+if printf '%s\n' "$RR_OUT" | grep -Fq 'REVIEW_RECORD_FAIL'; then
+  fail "verify-review-record reported FAIL"
+fi
+
 cat <<EOF
 PACK_HEALTH_OK parent=$PARENT
 Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ letter B.
@@ -64,4 +75,6 @@ outside the signature by design.
 Plugin manifests on-tree ≠ Cursor/Claude store listing approved.
 PILE_INDEX_OK ≠ DIMENSION_FILL_OK ≠ Architecture Pass ≠ locate DONE.
 MAP_DEEPEN_OK brand retired (W3a); dimension-fill optional and not part of this pack-health gate.
+REVIEW_RECORD_SKIP on non-trigger trees is OK for pack-health; exit 0 ≠ REVIEW_RECORD_OK.
+REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof.
 EOF
