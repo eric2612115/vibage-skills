@@ -1,0 +1,11 @@
+{
+  "schema_version": "1",
+  "run_id": "gateb-20260725T133736Z",
+  "pipeline_id": "locate",
+  "phase": "done",
+  "mode": "degraded",
+  "started_at": "2026-07-25T13:37:52Z",
+  "updated_at": "2026-07-25T13:37:52Z",
+  "investigators": [],
+  "reviewers": []
+}

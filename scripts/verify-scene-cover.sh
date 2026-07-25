@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Usage: verify-scene-cover.sh <workspace_root>
 # Exit 0 iff stereoscopic cover claim holds (§2.10).
-# Not a STATUS capability token — exit code only (optional OK line on stdout).
+# On success prints SCENE_COVER_OK (Held-token convention; Gate A still = BRIEF + cover exit 0).
 set -euo pipefail
 
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -199,3 +199,4 @@ if not terminal_ok:
 
 sys.exit(0)
 PY
+echo "SCENE_COVER_OK"

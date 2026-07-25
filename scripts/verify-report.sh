@@ -1,17 +1,32 @@
 #!/usr/bin/env bash
-# Checklist only — does NOT prove nested subagents actually ran.
-# Usage: verify-report.sh <VIBAGE-ISSUE-LOCATE.md> [RUNS/<run_id>.json]
-# Second arg: path to RunEnvelope JSON. When Mode in the MD is "full nested",
-# the RUNS json is REQUIRED and must pass verify-run.sh.
+# Checklist + deliverable token lint — does NOT prove nested subagents actually ran.
+# Does NOT prove chat honesty. Held tokens alone ≠ proof (need ## Token evidence fence).
+# Usage:
+#   verify-report.sh <VIBAGE-ISSUE-LOCATE.md> [RUNS/<run_id>.json] [--owner <VIBAGE-ISSUE-OWNER.md>]
+# If --owner omitted, lints sibling VIBAGE-ISSUE-OWNER.md next to LOCATE when present.
 set -euo pipefail
-LOCATE="${1:-}"
-RUNS_JSON="${2:-}"
+
+ARGS=("$@")
+LOCATE="${ARGS[0]:-}"
+RUNS_JSON=""
+OWNER=""
+i=1
+while [[ $i -lt ${#ARGS[@]} ]]; do
+  a="${ARGS[$i]}"
+  if [[ "$a" == "--owner" ]]; then
+    i=$((i + 1))
+    OWNER="${ARGS[$i]:-}"
+  elif [[ -z "$RUNS_JSON" && "$a" != --* ]]; then
+    RUNS_JSON="$a"
+  fi
+  i=$((i + 1))
+done
+
 if [[ -z "$LOCATE" || ! -f "$LOCATE" ]]; then
-  echo "Usage: $0 /path/to/VIBAGE-ISSUE-LOCATE.md [RUNS/<run_id>.json]" >&2
+  echo "Usage: $0 /path/to/VIBAGE-ISSUE-LOCATE.md [RUNS/<run_id>.json] [--owner /path/to/VIBAGE-ISSUE-OWNER.md]" >&2
   exit 2
 fi
 BASE="$(basename "$LOCATE")"
-# Reject pre-hard-cut basenames (concat so DoD rg does not false-positive on this guard).
 _legacy_owner="VIBAGE-"'OWNER.md'
 _legacy_locate="VIBAGE-"'LOCATE.md'
 if [[ "$BASE" == "$_legacy_owner" || "$BASE" == "$_legacy_locate" ]]; then
@@ -41,5 +56,20 @@ if [[ -n "$RUNS_JSON" ]]; then
     [[ "$RUNS_MODE" == "full nested" ]] || fail "Mode MD full nested requires RUNS mode == \"full nested\" (got: ${RUNS_MODE:-empty})"
   fi
 fi
+
+if [[ -z "$OWNER" ]]; then
+  sib="$(dirname "$LOCATE")/VIBAGE-ISSUE-OWNER.md"
+  if [[ -f "$sib" ]]; then
+    OWNER="$sib"
+  fi
+fi
+LINT_ARGS=("$LOCATE")
+if [[ -n "$OWNER" ]]; then
+  [[ -f "$OWNER" ]] || fail "owner report not found: $OWNER"
+  LINT_ARGS+=("$OWNER")
+fi
+python3 "$PKG_ROOT/scripts/lib/report_token_lint.py" "${LINT_ARGS[@]}" \
+  || fail "narrative token lint failed"
+
 echo "VERIFY_REPORT_OK: $LOCATE"
 exit 0

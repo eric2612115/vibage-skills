@@ -1,0 +1,6 @@
+OK: service_map.json present
+OK: pipeline_id=service_map
+OK: quality_bar=MEDIUM
+OK: scale=Tiny
+OK: services count=3
+OK: map qualification gates pass

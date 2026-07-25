@@ -40,5 +40,14 @@ Status — 架構檢視: not started | in progress | done | n/a — …
 - Mode: full nested | degraded
 - RunEnvelope: `docs/vibage/RUNS/<run_id>.json` (nested_dispatch required iff Mode is full nested)
 
+## Held tokens
+<!-- Machine-readable; one token per line. Required only if body uses Gate A slogans. -->
+- _(none — do not claim 掃透 / 立體場景 / 全懂 without tokens + Token evidence)_
+
+## Token evidence
+<!-- Paste exact script stdout lines for each Held token (e.g. MATRIX_SWEEP_SUBSTANTIVE_OK). -->
+```
+```
+
 ## Out of scope / deferred
 - …

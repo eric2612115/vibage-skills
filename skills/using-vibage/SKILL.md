@@ -113,6 +113,8 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
 ## Finishing (required after locate success)
 
+Deliverable `verify-report` token lint (Held + Token evidence) ≠ chat-level honesty; ≠ replace C′ live panel.
+
 Owner-language only (no soft CTA / no register / no pairing / no API-key / no Architecture Pass upsell):
 
 1. Optional localhost preview — fail-soft  

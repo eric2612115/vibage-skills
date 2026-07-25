@@ -1,0 +1,3 @@
+NOT_A_GIT_WORKTREE parent=/Users/eric.fang/MindOwnBuz
+docs/vibage deleted: YES
+-rw-r--r--  1 eric.fang  staff  3348 Jul 25 20:38 /Users/eric.fang/MindOwnBuz/.cursor/rules/vibage.mdc

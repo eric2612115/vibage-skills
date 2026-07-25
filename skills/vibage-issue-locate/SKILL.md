@@ -100,6 +100,7 @@ Rules:
 11. **Write dual reports** at workspace root (**success path only** — never on mid-fail):
     - `VIBAGE-ISSUE-OWNER.md` ← owner template
     - `VIBAGE-ISSUE-LOCATE.md` ← locate template  
+    - Fill `## Held tokens` + `## Token evidence` when body uses Gate A slogans (掃透/立體…); deliverable lint ≠ chat proof. Prefer no slogans on degraded digs.
     Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
     **OWNER must plain-list** unchecked external gaps (DB / log / container / not connected) — S06. Do not claim code-only completeness when externals were named.
 12. **Verify (optional checklist):**  

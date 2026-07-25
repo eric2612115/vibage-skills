@@ -35,5 +35,14 @@ If you want architecture / debt mapping beyond this locate, open:
 `<SITE_URL_OR_NOT_PUBLISHED>`
 No account required for this local report.
 
+## Held tokens
+<!-- Machine-readable; required only if this brief uses Gate A slogans (掃透 / 立體場景 / …). -->
+- _(none)_
+
+## Token evidence
+```
+```
+
 ## Honesty
 - Analysis mode: full nested | degraded (if degraded: nested investigators/reviewers were not available; local dual reports still count as done)
+- Deliverable token lint ≠ chat honesty; Held alone ≠ proof

@@ -1,0 +1,9 @@
+{
+  "schema_version": "1",
+  "confirm_kind": "scan_plan",
+  "subject_ref": "docs/vibage/SCAN_PLAN.md",
+  "payload_hash": "4192a9c6305cbaac2188414e9566a697b9588e8cd407e5eb1bd22b5496e427b8",
+  "hash_alg": "sha256",
+  "timestamp": "2026-07-25T13:37:37Z",
+  "confirmed_by": "owner"
+}
