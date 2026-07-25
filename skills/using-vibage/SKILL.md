@@ -50,7 +50,15 @@ Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · Vibage intent
 
 **Authoritative continuum:**
 
-`PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` → matrix sweep → **optional deferred dimension fill** → ticket **or** scene switch → **`SCENE_BRIEF_OK` when scene set** → orient → CONFIRM → locate.
+`PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` → matrix sweep → **freshness gate** → **optional deferred dimension fill** → ticket **or** scene switch → **`SCENE_BRIEF_OK` when scene set** → orient → CONFIRM → locate.
+
+**Freshness (W1 — HARD_MOTHER / SOFT_CHILD):**
+
+- Mother: `bash "$PKG_ROOT/scripts/verify-freshness.sh" "$PARENT"` (or `freshness-check.sh --mode=mother`).
+- Continuum / hub-ready / 掃透 / dig-ready slogans require stdout **`FRESHNESS_OK`** **or** (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`).
+- **Forbidden:** treating exit code 0 as `FRESHNESS_OK` (waived-stale also exits 0).
+- Hard-fail stdout: `STALE_BLOCKS_MOTHER count=<n>` — do not claim continuum ready; may still run refresh / graph-floor / matrix sweep.
+- Child: after commit/push emit `VIBAGE_FRESHNESS_ASK: Mother hub may be stale for this repo. Update docs/vibage map/matrix/progress now? [yes/no]`. yes → `freshness-refresh-repo.sh`; no → `freshness-mark.sh --refuse`. Refusal cannot stay silent (`VIBAGE_FRESHNESS_ESCALATE` at refuse_count≥3).
 
 Agent **must** (owner: do not type bash):
 
@@ -66,9 +74,11 @@ Agent **must** (owner: do not type bash):
    - matrix = “check env/branch evidence cells (掃透 only when substantive OK)”
    - orient = “for this ticket, which hot path on the map?”
    - Explicitly: **not** SaaS signup; **not** Graphify-first; **not** embedding pipelines as memory
-8. If hub missing → `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$PARENT"` (or follow `vibage-init`).
+8. If hub missing → prefer one-shot glue when owner wants continuum fill:
+   `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$PARENT" --c-prime-fill="$PARENT"`
+   (or `--init-hub` then hand to **`vibage-pile-index`** / `c-prime-fill`). `--c-prime-fill` default off.
 9. Hand to **`vibage-pile-index`** → expect `GRAPH_FLOOR_OK` (script also echoes `PILE_INDEX_OK` for freeze compat). Continuum exit ≠ “intent only” (F15).
-10. After graph floor: run matrix path (`c-prime-fill` / inventory + cell sweep). May accept ticket with honest “matrix incomplete” disclosure; **never** claim 掃透 without `MATRIX_SWEEP_SUBSTANTIVE_OK`. Dimension fill = **deferred** (skip).
+10. After graph floor: matrix path (`c-prime-fill` prints `ENV_BRANCH_MATRIX_OK` **or** `MATRIX_INCOMPLETE`, and `MATRIX_SWEEP_SUBSTANTIVE_OK` only when 掃透). May accept ticket with honest incomplete disclosure; **never** claim 掃透 without `MATRIX_SWEEP_SUBSTANTIVE_OK`. Dimension fill = **deferred** (skip). Success to CONFIRM-ready ≠ 掃透.
 11. Ticket / pain **or** scene switch: if scene set → `scene-brief` + expect `SCENE_BRIEF_OK`; stereoscopic cover via `verify-scene-cover.sh` (independent of matrix).
 12. Hand to **`vibage-orient`** → CONFIRM → **`vibage-issue-locate`**. **No dig / no dual reports** until CONFIRM. Optional `MAP_DEEPEN_OK` ≠ CONFIRM ≠ dig-all ≠ Gate A understood.
 
@@ -79,18 +89,19 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
 1. Resolve `PKG_ROOT`; verify-pins (agent).
 2. Read package `STATUS.md`.
-3. Follow **parent** routing (mdc/CLAUDE/AGENTS — hooks may drop; alwaysApply mdc is reliable):
+3. If hub present (`docs/vibage/STATUS.md`): run mother freshness check; report **`stale_count` + incomplete matrix** (stderr `stale_count=` / `incomplete_matrix=`); show any `VIBAGE_FRESHNESS_ESCALATE` lines; **do not** auto full rewrite. Continuum slogans need `FRESHNESS_OK` or waived+disclosed (exit 0 ≠ `FRESHNESS_OK`).
+4. Follow **parent** routing (mdc/CLAUDE/AGENTS — hooks may drop; alwaysApply mdc is reliable):
    - No hub → **vibage-init**
    - Hub ready, no graph floor (and no owner `MAP_SKIP`) → **vibage-pile-index** → then matrix sweep (`c-prime-fill` path)
    - Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; 多領域立體場景切換 also needs `verify-scene-cover.sh` exit 0
-   - Map/graph ready, no valid CONFIRM → **vibage-orient**
+   - Map/graph ready, no valid CONFIRM → **vibage-orient** (only if freshness allows or stale disclosed)
    - CONFIRM OK → **vibage-issue-locate**
-4. Dual-STATUS: package `STATUS.md` ≠ hub `docs/vibage/STATUS.md`.
-5. Thin entry — no nested locate paste; no register CTA.
+5. Dual-STATUS: package `STATUS.md` ≠ hub `docs/vibage/STATUS.md`.
+6. Thin entry — no nested locate paste; no register CTA.
 
 ## Lifecycle
 
-`PROJECT_ENTRY_OK → hub → GRAPH_FLOOR_OK → matrix sweep → (optional deferred dimension fill) → ticket or scene → SCENE_BRIEF_OK when scene set → orient → CONFIRM → locate → finish`
+`PROJECT_ENTRY_OK → hub → GRAPH_FLOOR_OK → matrix sweep → freshness (FRESHNESS_OK or WAIVED+DISCLOSED; exit 0 ≠ FRESHNESS_OK) → (optional deferred dimension fill) → ticket or scene → SCENE_BRIEF_OK when scene set → orient → CONFIRM → locate → finish`
 
 ## Finishing (required after locate success)
 

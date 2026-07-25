@@ -138,3 +138,56 @@ print(f"OK: forced_terminal={n}")
 PY
 
 echo "OK: c-prime-fill complete parent=$PARENT"
+echo "FULL_MOTHER_FILL_REFRESH"
+
+# W1: mark freshness for repos whose matrix cells are all terminal (fail-loud counts)
+python3 - "$PARENT" "$PKG_ROOT" <<'PY'
+import subprocess, sys
+from pathlib import Path
+
+parent = Path(sys.argv[1])
+pkg = Path(sys.argv[2])
+sys.path.insert(0, str(pkg / "scripts" / "lib"))
+from freshness import cells_all_terminal, in_scope_repo_ids  # noqa: E402
+
+mark = pkg / "scripts" / "freshness-mark.sh"
+ok = 0
+fail = 0
+skipped = 0
+for rid in in_scope_repo_ids(parent):
+    if not cells_all_terminal(parent, rid):
+        skipped += 1
+        print(f"NOTE: freshness mark skipped (cells not terminal) repo={rid}", file=sys.stderr)
+        continue
+    r = subprocess.run(
+        ["bash", str(mark), "--success", str(parent), rid],
+        check=False,
+    )
+    if r.returncode == 0:
+        ok += 1
+    else:
+        fail += 1
+        print(f"NOTE: freshness mark failed repo={rid}", file=sys.stderr)
+print(f"freshness_mark_summary ok={ok} fail={fail} skipped={skipped}", file=sys.stderr)
+if fail:
+    # Fill still exits 0; FULL_MOTHER_FILL_REFRESH ≠ FRESHNESS_OK
+    print(
+        "NOTE: FULL_MOTHER_FILL_REFRESH does not imply FRESHNESS_OK when mark fail>0",
+        file=sys.stderr,
+    )
+PY
+
+# Honest gate printout (substantive miss ≠ fill failure / exit 0)
+if out="$(bash "$PKG_ROOT/scripts/verify-env-branch-matrix.sh" "$PARENT" 2>/dev/null)" \
+  && [[ "$out" == "ENV_BRANCH_MATRIX_OK" ]]; then
+  echo "ENV_BRANCH_MATRIX_OK"
+else
+  echo "MATRIX_INCOMPLETE"
+fi
+if out_sub="$(bash "$PKG_ROOT/scripts/verify-matrix-substantive.sh" "$PARENT" 2>/dev/null)" \
+  && [[ "$out_sub" == "MATRIX_SWEEP_SUBSTANTIVE_OK" ]]; then
+  echo "MATRIX_SWEEP_SUBSTANTIVE_OK"
+else
+  echo "NOTE: not 掃透 (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure" >&2
+fi
+# Always exit 0 after successful fill orchestration (gates are informational)

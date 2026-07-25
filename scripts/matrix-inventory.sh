@@ -21,7 +21,7 @@ PARENT="$(cd "$1" && pwd)" || fail "parent is not a directory: $1"
 MAP="$PARENT/docs/vibage/maps/service_map.json"
 [[ -f "$MAP" ]] || fail "missing service_map.json — run graph-floor first"
 
-python3 - "$PARENT" "$MAP" <<'PY'
+python3 - "$PARENT" "$MAP" "$PKG_ROOT" <<'PY'
 import fnmatch
 import json
 import os
@@ -33,6 +33,14 @@ from pathlib import Path
 
 parent = Path(sys.argv[1]).resolve()
 map_path = Path(sys.argv[2])
+pkg_root = Path(sys.argv[3])
+sys.path.insert(0, str(pkg_root / "scripts"))
+from lib.env_discovery import (  # noqa: E402
+    COMPOSE_ENV_FILE_RE,
+    COMPOSE_NAMES,
+    discover_envs,
+)
+
 policy_path = parent / "docs" / "vibage" / "OWNER_POLICY.json"
 out_matrix = parent / "docs" / "vibage" / "maps" / "env_branch_matrix.json"
 out_manifest = parent / "docs" / "vibage" / "maps" / "inventory_manifest.json"
@@ -72,19 +80,6 @@ if not isinstance(env_aliases, dict):
 repos = smap.get("repos") or smap.get("services") or []
 if not repos:
     die("no repos in service_map")
-
-# Global env set across mother-dir (for sparse attach via deploy edges)
-global_envs = set()
-edges = smap.get("edges") or []
-# deploy participation: any edge involving the repo counts as deploy participation
-repos_with_deploy = set()
-for e in edges:
-    if isinstance(e, dict):
-        if e.get("from"):
-            repos_with_deploy.add(e["from"])
-        if e.get("to"):
-            repos_with_deploy.add(e["to"])
-
 
 def run_git(repo_root: Path, *args: str) -> str:
     try:
@@ -135,108 +130,6 @@ def matches_globs(name: str, globs) -> bool:
         if fnmatch.fnmatch(name, g):
             return True
     return False
-
-
-COMPOSE_NAMES = (
-    "docker-compose.yml",
-    "docker-compose.yaml",
-    "compose.yml",
-    "compose.yaml",
-)
-ENV_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9._-]{0,63}$")
-COMPOSE_ENV_FILE_RE = re.compile(
-    r"^(?:docker-)?compose[.-]([A-Za-z][A-Za-z0-9._-]*)\.(?:ya?ml)$", re.I
-)
-# Use [ \t] not \s so "environment:\n  APP_ENV" does not capture APP_ENV as env id
-APP_ENV_RE = re.compile(
-    r"^[ \t]*(?:APP_ENV|NODE_ENV|DEPLOY_ENV|ENVIRONMENT|ENV)[ \t]*[:=][ \t]*[\"']?([A-Za-z][A-Za-z0-9._-]*)",
-    re.I | re.M,
-)
-GH_ENV_RE = re.compile(r"^[ \t]*environment[ \t]*:[ \t]*([A-Za-z][A-Za-z0-9._-]*)[ \t]*$", re.M)
-
-
-def normalize_env(name: str) -> str:
-    n = (name or "").strip()
-    if not n:
-        return ""
-    if n in env_aliases:
-        n = str(env_aliases[n])
-    if n in ("missing-env-config", "unknown-env"):
-        return n
-    if not ENV_NAME_RE.match(n):
-        return ""
-    # skip generic values that are not deploy envs
-    if n.lower() in ("true", "false", "null", "none", "latest", "image"):
-        return ""
-    return n
-
-
-def discover_envs(repo_root: Path, repo_rel: str):
-    """Return dict env_id -> list of evidence dicts {path, quote, branch_hint?}."""
-    found = {}
-
-    def add(env_id: str, path: str, quote: str):
-        eid = normalize_env(env_id)
-        if not eid or eid in ("missing-env-config", "unknown-env"):
-            return
-        found.setdefault(eid, []).append({"path": path, "quote": quote[:200]})
-
-    # Filename patterns: docker-compose.staging.yml
-    for p in repo_root.iterdir() if repo_root.is_dir() else []:
-        if not p.is_file():
-            continue
-        m = COMPOSE_ENV_FILE_RE.match(p.name)
-        if m:
-            rel = f"{repo_rel}/{p.name}" if repo_rel not in (".", "") else p.name
-            add(m.group(1), rel, p.name)
-
-    # Compose content APP_ENV etc.
-    for fname in COMPOSE_NAMES:
-        p = repo_root / fname
-        if not p.is_file():
-            continue
-        try:
-            text = p.read_text(encoding="utf-8", errors="ignore")
-        except OSError:
-            continue
-        rel = f"{repo_rel}/{fname}" if repo_rel not in (".", "") else fname
-        for m in APP_ENV_RE.finditer(text):
-            line = m.group(0).strip()
-            add(m.group(1), rel, line[:200])
-
-    # deploy/{env}/, envs/{env}/, environments/{env}/, k8s/{env}/
-    for base in ("deploy", "envs", "environments", "k8s", "helm", "terraform"):
-        d = repo_root / base
-        if not d.is_dir():
-            continue
-        for child in d.iterdir():
-            if child.is_dir() and not child.name.startswith("."):
-                eid = normalize_env(child.name)
-                if eid:
-                    rel = (
-                        f"{repo_rel}/{base}/{child.name}"
-                        if repo_rel not in (".", "")
-                        else f"{base}/{child.name}"
-                    )
-                    add(eid, rel, f"dir:{base}/{child.name}")
-
-    # .github/workflows environment:
-    wf = repo_root / ".github" / "workflows"
-    if wf.is_dir():
-        for p in wf.glob("*.y*ml"):
-            try:
-                text = p.read_text(encoding="utf-8", errors="ignore")
-            except OSError:
-                continue
-            rel = (
-                f"{repo_rel}/.github/workflows/{p.name}"
-                if repo_rel not in (".", "")
-                else f".github/workflows/{p.name}"
-            )
-            for m in GH_ENV_RE.finditer(text):
-                add(m.group(1), rel, m.group(0).strip()[:200])
-
-    return found
 
 
 def branches_named_in_configs(repo_root: Path, repo_rel: str):
@@ -334,22 +227,7 @@ for repo in repos:
         branch_cap_extras = selected[max_branches:] + branch_cap_extras
         selected = selected[:max_branches]
 
-    envs = discover_envs(root, rid)
-    for eid in envs:
-        global_envs.add(eid)
-
-    # deploy participation via compose presence or edges
-    has_deploy = sid in repos_with_deploy or rid in repos_with_deploy
-    if not has_deploy:
-        for fname in COMPOSE_NAMES:
-            if (root / fname).is_file():
-                has_deploy = True
-                break
-        if not has_deploy:
-            for p in root.iterdir() if root.is_dir() else []:
-                if p.is_file() and COMPOSE_ENV_FILE_RE.match(p.name):
-                    has_deploy = True
-                    break
+    envs = discover_envs(root, rid, env_aliases)
 
     repo_info.append(
         {
@@ -360,7 +238,6 @@ for repo in repos:
             "branches": selected,
             "branch_cap_extras": branch_cap_extras,
             "envs": envs,
-            "has_deploy": has_deploy,
         }
     )
 
@@ -429,11 +306,8 @@ for info in repo_info:
             )
         continue
 
-    # envs attached to this repo
+    # Only envs discovered in this repo (no cross-repo global_envs fan-out)
     attached = set(envs.keys())
-    # plus global envs if repo has deploy participation
-    if info["has_deploy"]:
-        attached |= set(global_envs)
 
     # sparse: for each attached env × each bounded branch
     for env_id in sorted(attached):

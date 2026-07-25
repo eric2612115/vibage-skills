@@ -81,7 +81,8 @@ else
   DISCOVER_MAX_DEPTH=1
 fi
 
-python3 - "$PARENT" "$MAP" "$DISCOVER_MODE" "$DISCOVER_MAX_DEPTH" "$INCLUDE_SUBMODULES" "$CAND_FILE" <<'PY'
+python3 - "$PARENT" "$MAP" "$DISCOVER_MODE" "$DISCOVER_MAX_DEPTH" "$INCLUDE_SUBMODULES" "$CAND_FILE" "$PKG_ROOT" "$POLICY" <<'PY'
+import fnmatch
 import json, os, re, sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -92,6 +93,8 @@ discover_mode = sys.argv[3]
 discover_max_depth = int(sys.argv[4])
 include_submodules = sys.argv[5] == "true"
 cand_file = Path(sys.argv[6])
+pkg_root = Path(sys.argv[7]).resolve()
+policy_path = Path(sys.argv[8])
 
 WHITELIST = (
     "README.md", "README", "readme.md",
@@ -99,6 +102,49 @@ WHITELIST = (
     "docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml",
     "Dockerfile",
 )
+
+pol = {}
+if policy_path.is_file():
+    try:
+        pol = json.load(open(policy_path, encoding="utf-8"))
+    except Exception:
+        pol = {}
+
+HARD_EXCLUDE_GLOBS = [
+    "vibage-skills",
+    "vibage-skills-*",
+    "war-room-skills",
+    "war-room-skills-*",
+]
+policy_globs = pol.get("exclude_repo_globs") or []
+if isinstance(policy_globs, str):
+    policy_globs = [policy_globs]
+if not isinstance(policy_globs, list):
+    policy_globs = []
+# Union: hard defaults cannot be dropped by OWNER_POLICY
+exclude_globs = list(HARD_EXCLUDE_GLOBS)
+for g in policy_globs:
+    if isinstance(g, str) and g and g not in exclude_globs:
+        exclude_globs.append(g)
+
+
+def is_tooling_repo(root: Path) -> bool:
+    """Skip PKG sibling / skill packs so they do not pollute product map."""
+    try:
+        if root.resolve() == pkg_root:
+            return True
+    except OSError:
+        pass
+    base = root.name
+    for g in exclude_globs:
+        if fnmatch.fnmatch(base, g):
+            return True
+    # Heuristic: vibage-skills layout only (not broad *skills)
+    if (root / "skills" / "MANIFEST.txt").is_file() and (
+        root / "scripts" / "resolve-pkg-root.sh"
+    ).is_file():
+        return True
+    return False
 
 
 def die(msg: str) -> None:
@@ -152,6 +198,8 @@ canon_to_idx = {}
 extra_worktrees = {}  # primary Path -> worktree abs path
 
 for root in raw_candidates:
+    if is_tooling_repo(root):
+        continue
     kind, canon = resolve_git(root)
     if kind == "submodule" and not include_submodules:
         continue
@@ -239,6 +287,69 @@ def compose_depends(root: Path):
     return edges
 
 
+def compose_top_services(root: Path):
+    """Top-level keys under services: (regex-only; no YAML lib)."""
+    names = []
+    for fname in ("docker-compose.yml", "docker-compose.yaml", "compose.yml", "compose.yaml"):
+        p = root / fname
+        if not p.is_file():
+            continue
+        try:
+            text = p.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        in_services = False
+        for line in text.splitlines():
+            if re.match(r"^services:\s*$", line):
+                in_services = True
+                continue
+            if in_services:
+                if re.match(r"^\S", line) and not line.startswith("#"):
+                    break
+                m = re.match(r"^  ([A-Za-z0-9._-]+):\s*(?:#.*)?$", line)
+                if m:
+                    names.append(m.group(1))
+        break
+    return names
+
+
+def package_name_tokens(root: Path):
+    """Cheap identity tokens from package.json / go.mod (max useful for edges)."""
+    tokens = []
+    pkg = root / "package.json"
+    if pkg.is_file():
+        try:
+            data = json.loads(pkg.read_text(encoding="utf-8"))
+            name = data.get("name")
+            if isinstance(name, str) and name.strip():
+                raw = name.strip()
+                tokens.append(raw)
+                tokens.append(raw.split("/")[-1])
+        except (OSError, json.JSONDecodeError):
+            pass
+    gomod = root / "go.mod"
+    if gomod.is_file():
+        try:
+            for line in gomod.read_text(encoding="utf-8", errors="ignore").splitlines():
+                m = re.match(r"^module\s+(\S+)", line)
+                if m:
+                    mod = m.group(1).rstrip("/")
+                    tokens.append(mod)
+                    tokens.append(mod.split("/")[-1])
+                    break
+        except OSError:
+            pass
+    # dedupe preserve order
+    seen_t = set()
+    out = []
+    for t in tokens:
+        key = t.lower()
+        if key and key not in seen_t:
+            seen_t.add(key)
+            out.append(t)
+    return out
+
+
 services = []
 id_set = set()
 for root in children:
@@ -261,16 +372,66 @@ for root in children:
 
 name_to_id = {s["name"]: s["id"] for s in services}
 name_to_id.update({s["id"]: s["id"] for s in services})
+# also map slug(name) → id for compose service keys
+for s in services:
+    name_to_id.setdefault(slug(s["name"]), s["id"])
 
 edges = []
 seen = set()
+
+
+def add_edge(a: str, b: str) -> None:
+    if a and b and a != b and (a, b) not in seen:
+        seen.add((a, b))
+        edges.append({"from": a, "to": b})
+
+
+# A) compose depends_on
 for root in children:
+    host = None
+    for s, r in zip(services, children):
+        if r == root:
+            host = s["id"]
+            break
     for frm, to in compose_depends(root):
-        a = name_to_id.get(frm) or name_to_id.get(slug(frm))
+        a = name_to_id.get(frm) or name_to_id.get(slug(frm)) or host
         b = name_to_id.get(to) or name_to_id.get(slug(to))
-        if a and b and a != b and (a, b) not in seen:
-            seen.add((a, b))
-            edges.append({"from": a, "to": b})
+        if a and b:
+            add_edge(a, b)
+
+# B) compose services: keys that match sibling repo names
+for root, svc in zip(children, services):
+    for svc_name in compose_top_services(root):
+        b = name_to_id.get(svc_name) or name_to_id.get(slug(svc_name))
+        if b and b != svc["id"]:
+            add_edge(svc["id"], b)
+
+# C) package.json / go.mod name ↔ sibling basename (cap 8 edges per repo)
+for root, svc in zip(children, services):
+    n_added = 0
+    for tok in package_name_tokens(root):
+        if n_added >= 8:
+            break
+        b = name_to_id.get(tok) or name_to_id.get(slug(tok))
+        if b and b != svc["id"]:
+            before = len(edges)
+            add_edge(svc["id"], b)
+            if len(edges) > before:
+                n_added += 1
+# reverse: sibling basename matches our package token already covered via name_to_id
+for root, svc in zip(children, services):
+    n_added = 0
+    for other, other_svc in zip(children, services):
+        if other_svc["id"] == svc["id"] or n_added >= 8:
+            continue
+        for tok in package_name_tokens(other):
+            if tok == svc["name"] or slug(tok) == slug(svc["name"]):
+                before = len(edges)
+                add_edge(other_svc["id"], svc["id"])
+                if len(edges) > before:
+                    n_added += 1
+                break
+
 
 repos = []
 for root, svc in zip(children, services):

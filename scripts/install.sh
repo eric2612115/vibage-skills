@@ -6,6 +6,7 @@ MANIFEST="$PKG_ROOT/skills/MANIFEST.txt"
 PROJECT_RULE=""
 PROJECT_SKILLS=""
 INIT_HUB=""
+C_PRIME_FILL=""
 FORCE=0
 FORCE_HUB=0
 FORCE_PROJECT_ENTRY=0
@@ -25,6 +26,10 @@ Usage: $0 [options]
   --force-project-entry            Must be paired with --with-project-rule=… (refresh is default)
   --project-skills=/path/to/repo   Symlink MANIFEST skills under each surface's project skills dir
   --init-hub=/abs/path             Copy references/hub/* into path/docs/vibage/
+  --c-prime-fill=/abs/parent       After hub exists: run c-prime-fill (graph+matrix sweep).
+      Prints ENV_BRANCH_MATRIX_OK | MATRIX_INCOMPLETE | MATRIX_SWEEP_SUBSTANTIVE_OK.
+      Substantive miss → MATRIX_INCOMPLETE, exit 0 (honest; not greenwash 掃透).
+      Default: off. Prefer with --init-hub on same parent.
   --force                          Replace package-owned stale project skill symlinks only
   --force-hub                      Overwrite existing hub files (never deletes CONFIRM)
   -h|--help
@@ -39,6 +44,7 @@ for arg in "$@"; do
     --force-project-entry) FORCE_PROJECT_ENTRY=1 ;;
     --project-skills=*) PROJECT_SKILLS="${arg#*=}" ;;
     --init-hub=*) INIT_HUB="${arg#*=}" ;;
+    --c-prime-fill=*) C_PRIME_FILL="${arg#*=}" ;;
     --force) FORCE=1 ;;
     --force-hub) FORCE_HUB=1 ;;
     -h|--help) usage ;;
@@ -333,6 +339,20 @@ fi
 if [[ -n "$INIT_HUB" ]]; then
   [[ -d "$INIT_HUB" ]] || mkdir -p "$INIT_HUB"
   init_hub "$INIT_HUB"
+fi
+
+# --- optional C′ fill (honest gates; default off) ---
+if [[ -n "$C_PRIME_FILL" ]]; then
+  FILL_PARENT="$(cd "$C_PRIME_FILL" && pwd)" || {
+    echo "ERROR: --c-prime-fill path is not a directory: $C_PRIME_FILL" >&2
+    exit 1
+  }
+  if [[ ! -f "$FILL_PARENT/docs/vibage/STATUS.md" ]]; then
+    echo "ERROR: --c-prime-fill requires hub STATUS (run --init-hub=$FILL_PARENT first)" >&2
+    exit 1
+  fi
+  echo "Running c-prime-fill on $FILL_PARENT ..."
+  bash "$PKG_ROOT/scripts/c-prime-fill.sh" "$FILL_PARENT"
 fi
 
 echo "Installed. PKG_ROOT=$PKG_ROOT"

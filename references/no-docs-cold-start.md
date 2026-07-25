@@ -2,12 +2,12 @@
 
 Use this order. Still 5 min orient budget. Produce an identity line even without docs.
 
-1. **Compose / orchestration** — `docker-compose*.yml`, `compose.yaml`: service names, ports, build contexts.
+1. **Compose / orchestration** — `docker-compose*.yml`, `compose.yaml`: service names, ports, build contexts. Bare compose with no `APP_ENV` / named `compose.<env>.yml` still counts as a deploy surface (matrix may synthesize `env_id=local`).
 2. **Package graphs** — `package.json` workspaces, `pnpm-workspace.yaml`, `Cargo.toml` workspace, `pyproject.toml` / `go.work`.
 3. **Lockfiles** — note package managers present (`pnpm-lock.yaml`, `uv.lock`, `Cargo.lock`) without reading entire trees.
 4. **CI** — `.github/workflows/*`, `.gitlab-ci.yml`: what jobs imply "active" apps.
 5. **Entrypoints** — `Dockerfile*`, `Makefile` targets, `main.py` / `cmd/*/main.go` / `src/main.*` at shallow depth.
-6. **Ports / URLs** — from compose or `.env.example` keys (never print secret values).
+6. **Ports / URLs / env names** — from compose or `.env.example` / `.env.sample` / `.env.template` keys (never open real `.env`; never print secret values). Example KEY= values like `staging`/`local` may seed matrix env ids — not proven 掃透 by themselves.
 7. **Symptom grep** — exact error string / route / env key from owner input.
 
 Then write: `Active surface: … | Legacy/ignore: …` with at least one path+quote (compose service or entrypoint counts).

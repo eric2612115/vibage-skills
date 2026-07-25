@@ -1,0 +1,51 @@
+=== mindown /Users/eric.fang/MindOwnBuz ts=20260724T205853Z ===
+Surfaces: cursor,claude,codex
+MANIFEST skills linked under enabled global skill homes.
+Pin check: /Users/eric.fang/MindOwnBuz/vibage-skills/scripts/verify-pins.sh
+PKG_ROOT resolve: /Users/eric.fang/MindOwnBuz/vibage-skills/scripts/resolve-pkg-root.sh
+Tip: clone obra/superpowers once, then symlink into each skill home; verify-pins probes all three.
+Wrote: /Users/eric.fang/MindOwnBuz/docs/vibage/model-routing.json
+Wrote: /Users/eric.fang/MindOwnBuz/docs/vibage/SCAN_PLAN.md
+Installed. PKG_ROOT=/Users/eric.fang/MindOwnBuz/vibage-skills
+Surfaces: cursor,claude,codex
+MANIFEST skills linked under enabled global skill homes.
+Pin check: /Users/eric.fang/MindOwnBuz/vibage-skills/scripts/verify-pins.sh
+PKG_ROOT resolve: /Users/eric.fang/MindOwnBuz/vibage-skills/scripts/resolve-pkg-root.sh
+Tip: clone obra/superpowers once, then symlink into each skill home; verify-pins probes all three.
+c-prime-fill rc=0
+Wrote /Users/eric.fang/MindOwnBuz/docs/vibage/maps/service_map.json
+OK: services=3 children=3 edges=0
+OK: service_map.json present
+OK: pipeline_id=service_map
+OK: quality_bar=MEDIUM
+OK: scale=Tiny
+OK: services count=3
+OK: map qualification gates pass
+OK: discover_mode=flat services=3 children=3
+Wrote /Users/eric.fang/MindOwnBuz/docs/vibage/maps/env_branch_matrix.json
+Wrote /Users/eric.fang/MindOwnBuz/docs/vibage/maps/inventory_manifest.json
+OK: cells=4 status=ok
+4
+OK: sweeping n_cells=4 parallelism=4 timeout=60s
+OK: cell failed SelfAutoBuz@main/missing-env-config
+OK: cell proven vibage-app@main/dev
+OK: cell proven vibage-app@main/sandbox
+OK: cell proven vibage-web@main/sandbox
+OK: forced_terminal=0
+OK: c-prime-fill complete parent=/Users/eric.fang/MindOwnBuz
+FULL_MOTHER_FILL_REFRESH
+OK: freshness marked success repo=SelfAutoBuz
+OK: freshness marked success repo=vibage-app
+OK: freshness marked success repo=vibage-web
+ENV_BRANCH_MATRIX_OK
+NOTE: not 掃透 (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
+freshness-after-fill rc=0
+stale_count=0 incomplete_matrix=0
+FRESHNESS_OK
+mutate child=SelfAutoBuz
+freshness-after-mutate rc=1
+stale_count=1 incomplete_matrix=0
+STALE_BLOCKS_MOTHER count=1
+child: FRESHNESS_CHILD_WARN
+HEAD is now at 8f2664a Document hosted ops MVP and point STATUS at partial services.
+PRESSURE_PASS name=mindown

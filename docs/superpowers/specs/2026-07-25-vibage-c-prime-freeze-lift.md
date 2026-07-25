@@ -20,10 +20,13 @@ The ban lifts only when **all** of the following hold:
 
 | Item | Status |
 |------|--------|
-| Slice/cell stale → reindex sync (§2.5) | **Deferred** — not required for On-tree this plan |
-| Dimension fill / repo synthesizer wave | **Deferred** |
+| Slice/cell stale → reindex sync (§2.5) | **W1 freshness On-tree (HEAD+TTL subset) ≠ Sync contract DONE** — scripts `freshness-*.sh` + `tests/test_freshness_w1.sh` (`FRESHNESS_W1_OK`). Remainder → optional W1b |
+| Dimension fill / repo synthesizer wave | **Deferred** (W3a after W2 On-tree; deepen → retire `MAP_DEEPEN_OK` brand when W3a lands) |
+| Env vacancy ask / configure (W2) | **Design-FULL** at `…-env-vacancy-ask-design.md` (**On-tree=NO** until scripts green) |
+| Letter B as C′ wave (W3b) | **Thin clarify only** — B-path AP-C4/C5 evidence already on-tree; ≠ rebuild cards |
 | C′ in Tier-0 / pack-health | **Not wired** |
-| Proven-green / letter B for C′ | **NO** (script suite green ≠ agent Proven-green) |
+| C′ Proven-green | **YES** (`scope=script+live-pressure`; evidence `docs/evidence/c-prime/SUMMARY.md`) — suite alone ≠ enough; requires live PRESSURE_PASS |
+| letter B for C′ | **NO** (Proven-green ≠ letter B) |
 
 ## Gate reminder
 

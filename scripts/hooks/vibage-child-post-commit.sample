@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Sample soft hook for child repos (optional). Install into .git/hooks/post-commit.
+# Missing hook ≠ bypass mother HARD_MOTHER gates.
+set -euo pipefail
+echo "VIBAGE_FRESHNESS_ASK: Mother hub may be stale for this repo. Update docs/vibage map/matrix/progress now? [yes/no]"
+if command -v python3 >/dev/null 2>&1; then
+  # Best-effort child warn if PKG_ROOT / parent resolvable
+  HERE="$(pwd)"
+  PKG_ROOT="${VIBAGE_PKG_ROOT:-}"
+  if [[ -z "$PKG_ROOT" && -n "${HOME:-}" ]]; then
+    for cand in \
+      "$HOME/MindOwnBuz/vibage-skills" \
+      "$HOME/.cursor/skills/vibage-init"; do
+      if [[ -x "$cand/scripts/freshness-check.sh" ]]; then
+        PKG_ROOT="$cand"
+        break
+      elif [[ -L "$cand" ]]; then
+        PKG_ROOT="$(cd "$(dirname "$(readlink "$cand")")/../.." 2>/dev/null && pwd)" || true
+      fi
+    done
+  fi
+  if [[ -n "${PKG_ROOT:-}" && -x "$PKG_ROOT/scripts/freshness-check.sh" ]]; then
+    bash "$PKG_ROOT/scripts/freshness-check.sh" --mode=child "$HERE" || true
+  fi
+fi

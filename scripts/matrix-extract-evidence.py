@@ -6,30 +6,24 @@ Usage: matrix-extract-evidence.py <parent> <repo_id> <branch_ref> <env_id>
 Stdout: JSON object {"pointers":[{path,quote,branch_ref,env_id}, ...]}
 For non-current branch_ref, reads via `git show branch_ref:path`.
 Exit 0 on success with ≥1 pointer; exit 1 on failure.
+Never reads real `.env` secret files.
 """
 from __future__ import annotations
 
 import json
-import re
 import subprocess
 import sys
 from pathlib import Path
 
-COMPOSE_NAMES = (
-    "docker-compose.yml",
-    "docker-compose.yaml",
-    "compose.yml",
-    "compose.yaml",
+_SCRIPTS = Path(__file__).resolve().parent
+if str(_SCRIPTS) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS))
+
+from lib.env_discovery import (  # noqa: E402
+    SECRET_DOTENV_NAMES,
+    candidate_paths,
+    quote_for_env,
 )
-COMPOSE_ENV_FILE_RE = re.compile(
-    r"^(?:docker-)?compose[.-]([A-Za-z][A-Za-z0-9._-]*)\.(?:ya?ml)$", re.I
-)
-# Use [ \t] not \s so "environment:\n  APP_ENV" does not capture APP_ENV as env id
-APP_ENV_RE = re.compile(
-    r"^[ \t]*(?:APP_ENV|NODE_ENV|DEPLOY_ENV|ENVIRONMENT|ENV)[ \t]*[:=][ \t]*[\"']?([A-Za-z][A-Za-z0-9._-]*)",
-    re.I | re.M,
-)
-GH_ENV_RE = re.compile(r"^[ \t]*environment[ \t]*:[ \t]*([A-Za-z][A-Za-z0-9._-]*)[ \t]*$", re.M)
 
 
 def die(msg: str) -> None:
@@ -61,6 +55,9 @@ def current_branch(repo_root: Path) -> str:
 
 def read_file_at_branch(repo_root: Path, branch_ref: str, rel_path: str) -> str | None:
     """Read file content at branch_ref. Prefer git show for non-current."""
+    base = Path(rel_path).name
+    if base in SECRET_DOTENV_NAMES or base == ".env":
+        return None
     cur = current_branch(repo_root)
     abs_path = repo_root / rel_path
     if cur and cur == branch_ref and abs_path.is_file():
@@ -68,12 +65,8 @@ def read_file_at_branch(repo_root: Path, branch_ref: str, rel_path: str) -> str 
             return abs_path.read_text(encoding="utf-8", errors="ignore")
         except OSError:
             return None
-    # Always use git show for non-current (and as fallback)
     code, out, _ = run_git(repo_root, "show", f"{branch_ref}:{rel_path}")
     if code != 0:
-        # try HEAD-relative if branch missing file
-        if cur and cur == branch_ref:
-            return None
         return None
     return out
 
@@ -99,61 +92,9 @@ def resolve_repo_root(parent: Path, repo_id: str) -> Path:
                 if path in (".", ""):
                     return parent
                 return parent / path
-    # fallback: treat repo_id as relative path
     if repo_id in (".", ""):
         return parent
     return parent / repo_id
-
-
-def candidate_paths(repo_root: Path, env_id: str) -> list[str]:
-    paths: list[str] = []
-    # compose.{env}.yml first
-    if repo_root.is_dir():
-        for p in sorted(repo_root.iterdir()):
-            if not p.is_file():
-                continue
-            m = COMPOSE_ENV_FILE_RE.match(p.name)
-            if m and m.group(1).lower() == env_id.lower():
-                paths.append(p.name)
-        for fname in COMPOSE_NAMES:
-            if (repo_root / fname).is_file():
-                paths.append(fname)
-        for base in ("deploy", "envs", "environments", "k8s"):
-            d = repo_root / base / env_id
-            if d.is_dir():
-                paths.append(f"{base}/{env_id}")
-        wf = repo_root / ".github" / "workflows"
-        if wf.is_dir():
-            for p in sorted(wf.glob("*.y*ml")):
-                paths.append(f".github/workflows/{p.name}")
-    return paths
-
-
-def quote_for_env(text: str, env_id: str, path: str) -> str | None:
-    if not text and path:
-        # directory pointer
-        return f"dir:{path}"
-    # Prefer APP_ENV-style lines matching env_id
-    for m in APP_ENV_RE.finditer(text or ""):
-        if m.group(1).lower() == env_id.lower():
-            return m.group(0).strip()[:200]
-    for m in GH_ENV_RE.finditer(text or ""):
-        if m.group(1).lower() == env_id.lower():
-            return m.group(0).strip()[:200]
-    # filename match compose.staging.yml
-    base = Path(path).name
-    m = COMPOSE_ENV_FILE_RE.match(base)
-    if m and m.group(1).lower() == env_id.lower():
-        # return a content line if possible, else filename
-        for line in (text or "").splitlines():
-            if line.strip():
-                return line.strip()[:200]
-        return base
-    # any line mentioning env_id
-    for line in (text or "").splitlines():
-        if env_id.lower() in line.lower():
-            return line.strip()[:200]
-    return None
 
 
 def main() -> None:
@@ -173,6 +114,9 @@ def main() -> None:
 
     pointers = []
     for rel in candidate_paths(repo_root, env_id):
+        base = Path(rel).name
+        if base in SECRET_DOTENV_NAMES or base == ".env":
+            continue
         abs_p = repo_root / rel
         if abs_p.is_dir():
             quote = f"dir:{rel}"
@@ -184,11 +128,7 @@ def main() -> None:
             quote = quote_for_env(text, env_id, rel)
             if not quote:
                 continue
-        parent_rel = (
-            f"{repo_id}/{rel}" if repo_id not in (".", "") else rel
-        )
-        # If repo_id is path already and rel is under it, avoid double prefix when
-        # resolve used path == repo_id
+        parent_rel = f"{repo_id}/{rel}" if repo_id not in (".", "") else rel
         pointers.append(
             {
                 "path": parent_rel,

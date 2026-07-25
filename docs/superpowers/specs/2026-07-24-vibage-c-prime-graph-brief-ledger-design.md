@@ -1,6 +1,6 @@
 # Vibage C′ — Graph + Brief + Evidence Ledger
 
-**Status:** Design-FULL; implementation plan live at `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md` (index: `…-plan-index.md`). **On-tree=YES / Proven-green=NO** after plan Chunk 5 (sync deferred; ∉ Tier-0). Freeze-lift: `2026-07-25-vibage-c-prime-freeze-lift.md`.  
+**Status:** Design-FULL; implementation plan live at `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md` (index: `…-plan-index.md`). **On-tree=YES / Proven-green=YES** (`scope=script+live-pressure`; evidence `docs/evidence/c-prime/SUMMARY.md`; sync/dimension deferred; ∉ Tier-0; ≠ letter B). Freeze-lift: `2026-07-25-vibage-c-prime-freeze-lift.md`.  
 **Date:** 2026-07-24  
 **Package:** `vibage-skills`  
 **Target (understanding substrate):** replace “thin pile-index / short deepen = understood” with graph + brief + evidence ledger  
@@ -9,7 +9,7 @@
 **Archived prior plans (do not execute as C′ SSOT):**  
 `docs/archive/2026-07-24-pre-c-prime/plans/`
 
-**Freeze lift:** Dual-substrate ban lifts per `2026-07-25-vibage-c-prime-freeze-lift.md` (pile-index wrapper, deepen ≠ understood, no old+new nested substrates in one session). **Still deferred:** sync (§2.5), dimension fill, Tier-0 wiring, Proven-green.
+**Freeze lift:** Dual-substrate ban lifts per `2026-07-25-vibage-c-prime-freeze-lift.md` (pile-index wrapper, deepen ≠ understood, no old+new nested substrates in one session). **Still deferred:** sync (§2.5), dimension fill, Tier-0 wiring. Proven-green flipped via suite + live pressure (letter B still NO).
 
 ---
 
@@ -237,7 +237,7 @@ Matrix / substantive / scene tokens are **additional** Gate A slogans. None auth
 |-------|------|
 | Script proof | New verify tokens green in tests; may join pack-health only when explicitly wired |
 | Agent proof | Separate; never inferred from script green |
-| STATUS capability row | `C′ graph/brief/ledger` — Designed=YES; On-tree=YES after Chunk 5 suite; Proven-green=NO; sync deferred; ∉ Tier-0 |
+| STATUS capability row | `C′ graph/brief/ledger` — Designed=YES; On-tree=YES; Proven-green=YES (`script+live-pressure`); sync deferred; ∉ Tier-0; ≠ letter B |
 | Design-coverage (this brainstorm) | Friend + local bars in §2.11 must be design-FULL before writing-plans; On-tree remains independent |
 
 ### 2.9 Implementation plan pointer

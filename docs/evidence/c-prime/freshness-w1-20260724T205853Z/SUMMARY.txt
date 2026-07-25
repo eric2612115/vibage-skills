@@ -1,0 +1,5 @@
+run_ts=20260724T205853Z
+scope=W1-freshness-live-pressure
+result=PRESSURE_PASS
+parents=DefiStrategy,MindOwnBuz
+note=hubs cleaned after pressure; PROJECT_ENTRY may remain

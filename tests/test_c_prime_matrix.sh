@@ -622,13 +622,194 @@ EOF
   git checkout -q main
 )
 
-bash "$ROOT/scripts/c-prime-fill.sh" "$FILL"
+fill_out="$(bash "$ROOT/scripts/c-prime-fill.sh" "$FILL")"
+echo "$fill_out" | grep -q 'ENV_BRANCH_MATRIX_OK' \
+  || fail "c-prime-fill should print ENV_BRANCH_MATRIX_OK, got: $fill_out"
 out="$(bash "$ROOT/scripts/verify-env-branch-matrix.sh" "$FILL")"
 [[ "$out" == "ENV_BRANCH_MATRIX_OK" ]] || fail "c-prime-fill should reach ENV_BRANCH_MATRIX_OK, got: $out"
 pass "c-prime-fill → ENV_BRANCH_MATRIX_OK"
 
 out_sub="$(bash "$ROOT/scripts/verify-matrix-substantive.sh" "$FILL")"
 [[ "$out_sub" == "MATRIX_SWEEP_SUBSTANTIVE_OK" ]] || fail "c-prime-fill should reach substantive, got: $out_sub"
+echo "$fill_out" | grep -q 'MATRIX_SWEEP_SUBSTANTIVE_OK' \
+  || fail "c-prime-fill should print MATRIX_SWEEP_SUBSTANTIVE_OK"
 pass "c-prime-fill → MATRIX_SWEEP_SUBSTANTIVE_OK"
+
+# ---------------------------------------------------------------------------
+# bare compose → local; .env.example KEY → env id
+# ---------------------------------------------------------------------------
+BARE="$TMP/bare"
+mkdir -p "$BARE/docs/vibage/maps" "$BARE/svc-bare"
+(
+  cd "$BARE/svc-bare"
+  git init -q -b main
+  git config user.email "t@t"
+  git config user.name "t"
+  cat >docker-compose.yml <<'EOF'
+services:
+  app:
+    image: bare:local
+EOF
+  cat >.env.example <<'EOF'
+DEPLOY_ENV=staging
+SECRET=do-not-read-real-env
+EOF
+  git add -A && git commit -q -m init
+)
+# Minimal map for inventory
+cat >"$BARE/docs/vibage/maps/service_map.json" <<'EOF'
+{
+  "schema_version": "1",
+  "services": [{"id": "svc-bare", "name": "svc-bare", "path": "svc-bare", "definition": "bare"}],
+  "repos": [{"id": "svc-bare", "repo_id": "svc-bare", "name": "svc-bare", "path": "svc-bare", "definition": "bare"}],
+  "edges": []
+}
+EOF
+bash "$ROOT/scripts/matrix-inventory.sh" "$BARE"
+python3 - "$BARE" <<'PY' || fail "bare/.env.example discovery"
+import json, sys
+from pathlib import Path
+m = json.loads((Path(sys.argv[1]) / "docs/vibage/maps/env_branch_matrix.json").read_text())
+envs = {c["env_id"] for c in m["cells"] if c["repo_id"] == "svc-bare"}
+# .env.example DEPLOY_ENV=staging → staging; bare compose alone would be local —
+# with staging present, local synthesis is skipped (rules 1–5 non-empty)
+if "staging" not in envs:
+    raise SystemExit(f"expected staging from .env.example, got {envs}")
+if "missing-env-config" in envs and len(envs) == 1:
+    raise SystemExit("should not be only missing-env-config")
+print(sorted(envs))
+PY
+pass ".env.example KEY → staging env"
+
+BARE2="$TMP/bare2"
+mkdir -p "$BARE2/docs/vibage/maps" "$BARE2/svc-only"
+(
+  cd "$BARE2/svc-only"
+  git init -q -b main
+  git config user.email "t@t"
+  git config user.name "t"
+  cat >compose.yml <<'EOF'
+services:
+  app:
+    image: only:local
+EOF
+  git add -A && git commit -q -m init
+)
+cat >"$BARE2/docs/vibage/maps/service_map.json" <<'EOF'
+{
+  "schema_version": "1",
+  "services": [{"id": "svc-only", "name": "svc-only", "path": "svc-only", "definition": "bare"}],
+  "repos": [{"id": "svc-only", "repo_id": "svc-only", "name": "svc-only", "path": "svc-only", "definition": "bare"}],
+  "edges": []
+}
+EOF
+bash "$ROOT/scripts/matrix-inventory.sh" "$BARE2"
+python3 - "$BARE2" <<'PY' || fail "bare compose → local"
+import json, sys
+from pathlib import Path
+m = json.loads((Path(sys.argv[1]) / "docs/vibage/maps/env_branch_matrix.json").read_text())
+envs = {c["env_id"] for c in m["cells"] if c["repo_id"] == "svc-only"}
+if "local" not in envs:
+    raise SystemExit(f"bare compose must synthesize local, got {envs}")
+print(sorted(envs))
+PY
+ext="$(python3 "$ROOT/scripts/matrix-extract-evidence.py" "$BARE2" "svc-only" "main" "local")"
+echo "$ext" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["pointers"][0]["quote"]'
+pass "bare compose → local + extract"
+
+# empty .env.example (no compose) → local presence
+EX="$TMP/exonly"
+mkdir -p "$EX/docs/vibage/maps" "$EX/svc-ex"
+(
+  cd "$EX/svc-ex"
+  git init -q -b main
+  git config user.email "t@t"
+  git config user.name "t"
+  cat >.env.example <<'EOF'
+# comment only
+VITE_RPC_URL=
+EOF
+  git add -A && git commit -q -m init
+)
+cat >"$EX/docs/vibage/maps/service_map.json" <<'EOF'
+{
+  "schema_version": "1",
+  "services": [{"id": "svc-ex", "name": "svc-ex", "path": "svc-ex", "definition": "ex"}],
+  "repos": [{"id": "svc-ex", "repo_id": "svc-ex", "name": "svc-ex", "path": "svc-ex", "definition": "ex"}],
+  "edges": []
+}
+EOF
+bash "$ROOT/scripts/matrix-inventory.sh" "$EX"
+python3 - "$EX" <<'PY' || fail "empty example → local"
+import json, sys
+from pathlib import Path
+m = json.loads((Path(sys.argv[1]) / "docs/vibage/maps/env_branch_matrix.json").read_text())
+envs = {c["env_id"] for c in m["cells"] if c["repo_id"] == "svc-ex"}
+if "local" not in envs:
+    raise SystemExit(f"expected local from empty .env.example, got {envs}")
+if envs == {"missing-env-config"}:
+    raise SystemExit("false vacant")
+print(sorted(envs))
+PY
+ext3="$(python3 "$ROOT/scripts/matrix-extract-evidence.py" "$EX" "svc-ex" "main" "local")"
+echo "$ext3" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d["pointers"][0]["quote"]'
+pass "empty .env.example → local + extract"
+
+# G2: no global_envs fan-out — staging on A must not appear on B
+FAN="$TMP/fan"
+mkdir -p "$FAN/docs/vibage/maps" "$FAN/svc-a" "$FAN/svc-b"
+(
+  cd "$FAN/svc-a"
+  git init -q -b main && git config user.email t@t && git config user.name t
+  cat >docker-compose.staging.yml <<'EOF'
+services:
+  app:
+    image: a:staging
+    environment:
+      APP_ENV: staging
+EOF
+  git add -A && git commit -q -m init
+)
+(
+  cd "$FAN/svc-b"
+  git init -q -b main && git config user.email t@t && git config user.name t
+  cat >compose.yml <<'EOF'
+services:
+  app:
+    image: b:local
+EOF
+  git add -A && git commit -q -m init
+)
+cat >"$FAN/docs/vibage/maps/service_map.json" <<'EOF'
+{
+  "schema_version": "1",
+  "services": [
+    {"id": "svc-a", "name": "svc-a", "path": "svc-a", "definition": "a"},
+    {"id": "svc-b", "name": "svc-b", "path": "svc-b", "definition": "b"}
+  ],
+  "repos": [
+    {"id": "svc-a", "repo_id": "svc-a", "name": "svc-a", "path": "svc-a", "definition": "a"},
+    {"id": "svc-b", "repo_id": "svc-b", "name": "svc-b", "path": "svc-b", "definition": "b"}
+  ],
+  "edges": [{"from": "svc-a", "to": "svc-b"}]
+}
+EOF
+bash "$ROOT/scripts/matrix-inventory.sh" "$FAN"
+python3 - "$FAN" <<'PY' || fail "global_envs fan-out still present"
+import json, sys
+from pathlib import Path
+m = json.loads((Path(sys.argv[1]) / "docs/vibage/maps/env_branch_matrix.json").read_text())
+by = {}
+for c in m["cells"]:
+    by.setdefault(c["repo_id"], set()).add(c["env_id"])
+if "staging" not in by.get("svc-a", set()):
+    raise SystemExit(f"svc-a should have staging: {by}")
+if "staging" in by.get("svc-b", set()):
+    raise SystemExit(f"svc-b must not inherit staging: {by}")
+if "local" not in by.get("svc-b", set()):
+    raise SystemExit(f"svc-b should have local: {by}")
+print(by)
+PY
+pass "no global_envs fan-out"
 
 echo "ALL test_c_prime_matrix.sh PASS"
