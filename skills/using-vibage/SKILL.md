@@ -50,7 +50,7 @@ Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · Vibage intent
 
 **Authoritative continuum:**
 
-`PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` → matrix sweep → **freshness gate** → **optional deferred dimension fill** → ticket **or** scene switch → **`SCENE_BRIEF_OK` when scene set** → orient → CONFIRM → locate.
+`PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` → matrix sweep → **freshness gate** → **env-vacancy gate** → **optional deferred dimension fill** → ticket **or** scene switch → **`SCENE_BRIEF_OK` when scene set** → orient → CONFIRM → locate.
 
 **Freshness (W1 — HARD_MOTHER / SOFT_CHILD):**
 
@@ -59,6 +59,14 @@ Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · Vibage intent
 - **Forbidden:** treating exit code 0 as `FRESHNESS_OK` (waived-stale also exits 0).
 - Hard-fail stdout: `STALE_BLOCKS_MOTHER count=<n>` — do not claim continuum ready; may still run refresh / graph-floor / matrix sweep.
 - Child: after commit/push emit `VIBAGE_FRESHNESS_ASK: Mother hub may be stale for this repo. Update docs/vibage map/matrix/progress now? [yes/no]`. yes → `freshness-refresh-repo.sh`; no → `freshness-mark.sh --refuse`. Refusal cannot stay silent (`VIBAGE_FRESHNESS_ESCALATE` at refuse_count≥3).
+
+**Env vacancy (W2):**
+
+- Mother: `bash "$PKG_ROOT/scripts/verify-env-vacancy.sh" "$PARENT"` after matrix fill / session start.
+- Tokens (exactly one): `ENV_VACANCY_CLEAR` | `ENV_VACANCY_ASK count=<n>` | `ENV_VACANCY_ANSWERED count=<n>` | `ENV_VACANCY_BLOCKED`.
+- **ANSWERED ≠ CLEAR ≠ 掃透.** Exit 0 on CLEAR/ANSWERED still requires token parse; ASK/BLOCKED exit ≠ 0.
+- Unanswered missing → emit `VIBAGE_ENV_VACANCY_ASK` and record skip|point|classify via `env-vacancy-answer.sh` (point-pending stays ASK until `env-vacancy-apply-point.sh`).
+- skip/classify/binary `env_vacancy_waiver` **never** grant `MATRIX_SWEEP_SUBSTANTIVE_OK`.
 
 Agent **must** (owner: do not type bash):
 
@@ -101,7 +109,7 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
 ## Lifecycle
 
-`PROJECT_ENTRY_OK → hub → GRAPH_FLOOR_OK → matrix sweep → freshness (FRESHNESS_OK or WAIVED+DISCLOSED; exit 0 ≠ FRESHNESS_OK) → (optional deferred dimension fill) → ticket or scene → SCENE_BRIEF_OK when scene set → orient → CONFIRM → locate → finish`
+`PROJECT_ENTRY_OK → hub → GRAPH_FLOOR_OK → matrix sweep → freshness (exit 0 ≠ FRESHNESS_OK) → env-vacancy (ANSWERED ≠ CLEAR ≠ 掃透) → (optional deferred dimension fill) → ticket or scene → SCENE_BRIEF_OK when scene set → orient → CONFIRM → locate → finish`
 
 ## Finishing (required after locate success)
 

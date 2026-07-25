@@ -1,7 +1,7 @@
 # C′ Wave-2 — Env Vacancy Ask / Configure Design
 
 **Date:** 2026-07-25  
-**Status:** Design-FULL for W2 only (**On-tree=NO** until scripts + tests green)  
+**Status:** Design-FULL — **On-tree=YES** (`ENV_VACANCY_W2_OK`); phrase: `W2 env-vacancy On-tree ≠ 掃透 ≠ letter B`  
 **Roadmap:** `docs/superpowers/specs/2026-07-25-vibage-c-prime-next-waves-roadmap.md`  
 **Tri-review fold:** `docs/superpowers/specs/2026-07-25-vibage-c-prime-next-waves-tri-review.md`  
 **Parent matrix rules:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md` §2.3  
@@ -182,8 +182,7 @@ W3a dimension; W3b letter B; W4 Tier-0; W1b sync remainder; reading real `.env`;
 
 ## 10. Freeze-lift note
 
-Until scripts green: **W2 env-vacancy design exists; On-tree=NO**.  
-After green: **W2 env-vacancy On-tree ≠ 掃透 ≠ letter B**.
+**W2 env-vacancy On-tree ≠ 掃透 ≠ letter B** — scripts + `tests/test_env_vacancy_w2.sh`.
 
 ## 11. Next after this design
 

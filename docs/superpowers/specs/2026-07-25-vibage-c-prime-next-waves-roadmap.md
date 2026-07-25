@@ -58,5 +58,7 @@ Wiring C′ into Tier-0 means: **if those C′ tests fail, the package must not 
 | `…-next-waves-tri-review.md` | W2–W4 planning tri-review fold |
 | `…-sync-freshness-design.md` | W1 design (On-tree) |
 | `…-sync-freshness.md` (plans/) | W1 implementation plan (**executed**) |
-| `…-env-vacancy-ask-design.md` | W2 design (**Design-FULL**; On-tree=NO until scripts green) |
+| `…-env-vacancy-ask-design.md` | W2 design (**On-tree**; `ENV_VACANCY_W2_OK`) |
+| `…-letter-b-thin-design.md` | W3b thin clarify |
+| `…-dimension-fill-design.md` | W3a design (**Design-FULL**; On-tree=NO until scripts green) |
 | `…-c-prime-plan-index.md` | Live construction index |

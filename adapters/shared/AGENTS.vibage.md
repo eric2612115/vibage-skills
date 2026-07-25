@@ -7,10 +7,11 @@ Thin entry only — do not paste nested locate procedure.
 Session routing: follow **using-vibage** (pointer skill). Parent routers remain SSOT — no second state machine.
 Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA.
 If owner says **幫我裝 Vibage** / install Vibage → follow using-vibage § Install continuum:
-`PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` (via **vibage-pile-index**) → matrix sweep → freshness → optional deferred dimension fill → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.
+`PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` (via **vibage-pile-index**) → matrix sweep → freshness → env-vacancy → optional deferred dimension fill → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.
 Do not claim installed without verify. Do not dig yet.
 掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `MAP_DEEPEN_OK` ≠ full-understanding.
 Freshness: parse `verify-freshness.sh` stdout — need `FRESHNESS_OK` or (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`). **Forbidden:** treat exit 0 as `FRESHNESS_OK`. Session start: disclose stale_count + incomplete_matrix (+ escalate).
+Env vacancy: `verify-env-vacancy.sh` — ANSWERED ≠ CLEAR ≠ 掃透; exit 0 ≠ 掃透.
 
 ## Skill routing
 
