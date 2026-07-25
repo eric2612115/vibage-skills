@@ -33,8 +33,8 @@ Allowed sibling jobs (own check-run names; **∉** `TIER0_OK`):
 
 | Job | Entry |
 |-----|--------|
-| `status-lints` | `tests/test_proven_lock.sh` + `tests/test_status_capability_table.sh` |
-| `pack-health` | `tests/test_pack_health.sh` (temp parent → `PACK_HEALTH_OK`) |
+| `status-lints` | `tests/test_proven_lock.sh` + `tests/test_status_capability_table.sh` + `tests/test_plan_loop_hygiene.sh` |
+| `pack-health` | `tests/test_pack_health.sh` (temp parent → `PACK_HEALTH_OK`; checkout `fetch-depth: 0` for review-record) |
 
 STATUS must:
 

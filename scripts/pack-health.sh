@@ -53,14 +53,22 @@ echo "== pack-health: proven-green lock =="
 bash "$PKG_ROOT/scripts/verify-proven-lock.sh" "$PKG_ROOT"
 
 echo "== pack-health: verify-review-record =="
-# Parse token: SKIP and OK both exit 0; exit 0 ≠ REVIEW_RECORD_OK.
-RR_OUT="$(bash "$PKG_ROOT/scripts/verify-review-record.sh" "$PKG_ROOT")"
+# no_trigger_paths → SKIP (exit 0) OK for pack-health.
+# no_git_base / missing record / schema → FAIL (exit ≠ 0) must fail pack-health.
+# exit 0 ≠ REVIEW_RECORD_OK.
+set +e
+RR_OUT="$(bash "$PKG_ROOT/scripts/verify-review-record.sh" "$PKG_ROOT" 2>&1)"
+RR_EC=$?
+set -e
 printf '%s\n' "$RR_OUT"
+if printf '%s\n' "$RR_OUT" | grep -Fq 'REVIEW_RECORD_FAIL'; then
+  fail "verify-review-record FAIL (incl. no_git_base — not a pass)"
+fi
+if [[ "$RR_EC" -ne 0 ]]; then
+  fail "verify-review-record exit=$RR_EC"
+fi
 if ! printf '%s\n' "$RR_OUT" | grep -Eq 'REVIEW_RECORD_(OK|SKIP)'; then
   fail "verify-review-record missing SKIP|OK token"
-fi
-if printf '%s\n' "$RR_OUT" | grep -Fq 'REVIEW_RECORD_FAIL'; then
-  fail "verify-review-record reported FAIL"
 fi
 
 cat <<EOF
@@ -75,6 +83,7 @@ outside the signature by design.
 Plugin manifests on-tree ≠ Cursor/Claude store listing approved.
 PILE_INDEX_OK ≠ DIMENSION_FILL_OK ≠ Architecture Pass ≠ locate DONE.
 MAP_DEEPEN_OK brand retired (W3a); dimension-fill optional and not part of this pack-health gate.
-REVIEW_RECORD_SKIP on non-trigger trees is OK for pack-health; exit 0 ≠ REVIEW_RECORD_OK.
-REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof.
+REVIEW_RECORD_SKIP (no_trigger_paths) OK for pack-health; SKIP ≠ reviewed.
+REVIEW_RECORD_FAIL (incl. no_git_base) must fail pack-health — not a silent pass.
+exit 0 ≠ REVIEW_RECORD_OK; REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof.
 EOF

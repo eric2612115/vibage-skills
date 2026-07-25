@@ -18,11 +18,17 @@ TRIGGER_PREFIXES = (
     "scripts/lib/",
     "adapters/",
     "skills/using-vibage/",
+    "tests/",
 )
 TRIGGER_EXACT = {
     "references/hard-stops.md",
     "references/looping-review.md",
     "references/routing-scope.md",
+    "scripts/assert_gate.sh",
+    "scripts/write_confirm.sh",
+    "scripts/coverage-box.sh",
+    "scripts/test-tier0.sh",
+    "scripts/pack-health.sh",
 }
 TRIGGER_VERIFY_GLOB = "scripts/verify-"
 
@@ -54,7 +60,18 @@ def git_stdout(pkg: Path, args: list[str]) -> str:
     return r.stdout
 
 
-def resolve_base(pkg: Path) -> str | None:
+def resolve_base(pkg: Path) -> tuple[str | None, str]:
+    """Return (base_sha, mode) where mode is merge_base|head1|none.
+
+    Algorithm (B3):
+      mb = merge-base(HEAD, main|master|origin/*)
+      if mb == HEAD and HEAD~1 exists → base=HEAD~1, mode=head1
+      elif mb → base=mb, mode=merge_base
+      elif HEAD~1 → base=HEAD~1, mode=head1  (no main candidate)
+      else → (None, none) → caller FAIL as no_git_base
+    """
+    head = git_stdout(pkg, ["rev-parse", "HEAD"]).strip()
+    mb = ""
     for cand in ("main", "master", "origin/main", "origin/master"):
         r = subprocess.run(
             ["git", "-C", str(pkg), "rev-parse", "--verify", cand],
@@ -66,8 +83,8 @@ def resolve_base(pkg: Path) -> str | None:
             continue
         mb = git_stdout(pkg, ["merge-base", "HEAD", cand]).strip()
         if mb:
-            return mb
-    # fallback HEAD~1 when exists
+            break
+    parent = ""
     r = subprocess.run(
         ["git", "-C", str(pkg), "rev-parse", "--verify", "HEAD~1"],
         capture_output=True,
@@ -75,8 +92,15 @@ def resolve_base(pkg: Path) -> str | None:
         check=False,
     )
     if r.returncode == 0:
-        return r.stdout.strip()
-    return None
+        parent = r.stdout.strip()
+
+    if mb and head and mb == head and parent:
+        return parent, "head1"
+    if mb:
+        return mb, "merge_base"
+    if parent:
+        return parent, "head1"
+    return None, "none"
 
 
 def changed_paths(pkg: Path, base: str | None) -> list[str]:
@@ -238,7 +262,9 @@ def main(argv: list[str]) -> int:
             base_override = a.split("=", 1)[1]
         i += 1
 
+    mode = "fixture"
     if paths_file:
+        # --paths-file is TEST-ONLY; must not be used as production acceptance path.
         all_changed = [
             ln.strip()
             for ln in Path(paths_file).read_text(encoding="utf-8").splitlines()
@@ -246,26 +272,25 @@ def main(argv: list[str]) -> int:
         ]
         base = base_override or "fixture"
     else:
-        base = base_override or resolve_base(pkg)
+        if base_override:
+            base, mode = base_override, "override"
+        else:
+            base, mode = resolve_base(pkg)
         if base is None:
-            print("REVIEW_RECORD_SKIP reason=no_git_base")
-            print("Honesty: exit 0 is not the OK token")
-            return 0
+            # History insufficient to evaluate — FAIL (not SKIP / not fake-green)
+            print("REVIEW_RECORD_FAIL reason=no_git_base")
+            print("Honesty: no_git_base cannot pass pack-health; need fetch-depth:0 / git history")
+            return 1
+        if mode == "head1":
+            print("review_record_mode=head1")
+        elif mode == "merge_base":
+            print("review_record_mode=merge_base")
         all_changed = changed_paths(pkg, base)
-        # If base == HEAD and worktree clean of triggers → skip
-        head = git_stdout(pkg, ["rev-parse", "HEAD"]).strip()
-        if base == head and not any(
-            is_trigger(p)
-            for p in git_stdout(pkg, ["diff", "--name-only"]).splitlines()
-            + git_stdout(pkg, ["diff", "--name-only", "--cached"]).splitlines()
-        ):
-            # still may have base...HEAD empty
-            pass
 
     triggers = [p for p in all_changed if is_trigger(p)]
     if not triggers:
         print("REVIEW_RECORD_SKIP reason=no_trigger_paths")
-        print("Honesty: exit 0 is not the OK token")
+        print("Honesty: exit 0 is not the OK token; SKIP ≠ reviewed")
         return 0
 
     diff_id = compute_diff_id(pkg, triggers)

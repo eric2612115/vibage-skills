@@ -9,9 +9,14 @@ Records may come from another chat, another host, another person, or another mod
 - Authoring or revising an implementation **plan** that will drive guarded work
 - Changing guarded paths (see `scripts/verify-review-record.sh` trigger list):
   `scripts/verify-*`, entire `scripts/lib/`, `adapters/**`, `skills/using-vibage/**`,
-  `references/hard-stops.md`, `references/looping-review.md`, `references/routing-scope.md`
+  entire `tests/` (incl. fixtures — churn requires a record),
+  `references/hard-stops.md`, `references/looping-review.md`, `references/routing-scope.md`,
+  `scripts/assert_gate.sh`, `scripts/write_confirm.sh`, `scripts/coverage-box.sh`,
+  `scripts/test-tier0.sh`, `scripts/pack-health.sh`
 
-Not every commit message. Not a required git pre-commit hook in V1. Branch relative to merge-base: if any trigger path changed, a record is required for pack-health.
+Not every commit message. Not a required git pre-commit hook in V1.
+
+**Base selection:** prefer `merge-base(HEAD, main|master|origin/*)`. If that equals `HEAD` (tip of main / direct-push), use `HEAD~1` and print `review_record_mode=head1`. `REVIEW_RECORD_SKIP` ≠ reviewed. `head1` ≠ SKIP. Multi-commit direct pushes: head1 only covers the tip commit. `no_git_base` → **FAIL** (not SKIP) — CI pack-health needs `fetch-depth: 0`.
 
 ## Loops
 
@@ -77,8 +82,15 @@ Pass predicate (mechanical):
 
 ## Tokens
 
-- No trigger path changes → `REVIEW_RECORD_SKIP` (exit 0). **Never** print `REVIEW_RECORD_OK` on a clean/non-trigger tree.
+- No trigger path changes → `REVIEW_RECORD_SKIP` (exit 0). **Never** print `REVIEW_RECORD_OK` on a clean/non-trigger tree. SKIP ≠ reviewed.
+- Insufficient git history → `REVIEW_RECORD_FAIL reason=no_git_base` (exit ≠ 0) — must not pass pack-health.
 - Qualified record → `REVIEW_RECORD_OK`
 - **Forbidden:** treat exit 0 as `REVIEW_RECORD_OK` (same class of bug as freshness).
+- Model strings are **unverified disclosure** (can be forged).
 
-∉ Tier-0. Wired via pack-health + `tests/test_review_record.sh` only.
+∉ Tier-0. Review-record via pack-health + `tests/test_review_record.sh`.  
+Plan-loop hygiene (todo-line phrase lint on `docs/superpowers/plans/**`) via **status-lints** + `tests/test_plan_loop_hygiene.sh` — not pack-health.
+
+## Plan-loop hygiene (mechanical, word-level)
+
+`scripts/verify-plan-loop-hygiene.sh` fails if **todo/checklist lines** in `docs/superpowers/plans/**/*.md` contain Plan-loop-as-Implement phrases (`plan-loop-converge`, `run 3 plan reviews`, …). Narrative “Plan loop already frozen…” is OK. Does **not** scan `~/.cursor/plans`. Token: `PLAN_LOOP_HYGIENE_OK`.
