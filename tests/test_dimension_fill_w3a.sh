@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# W3a P0 dimension-fill — Spec §9 subset. Outside test_c_prime_*.sh suite glob. Not Tier-0.
+# W3a P0+P1 dimension-fill — Spec §9. Outside test_c_prime_*.sh suite glob. Not Tier-0.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
@@ -9,13 +9,15 @@ pass() { echo "OK: $*"; }
 
 [[ -x "$ROOT/scripts/dimension-search.sh" ]] || fail "missing dimension-search.sh"
 [[ -x "$ROOT/scripts/verify-dimension-fill.sh" ]] || fail "missing verify-dimension-fill.sh"
+[[ -x "$ROOT/scripts/dimension-fill.sh" ]] || fail "missing dimension-fill.sh"
+[[ -x "$ROOT/scripts/dimension-synth-repo.sh" ]] || fail "missing dimension-synth-repo.sh"
 [[ -f "$ROOT/scripts/lib/dimension_fill.py" ]] || fail "missing dimension_fill.py"
 
 # Firewall: dimension-fill ∉ Tier-0 / pack-health
-! grep -Eq 'test_dimension_fill_w3a|dimension-search|verify-dimension-fill|dimension_fill\.py|dimension-fill\.sh' \
+! grep -Eq 'test_dimension_fill_w3a|dimension-search|verify-dimension-fill|dimension_fill\.py|dimension-fill\.sh|dimension-synth' \
   "$ROOT/scripts/test-tier0.sh" \
   || fail "dimension-fill wired into test-tier0.sh"
-! grep -Eq 'test_dimension_fill_w3a|dimension-search|verify-dimension-fill|dimension_fill' \
+! grep -Eq 'test_dimension_fill_w3a|dimension-search|verify-dimension-fill|dimension_fill|dimension-synth' \
   "$ROOT/scripts/pack-health.sh" \
   || fail "dimension-fill wired into pack-health.sh"
 pass "Tier-0 / pack-health firewall"
@@ -279,3 +281,57 @@ set -e
 pass "vacancy ASK → PARTIAL not OK"
 
 echo "DIMENSION_FILL_W3A_P0_OK"
+
+# --- P1: legacy deepen freeze alone → BLOCKED ---
+M4="$TMP/m4"
+make_mother "$M4" "svc-a"
+seed_matrix_clear "$M4" "svc-a"
+cat >"$M4/docs/vibage/DECISIONS.md" <<'EOF'
+# Decisions
+
+```json
+{
+  "deepen_yes": true,
+  "model_tier": "balanced",
+  "deepen_scope_ids": ["svc-a"],
+  "source": "human",
+  "run_id": "map-deepen-legacy"
+}
+```
+EOF
+set +e
+out="$(bash "$ROOT/scripts/dimension-fill.sh" "$M4" 2>/dev/null)"
+rc=$?
+set -e
+[[ "$rc" -ne 0 ]] || fail "legacy deepen freeze must BLOCKED"
+[[ "$out" == *"DIMENSION_FILL_BLOCKED reason=no_consent"* ]] \
+  || fail "expect no_consent for deepen-only, got: $out"
+[[ "$out" != *"MAP_DEEPEN_OK"* ]] || fail "fill must never print MAP_DEEPEN_OK"
+pass "legacy deepen freeze only → BLOCKED"
+
+# --- P1: orchestrator happy path with claims-dir + synth ---
+M5="$TMP/m5"
+make_mother "$M5" "svc-a"
+seed_matrix_clear "$M5" "svc-a"
+write_dimension_freeze "$M5" "svc-a"
+CLAIMS="$TMP/claims5"
+mkdir -p "$CLAIMS/svc-a"
+i=0
+for cls in "${CLASSES[@]}"; do
+  i=$((i + 1))
+  write_claim "$CLAIMS/svc-a/${cls}.json" "f${i}" "svc-a" "$cls" "proven" "svc-a/README.md"
+done
+set +e
+out="$(bash "$ROOT/scripts/dimension-fill.sh" "$M5" --claims-dir="$CLAIMS" 2>/dev/null)"
+rc=$?
+set -e
+[[ "$rc" -eq 0 ]] || fail "fill happy exit 0, got $rc"
+[[ "$out" == "DIMENSION_FILL_OK tally=proven:4,failed:0" ]] \
+  || fail "fill expect OK tally, got: $out"
+[[ -f "$M5/docs/vibage/dossiers/svc-a.md" ]] || fail "synth stub missing"
+grep -q 'Stub alone' "$M5/docs/vibage/dossiers/svc-a.md" \
+  || fail "dossier must state stub ≠ depth"
+[[ "$out" != *"MAP_DEEPEN_OK"* ]] || fail "no MAP_DEEPEN_OK"
+pass "orchestrator happy path + synth stub"
+
+echo "DIMENSION_FILL_W3A_P1_OK"

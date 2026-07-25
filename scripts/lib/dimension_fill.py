@@ -476,6 +476,64 @@ def cmd_search(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_fill(args: argparse.Namespace) -> int:
+    """P1 orchestrator: consent → synth → search from claims-dir → verify."""
+    mother = Path(args.mother).resolve()
+    if not mother_marker(mother):
+        print("DIMENSION_FILL_BLOCKED reason=no_floor")
+        return 1
+    freeze = load_freeze(mother)
+    if not consent_ok(freeze):
+        # Reject silent auth via deepen_* alone
+        print("DIMENSION_FILL_BLOCKED reason=no_consent")
+        return 1
+    scope = scope_ids(freeze)
+    classes = sorted(required_classes(mother, freeze))
+    if not scope or not classes:
+        print("DIMENSION_FILL_BLOCKED reason=no_consent")
+        return 1
+
+    claims_dir = Path(args.claims_dir).resolve() if args.claims_dir else None
+    synth = _PKG / "scripts" / "dimension-synth-repo.sh"
+    search = _PKG / "scripts" / "dimension-search.sh"
+
+    for rid in scope:
+        csv = ",".join(classes)
+        r = subprocess.run(
+            ["bash", str(synth), str(mother), rid, csv],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if r.returncode != 0:
+            print(
+                (r.stderr or r.stdout or "synth failed").strip(),
+                file=sys.stderr,
+            )
+            print("DIMENSION_FILL_BLOCKED reason=synth_failed")
+            return 1
+        if claims_dir is not None:
+            for cls in classes:
+                claim_path = claims_dir / rid / f"{cls}.json"
+                if not claim_path.is_file():
+                    continue
+                sr = subprocess.run(
+                    ["bash", str(search), str(mother), rid, cls, str(claim_path)],
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                if sr.returncode != 0:
+                    print(
+                        (sr.stderr or sr.stdout or "search failed").strip(),
+                        file=sys.stderr,
+                    )
+                    # continue; verify will PARTIAL/BLOCKED honestly
+
+    # Always end with verify token (never MAP_DEEPEN_OK)
+    return cmd_verify(argparse.Namespace(mother=str(mother)))
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     p = argparse.ArgumentParser(prog="dimension_fill.py")
     sub = p.add_subparsers(dest="cmd", required=True)
@@ -495,6 +553,15 @@ def main(argv: Optional[List[str]] = None) -> int:
         help="fixture/test only; requires VIBAGE_DIMENSION_HEURISTIC=1",
     )
     s.set_defaults(func=cmd_search)
+
+    f = sub.add_parser("fill")
+    f.add_argument("mother")
+    f.add_argument(
+        "--claims-dir",
+        default=None,
+        help="optional dir: <claims-dir>/<repo_id>/<claim_class>.json",
+    )
+    f.set_defaults(func=cmd_fill)
 
     args = p.parse_args(argv)
     return int(args.func(args))

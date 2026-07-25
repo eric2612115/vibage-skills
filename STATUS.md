@@ -27,7 +27,7 @@
 | **C′ graph / brief / ledger** | YES | YES | YES | script+live-pressure (`2026-07-24-…-design.md`; suite `C_PRIME_SUITE_OK` + live parents PRESSURE_PASS `run_ts=20260724T171248Z`; W1 freshness On-tree ≠ Sync DONE; dimension deferred; ∉ Tier-0; ≠ letter B) |
 | **C′ W1 freshness** | YES | YES | YES | script+live-pressure (`FRESHNESS_W1_OK` + `FRESHNESS-W1-SUMMARY.md` `run_ts=20260724T205853Z`; ∉ Tier-0 / suite ship-gate; ≠ Sync contract DONE ≠ letter B) |
 | **C′ W2 env-vacancy** | YES | YES | YES | script (`ENV_VACANCY_W2_OK`; skip/point/classify; ≠ 掃透; ∉ Tier-0 / suite ship-gate; ≠ letter B) |
-| **C′ W3a dimension fill** | YES | P0 | script | Design-FULL + P0 search/verify (`DIMENSION_FILL_W3A_P0_OK`); P1/P2 pending; ≠ 掃透 ≠ understood; ∉ Tier-0 |
+| **C′ W3a dimension fill** | YES | P0+P1 | script | P0+P1 On-tree (`DIMENSION_FILL_W3A_P1_OK`); P2 deepen-migrate open; ≠ 掃透 ≠ understood; ∉ Tier-0 |
 | SaaS / register | blank | — | — | — |
 
 **SaaS blank pointer:** reserved seam only — `docs/superpowers/specs/satellites/SAT-saas-blank.md`. Thin SAT on tree ≠ Designed/On-tree/Proven YES; no local register CTA; ≠ SaaS shipped.
