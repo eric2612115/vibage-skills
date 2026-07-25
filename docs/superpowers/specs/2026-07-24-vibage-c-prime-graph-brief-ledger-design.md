@@ -6,8 +6,7 @@
 **Target (understanding substrate):** replace “thin pile-index / short deepen = understood” with graph + brief + evidence ledger  
 **Does not supersede:** parent session entry; orient → CONFIRM → `assert_gate` → locate authorization; SaaS-blank honesty  
 
-**Archived prior plans (do not execute as C′ SSOT):**  
-`docs/archive/2026-07-24-pre-c-prime/plans/`
+**Prior (pre-C′) plans:** deleted from the tree (git history only). Not C′ SSOT.
 
 **Freeze lift:** Dual-substrate ban lifts per `2026-07-25-vibage-c-prime-freeze-lift.md` (pile-index wrapper, deepen ≠ understood, no old+new nested substrates in one session). **Still deferred:** sync (§2.5), dimension fill, Tier-0 wiring. Proven-green flipped via suite + live pressure (letter B still NO).
 

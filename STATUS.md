@@ -4,7 +4,7 @@
 
 **Active design (C′):** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
 **Active plans:** `docs/superpowers/plans/2026-07-25-vibage-c-prime-plan-index.md` → `2026-07-25-vibage-c-prime-graph-brief-ledger.md`  
-**Archived plans (pre-C′, do not execute):** `docs/archive/2026-07-24-pre-c-prime/`  
+**Pre-C′ plans:** removed from the tree (git history only). Do not restore into context unless the owner asks for archaeology.  
 **Shipped-baseline umbrella spec (historical):** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`
 
 > **C′ honesty banner:** Graph / Brief / Evidence ledger substrate is **On-tree** + **Proven-green=YES** (`scope=script+live-pressure`; evidence `docs/evidence/c-prime/SUMMARY.md` `run_ts=20260724T171248Z`).  

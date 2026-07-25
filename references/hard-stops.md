@@ -47,3 +47,9 @@ Shared DO NOT / MUST for all surfaces (Cursor, Claude Code, Codex). Thin IDE ada
 - No SaaS / register / Architecture Pass upsell in cost talk.
 - Child workspace (S03): do not deepen/index whole pile; ask open parent.
 - Legacy `deepen_yes` / `MAP_DEEPEN_OK` do not authorize fill or dig.
+
+## Docs / context
+
+- Live SSOT = package `STATUS.md` + live files under `docs/superpowers/` + `docs/evidence/` + skills/scripts.
+- Do **not** restore deleted `docs/archive/**` from git history into the working context unless the owner explicitly asks for archaeology.
+- Pre-C′ plans are gone from the tree on purpose — history ≠ current instructions.

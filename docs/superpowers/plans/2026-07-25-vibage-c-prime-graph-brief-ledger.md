@@ -10,7 +10,7 @@
 
 **Spec:** `@docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
 **Index:** `@docs/superpowers/plans/2026-07-25-vibage-c-prime-plan-index.md`  
-**Forbidden:** Execute `docs/archive/2026-07-24-pre-c-prime/plans/*`; add embedding/vector/RAG.
+**Forbidden:** Restore deleted pre-C′ plans into context; add embedding/vector/RAG.
 
 ---
 
@@ -359,8 +359,7 @@ EOF
 
 - [x] **Step 1: Archive SSOT guard**
 
-Run: `rg -n 'docs/archive/2026-07-24-pre-c-prime/plans' skills adapters scripts docs/superpowers/plans/*.md || true`  
-Expected: no hit treating archive as executable checklist (mentions “do not execute” OK).
+Pre-C′ `docs/archive/**` removed from tree. Expected: no live skill/adapter points at those paths as executable checklists.
 
 - [x] **Step 2: Full suite**
 

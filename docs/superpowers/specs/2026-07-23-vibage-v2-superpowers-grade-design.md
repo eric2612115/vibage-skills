@@ -2,13 +2,13 @@
 
 **Date:** 2026-07-23  
 **Status:** Spec ✅ Approved (shipped-baseline / historical).  
-**Plans:** moved to `docs/archive/2026-07-24-pre-c-prime/plans/` — not live C′ SSOT.  
+**Plans:** pre-C′ plan tree deleted — not live C′ SSOT (git history only).  
 **Active design draft:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
 **Branch:** `feature/vibage-v2-superpowers-grade`  
 **Package SSOT:** `/Users/eric.fang/MindOwnBuz/vibage-skills`  
 **Doc shape:** This file is the **umbrella** contract. Thick topics get **satellite** specs; implementation is **many small plans** (not one mega-plan).  
 **Note on section labels:** Parenthetical marks like “(§3)” in later headings mean **frozen brainstorm section IDs**, not this file’s heading numbers.  
-**Supersedes for development:** Conflicting older STATUS / coverage / plans / soft-CTA feature-call copy must be moved to `docs/archive/<date>/` with `DO NOT USE FOR DEV` before they may be deleted at a later version milestone. Do not use `docs/superpowers/specs/2026-07-22-vibage-os-p1-design.md` as the live SSOT once this umbrella is approved (archive or banner it).
+**Supersedes for development:** Conflicting older STATUS / coverage / plans / soft-CTA feature-call copy must leave the live tree (delete; git history is enough). Do not use retired `2026-07-22-vibage-os-p1-design` as live SSOT.
 
 ### Local DoD letters (plain)
 
