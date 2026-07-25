@@ -58,7 +58,7 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 |-------|----------------|----------|
 | Install continuum | `tests/test_install_phrase_e2e.sh` | `INSTALL_PHRASE_E2E_OK` |
 | Pile index | `scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` |
-| Optional map deepen | `scripts/verify-map-deepen.sh <parent> [RUNS.json]` | `MAP_DEEPEN_OK` |
+| Optional dimension-fill | `scripts/verify-dimension-fill.sh <parent>` (legacy `verify-map-deepen.sh` = migrate shim) | `DIMENSION_FILL_*` (`MAP_DEEPEN_OK` retired) |
 | Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
 | Capability table | [`STATUS.md`](STATUS.md) | — |
@@ -71,8 +71,8 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 - **SaaS / sign-up** = blank (no register CTA in this pack).
 - **This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
 - Plugin manifests are on-tree (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). **≠** store listing until you submit and pass review.
-- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `PILE_INDEX_OK` ≠ `MAP_DEEPEN_OK` ≠ “scan confirmed” ≠ “locate finished”.
-- Pile-index / deepen ≠ Architecture Pass; Graphify optional / fail-soft; Plan-L prettier ≠ nested deepen.
+- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `PILE_INDEX_OK` ≠ `DIMENSION_FILL_OK` ≠ “scan confirmed” ≠ “locate finished”.
+- Pile-index / dimension-fill ≠ Architecture Pass; Graphify optional / fail-soft; Plan-L prettier ≠ nested deepen; `MAP_DEEPEN_OK` brand retired.
 - Cost talk stays local — no register / SaaS CTA.
 
 ---

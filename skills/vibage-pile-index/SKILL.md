@@ -78,7 +78,7 @@ Do **not** claim full-understanding, or dig-ready after install alone, from this
    bash "$PKG_ROOT/scripts/c-prime-fill.sh" "$WORKSPACE"
    ```
    (or inventory + cell sweep). Aim `ENV_BRANCH_MATRIX_OK`; claim 掃透 **only** with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Incomplete matrix → disclose; tickets still OK.
-7. Dimension fill / optional `vibage-map-deepen` = **deferred** this plan — do not block continuum; never narrate deepen as understood.
+7. Optional dimension-fill / legacy `vibage-map-deepen` pointer: after anti-illusion + cost band, ask only if owner wants it. **Ticket paste alone = implicit no** (do not enter deepen/fill). Never narrate deepen/fill as understood.
 8. Ticket / pain **or** scene switch → if scene set, scene-brief → `SCENE_BRIEF_OK`; hand to `vibage-orient`. Owner-stated names **correct** hot path only — never shrink the full discovery index (F10).
 
 ## Completion token (F15)
@@ -86,7 +86,7 @@ Do **not** claim full-understanding, or dig-ready after install alone, from this
 - Floor success = `GRAPH_FLOOR_OK` + hub `docs/vibage/maps/service_map.json` verifies (`PILE_INDEX_OK` wrapper echo OK).
 - “Started indexing” / intent alone ≠ done.
 - Timeout / cannot finish → STOP + handoff; do not pretend map complete.
-- Do **not** claim `MATRIX_SWEEP_SUBSTANTIVE_OK`, `SCENE_BRIEF_OK`, or `MAP_DEEPEN_OK` from pile-index alone.
+- Do **not** claim `MATRIX_SWEEP_SUBSTANTIVE_OK`, `SCENE_BRIEF_OK`, `DIMENSION_FILL_OK`, or retired `MAP_DEEPEN_OK` from pile-index alone.
 - Do **not** claim dig-ready-after-install from this skill.
 
 ## Hard stops

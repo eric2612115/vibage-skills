@@ -1,7 +1,7 @@
 # C′ Wave-3a — Dimension Fill Design
 
 **Date:** 2026-07-25  
-**Status:** Design-FULL for W3a only (**On-tree=NO** until scripts + tests green)  
+**Status:** Design-FULL for W3a — **On-tree=YES** after P0–P2 (`DIMENSION_FILL_W3A_P2_OK`; `MAP_DEEPEN_OK` brand retired)  
 **Roadmap:** `docs/superpowers/specs/2026-07-25-vibage-c-prime-next-waves-roadmap.md`  
 **Parent:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md` (§1 workers, §2.1–2.4)  
 **Prereq:** W2 env-vacancy On-tree (`ENV_VACANCY_W2_OK`) for **implement**; design may land now  

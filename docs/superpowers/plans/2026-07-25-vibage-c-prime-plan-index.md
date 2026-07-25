@@ -24,7 +24,7 @@
 | **W1** | Spec: `…-sync-freshness-design.md` · Plan: `…-sync-freshness.md` (**On-tree**; `FRESHNESS_W1_OK`) | Freshness HEAD+TTL / HARD_MOTHER / SOFT_CHILD (**≠** Sync contract DONE) |
 | **W1b** | (optional, not yet) | Remaining §2.5 triggers |
 | **W2** | Spec: `…-env-vacancy-ask-design.md` · Plan: `…-env-vacancy-ask.md` (**On-tree**; `ENV_VACANCY_W2_OK`) | Missing-env ask / configure (skip/point/classify; ≠ 掃透) |
-| **W3a** | Spec: `…-dimension-fill-design.md` · Plans: `…-p0.md` / `…-p1.md` (**P0+P1 On-tree**; `DIMENSION_FILL_W3A_P1_OK`) · P2 open | P0+P1 orchestrator/synth done; P2 deepen-migrate + STATUS scrub open |
+| **W3a** | Spec: `…-dimension-fill-design.md` · Plans: `…-p0.md` / `…-p1.md` / `…-p2.md` (**P0–P2 On-tree**; `DIMENSION_FILL_W3A_P2_OK`) | Dimension-fill On-tree; `MAP_DEEPEN_OK` brand retired |
 | **W3b** | Spec: `…-letter-b-thin-design.md` (thin docs; B-path evidence already on-tree) | ≠ rebuild AP-C4/C5; ≠ C′ Proven-green ≠ Gate B; optional RUNBOOK re-verify only if owner asks |
 | **W4** | (not yet; last) | Tier-0 thin-subset policy (draft: graph_floor + ledger; excludes freshness) |
 

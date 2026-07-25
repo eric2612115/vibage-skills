@@ -30,7 +30,7 @@ Say these in owner language (no jargon):
 | Scene brief | When a scene is set: `SCENE_BRIEF_OK` (+ cover via `verify-scene-cover`) | Confirm / dig |
 | Confirm | Owner OK on this ticket’s hot path | Dig reports |
 
-Optional nested dossiers (`MAP_DEEPEN_OK`) / dimension fill are **deferred** this wave — never Gate A “understood” / never “ready after install alone.”
+Optional dimension-fill (`DIMENSION_FILL_*`; legacy `MAP_DEEPEN_OK` brand retired) — never Gate A “understood” / never “ready after install alone.”
 
 ## Gate A slogans (narrative honesty — ≠ dig auth)
 
@@ -42,7 +42,7 @@ Optional nested dossiers (`MAP_DEEPEN_OK`) / dimension fill are **deferred** thi
 | 多領域立體場景切換 | `SCENE_BRIEF_OK` + `verify-scene-cover.sh` exit 0 |
 
 Gate A ≠ Gate B (orient → CONFIRM → `assert_gate` → dig).  
-`PILE_INDEX_OK` / `MAP_DEEPEN_OK` must **not** be narrated as full-understanding or dig-ready by themselves.
+`PILE_INDEX_OK` / `DIMENSION_FILL_*` (retired `MAP_DEEPEN_OK`) must **not** be narrated as full-understanding or dig-ready by themselves.
 
 ## Install phrase / continuum (C′)
 
@@ -88,7 +88,7 @@ Agent **must** (owner: do not type bash):
 9. Hand to **`vibage-pile-index`** → expect `GRAPH_FLOOR_OK` (script also echoes `PILE_INDEX_OK` for freeze compat). Continuum exit ≠ “intent only” (F15).
 10. After graph floor: matrix path (`c-prime-fill` prints `ENV_BRANCH_MATRIX_OK` **or** `MATRIX_INCOMPLETE`, and `MATRIX_SWEEP_SUBSTANTIVE_OK` only when 掃透). May accept ticket with honest incomplete disclosure; **never** claim 掃透 without `MATRIX_SWEEP_SUBSTANTIVE_OK`. Dimension fill = **deferred** (skip). Success to CONFIRM-ready ≠ 掃透.
 11. Ticket / pain **or** scene switch: if scene set → `scene-brief` + expect `SCENE_BRIEF_OK`; stereoscopic cover via `verify-scene-cover.sh` (independent of matrix).
-12. Hand to **`vibage-orient`** → CONFIRM → **`vibage-issue-locate`**. **No dig / no dual reports** until CONFIRM. Optional `MAP_DEEPEN_OK` ≠ CONFIRM ≠ dig-all ≠ Gate A understood.
+12. Hand to **`vibage-orient`** → CONFIRM → **`vibage-issue-locate`**. **No dig / no dual reports** until CONFIRM. Optional `DIMENSION_FILL_*` / retired `MAP_DEEPEN_OK` ≠ CONFIRM ≠ dig-all ≠ Gate A understood.
 
 Canonical paste: `prompts/SAY-INSTALL-VIBAGE.md`.  
 Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.

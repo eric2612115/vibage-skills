@@ -11,7 +11,7 @@ If owner says **幫我裝 Vibage** / install Vibage → follow using-vibage § I
 Freshness: parse stdout tokens (`FRESHNESS_OK` or WAIVED+DISCLOSED); exit 0 ≠ `FRESHNESS_OK`. Session start: disclose stale_count + incomplete_matrix (+ escalate).
 Env vacancy: ANSWERED ≠ CLEAR ≠ 掃透; exit 0 ≠ 掃透.
 Do not claim installed without verify. Do not dig yet. Cursor hook files are **not** required for Claude success.
-掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `MAP_DEEPEN_OK` ≠ full-understanding.
+掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `DIMENSION_FILL_*` (legacy `MAP_DEEPEN_OK` brand retired) ≠ full-understanding.
 
 ## Skill routing
 

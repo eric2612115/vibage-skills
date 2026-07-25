@@ -14,8 +14,9 @@
 | `bash tests/test_plugin_manifests.sh` → `PLUGIN_MANIFESTS_OK` | Cursor + Claude plugin/marketplace JSON on-tree | store listing approved · SaaS |
 | `bash scripts/pile-index.sh <parent>` → `PILE_INDEX_OK` | Shallow map of one-level child git checkouts | Architecture Pass · locate DONE · Graphify required |
 | `bash tests/test_pile_index.sh` → `PILE_INDEX_TEST_OK` | Script + skill + 3-app fixture | Tier-0 |
-| `bash scripts/verify-map-deepen.sh <parent> [RUNS.json]` → `MAP_DEEPEN_OK` | Scope-complete nested dossiers after freeze + Mode honesty | Architecture Pass · CONFIRM · dig-all · Plan-L prettier · Tier-0 · assert_gate |
-| `bash tests/test_verify_map_deepen.sh` → `MAP_DEEPEN_TEST_OK` | Happy + fake nested + green-shrink + stub negatives | Tier-0 · pack-health |
+| `bash scripts/verify-dimension-fill.sh <parent>` → `DIMENSION_FILL_*` | Optional ledger dimension_* notes after `dimension_yes` freeze (`exit 0 ≠ OK`) | Architecture Pass · understood · 掃透 · dig-ready · Tier-0 · assert_gate |
+| `bash scripts/verify-map-deepen.sh <parent>` | Migrate shim only — never emits retired `MAP_DEEPEN_OK`; wraps fill or `deepen_retired` | Claiming deepen brand success |
+| `bash tests/test_verify_map_deepen.sh` → `DIMENSION_FILL_W3A_P2_OK` / `MAP_DEEPEN_TEST_OK` | Migrate honesty + firewall | Tier-0 · pack-health |
 | `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` | Parent Cursor/Claude/Codex routers on disk | CONFIRM · locate DONE |
 | `bash tests/test_issue_fix_usable.sh` | issue-fix unlock gates script-usable | letter B · fix quality |
 | `bash tests/test_arch_review_usable.sh` | service_map qualification script-usable | Architecture Pass · letter B alone |

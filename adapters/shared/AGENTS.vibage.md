@@ -9,7 +9,7 @@ Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA
 If owner says **幫我裝 Vibage** / install Vibage → follow using-vibage § Install continuum:
 `PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` (via **vibage-pile-index**) → matrix sweep → freshness → env-vacancy → optional deferred dimension fill → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.
 Do not claim installed without verify. Do not dig yet.
-掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `MAP_DEEPEN_OK` ≠ full-understanding.
+掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `DIMENSION_FILL_*` (legacy `MAP_DEEPEN_OK` brand retired) ≠ full-understanding.
 Freshness: parse `verify-freshness.sh` stdout — need `FRESHNESS_OK` or (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`). **Forbidden:** treat exit 0 as `FRESHNESS_OK`. Session start: disclose stale_count + incomplete_matrix (+ escalate).
 Env vacancy: `verify-env-vacancy.sh` — ANSWERED ≠ CLEAR ≠ 掃透; exit 0 ≠ 掃透.
 
@@ -21,7 +21,7 @@ Env vacancy: `verify-env-vacancy.sh` — ANSWERED ≠ CLEAR ≠ 掃透; exit 0 �
 4. Map/graph ready, no valid CONFIRM (= owner OK on the scan plan; file `docs/vibage/CONFIRM.json`) → **vibage-orient** (stop until owner confirms).
 5. CONFIRM OK → **vibage-issue-locate** (consume briefs/ledger; ignore deepen-as-auth; nested dig ⊆ planned_dig_ids; legacy `vibage-locate` OK).
 6. Paste NEW-CHAT / unclear install → **vibage-bootstrap** or **vibage-init** (then using-vibage).
-7. Optional (not required for locate DONE): **vibage-map-deepen** (deferred dimension path; ≠ Gate A), **vibage-issue-fix**, **vibage-arch-review**.
+7. Optional (not required for locate DONE): **vibage-map-deepen** (thin pointer → dimension-fill; ≠ Gate A), **vibage-issue-fix**, **vibage-arch-review**.
 
 Read package `STATUS.md` first (capability SSOT) before expanding scope.
 After locate DONE → finishing options in **using-vibage** (required).
