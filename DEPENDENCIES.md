@@ -12,6 +12,11 @@ ripgrep=required
 Nested investigation uses the host agent's subagent API when available (Cursor Task, Claude Code Agent, Codex subagents). No separate pin. If nested dispatch is unavailable → `Mode: degraded` (legitimate success).
 Graphify / other tools: not required for v1.
 
-**ripgrep honesty:** tests that call `rg` source `scripts/lib/require_rg.sh` (fail-closed). A missing `rg` must exit 1 — never treat empty stdout as “no slogan hits.” Presence check ≠ semantic coverage of slogans.
+**ripgrep honesty:** tests that call `rg` source `scripts/lib/require_rg.sh` (fail-closed). A missing `rg` must exit 1 — never treat empty stdout as “no slogan hits.” Presence check ≠ semantic coverage of slogans. A zsh `rg` shell function alone is not enough — `verify-pins.sh` / locate preflight need a real `rg` binary on PATH.
+
+Install ripgrep (pick one):
+- macOS: `brew install ripgrep`
+- Debian/Ubuntu: `sudo apt install ripgrep`
+- Confirm: `command -v rg` prints a path (not only a shell function)
 
 Recommended install: one git checkout of obra/superpowers at the pin SHA, then symlink that directory into each skill home you use.
