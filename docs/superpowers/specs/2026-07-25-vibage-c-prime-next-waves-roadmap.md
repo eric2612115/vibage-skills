@@ -20,7 +20,7 @@ Four owner themes are **four subsystems**. One mega-spec mixes ship gates, UX, a
 | **W2** | Missing-env → ask / configure | Answerable gaps; per-gap skip / point / classify + ask tokens; binary `env_vacancy_waiver` kept as hatch | Asking / skip / classify / waiver **never** grant 掃透; ≠ freshness waiver |
 | **W3a** | Dimension fill (may split N plans) | Repo synthesizer + dimension searchers → ledger `dimension_*`; **migrate deepen → retire `MAP_DEEPEN_OK` brand** | ≠ 掃透; ≠ “understood”; **implement after W2 On-tree** |
 | **W3b** | Letter B (**thin**) | Clarify: B-path agent-proven (AP-C4/C5 evidence already on-tree) ≠ C′ Proven-green ≠ Gate B; optional RUNBOOK re-verify for new `run_ts` | **No new cards**; **no** rebuild Focus C1–C3; C′/W1 **never** auto-flip letter B |
-| **W4** | Tier-0 policy | Thin C′ subset ship-gate **decision** (draft: YES = `graph_floor` + `ledger` only) | Default reject whole `test_c_prime_suite`; **excludes** freshness / matrix / fixtures / defi_pile; W1–W3 must not sneak-wire |
+| **W4** | Tier-0 policy | Thin C′ subset ship-gate **On-tree** (YES = `graph_floor` + `ledger` only; `TIER0_C_PRIME_THIN_OK`) | Rejects whole `test_c_prime_suite`; **excludes** freshness / matrix / fixtures / defi_pile / dimension |
 
 ### Dependencies
 
@@ -60,5 +60,6 @@ Wiring C′ into Tier-0 means: **if those C′ tests fail, the package must not 
 | `…-sync-freshness.md` (plans/) | W1 implementation plan (**executed**) |
 | `…-env-vacancy-ask-design.md` | W2 design (**On-tree**; `ENV_VACANCY_W2_OK`) |
 | `…-letter-b-thin-design.md` | W3b thin clarify |
-| `…-dimension-fill-design.md` | W3a design (**Design-FULL**; On-tree=NO until scripts green) |
+| `…-dimension-fill-design.md` | W3a design (**On-tree**; `MAP_DEEPEN_OK` retired) |
+| `…-tier0-thin-policy.md` | W4 policy (**On-tree**) |
 | `…-c-prime-plan-index.md` | Live construction index |

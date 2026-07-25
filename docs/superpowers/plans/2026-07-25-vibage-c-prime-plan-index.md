@@ -26,7 +26,7 @@
 | **W2** | Spec: `…-env-vacancy-ask-design.md` · Plan: `…-env-vacancy-ask.md` (**On-tree**; `ENV_VACANCY_W2_OK`) | Missing-env ask / configure (skip/point/classify; ≠ 掃透) |
 | **W3a** | Spec: `…-dimension-fill-design.md` · Plans: `…-p0.md` / `…-p1.md` / `…-p2.md` (**P0–P2 On-tree**; `DIMENSION_FILL_W3A_P2_OK`) | Dimension-fill On-tree; `MAP_DEEPEN_OK` brand retired |
 | **W3b** | Spec: `…-letter-b-thin-design.md` (thin docs; B-path evidence already on-tree) | ≠ rebuild AP-C4/C5; ≠ C′ Proven-green ≠ Gate B; optional RUNBOOK re-verify only if owner asks |
-| **W4** | (not yet; last) | Tier-0 thin-subset policy (draft: graph_floor + ledger; excludes freshness) |
+| **W4** | Spec: `…-tier0-thin-policy.md` · Plan: `…-tier0-thin.md` (**On-tree**; `TIER0_C_PRIME_THIN_OK`) | Tier-0 includes graph_floor + ledger only; excludes suite/freshness/vacancy/dimension |
 
 ## Execution
 

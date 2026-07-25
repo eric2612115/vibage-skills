@@ -33,4 +33,12 @@ if [[ -f tests/test_install_manifest.sh ]]; then
   bash tests/test_install_manifest.sh
 fi
 
+# W4 thin C′ ship subset (policy: graph_floor + ledger only).
+# MUST NOT call test_c_prime_suite / freshness / vacancy / dimension / fixtures.
+echo "== tier0: c-prime thin (graph_floor) =="
+bash tests/test_c_prime_graph_floor.sh
+
+echo "== tier0: c-prime thin (ledger) =="
+bash tests/test_c_prime_ledger.sh
+
 echo "TIER0_OK"
