@@ -7,7 +7,8 @@
 
 | Command / artifact | YES means | Not |
 |--------------------|-----------|-----|
-| `bash scripts/test-tier0.sh` → `TIER0_OK` | Core locate ship gate green | pin · parent entry · letter B · remote CI |
+| `bash scripts/test-tier0.sh` → `TIER0_OK` | Core locate ship gate + W4 thin C′ (`graph_floor` + `ledger` tests) | whole C′ suite · freshness · vacancy · dimension · letter B · remote CI |
+| `bash tests/test_tier0_c_prime_thin.sh` → `TIER0_C_PRIME_THIN_OK` | Tier-0 wiring matches thin policy | Fat-wiring suite/W1–W3 into Tier-0 |
 | `bash scripts/pack-health.sh <parent>` → `PACK_HEALTH_OK` | pins + parent entry + entry-docs + `OWNER_ZERO_BASH_OK` + `INSTALL_PHRASE_OK` + `INSTALL_PHRASE_E2E_OK` | Tier-0 · letter B · remote CI |
 | `bash tests/test_install_phrase.sh` → `INSTALL_PHRASE_OK` | 「幫我裝 Vibage」docs + markers | dig |
 | `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK` | Agent-equivalent install steps on temp parent | screen recording · dig |
