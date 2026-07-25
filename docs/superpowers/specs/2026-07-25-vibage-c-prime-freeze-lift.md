@@ -21,7 +21,7 @@ The ban lifts only when **all** of the following hold:
 | Item | Status |
 |------|--------|
 | Slice/cell stale → reindex sync (§2.5) | **W1 freshness On-tree (HEAD+TTL subset) ≠ Sync contract DONE** — scripts `freshness-*.sh` + `tests/test_freshness_w1.sh` (`FRESHNESS_W1_OK`). Remainder → optional W1b |
-| Dimension fill / repo synthesizer wave | **Design-FULL W3a** at `…-dimension-fill-design.md` (**On-tree=NO** until scripts green); deepen → retire `MAP_DEEPEN_OK` brand on implement |
+| Dimension fill / repo synthesizer wave | **Design-FULL W3a**; **P0 On-tree** (`DIMENSION_FILL_W3A_P0_OK` — search+verify only). P1 orchestrator / P2 deepen-migrate still open. Full wave phrase after P2: `W3a dimension-fill On-tree ≠ 掃透 ≠ understood ≠ letter B` |
 | Env vacancy ask / configure (W2) | **W2 env-vacancy On-tree ≠ 掃透 ≠ letter B** — `ENV_VACANCY_W2_OK`; design `…-env-vacancy-ask-design.md` |
 | Letter B as C′ wave (W3b) | **Thin clarify** at `…-letter-b-thin-design.md` — B-path evidence already on-tree; ≠ rebuild cards |
 | C′ in Tier-0 / pack-health | **Not wired** |

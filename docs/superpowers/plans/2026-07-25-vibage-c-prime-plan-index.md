@@ -24,7 +24,7 @@
 | **W1** | Spec: `…-sync-freshness-design.md` · Plan: `…-sync-freshness.md` (**On-tree**; `FRESHNESS_W1_OK`) | Freshness HEAD+TTL / HARD_MOTHER / SOFT_CHILD (**≠** Sync contract DONE) |
 | **W1b** | (optional, not yet) | Remaining §2.5 triggers |
 | **W2** | Spec: `…-env-vacancy-ask-design.md` · Plan: `…-env-vacancy-ask.md` (**On-tree**; `ENV_VACANCY_W2_OK`) | Missing-env ask / configure (skip/point/classify; ≠ 掃透) |
-| **W3a** | Spec: `…-dimension-fill-design.md` (**design**; not executed) | Dimension fill; deepen → retire `MAP_DEEPEN_OK` brand |
+| **W3a** | Spec: `…-dimension-fill-design.md` · Plan: `…-dimension-fill-p0.md` (**P0** searcher+verify; On-tree=NO until green) | Dimension fill P0; deepen migrate deferred to P2 |
 | **W3b** | Spec: `…-letter-b-thin-design.md` (thin docs; B-path evidence already on-tree) | ≠ rebuild AP-C4/C5; ≠ C′ Proven-green ≠ Gate B; optional RUNBOOK re-verify only if owner asks |
 | **W4** | (not yet; last) | Tier-0 thin-subset policy (draft: graph_floor + ledger; excludes freshness) |
 
