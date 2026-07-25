@@ -61,10 +61,17 @@ for line in block[2:]:
         if scope not in ("—", "blank"):
             print(f"FAIL: {cap}: Scope bad prefix {scope!r}", file=sys.stderr)
             sys.exit(1)
-    # If Scope already uses backtick evidence tokens, require an *_OK token.
+    # If Scope cites evidence in backticks, it must cite something checkable:
+    # an *_OK token, or a run_ts= (agent-scope rows have no token to name).
     if proven == "YES" and "`" in scope:
-        if not re.search(r"`[A-Z0-9_]{6,}_OK`", scope):
-            print(f"FAIL: {cap}: Scope has backticks but no `*_OK` token", file=sys.stderr)
+        has_token = re.search(r"`[A-Z0-9_]{6,}_OK`", scope)
+        has_run_ts = re.search(r"run_ts\s*=\s*`?\d{8}T\d{6}Z`?", scope)
+        if not (has_token or has_run_ts):
+            print(
+                f"FAIL: {cap}: Scope has backticks but cites neither an `*_OK` token "
+                "nor a run_ts=",
+                file=sys.stderr,
+            )
             sys.exit(1)
 
 # banner must not say Dimension fill deferred

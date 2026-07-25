@@ -24,3 +24,52 @@ jobs:
           python3 -m pytest --version
       - name: Tier-0 ship gate
         run: bash scripts/test-tier0.sh
+
+  # Separate JOB on purpose, not just a separate step: check-runs and branch
+  # protection are per-job, so a STATUS-lint failure must never surface as
+  # "tier0 failed". `TIER0_OK` semantics stay exactly what they were.
+  # Unsigned Proven-green drift fails *this* job; merge-blocking still depends
+  # on required-check settings (workflow alone ≠ unbypassable on push).
+  status-lints:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # verify-proven-lock.sh --since needs history
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Proven-green lock
+        run: bash tests/test_proven_lock.sh
+      - name: STATUS capability table shape
+        run: bash tests/test_status_capability_table.sh
+
+  # Separate JOB on purpose: pack-health failure must never surface as
+  # "tier0 failed". Uses temp parent via tests/test_pack_health.sh (install
+  # --with-project-rule then pack-health.sh). Still ≠ TIER0_OK.
+  pack-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install OS deps (ripgrep)
+        run: sudo apt-get update && sudo apt-get install -y ripgrep
+      # pack-health → verify-pins needs the pinned superpowers checkout.
+      # Local machines usually already have it under ~/.cursor/skills; CI does not.
+      - name: Checkout pinned superpowers
+        run: |
+          set -euo pipefail
+          SHA="$(grep -E '^superpowers_sha=' DEPENDENCIES.md | head -1 | cut -d= -f2 | tr -d '[:space:]')"
+          test -n "$SHA"
+          DEST="$RUNNER_TEMP/superpowers"
+          git init "$DEST"
+          git -C "$DEST" remote add origin https://github.com/obra/superpowers.git
+          git -C "$DEST" fetch --depth 1 origin "$SHA"
+          git -C "$DEST" checkout --force FETCH_HEAD
+          test "$(git -C "$DEST" rev-parse HEAD)" = "$SHA"
+          echo "SUPERPOWERS_ROOT=$DEST" >> "$GITHUB_ENV"
+          echo "pinned superpowers@$SHA"
+      - name: Pack health (temp parent)
+        run: bash tests/test_pack_health.sh

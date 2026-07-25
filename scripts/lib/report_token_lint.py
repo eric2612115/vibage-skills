@@ -109,6 +109,17 @@ RULES: List[Tuple[re.Pattern[str], Optional[Set[str]], List[re.Pattern[str]]]] =
 ]
 
 
+COVERAGE_FENCE = re.compile(r"```vibage_coverage_v1\s*\n.*?```", re.S)
+
+
+def _strip_coverage_fence(text: str) -> str:
+    """The machine-filled coverage box is not a claim by the agent — it is the
+    fact box the claims are measured against, and it legitimately contains the
+    word 掃透. Exempt the FENCE ONLY, never the whole `## Coverage` section, or
+    that heading becomes a place to hide prose."""
+    return COVERAGE_FENCE.sub("", text)
+
+
 def _split_sections(text: str) -> Tuple[str, str, str]:
     matches = list(H2.finditer(text))
     if not matches:
@@ -153,7 +164,7 @@ def _negated(line: str, neg_pats: List[re.Pattern[str]]) -> bool:
 
 
 def lint_report(path: Path) -> List[str]:
-    text = path.read_text(encoding="utf-8")
+    text = _strip_coverage_fence(path.read_text(encoding="utf-8"))
     body, held, evid = _split_sections(text)
     tokens = _held_tokens(held)
     evid_lines = _fenced_evidence_lines(evid)

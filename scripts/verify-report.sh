@@ -71,5 +71,17 @@ fi
 python3 "$PKG_ROOT/scripts/lib/report_token_lint.py" "${LINT_ARGS[@]}" \
   || fail "narrative token lint failed"
 
+# Coverage box: re-derive the numbers from the hub instead of trusting the prose.
+# Prints COVERAGE_BOX_OK, or COVERAGE_BOX_SKIPPED reason=no-derivable-hub when the
+# workspace cannot be resolved (archived evidence, no RUNS json). SKIPPED is not a
+# pass — it means the check could not run, and the token says so out loud.
+COV_ARGS=()
+[[ -n "$RUNS_JSON" ]] && COV_ARGS+=("--run=$RUNS_JSON")
+[[ -n "${WORKSPACE:-}" ]] && COV_ARGS+=("--workspace=$WORKSPACE")
+for r in "${LINT_ARGS[@]}"; do
+  bash "$PKG_ROOT/scripts/coverage-box.sh" check "$r" "${COV_ARGS[@]+"${COV_ARGS[@]}"}" \
+    || fail "coverage box check failed for $r"
+done
+
 echo "VERIFY_REPORT_OK: $LOCATE"
 exit 0

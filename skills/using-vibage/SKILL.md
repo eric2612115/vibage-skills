@@ -86,7 +86,7 @@ Agent **must** (owner: do not type bash):
    `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$PARENT" --c-prime-fill="$PARENT"`
    (or `--init-hub` then hand to **`vibage-pile-index`** / `c-prime-fill`). `--c-prime-fill` default off.
 9. Hand to **`vibage-pile-index`** → expect `GRAPH_FLOOR_OK` (script also echoes `PILE_INDEX_OK` for freeze compat). Continuum exit ≠ “intent only” (F15).
-10. After graph floor: matrix path (`c-prime-fill` prints `ENV_BRANCH_MATRIX_OK` **or** `MATRIX_INCOMPLETE`, and `MATRIX_SWEEP_SUBSTANTIVE_OK` only when 掃透). May accept ticket with honest incomplete disclosure; **never** claim 掃透 without `MATRIX_SWEEP_SUBSTANTIVE_OK`. Dimension fill = **deferred** (skip). Success to CONFIRM-ready ≠ 掃透.
+10. After graph floor / `PILE_INDEX_OK`: nameplate only; **cost/deepen ask** (`ticket paste = skip deepen`; optional **`vibage-map-deepen`** / dimension-fill only if owner says yes). Then matrix path (`c-prime-fill` prints `ENV_BRANCH_MATRIX_OK` **or** `MATRIX_INCOMPLETE`, and `MATRIX_SWEEP_SUBSTANTIVE_OK` only when 掃透). May accept ticket with honest incomplete disclosure; **never** claim 掃透 without `MATRIX_SWEEP_SUBSTANTIVE_OK`. Dimension fill stays optional/deferred unless owner yes. Success to CONFIRM-ready ≠ 掃透.
 11. Ticket / pain **or** scene switch: if scene set → `scene-brief` + expect `SCENE_BRIEF_OK`; stereoscopic cover via `verify-scene-cover.sh` (independent of matrix).
 12. Hand to **`vibage-orient`** → CONFIRM → **`vibage-issue-locate`**. **No dig / no dual reports** until CONFIRM. Optional `DIMENSION_FILL_*` / retired `MAP_DEEPEN_OK` ≠ CONFIRM ≠ dig-all ≠ Gate A understood.
 
@@ -124,6 +124,7 @@ Owner-language only (no soft CTA / no register / no pairing / no API-key / no Ar
 
 ### Cost / deepen talk (any time)
 
+After `PILE_INDEX_OK`: say nameplate index; **cost/deepen ask**; **ticket paste = skip deepen** (implicit no to optional `vibage-map-deepen` / dimension-fill).  
 Stay **local**: skip optional deepen/dimension fill, thin graph + hot path, shrink `planned_dig_ids`, `Mode: degraded`.  
 Do **not** push register / cloud / “Architecture Pass is cheaper.” SaaS stays blank in package `STATUS.md`.
 

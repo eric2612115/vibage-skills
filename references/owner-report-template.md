@@ -4,6 +4,18 @@
 Status — 找問題: open | done | blocked — …
 Status — 架構檢視: not started | in progress | done | n/a — …
 
+## Coverage (machine-filled)
+
+<!--
+DO NOT WRITE THIS BY HAND — generate with scripts/coverage-box.sh emit.
+It is re-derived at verify time. It is also what the owner should read FIRST:
+if a sentence below sounds broader than these numbers, the numbers win.
+-->
+
+```vibage_coverage_v1
+<paste the emitted block here>
+```
+
 ## Symptom (owner words)
 …
 

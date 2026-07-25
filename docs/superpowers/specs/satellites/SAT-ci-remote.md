@@ -1,6 +1,6 @@
 # SAT-ci-remote
 
-**Owns:** Honest skip when no remote `origin`; when `origin` exists, remote CI may mirror Tier-0 only.  
+**Owns:** Honest skip when no remote `origin`; when `origin` exists, remote CI must mirror Tier-0 in its own job, and may add sibling jobs that must never widen `TIER0_OK`.  
 **Umbrella:** §9.1 `SAT-ci-remote`; §9.2 `P7-ci-when-remote`  
 **Plan:** P7 / Plan-P  
 **Local ship entry:** `bash scripts/test-tier0.sh` (independent of remote CI until Actions green)
@@ -21,13 +21,20 @@ When `git remote -v` shows **no remotes**, or shows remotes but **no `origin`**:
 
 ## 2. When `origin` exists
 
-Add a GitHub Actions workflow that runs **only**:
+Add a GitHub Actions workflow whose **ship-gate job** runs **only**:
 
 ```bash
 bash scripts/test-tier0.sh
 ```
 
-Same command as local Tier-0. Do not widen the remote job beyond that entry without a new plan.
+Same command as local Tier-0. Do **not** put STATUS lints or pack-health into that job — they stay separate jobs so a failure never surfaces as `TIER0_OK` / “tier0 failed”.
+
+Allowed sibling jobs (own check-run names; **∉** `TIER0_OK`):
+
+| Job | Entry |
+|-----|--------|
+| `status-lints` | `tests/test_proven_lock.sh` + `tests/test_status_capability_table.sh` |
+| `pack-health` | `tests/test_pack_health.sh` (temp parent → `PACK_HEALTH_OK`) |
 
 STATUS must:
 
@@ -36,7 +43,7 @@ STATUS must:
 - Keep ≠ publish-ready until human decides otherwise
 - Still point at this satellite
 
-Do not claim remote success from local `TIER0_OK` alone.
+Do not claim remote success from local `TIER0_OK` alone. Branch protection may require `status-lints` / `pack-health` independently of `tier0`.
 
 ---
 
