@@ -50,6 +50,21 @@ if bash scripts/verify-report.sh "$FX/bad_held_no_fence.md" >/dev/null 2>&1; the
 fi
 pass "bad_held_no_fence fails"
 
+if bash scripts/verify-report.sh "$FX/bad_paraphrase_saotou.md" >/dev/null 2>&1; then
+  fail "universal 掃 paraphrase must fail"
+fi
+pass "bad_paraphrase_saotou fails"
+
+if bash scripts/verify-report.sh "$FX/bad_env_vacancy_inflation.md" >/dev/null 2>&1; then
+  fail "環境都確認/全部釐清 without ENV_VACANCY_CLEAR must fail"
+fi
+pass "bad_env_vacancy_inflation fails"
+
+if bash scripts/verify-report.sh "$FX/bad_paraphrase_dig_ready.md" >/dev/null 2>&1; then
+  fail "fully mapped / ready to dig paraphrase must fail"
+fi
+pass "bad_paraphrase_dig_ready fails"
+
 if bash scripts/verify-report.sh "$FX/bad_scene.md" >/dev/null 2>&1; then
   fail "scene without SCENE_COVER_OK must fail"
 fi

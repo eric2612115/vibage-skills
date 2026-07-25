@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Fail-closed: presence/absence rg checks must not skip when rg is missing.
+source "$ROOT/scripts/lib/require_rg.sh"
 LEGACY_RE='VIBAGE-OWNER\.md|VIBAGE-LOCATE\.md|WAR-ROOM-OWNER|WAR-ROOM-LOCATE'
 
 # Legacy names must NOT be the instructed deliverable in skill/templates

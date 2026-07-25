@@ -4,6 +4,8 @@
 # MUST NOT be wired into scripts/test-tier0.sh.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+# Fail-closed: slogan/copy guards must not skip when rg is missing.
+source "$ROOT/scripts/lib/require_rg.sh"
 cd "$ROOT"
 
 fail() { echo "FAIL: $*"; exit 1; }

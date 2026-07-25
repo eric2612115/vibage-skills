@@ -1,7 +1,20 @@
 #!/usr/bin/env bash
-# Verify pinned superpowers SHA. Probes Cursor / Claude / Codex skill homes.
+# Verify pinned superpowers SHA + fail-closed ripgrep presence.
+# Probes Cursor / Claude / Codex skill homes.
 set -euo pipefail
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+
+# ripgrep: presence required (DEPENDENCIES.md ripgrep=required). Not SHA-pinned.
+if ! grep -Eq '^ripgrep=required[[:space:]]*$' "$PKG_ROOT/DEPENDENCIES.md"; then
+  echo "ERROR: DEPENDENCIES.md must declare ripgrep=required" >&2
+  exit 1
+fi
+if ! command -v rg >/dev/null 2>&1; then
+  echo "ERROR: ripgrep (rg) not on PATH — required (fail-closed). See DEPENDENCIES.md" >&2
+  exit 1
+fi
+echo "OK: ripgrep $(command -v rg)"
+
 expected="$(grep -E '^superpowers_sha=' "$PKG_ROOT/DEPENDENCIES.md" | head -1 | cut -d= -f2 | tr -d '[:space:]')"
 if [[ -z "$expected" || ${#expected} -lt 40 ]]; then
   echo "ERROR: superpowers_sha missing/invalid in DEPENDENCIES.md" >&2

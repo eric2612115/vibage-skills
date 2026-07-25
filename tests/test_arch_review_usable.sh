@@ -3,6 +3,7 @@
 # MUST NOT be wired into scripts/test-tier0.sh.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+source "$ROOT/scripts/lib/require_rg.sh"
 VERIFY="$ROOT/scripts/verify-service-map.sh"
 ARCH_SKILL="$ROOT/skills/vibage-arch-review/SKILL.md"
 SAT_ARCH="$ROOT/docs/superpowers/specs/satellites/SAT-arch-review.md"

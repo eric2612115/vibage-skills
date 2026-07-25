@@ -4,6 +4,7 @@
 # MUST NOT require changing scripts/verify-service-map.sh behavior.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+source "$ROOT/scripts/lib/require_rg.sh"
 GRAPHIFY_GEN="$ROOT/scripts/generate-service-map-graph.sh"
 VERIFY="$ROOT/scripts/verify-service-map.sh"
 FIX_OK="$ROOT/tests/fixtures/service-map/standard-depth-ok.json"

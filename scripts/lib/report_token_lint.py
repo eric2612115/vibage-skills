@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-"""Deliverable narrative token lint for VIBAGE-ISSUE-*.md (≠ chat proof)."""
+"""Deliverable narrative token lint for VIBAGE-ISSUE-*.md (≠ chat proof).
+
+v1 is literal / phrase matching — paraphrase can still slip through; raising
+cost ≠ semantic understanding. ≠ chat-level narrative firewall.
+"""
 from __future__ import annotations
 
 import re
@@ -31,6 +35,10 @@ NEG_DIG_READY = [
     re.compile(r"≠\s*(?:dig-ready|ready-after-install-alone)", re.I),
     re.compile(r"never\s+claim\s+(?:dig-ready|ready-after-install)", re.I),
 ]
+NEG_VACANCY = [
+    re.compile(r"≠\s*ENV_VACANCY_CLEAR"),
+    re.compile(r"≠\s*(?:環境|vacancy).{0,12}(?:清|clear)", re.I),
+]
 
 # (slogan_pat, required Held tokens or None=always forbidden, negation pats)
 RULES: List[Tuple[re.Pattern[str], Optional[Set[str]], List[re.Pattern[str]]]] = [
@@ -44,6 +52,41 @@ RULES: List[Tuple[re.Pattern[str], Optional[Set[str]], List[re.Pattern[str]]]] =
         {"ENV_BRANCH_MATRIX_OK"},
         [],
     ),
+    # Universal completion phrases (raise paraphrase cost; ≠ semantic firewall)
+    (
+        re.compile(
+            r"(?:全部|所有).{0,48}(?:掃|掃過|掃一遍)|"
+            r"(?:都).{0,24}(?:已經)?(?:完整)?掃|"
+            r"(?:掃|掃過|掃一遍).{0,32}沒有遺漏|"
+            r"沒有遺漏.{0,32}(?:掃|掃過)"
+        ),
+        {"MATRIX_SWEEP_SUBSTANTIVE_OK"},
+        NEG_SAOTOU,
+    ),
+    (
+        re.compile(
+            r"(?:all|every|fully).{0,48}(?:scanned|scan(?:ned)?)\b|"
+            r"end\s*to\s*end.{0,48}(?:scanned|mapped)|"
+            r"(?:scanned|mapped).{0,48}end\s*to\s*end|"
+            r"fully\s+mapped",
+            re.I,
+        ),
+        {"MATRIX_SWEEP_SUBSTANTIVE_OK"},
+        NEG_SAOTOU,
+    ),
+    # Env-vacancy inflation: only ENV_VACANCY_CLEAR legitimizes "環境都確認/釐清"
+    (
+        re.compile(
+            r"(?:環境|env(?:ironment)?|env-?config|環境設定).{0,48}"
+            r"(?:都|全部|全都).{0,32}(?:確認|釐清|清掉|清楚)|"
+            r"(?:都|全部).{0,32}(?:確認|釐清).{0,24}(?:環境|env)|"
+            r"全部釐清|"
+            r"(?:env(?:ironment)?|環境).{0,32}(?:all|fully).{0,24}(?:confirm|clear)",
+            re.I,
+        ),
+        {"ENV_VACANCY_CLEAR"},
+        NEG_VACANCY,
+    ),
     (
         re.compile(r"多領域立體場景(?:切換)?|立體場景切換|立體場景"),
         {"SCENE_BRIEF_OK", "SCENE_COVER_OK"},
@@ -56,7 +99,8 @@ RULES: List[Tuple[re.Pattern[str], Optional[Set[str]], List[re.Pattern[str]]]] =
     ),
     (
         re.compile(
-            r"\bdig-ready\b|ready-after-install-alone|install→ready|install->ready",
+            r"\bdig-ready\b|ready-after-install-alone|install→ready|install->ready|"
+            r"ready\s+to\s+dig|dig\s+anywhere",
             re.I,
         ),
         None,
@@ -99,7 +143,7 @@ def _fenced_evidence_lines(evid_body: str) -> Set[str]:
     for block in FENCE.findall(evid_body):
         for raw in block.splitlines():
             line = raw.strip().strip("`")
-            if re.fullmatch(r"[A-Z0-9_]{6,}_OK", line):
+            if re.fullmatch(r"[A-Z0-9_]{6,}_OK", line) or line == "ENV_VACANCY_CLEAR":
                 found.add(line)
     return found
 
@@ -114,11 +158,16 @@ def lint_report(path: Path) -> List[str]:
     tokens = _held_tokens(held)
     evid_lines = _fenced_evidence_lines(evid)
     errors: List[str] = []
+    seen_line_rule: Set[Tuple[int, int]] = set()
 
-    for line in body.splitlines():
-        for slogan_pat, req, neg_pats in RULES:
+    for li, line in enumerate(body.splitlines()):
+        for ri, (slogan_pat, req, neg_pats) in enumerate(RULES):
             if not slogan_pat.search(line):
                 continue
+            key = (li, ri)
+            if key in seen_line_rule:
+                continue
+            seen_line_rule.add(key)
             if _negated(line, neg_pats):
                 continue
             if req is None:

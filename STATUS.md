@@ -9,7 +9,7 @@
 
 > **C′ honesty banner:** Graph / Brief / Evidence ledger substrate is **On-tree** + **Proven-green=YES** (`scope=script+live-pressure`; evidence `docs/evidence/c-prime/SUMMARY.md` `run_ts=20260724T171248Z`).  
 > Proven-green ≠ letter **B** ≠ “understanding wave complete” ≠ full-pile 掃透 ≠ dig without CONFIRM.  
-> **W1 freshness On-tree (HEAD+TTL subset) ≠ Sync contract DONE** (`FRESHNESS_W1_OK`). **W2 env-vacancy On-tree ≠ 掃透 ≠ letter B** (`ENV_VACANCY_W2_OK`). **W3a dimension-fill On-tree** (`DIMENSION_FILL_W3A_P2_OK`; ≠ 掃透 ≠ understood; ∉ Tier-0). **Not** wired into Tier-0 / pack-health. Freeze-lift: `docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md`.  
+> **W1 freshness On-tree (HEAD+TTL subset) ≠ Sync contract DONE** (`FRESHNESS_W1_OK`). **W2 env-vacancy On-tree ≠ 掃透 ≠ letter B** (`ENV_VACANCY_W2_OK`). **W3a dimension-fill On-tree** (`DIMENSION_FILL_W3A_P0_OK` + `DIMENSION_FILL_W3A_P1_OK` + `DIMENSION_FILL_W3A_P2_OK`; ≠ 掃透 ≠ understood; ∉ Tier-0). **Not** wired into Tier-0 / pack-health. Freeze-lift: `docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md`.  
 > Continuum: `PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` → matrix sweep → freshness → env-vacancy (`ANSWERED` ≠ `CLEAR` ≠ 掃透) → (optional dimension fill) → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.  
 > `PILE_INDEX_OK` remains freeze-compat wrapper echo; 掃透 only `MATRIX_SWEEP_SUBSTANTIVE_OK`; scene cover via `verify-scene-cover`.
 
@@ -27,7 +27,7 @@
 | **C′ graph / brief / ledger** | YES | YES | YES | script+live-pressure (`2026-07-24-…-design.md`; suite `C_PRIME_SUITE_OK` + live parents PRESSURE_PASS `run_ts=20260724T171248Z`; W4 thin Tier-0 = graph_floor+ledger tests only; ≠ letter B) |
 | **C′ W1 freshness** | YES | YES | YES | script+live-pressure (`FRESHNESS_W1_OK` + `FRESHNESS-W1-SUMMARY.md` `run_ts=20260724T205853Z`; ∉ Tier-0 / suite ship-gate; ≠ Sync contract DONE ≠ letter B) |
 | **C′ W2 env-vacancy** | YES | YES | YES | script (`ENV_VACANCY_W2_OK`; skip/point/classify; ≠ 掃透; ∉ Tier-0 / suite ship-gate; ≠ letter B) |
-| **C′ W3a dimension fill** | YES | YES | YES | script (`DIMENSION_FILL_W3A_P2_OK`; P0–P2; `MAP_DEEPEN_OK` brand retired; ≠ 掃透 ≠ understood; ∉ Tier-0) |
+| **C′ W3a dimension fill** | YES | YES | YES | script (`DIMENSION_FILL_W3A_P0_OK`+`DIMENSION_FILL_W3A_P1_OK`+`DIMENSION_FILL_W3A_P2_OK`; P0–P2; `MAP_DEEPEN_OK` brand retired; ≠ 掃透 ≠ understood; ∉ Tier-0) |
 | **C′ W4 Tier-0 thin** | YES | YES | YES | script (`TIER0_C_PRIME_THIN_OK`); Tier-0 runs graph_floor+ledger only; ≠ whole suite ≠ Proven-green ≠ letter B |
 | SaaS / register | blank | — | — | — |
 

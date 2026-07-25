@@ -5,6 +5,7 @@
 # verify-service-map.sh from this file (thin rg / example presence only).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+source "$ROOT/scripts/lib/require_rg.sh"
 FIX="$ROOT/skills/vibage-issue-fix/SKILL.md"
 ARCH="$ROOT/skills/vibage-arch-review/SKILL.md"
 UNLOCK_EX="$ROOT/docs/superpowers/specs/satellites/unlock.example.json"

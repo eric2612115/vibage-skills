@@ -138,3 +138,16 @@ impl review loop → pressure: test_status_capability_table + test_verify_report
 - STATUS lint: [invest-status](dd5c11d1-8262-4ba3-84ff-f3811da64ce6)
 - Narrative lint: [invest-narrative](2e3c7e4b-5e98-4c7e-b8d5-562d77d58f93)
 - Live locate: [invest-gateb](56c364e3-a0e6-4872-97d1-e77748952c3f)
+
+## 9. Residual risk disclosure (v1) + hardening wave
+
+**Deliverable lint is literal / phrase matching, not a semantic firewall.**  
+v1 blocks exact slogans and a closed set of universal-completion / env-vacancy paraphrase patterns. **Rewording can still pass** outside those patterns. Forged `## Token evidence` fences remain residual risk (§4.2). Lint ≠ chat-level honesty.
+
+### 9.1 Hardening (post Opus re-verify) — goals / non-claims
+
+| ID | Goal | Success | Must not claim |
+|----|------|---------|----------------|
+| **H1** | `rg` fail-closed in all tests that call `rg` | `REQUIRE_RG_OK` + `DEPENDENCIES.md` `ripgrep=required` + `verify-pins.sh` presence check | slogan guards are semantic; re-running `C_PRIME_SUITE_OK` flips Proven-green |
+| **H2** | Universal completion + env-vacancy phrase rules in deliverable lint | fixtures FAIL paraphrase probes; `VERIFY_REPORT_TOKENS_OK` | chat has a firewall; lint prevents all rewording |
+| **H3** | freeze-lift + STATUS W3a scope cite P0+P1+P2 | cross-doc consistent | W3a enters Tier-0; scope upgrades to `script+live-pressure` |

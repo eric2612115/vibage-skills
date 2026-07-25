@@ -3,6 +3,7 @@
 # MUST NOT be wired into scripts/test-tier0.sh.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+source "$ROOT/scripts/lib/require_rg.sh"
 VERIFY="$ROOT/scripts/verify-issue-fix-unlock.sh"
 FIX_SKILL="$ROOT/skills/vibage-issue-fix/SKILL.md"
 SAT="$ROOT/docs/superpowers/specs/satellites/SAT-issue-fix-unlock.md"
