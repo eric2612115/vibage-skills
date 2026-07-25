@@ -4,6 +4,19 @@
 Status — 找問題: open | done | blocked — …
 Status — 架構檢視: not started | in progress | done | n/a — …
 
+## Coverage (machine-filled)
+
+<!--
+DO NOT WRITE THIS BY HAND. Generate it:
+  bash "$PKG_ROOT/scripts/coverage-box.sh" emit "$WORKSPACE" --run=docs/vibage/RUNS/<run_id>.json
+verify-report.sh re-derives it from the hub; a hand-edited box fails.
+These numbers bound every claim in this report.
+-->
+
+```vibage_coverage_v1
+<paste the emitted block here>
+```
+
 ## Symptom
 <one sentence>
 

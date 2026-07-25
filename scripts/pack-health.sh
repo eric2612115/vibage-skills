@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Composite local pack proof — NOT capability SSOT, NOT Tier-0, NOT remote CI.
+# Composite pack proof — NOT capability SSOT, NOT Tier-0.
+# Remote CI runs this via a separate job (tests/test_pack_health.sh); that job
+# is still ≠ TIER0_OK (own check-run name: pack-health).
 # Usage: bash scripts/pack-health.sh /path/to/parent-workspace
 set -euo pipefail
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -15,7 +17,7 @@ Usage: $0 /path/to/parent-workspace
 
 This is a composite check (pins + parent entry + entry-docs +
 owner-zero-bash + install-phrase + install-phrase-e2e).
-PACK_HEALTH_OK ≠ TIER0_OK ≠ remote CI ≠ letter B.
+PACK_HEALTH_OK ≠ TIER0_OK ≠ letter B.
 Capability SSOT remains package STATUS.md.
 EOF
   exit 1
@@ -52,8 +54,9 @@ bash "$PKG_ROOT/scripts/verify-proven-lock.sh" "$PKG_ROOT"
 
 cat <<EOF
 PACK_HEALTH_OK parent=$PARENT
-Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ remote CI ≠ letter B.
+Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ letter B.
 Capability SSOT: package STATUS.md (not this script).
+CI: separate job pack-health may mirror tests/test_pack_health.sh; still ≠ TIER0_OK.
 PROVEN_LOCK_OK = parsed capability rows match the last signature + every YES names
 an in-package path that exists. It is ≠ "the evidence supports the claim"
 ≠ "the claims are true" ≠ letter B ≠ live-panel re-run. Scope caveat prose is

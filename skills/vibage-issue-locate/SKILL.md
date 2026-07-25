@@ -100,6 +100,13 @@ Rules:
 11. **Write dual reports** at workspace root (**success path only** — never on mid-fail):
     - `VIBAGE-ISSUE-OWNER.md` ← owner template
     - `VIBAGE-ISSUE-LOCATE.md` ← locate template  
+    **Coverage box (MUST, both reports):** generate — never hand-write —
+    `"$PKG_ROOT/scripts/coverage-box.sh" emit "$WORKSPACE" --run=docs/vibage/RUNS/<run_id>.json`
+    and paste the emitted `## Coverage (machine-filled)` section near the top.
+    `verify-report.sh` re-derives it; a hand-edited box fails. Those numbers bound
+    every sentence you write below them — if a claim sounds broader than the box,
+    rewrite the claim, not the box. `## Held tokens` must be a **subset** of the
+    box's `held:` list.
     - Fill `## Held tokens` + `## Token evidence` when body uses Gate A slogans (掃透/立體…); deliverable lint ≠ chat proof. Prefer no slogans on degraded digs.
     Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
     **OWNER must plain-list** unchecked external gaps (DB / log / container / not connected) — S06. Do not claim code-only completeness when externals were named.
