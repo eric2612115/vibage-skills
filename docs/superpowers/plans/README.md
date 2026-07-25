@@ -5,6 +5,6 @@
 **Active design:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
 **Freeze-lift:** `docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md`
 
-**STATUS (package):** C′ row Designed=YES · On-tree=YES · Proven-green=NO (sync deferred; ∉ Tier-0 / pack-health).
+**STATUS (package):** C′ row Designed=YES · On-tree=YES · Proven-green=YES (`scope=script+live-pressure`; see package `STATUS.md`).
 
-**Do not execute** archived plans: `docs/archive/2026-07-24-pre-c-prime/plans/`
+**Pre-C′ plans:** deleted from the tree. Do not recover from git history into context unless the owner asks for archaeology.

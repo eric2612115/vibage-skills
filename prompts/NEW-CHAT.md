@@ -9,7 +9,7 @@ Cold-start SSOT (live only):
 - Spec: docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md
 - Active design (C′ draft): docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md
 - Plans (live stub): docs/superpowers/plans/README.md
-- Archived plans: docs/archive/2026-07-24-pre-c-prime/
+- Pre-C′ plans: removed from tree (git history only; do not load unless owner asks archaeology)
 - Parent entry should already exist via --with-project-rule; run verify-project-entry and expect PROJECT_ENTRY_OK
 - If owner says 幫我裝 Vibage / install Vibage → follow using-vibage Install phrase (prompts/SAY-INSTALL-VIBAGE.md); do not ask them to type bash
 

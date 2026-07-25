@@ -1,6 +1,6 @@
 # Vibage C′ Implementation Plan Index
 
-> **Live SSOT for C′ construction.** Do **not** execute archived plans under `docs/archive/2026-07-24-pre-c-prime/plans/`.
+> **Live SSOT for C′ construction.** Pre-C′ plans were deleted from the tree — do not restore them from git history into context.
 
 **Spec:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
 **Detailed plan (P0–P4):** `docs/superpowers/plans/2026-07-25-vibage-c-prime-graph-brief-ledger.md`  

@@ -82,7 +82,8 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 - Spec: `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
 - Active design (C′ draft): `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`
 - Plans (live stub): `docs/superpowers/plans/README.md`
-- Archived plans: `docs/archive/2026-07-24-pre-c-prime/`  
+- Pre-C′ plans: removed from tree (git history only; do not load unless archaeology)  
+
 - Optional paste: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md)  
 - Hard stops: [`references/hard-stops.md`](references/hard-stops.md)  
 - GitHub + CI: `https://github.com/eric2612115/vibage-skills`  
