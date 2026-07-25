@@ -14,6 +14,7 @@ If owner says **幫我裝 Vibage** / install Vibage → follow using-vibage § I
 `PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` (via **vibage-pile-index**) → matrix sweep → freshness → env-vacancy → optional deferred dimension fill → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.
 Do not claim installed without verify. Do not dig yet. Do not ask “which repos?” instead of full pile-index / graph floor.
 掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `DIMENSION_FILL_*` (legacy `MAP_DEEPEN_OK` brand retired) ≠ full-understanding.
+After `PILE_INDEX_OK` / `GRAPH_FLOOR_OK`: nameplate only; cost/deepen ask (ticket paste = skip deepen).
 Freshness: parse `verify-freshness.sh` stdout — need `FRESHNESS_OK` or (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`). **Forbidden:** treat exit 0 as `FRESHNESS_OK`. Session start: report stale_count + incomplete matrix; escalate lines must disclose.
 Env vacancy: parse `verify-env-vacancy.sh` — `CLEAR` | `ASK` | `ANSWERED` | `BLOCKED`. **ANSWERED ≠ CLEAR ≠ 掃透**; exit 0 ≠ 掃透.
 
