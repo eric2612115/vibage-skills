@@ -1,0 +1,10 @@
+ENV_VACANCY_ASK count=9
+VIBAGE_ENV_VACANCY_ASK: repo=LangSight has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=OmRate_Phalanx has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=TMX_Token_allocation has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=TS_offical_v2 has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=TimeStructureStrategy has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax-alpha-mm-frontend has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax-curator-server-client-sdk has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax-leaderboard-frontend-v2 has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax_remotion has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.

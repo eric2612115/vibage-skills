@@ -1,0 +1,7 @@
+Wrote /Users/eric.fang/DefiStrategy/docs/vibage/maps/env_branch_matrix.json
+Wrote /Users/eric.fang/DefiStrategy/docs/vibage/maps/inventory_manifest.json
+OK: cells=22 status=ok
+1
+OK: cell failed OmRate_Phalanx@main/missing-env-config
+FAIL: mark --success requires git HEAD for repo checkout
+FAIL: mark --success failed (cells not all terminal?)

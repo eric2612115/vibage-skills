@@ -1,0 +1,61 @@
+===== PRESSURE MATRIX PANEL ATTACH PACK run_ts=20260725T123404Z =====
+NOT: L1 fixture scene ≠ MindOwn live stereoscopic; ANSWERED≠掃透; WAIVED≠掃透
+===== DEFI entry =====
+PROJECT_ENTRY_OK parent=/Users/eric.fang/DefiStrategy
+Note: PROJECT_ENTRY_OK ≠ hub CONFIRM / locate DONE.
+Note: Cursor hooks installed; Claude/Codex use always-on blocks (host-best). See references/host-best-session-entry.md
+===== DEFI floor =====
+GRAPH_FLOOR_OK
+===== DEFI matrix =====
+ENV_BRANCH_MATRIX_OK
+===== DEFI substantive =====
+FAIL: missing-env-config blocks MATRIX_SWEEP_SUBSTANTIVE_OK (waiver never grants 掃透)
+===== DEFI freshness =====
+FRESHNESS_WAIVED
+STALE_DISCLOSED count=1
+===== DEFI vacancy_before (ASK) =====
+ENV_VACANCY_ASK count=9
+VIBAGE_ENV_VACANCY_ASK: repo=LangSight has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=OmRate_Phalanx has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=TMX_Token_allocation has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=TS_offical_v2 has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=TimeStructureStrategy has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax-alpha-mm-frontend has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax-curator-server-client-sdk has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax-leaderboard-frontend-v2 has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=termmax_remotion has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+===== DEFI vacancy_after (ANSWERED) =====
+ENV_VACANCY_ANSWERED count=9
+===== MINDOWN entry =====
+PROJECT_ENTRY_OK parent=/Users/eric.fang/MindOwnBuz
+Note: PROJECT_ENTRY_OK ≠ hub CONFIRM / locate DONE.
+Note: Cursor hooks installed; Claude/Codex use always-on blocks (host-best). See references/host-best-session-entry.md
+===== MINDOWN floor =====
+GRAPH_FLOOR_OK
+===== MINDOWN matrix =====
+ENV_BRANCH_MATRIX_OK
+===== MINDOWN substantive =====
+FAIL: missing-env-config blocks MATRIX_SWEEP_SUBSTANTIVE_OK (waiver never grants 掃透)
+===== MINDOWN freshness =====
+FRESHNESS_OK
+===== MINDOWN vacancy_before =====
+ENV_VACANCY_ASK count=1
+VIBAGE_ENV_VACANCY_ASK: repo=SelfAutoBuz has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+===== MINDOWN vacancy_after =====
+ENV_VACANCY_ANSWERED count=1
+===== FRIEND floor =====
+GRAPH_FLOOR_OK
+===== FRIEND matrix =====
+ENV_BRANCH_MATRIX_OK
+===== FRIEND substantive =====
+MATRIX_SWEEP_SUBSTANTIVE_OK
+===== SCENE brief architecture =====
+SCENE_BRIEF_OK
+===== SCENE cover architecture =====
+COVER_ARCH_EXIT=0
+===== SCENE brief quant =====
+SCENE_BRIEF_OK
+===== SCENE cover quant =====
+COVER_QUANT_EXIT=0
+===== SCENE NOT_CLAIM =====
+L1_FIXTURE_SCENE_COVER≠MindOwnBuz_live_stereoscopic

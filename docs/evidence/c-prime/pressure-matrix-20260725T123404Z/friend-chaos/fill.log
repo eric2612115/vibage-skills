@@ -1,0 +1,69 @@
+Wrote /var/folders/gc/0thghrn97zzfbhr0xpd47nlh0000gp/T/tmp.Cp9WJbTqgs/docs/vibage/maps/service_map.json
+OK: services=10 children=10 edges=0
+OK: service_map.json present
+OK: pipeline_id=service_map
+OK: quality_bar=MEDIUM
+OK: scale=Subset
+OK: services count=10
+OK: map qualification gates pass
+OK: discover_mode=nested services=10 children=10
+Wrote /private/var/folders/gc/0thghrn97zzfbhr0xpd47nlh0000gp/T/tmp.Cp9WJbTqgs/docs/vibage/maps/env_branch_matrix.json
+Wrote /private/var/folders/gc/0thghrn97zzfbhr0xpd47nlh0000gp/T/tmp.Cp9WJbTqgs/docs/vibage/maps/inventory_manifest.json
+OK: cells=40 status=ok
+40
+OK: sweeping n_cells=40 parallelism=8 timeout=60s
+OK: cell proven svc-01@main/prod
+OK: cell proven nest/deep-svc@main/prod
+OK: cell proven nest/deep-svc@staging/staging
+OK: cell proven nest/deep-svc@main/staging
+OK: cell proven nest/deep-svc@staging/prod
+OK: cell proven svc-01@main/staging
+OK: cell proven svc-01@staging/prod
+OK: cell proven svc-01@staging/staging
+OK: cell proven svc-02@main/prod
+OK: cell proven svc-02@main/staging
+OK: cell proven svc-03@main/prod
+OK: cell proven svc-02@staging/prod
+OK: cell proven svc-02@staging/staging
+OK: cell proven svc-03@main/staging
+OK: cell proven svc-03@staging/prod
+OK: cell proven svc-03@staging/staging
+OK: cell proven svc-04@main/prod
+OK: cell proven svc-04@main/staging
+OK: cell proven svc-04@staging/prod
+OK: cell proven svc-04@staging/staging
+OK: cell proven svc-05@main/prod
+OK: cell proven svc-05@main/staging
+OK: cell proven svc-05@staging/prod
+OK: cell proven svc-05@staging/staging
+OK: cell proven svc-06@main/prod
+OK: cell proven svc-06@main/staging
+OK: cell proven svc-06@staging/prod
+OK: cell proven svc-07@main/prod
+OK: cell proven svc-06@staging/staging
+OK: cell proven svc-07@main/staging
+OK: cell proven svc-07@staging/prod
+OK: cell proven svc-07@staging/staging
+OK: cell proven svc-08@main/prod
+OK: cell proven svc-08@main/staging
+OK: cell proven svc-08@staging/prod
+OK: cell proven svc-09@main/prod
+OK: cell proven svc-08@staging/staging
+OK: cell proven svc-09@main/staging
+OK: cell proven svc-09@staging/prod
+OK: cell proven svc-09@staging/staging
+OK: forced_terminal=0
+OK: c-prime-fill complete parent=/var/folders/gc/0thghrn97zzfbhr0xpd47nlh0000gp/T/tmp.Cp9WJbTqgs
+FULL_MOTHER_FILL_REFRESH
+OK: freshness marked success repo=nest/deep-svc
+OK: freshness marked success repo=svc-01
+OK: freshness marked success repo=svc-02
+OK: freshness marked success repo=svc-03
+OK: freshness marked success repo=svc-04
+OK: freshness marked success repo=svc-05
+OK: freshness marked success repo=svc-06
+OK: freshness marked success repo=svc-07
+OK: freshness marked success repo=svc-08
+OK: freshness marked success repo=svc-09
+ENV_BRANCH_MATRIX_OK
+MATRIX_SWEEP_SUBSTANTIVE_OK

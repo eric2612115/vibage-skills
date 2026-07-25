@@ -1,0 +1,5 @@
+{
+  "discover_nested_git": true,
+  "discover_max_depth": 3,
+  "include_submodules": false
+}

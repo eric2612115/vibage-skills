@@ -1,0 +1,115 @@
+Linked global (cursor): /Users/eric.fang/.cursor/skills/using-vibage -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/using-vibage
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-init -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-init
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-bootstrap -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-bootstrap
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-pile-index -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-pile-index
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-map-deepen -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-map-deepen
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-issue-locate -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-locate
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-orient -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-orient
+Linked global (cursor): /Users/eric.fang/.cursor/skills/research-survey-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/research-survey-review
+Linked global (cursor): /Users/eric.fang/.cursor/skills/section-gate-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/section-gate-review
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-issue-fix -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-fix
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-arch-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-arch-review
+Linked global (cursor): /Users/eric.fang/.cursor/skills/vibage-locate -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-locate
+Linked global (claude): /Users/eric.fang/.claude/skills/using-vibage -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/using-vibage
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-init -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-init
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-bootstrap -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-bootstrap
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-pile-index -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-pile-index
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-map-deepen -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-map-deepen
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-issue-locate -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-locate
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-orient -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-orient
+Linked global (claude): /Users/eric.fang/.claude/skills/research-survey-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/research-survey-review
+Linked global (claude): /Users/eric.fang/.claude/skills/section-gate-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/section-gate-review
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-issue-fix -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-fix
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-arch-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-arch-review
+Linked global (claude): /Users/eric.fang/.claude/skills/vibage-locate -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-locate
+Linked global (codex): /Users/eric.fang/.agents/skills/using-vibage -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/using-vibage
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-init -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-init
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-bootstrap -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-bootstrap
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-pile-index -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-pile-index
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-map-deepen -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-map-deepen
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-issue-locate -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-locate
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-orient -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-orient
+Linked global (codex): /Users/eric.fang/.agents/skills/research-survey-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/research-survey-review
+Linked global (codex): /Users/eric.fang/.agents/skills/section-gate-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/section-gate-review
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-issue-fix -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-fix
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-arch-review -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-arch-review
+Linked global (codex): /Users/eric.fang/.agents/skills/vibage-locate -> /Users/eric.fang/MindOwnBuz/vibage-skills/skills/vibage-issue-locate
+Wrote Cursor rule: /Users/eric.fang/DefiStrategy/.cursor/rules/vibage.mdc
+Wrote Cursor hook script: /Users/eric.fang/DefiStrategy/.cursor/hooks/vibage-session-start.sh
+Upserted Cursor hooks.json sessionStart: /Users/eric.fang/DefiStrategy/.cursor/hooks.json
+Wrote: /Users/eric.fang/DefiStrategy/.claude/vibage-entry.md
+Updated vibage block: /Users/eric.fang/DefiStrategy/CLAUDE.md
+Updated vibage block: /Users/eric.fang/DefiStrategy/AGENTS.md
+Wrote: /Users/eric.fang/DefiStrategy/docs/vibage/STATUS.md
+Wrote: /Users/eric.fang/DefiStrategy/docs/vibage/DECISIONS.md
+Wrote: /Users/eric.fang/DefiStrategy/docs/vibage/UploadManifest.stub.json
+Wrote: /Users/eric.fang/DefiStrategy/docs/vibage/model-routing.json
+Wrote: /Users/eric.fang/DefiStrategy/docs/vibage/SCAN_PLAN.md
+Running c-prime-fill on /Users/eric.fang/DefiStrategy ...
+Wrote /Users/eric.fang/DefiStrategy/docs/vibage/maps/service_map.json
+OK: services=17 children=17 edges=0
+OK: service_map.json present
+OK: pipeline_id=service_map
+OK: quality_bar=MEDIUM
+OK: scale=Large
+OK: services count=17
+OK: map qualification gates pass
+OK: discover_mode=flat services=17 children=17
+Wrote /Users/eric.fang/DefiStrategy/docs/vibage/maps/env_branch_matrix.json
+Wrote /Users/eric.fang/DefiStrategy/docs/vibage/maps/inventory_manifest.json
+OK: cells=22 status=ok
+22
+OK: sweeping n_cells=22 parallelism=8 timeout=60s
+OK: cell failed LangSight@main/missing-env-config
+OK: cell failed OmRate_Phalanx@main/missing-env-config
+OK: cell failed TMX_Token_allocation@main/missing-env-config
+OK: cell failed TS_offical_v2@main/missing-env-config
+OK: cell failed TimeStructureStrategy@main/missing-env-config
+OK: cell failed termmax-alpha-mm-frontend@main/missing-env-config
+OK: cell proven TermMax_app_v2@main/local
+OK: cell proven strategy-vault-v1@main/local
+OK: cell proven quant-lab@main/local
+OK: cell proven term-max-curator-frontend-v-1-5@eric-opt/staging
+OK: cell proven termmax-alpha-mm@main/staging
+OK: cell proven term-structure-homepage-official@main/local
+OK: cell proven term-max-curator-frontend-v-1-5@main/staging
+OK: cell failed termmax-curator-server-client-sdk@main/missing-env-config
+OK: cell failed termmax-leaderboard-frontend-v2@main/missing-env-config
+OK: cell failed termmax_remotion@main/missing-env-config
+OK: cell proven termmax-curator-frontend-v2@main/staging
+OK: cell proven termmax-curator-frontend-v2@eric-opt/staging
+OK: cell proven termmax-leaderboard-s1-super@chore/score-pay-regression/dev
+OK: cell proven termmax-leaderboard-s1-super@main/dev
+OK: cell proven termmax-leaderboard-s1-super@chore/score-pay-regression/development
+OK: cell proven termmax-leaderboard-s1-super@main/development
+OK: forced_terminal=0
+OK: c-prime-fill complete parent=/Users/eric.fang/DefiStrategy
+FULL_MOTHER_FILL_REFRESH
+OK: freshness marked success repo=LangSight
+FAIL: mark --success requires git HEAD for repo checkout
+NOTE: freshness mark failed repo=OmRate_Phalanx
+OK: freshness marked success repo=TMX_Token_allocation
+OK: freshness marked success repo=TS_offical_v2
+OK: freshness marked success repo=TermMax_app_v2
+OK: freshness marked success repo=TimeStructureStrategy
+OK: freshness marked success repo=quant-lab
+OK: freshness marked success repo=strategy-vault-v1
+OK: freshness marked success repo=term-max-curator-frontend-v-1-5
+OK: freshness marked success repo=term-structure-homepage-official
+OK: freshness marked success repo=termmax-alpha-mm
+OK: freshness marked success repo=termmax-alpha-mm-frontend
+OK: freshness marked success repo=termmax-curator-frontend-v2
+OK: freshness marked success repo=termmax-curator-server-client-sdk
+OK: freshness marked success repo=termmax-leaderboard-frontend-v2
+OK: freshness marked success repo=termmax-leaderboard-s1-super
+OK: freshness marked success repo=termmax_remotion
+freshness_mark_summary ok=16 fail=1 skipped=0
+NOTE: FULL_MOTHER_FILL_REFRESH does not imply FRESHNESS_OK when mark fail>0
+MATRIX_INCOMPLETE
+NOTE: not 掃透 (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
+Installed. PKG_ROOT=/Users/eric.fang/MindOwnBuz/vibage-skills
+Surfaces: cursor,claude,codex
+MANIFEST skills linked under enabled global skill homes.
+Pin check: /Users/eric.fang/MindOwnBuz/vibage-skills/scripts/verify-pins.sh
+PKG_ROOT resolve: /Users/eric.fang/MindOwnBuz/vibage-skills/scripts/resolve-pkg-root.sh
+Tip: clone obra/superpowers once, then symlink into each skill home; verify-pins probes all three.

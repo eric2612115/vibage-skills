@@ -23,7 +23,7 @@ description: >-
 |------|-----|
 | Parent hub + floor; owner **yes** to dimension-fill after anti-illusion + cost band | Default deepen/fill on every install |
 | Freeze uses `dimension_yes` + `dimension_scope_ids` (not `deepen_yes` alone) | Silent auth via legacy `deepen_*` / `pipeline_id=map_deepen` |
-| Script verify prints `DIMENSION_FILL_*` | Claiming `MAP_DEEPEN_OK` or “system understood” |
+| Script verify prints `DIMENSION_FILL_*` | Never claim `MAP_DEEPEN_OK` or “system understood” |
 | Ticket paste alone | Implicit yes (ticket = implicit **no**) |
 
 ## PKG_ROOT
@@ -51,6 +51,6 @@ bash "$PKG_ROOT/scripts/verify-dimension-fill.sh" "<mother>"
 ## Forbidden
 
 - green-shrink after partial to mint OK
-- narrating understood / dig-ready / install→ready / 掃透 from fill or deepen
+- narrating understood / dig-ready / ready-after-install-alone / 掃透 from fill or deepen
 - wiring into Tier-0 / pack-health / `assert_gate`
 - treating dossiers stub alone as depth without ledger claim ids

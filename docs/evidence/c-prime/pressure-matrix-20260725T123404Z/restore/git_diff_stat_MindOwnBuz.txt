@@ -1,0 +1,10 @@
+NOT_A_GIT_WORKTREE parent=/Users/eric.fang/MindOwnBuz
+docs/vibage deleted: YES
+PROJECT_ENTRY files:
+-rw-r--r--  1 eric.fang  staff  3348 Jul 25 20:38 /Users/eric.fang/MindOwnBuz/.cursor/rules/vibage.mdc
+-rw-r--r--  1 eric.fang  staff  2993 Jul 25 20:38 /Users/eric.fang/MindOwnBuz/CLAUDE.md
+-rw-r--r--  1 eric.fang  staff  3059 Jul 25 20:38 /Users/eric.fang/MindOwnBuz/AGENTS.md
+docs/:
+total 0
+drwxr-xr-x   2 eric.fang  staff   64 Jul 25 20:40 .
+drwxr-xr-x  15 eric.fang  staff  480 Jul 25 04:59 ..
