@@ -1,0 +1,276 @@
+{
+  "schema_version": "1",
+  "hash_alg": "sha256",
+  "payload_hash": "e716326aace336e5bc23b610671383fa501f965f634904d07e122ac0093df989",
+  "note": "Signed assertion = STATUS.md `## Capability` projection AND the evidence pointers below. Re-sign only with evidence. PROVEN_LOCK_OK != claims true != letter B != panel re-run.",
+  "projection": [
+    {
+      "capability": "C′ W1 freshness",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script+live-pressure",
+      "scope_tokens": [
+        "FRESHNESS_W1_OK"
+      ],
+      "scope_run_ts": [
+        "20260724T205853Z"
+      ]
+    },
+    {
+      "capability": "C′ W2 env-vacancy",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [
+        "ENV_VACANCY_W2_OK"
+      ],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "C′ W3a dimension fill",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [
+        "DIMENSION_FILL_W3A_P0_OK",
+        "DIMENSION_FILL_W3A_P1_OK",
+        "DIMENSION_FILL_W3A_P2_OK",
+        "MAP_DEEPEN_OK"
+      ],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "C′ W4 Tier-0 thin",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [
+        "TIER0_C_PRIME_THIN_OK"
+      ],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "C′ graph / brief / ledger",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script+live-pressure",
+      "scope_tokens": [
+        "C_PRIME_SUITE_OK"
+      ],
+      "scope_run_ts": [
+        "20260724T171248Z"
+      ]
+    },
+    {
+      "capability": "Focus: agent-pressure",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "agent",
+      "scope_tokens": [],
+      "scope_run_ts": [
+        "20260723T101530Z"
+      ]
+    },
+    {
+      "capability": "Handoff dual-write",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "Optional: issue-fix",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "Optional: 架構檢視",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "Report hard-cut VIBAGE-ISSUE-*",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "SaaS / register",
+      "designed": "blank",
+      "on_tree": "—",
+      "proven_green": "—",
+      "scope_kind": "—",
+      "scope_tokens": [],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "Tier-0 scripts/test-tier0.sh",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [],
+      "scope_run_ts": []
+    },
+    {
+      "capability": "scan_plan_hash + assert_gate",
+      "designed": "YES",
+      "on_tree": "YES",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "scope_tokens": [],
+      "scope_run_ts": []
+    }
+  ],
+  "rows": [
+    {
+      "capability": "C′ W1 freshness",
+      "proven_green": "YES",
+      "scope_kind": "script+live-pressure",
+      "evidence_kind": "run",
+      "evidence_paths": [
+        "docs/evidence/c-prime/FRESHNESS-W1-SUMMARY.md"
+      ],
+      "evidence_run_ts": "20260724T205853Z"
+    },
+    {
+      "capability": "C′ W2 env-vacancy",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_env_vacancy_w2.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "C′ W3a dimension fill",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_dimension_fill_w3a.sh",
+        "tests/test_verify_map_deepen.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "C′ W4 Tier-0 thin",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_tier0_c_prime_thin.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "C′ graph / brief / ledger",
+      "proven_green": "YES",
+      "scope_kind": "script+live-pressure",
+      "evidence_kind": "run",
+      "evidence_paths": [
+        "docs/evidence/c-prime/SUMMARY.md"
+      ],
+      "evidence_run_ts": "20260724T171248Z"
+    },
+    {
+      "capability": "Focus: agent-pressure",
+      "proven_green": "YES",
+      "scope_kind": "agent",
+      "evidence_kind": "run",
+      "evidence_paths": [
+        "docs/evidence/focus/SUMMARY.md"
+      ],
+      "evidence_run_ts": "20260723T101530Z"
+    },
+    {
+      "capability": "Handoff dual-write",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_handoff.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "Optional: issue-fix",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_issue_fix_usable.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "Optional: 架構檢視",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_arch_review_usable.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "Report hard-cut VIBAGE-ISSUE-*",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_report_names.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "SaaS / register",
+      "proven_green": "—",
+      "scope_kind": "—",
+      "evidence_kind": "none",
+      "evidence_paths": [],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "Tier-0 scripts/test-tier0.sh",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "scripts/test-tier0.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
+      "capability": "scan_plan_hash + assert_gate",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_assert_gate.sh",
+        "tests/test_scan_plan_hash.py"
+      ],
+      "evidence_run_ts": ""
+    }
+  ]
+}

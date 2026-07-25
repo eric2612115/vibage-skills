@@ -24,3 +24,22 @@ jobs:
           python3 -m pytest --version
       - name: Tier-0 ship gate
         run: bash scripts/test-tier0.sh
+
+  # Separate JOB on purpose, not just a separate step: check-runs and branch
+  # protection are per-job, so a STATUS-lint failure must never surface as
+  # "tier0 failed". `TIER0_OK` semantics stay exactly what they were.
+  # Unsigned Proven-green drift fails *this* job; merge-blocking still depends
+  # on required-check settings (workflow alone ≠ unbypassable on push).
+  status-lints:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # verify-proven-lock.sh --since needs history
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Proven-green lock
+        run: bash tests/test_proven_lock.sh
+      - name: STATUS capability table shape
+        run: bash tests/test_status_capability_table.sh

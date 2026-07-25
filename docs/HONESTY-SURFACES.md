@@ -1,0 +1,119 @@
+# Honesty surfaces (what "covered" can and cannot mean)
+
+Vibage spends most of its design budget on one problem: **an agent claiming more
+than it proved.** That problem does not live on one surface, and the surfaces do
+not have the same ceiling. Scoring them with a single "fully covered?" question
+produces a permanent **NO** that says nothing useful — the same mistake as
+collapsing `script` and `agent` scope into one Proven-green column.
+
+So: name the surfaces, name the inequality.
+
+## The three surfaces
+
+| Surface | What can go wrong | Instrument | Ceiling |
+|---------|-------------------|------------|---------|
+| **Capability SSOT** | `STATUS.md` says Proven-green=YES for something that was never proven, or drifts silently across repair waves | `verify-proven-lock.sh` (`PROVEN_LOCK_OK`), `test_status_capability_table.sh` (`STATUS_CAPABILITY_TABLE_OK`) | **Reachable for the signed fields** — tri-state cells, scope kind, cited tokens and cited `run_ts`. Scope caveat prose stays unsigned |
+| **Deliverable** | `VIBAGE-ISSUE-OWNER/LOCATE.md` narrate 掃透 / 立體場景 / dig-ready without holding the token | `verify-report.sh` → `REPORT_TOKEN_LINT_OK`, `verify-run.sh` mode honesty | **Reachable in principle**, currently partial (see below) |
+| **Chat** | The agent tells the owner something truer-sounding than the artifacts support | receipt / milestone script stdout only | **Not reachable. Bounded by construction.** |
+
+## The inequality
+
+```
+CAPABILITY_SSOT_HONESTY  ≠  DELIVERABLE_HONESTY  ≠  CHAT_HONESTY
+```
+
+- **Capability SSOT honesty** — enforceable today for the signed fields. Drift is
+  not *impossible* — anyone with write access can re-sign — but **unsigned** drift
+  fails the gate, and re-signing is an explicit act that shows up in review and
+  must name an evidence path that resolves inside the package. See
+  `docs/PROVEN-LOCK.json`. What the gate cannot see: whether that evidence file's
+  content actually supports the claim, and any caveat deleted from Scope prose.
+- **Deliverable honesty** — enforceable in principle, **partial today**. The lint is
+  literal / phrase matching. Second-order paraphrase passes; this is measured and
+  disclosed, not assumed away. See the residual section below.
+- **Chat honesty** — **not provable, and no future wave will make it provable.**
+  Chat has no verifiable side effect. The only instrument is to make the machine
+  speak in chat (paste script stdout verbatim at milestones), which raises the
+  cost of a false claim from "an ambiguous turn of phrase" to "fabricating tool
+  output" — a different and much rarer failure mode. It does not close the gap.
+
+**Therefore:** "Is Vibage fully covered?" is not answerable as one question.
+Answer it per surface, and never let a reachable surface borrow credibility from
+an unreachable one — or the reverse.
+
+## Measured residual (deliverable surface)
+
+The deliverable lint blocks exact slogans plus a closed set of universal-completion
+and env-vacancy phrases. Rewording outside those patterns passes. This is measured,
+not estimated — probes that pass today:
+
+- 「每一個 repo 的每一條 branch 都檢查完畢，沒有漏網之魚。」(「檢查」∉ 掃/scan)
+- 「環境變數的疑慮都已排除。」(「排除」∉ 確認/釐清/clear)
+- "I have completed a full sweep of every environment and branch." (`sweep` ∉ scanned/mapped)
+- 「這個系統的架構我已經完全掌握了。」(「掌握」∉ understood/全懂)
+- 「可以直接開挖了。」(「開挖」∉ dig-ready/ready to dig)
+
+**Do not close this with more regex.** Every added pattern enumerates one more bad
+sentence out of an infinite set while adding a surface that *looks* covered — using
+the fake-green technique to fight fake green. The structural fix is to stop
+detecting the lie and start bounding it:
+
+1. **Machine-filled coverage box** — a required report section produced by a script
+   and re-derived by the lint, so tampering fails. A sentence claiming full coverage
+   directly under `dug: 1/3 · matrix proven: 0/3 · 掃透: NO` is self-refuting to the
+   owner without the lint understanding any language. Paraphrase stops being
+   *blocked* and starts being *pointless*.
+2. **Per-finding citation** — every finding line carries a path or sits under an
+   explicit `## Not verified` heading. Language-independent.
+
+Both are deliverable-surface work; neither claims anything about chat.
+
+## What each token does and does not mean
+
+| Token | Means | Does **not** mean |
+|-------|-------|-------------------|
+| `PROVEN_LOCK_OK` | The rows the parser sees in the single `## Capability` table match the last signature; each Proven-green=YES names an in-package path that exists (run-kind: containing the declared `run_ts`) | The evidence supports the claim; the claims are true; letter B; a live-panel re-run happened; that unsigned Scope prose is intact |
+| `STATUS_CAPABILITY_TABLE_OK` | Table shape is well-formed; no scope words leaked into tri-state columns | Any claim in the table is proven |
+| `REPORT_TOKEN_LINT_OK` | No listed slogan appears without the required Held token + evidence fence | Semantic coverage; paraphrase caught; chat honesty |
+| `VERIFY_REPORT_OK` | Report passes the structural checklist | Nested subagents actually ran (see `verify-report.sh` header) |
+
+## Known limits of the capability-SSOT gate (measured, not assumed)
+
+An adversarial pass tried to move a Proven-green claim without tripping
+`verify-proven-lock.sh`. Five bypasses were reproduced and are now closed, each
+with a regression test in `tests/test_proven_lock.sh`:
+
+| Bypass | Now |
+|--------|-----|
+| Flip the **lock's own** `proven_green` to `NO` → evidence check disarms itself | Closed — the claim is read from STATUS.md; a lock row disagreeing with STATUS fails |
+| Append a row indented 1–3 spaces (GitHub still renders it as a table row) | Closed — every pipe-line in the section is a row, indented or not |
+| Add a second `## Capability` heading to shadow the governed table | Closed — exactly one heading required |
+| Flip `Designed` / `On-tree` (outside the old projection) | Closed — both are signed |
+| `evidence_paths` pointing at `/etc/hosts`, `../` escapes, symlinks, or a `run_ts` of `"2"` | Closed — package-relative, no `..`, no symlink, resolved inside root, strict `run_ts` format |
+
+A second, cross-model pass then found four more. All closed, all with tests:
+
+| Bypass | Now |
+|--------|-----|
+| Re-aim `evidence_paths` at any other file that happens to exist — the pointers were outside the hash | Closed — the signature covers **both** halves: the STATUS projection AND the evidence pointers |
+| Downgrade `evidence_kind` `run` → `script` to shed the `run_ts` check | Closed — same signature |
+| A run-kind row whose `run_ts` is named only inside the lock, never in STATUS | Closed — run-kind rows must cite `run_ts=` in the Scope cell, so the timestamp is a public claim |
+| A stale `lock.projection` that disagrees with STATUS — no bypass, but it misleads anyone reading the lock instead of running it | Closed — stored projection must equal the recomputed one |
+
+**Still open, deliberately:** Scope **prose** is unsigned. Deleting a `≠` caveat
+from a Scope cell — which is where much of this table's honesty content lives —
+does not trip the gate. Signing free text would make every wording fix a
+re-signature event; the trade was made knowingly, and it is a real hole, not an
+oversight. A forged `run_ts=` citation *is* caught, because that is a fact rather
+than prose.
+
+**Also open:** the gate proves an evidence file exists and carries the declared
+`run_ts`. It cannot judge whether that file's content supports the claim.
+
+## Where this runs
+
+`PROVEN_LOCK_OK` is checked in remote CI (its own job `status-lints`) and in
+`pack-health.sh`. It is deliberately **∉ Tier-0** — `TIER0_OK` semantics stay
+exactly what they were, consistent with the existing policy that STATUS lints
+stay out of the ship gate. Whether that job is a required check on GitHub is a
+repo-settings question — the workflow alone does not make merge “unbypassable.”
