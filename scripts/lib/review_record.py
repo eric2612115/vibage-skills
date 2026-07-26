@@ -17,13 +17,14 @@ from pathlib import Path
 TRIGGER_PREFIXES = (
     "scripts/lib/",
     "adapters/",
-    "skills/using-vibage/",
+    "skills/",  # G2: entire skills tree
     "tests/",
 )
 TRIGGER_EXACT = {
     "references/hard-stops.md",
     "references/looping-review.md",
     "references/routing-scope.md",
+    "references/review-budget.md",
     "scripts/assert_gate.sh",
     "scripts/write_confirm.sh",
     "scripts/coverage-box.sh",

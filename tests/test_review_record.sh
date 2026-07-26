@@ -7,13 +7,14 @@ cd "$ROOT"
 
 fail() { echo "FAIL: $*"; exit 1; }
 
-if grep -qE 'test_review_record|verify-review-record' scripts/test-tier0.sh 2>/dev/null; then
-  fail "review-record must not enter scripts/test-tier0.sh"
+if grep -qE 'test_review_record|verify-review-record|review-budget' scripts/test-tier0.sh 2>/dev/null; then
+  fail "review-budget/record must not enter scripts/test-tier0.sh"
 fi
 
 [[ -f scripts/verify-review-record.sh ]] || fail "missing verify-review-record.sh"
 [[ -f scripts/lib/review_record.py ]] || fail "missing review_record.py"
 [[ -f references/looping-review.md ]] || fail "missing looping-review.md"
+[[ -f references/review-budget.md ]] || fail "missing review-budget.md"
 
 FIX="$ROOT/docs/evidence/reviews/_fixture_work"
 mkdir -p "$FIX" "$ROOT/docs/evidence/reviews"
@@ -27,6 +28,16 @@ assert is_trigger("scripts/assert_gate.sh"), "assert_gate not trigger"
 assert is_trigger("tests/test_assert_gate.sh"), "tests/ not trigger"
 assert not is_trigger("docs/evidence/reviews/x.md")
 print("TRIGGER_ASSERT_OK")
+PY
+
+python3 - <<'PY' || fail "skills/ prefix must be trigger (G2)"
+import sys
+sys.path.insert(0, "scripts/lib")
+from review_record import is_trigger
+assert is_trigger("skills/vibage-orient/SKILL.md"), "skills/ not only using-vibage"
+assert is_trigger("skills/using-vibage/SKILL.md")
+assert is_trigger("references/review-budget.md"), "review-budget must be TRIGGER_EXACT"
+print("TRIGGER_SKILLS_G2_OK")
 PY
 
 PATHS_FILE="$FIX/paths.txt"

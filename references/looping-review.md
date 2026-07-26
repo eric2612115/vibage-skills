@@ -7,10 +7,12 @@ Records may come from another chat, another host, another person, or another mod
 ## When it applies
 
 - Authoring or revising an implementation **plan** that will drive guarded work
-- Changing guarded paths (see `scripts/verify-review-record.sh` trigger list):
-  `scripts/verify-*`, entire `scripts/lib/`, `adapters/**`, `skills/using-vibage/**`,
+- Changing guarded paths (see `scripts/verify-review-record.sh` trigger list +
+  `references/review-budget.md`):
+  `scripts/verify-*`, entire `scripts/lib/`, `adapters/**`, entire `skills/**`,
   entire `tests/` (incl. fixtures — churn requires a record),
   `references/hard-stops.md`, `references/looping-review.md`, `references/routing-scope.md`,
+  `references/review-budget.md`,
   `scripts/assert_gate.sh`, `scripts/write_confirm.sh`, `scripts/coverage-box.sh`,
   `scripts/test-tier0.sh`, `scripts/pack-health.sh`
 
