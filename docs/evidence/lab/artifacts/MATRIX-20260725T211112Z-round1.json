@@ -1,0 +1,55 @@
+{
+  "round": "1",
+  "matrix_root": "/tmp/vibage-lab/20260725T211112Z-round1",
+  "ok": 3,
+  "fail": 0,
+  "scoreboards": [
+    {
+      "parent": "/tmp/vibage-lab/20260725T211112Z-round1/20260725T211112Z-fix-defi_strategy_like-script-r1-14315/parent",
+      "project_entry_ok": true,
+      "pile_index_ok": true,
+      "env_branch_matrix_ok": false,
+      "matrix_incomplete": true,
+      "matrix_sweep_substantive_ok": false,
+      "freshness_ok": true,
+      "freshness_waived": false,
+      "stale_disclosed": false,
+      "pile_index_exit": 0,
+      "c_prime_fill_exit": 0,
+      "freshness_exit": 0,
+      "honesty": "LAB_OK \u2260 live mutated \u2260 TIER0_OK \u2260 \u6383\u900f \u2260 letter B"
+    },
+    {
+      "parent": "/tmp/vibage-lab/20260725T211112Z-round1/20260725T211112Z-fix-synthetic-parent-script-r1-14305/parent",
+      "project_entry_ok": true,
+      "pile_index_ok": true,
+      "env_branch_matrix_ok": false,
+      "matrix_incomplete": true,
+      "matrix_sweep_substantive_ok": false,
+      "freshness_ok": false,
+      "freshness_waived": false,
+      "stale_disclosed": false,
+      "pile_index_exit": 0,
+      "c_prime_fill_exit": 0,
+      "freshness_exit": 1,
+      "honesty": "LAB_OK \u2260 live mutated \u2260 TIER0_OK \u2260 \u6383\u900f \u2260 letter B"
+    },
+    {
+      "parent": "/tmp/vibage-lab/20260725T211112Z-round1/20260725T211115Z-fix-friend-chaos-script-r1-15600/parent",
+      "project_entry_ok": true,
+      "pile_index_ok": true,
+      "env_branch_matrix_ok": true,
+      "matrix_incomplete": false,
+      "matrix_sweep_substantive_ok": true,
+      "freshness_ok": true,
+      "freshness_waived": false,
+      "stale_disclosed": false,
+      "pile_index_exit": 0,
+      "c_prime_fill_exit": 0,
+      "freshness_exit": 0,
+      "honesty": "LAB_OK \u2260 live mutated \u2260 TIER0_OK \u2260 \u6383\u900f \u2260 letter B"
+    }
+  ],
+  "honesty": "LAB_OK \u2260 live mutated \u2260 TIER0_OK \u2260 \u6383\u900f \u2260 letter B",
+  "lab_no_delete": true
+}

@@ -1,0 +1,160 @@
+{
+  "/Users/eric.fang/MindOwnBuz": {
+    ".claude/vibage-entry.md": {
+      "mtime": 1784983113.5339987,
+      "sha256": "42d2ab6d80fc04fb320d377e7b8f93879c28845365fdb51a12810a2023e0bbdb",
+      "type": "file"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "mtime": 1784983113.457019,
+      "sha256": "5d310e70d8490231931ac999601de0bf9293d585084b713353a508fd6d0e6571",
+      "type": "file"
+    },
+    "AGENTS.md": {
+      "mtime": 1784983113.593705,
+      "sha256": "63c5c15b0afcb3dae3ded7703cc42cc02bdaa6865d216f6553c5a694304b68cf",
+      "type": "file"
+    },
+    "CLAUDE.md": {
+      "mtime": 1784983113.564848,
+      "sha256": "efddff1631d08f06e499869d65da8a5c2a73d2297fa056b4e8231a4be71fdf90",
+      "type": "file"
+    },
+    "docs/vibage": {
+      "type": "absent"
+    }
+  },
+  "/Users/eric.fang/Projects/AI-Project": {
+    ".claude/vibage-entry.md": {
+      "type": "absent"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "type": "absent"
+    },
+    "AGENTS.md": {
+      "type": "absent"
+    },
+    "CLAUDE.md": {
+      "type": "absent"
+    },
+    "docs/vibage": {
+      "type": "absent"
+    }
+  },
+  "/Users/eric.fang/Projects/AI_Game": {
+    ".claude/vibage-entry.md": {
+      "type": "absent"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "type": "absent"
+    },
+    "AGENTS.md": {
+      "type": "absent"
+    },
+    "CLAUDE.md": {
+      "type": "absent"
+    },
+    "docs/vibage": {
+      "type": "absent"
+    }
+  },
+  "/Users/eric.fang/Projects/LangSight": {
+    ".claude/vibage-entry.md": {
+      "type": "absent"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "type": "absent"
+    },
+    "AGENTS.md": {
+      "type": "absent"
+    },
+    "CLAUDE.md": {
+      "mtime": 1784926740.9599311,
+      "sha256": "26f282a7c23b0a1b7392f820eec30d00e6a2b963cbba6ab46aafba68c6351002",
+      "type": "file"
+    },
+    "docs/vibage": {
+      "type": "absent"
+    }
+  },
+  "/Users/eric.fang/Projects/OmRate_Phalanx": {
+    ".claude/vibage-entry.md": {
+      "type": "absent"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "type": "absent"
+    },
+    "AGENTS.md": {
+      "type": "absent"
+    },
+    "CLAUDE.md": {
+      "mtime": 1777012736.1552114,
+      "sha256": "27d5384aac942b3bc75c94f9d0a1389ef38dfd4df928c36d4d8b2eb6782154fe",
+      "type": "file"
+    },
+    "docs/vibage": {
+      "type": "absent"
+    }
+  },
+  "/Users/eric.fang/Projects/Termmax": {
+    ".claude/vibage-entry.md": {
+      "type": "absent"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "type": "absent"
+    },
+    "AGENTS.md": {
+      "type": "absent"
+    },
+    "CLAUDE.md": {
+      "type": "absent"
+    },
+    "docs/vibage": {
+      "type": "absent"
+    }
+  },
+  "/Users/eric.fang/Projects/Trading": {
+    ".claude/vibage-entry.md": {
+      "type": "absent"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "type": "absent"
+    },
+    "AGENTS.md": {
+      "type": "absent"
+    },
+    "CLAUDE.md": {
+      "type": "absent"
+    },
+    "docs/vibage": {
+      "type": "absent"
+    }
+  },
+  "/Users/eric.fang/Rust": {
+    ".claude/vibage-entry.md": {
+      "mtime": 1784788103.54118,
+      "sha256": "323cc0fc6e3c0a778949ec188387a21e3305f4699151653d9149b4a32b6a30bb",
+      "type": "file"
+    },
+    ".cursor/rules/vibage.mdc": {
+      "mtime": 1784788103.5361226,
+      "sha256": "d9b26e8c24b4c00de44c15d970e6f748dc3e0c5b4e57adc82703beb656f90981",
+      "type": "file"
+    },
+    "AGENTS.md": {
+      "mtime": 1784788103.603952,
+      "sha256": "8e1cb4a66b6b77c59c8b417c80fd41915ed385aacb89d291ec93d454275780f5",
+      "type": "file"
+    },
+    "CLAUDE.md": {
+      "mtime": 1784788103.5723298,
+      "sha256": "323cc0fc6e3c0a778949ec188387a21e3305f4699151653d9149b4a32b6a30bb",
+      "type": "file"
+    },
+    "docs/vibage": {
+      "n": 8,
+      "sha256": "3ac712447ac7c1daf9c70adcbc33ab60bb74216403667e6bfe54d1a897b78e0c",
+      "type": "dir"
+    }
+  }
+}

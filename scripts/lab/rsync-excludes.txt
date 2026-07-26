@@ -1,0 +1,99 @@
+# Junk excluded when copying allowlisted parents into lab sandboxes.
+# Goal: keep continuum/locate signal, drop dependency and cache bulk.
+
+# Python
+.venv/
+venv/
+.venv
+venv
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.tox/
+.nox/
+.eggs/
+*.egg-info/
+*.egg
+.ipynb_checkpoints/
+.pdm-python
+.poetry/
+pip-wheel-metadata/
+*.whl
+
+# Node / JS
+node_modules/
+.npm/
+.yarn/
+.pnpm-store/
+.next/
+.nuxt/
+.turbo/
+.parcel-cache/
+.vite/
+.cache/
+dist/
+build/
+coverage/
+.nyc_output/
+
+# Rust / native
+target/
+*.so
+*.dylib
+*.o
+*.a
+
+# Mobile / JVM
+Pods/
+.gradle/
+*.apk
+*.aab
+
+# VCS bulk / editor
+.git/objects/pack/
+.git/lfs/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# ML / data blobs often left in trees
+*.pt
+*.pth
+*.onnx
+*.safetensors
+*.gguf
+*.parquet
+*.h5
+*.hdf5
+datasets/
+Models/
+models/
+checkpoints/
+wandb/
+mlruns/
+site-packages/
+
+# Trading / quant mother bulk (not needed for continuum / locate structure)
+_reference/
+.worktrees/
+gnidart-master/
+**/lean/Data/
+**/lean-src/Data/
+**/user_data/data/
+**/user_data/backtest_results/
+**/PolyStrikeReverse/data/
+**/quant/data/
+**/strategy_testing/data_*.csv
+output/
+**/runs/
+*.jsonl
+*.pdf
+*.epub
+*.mobi
+*.csv
+# keep small fixture CSVs? excluding *.csv is OK for vibage map/dig shape

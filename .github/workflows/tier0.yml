@@ -43,6 +43,8 @@ jobs:
         run: bash tests/test_proven_lock.sh
       - name: STATUS capability table shape
         run: bash tests/test_status_capability_table.sh
+      - name: Plan-loop hygiene (∉ Tier-0)
+        run: bash tests/test_plan_loop_hygiene.sh
 
   # Separate JOB on purpose: pack-health failure must never surface as
   # "tier0 failed". Uses temp parent via tests/test_pack_health.sh (install
@@ -51,6 +53,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # verify-review-record needs merge-base / HEAD~1 history
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"

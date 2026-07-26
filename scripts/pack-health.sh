@@ -52,6 +52,25 @@ bash "$PKG_ROOT/tests/test_pile_index.sh"
 echo "== pack-health: proven-green lock =="
 bash "$PKG_ROOT/scripts/verify-proven-lock.sh" "$PKG_ROOT"
 
+echo "== pack-health: verify-review-record =="
+# no_trigger_paths → SKIP (exit 0) OK for pack-health.
+# no_git_base / missing record / schema → FAIL (exit ≠ 0) must fail pack-health.
+# exit 0 ≠ REVIEW_RECORD_OK.
+set +e
+RR_OUT="$(bash "$PKG_ROOT/scripts/verify-review-record.sh" "$PKG_ROOT" 2>&1)"
+RR_EC=$?
+set -e
+printf '%s\n' "$RR_OUT"
+if printf '%s\n' "$RR_OUT" | grep -Fq 'REVIEW_RECORD_FAIL'; then
+  fail "verify-review-record FAIL (incl. no_git_base — not a pass)"
+fi
+if [[ "$RR_EC" -ne 0 ]]; then
+  fail "verify-review-record exit=$RR_EC"
+fi
+if ! printf '%s\n' "$RR_OUT" | grep -Eq 'REVIEW_RECORD_(OK|SKIP)'; then
+  fail "verify-review-record missing SKIP|OK token"
+fi
+
 cat <<EOF
 PACK_HEALTH_OK parent=$PARENT
 Honesty: PACK_HEALTH_OK ≠ TIER0_OK ≠ letter B.
@@ -64,4 +83,7 @@ outside the signature by design.
 Plugin manifests on-tree ≠ Cursor/Claude store listing approved.
 PILE_INDEX_OK ≠ DIMENSION_FILL_OK ≠ Architecture Pass ≠ locate DONE.
 MAP_DEEPEN_OK brand retired (W3a); dimension-fill optional and not part of this pack-health gate.
+REVIEW_RECORD_SKIP (no_trigger_paths) OK for pack-health; SKIP ≠ reviewed.
+REVIEW_RECORD_FAIL (incl. no_git_base) must fail pack-health — not a silent pass.
+exit 0 ≠ REVIEW_RECORD_OK; REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof.
 EOF

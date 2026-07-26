@@ -7,6 +7,10 @@ Shared DO NOT / MUST for all surfaces (Cursor, Claude Code, Codex). Thin IDE ada
 - Match the **owner's language** in chat and `VIBAGE-ISSUE-OWNER.md`. Never assume Traditional Chinese.
 - Paths, identifiers, template section titles stay English inside engineer artifacts.
 
+## Routing scope
+
+- Do not silently invent in-scope vs out-of-scope. Unclear → ask. Out of scope → one-line disclosure; do not run init/orient/locate. See `references/routing-scope.md`.
+
 ## Install / hub
 
 - No silent `--force`. `--force` only replaces package-owned stale **skill symlinks**; never delete real skill directories or foreign symlinks.

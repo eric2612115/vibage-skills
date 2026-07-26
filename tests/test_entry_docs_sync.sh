@@ -143,6 +143,22 @@ for f in \
   "$ROOT/adapters/codex/AGENTS.vibage.md"
 do
   grep -Fq 'owner OK on the scan plan' "$f" || fail "missing CONFIRM plain gloss in $f"
+  grep -Fq '## Routing scope' "$f" || fail "missing ## Routing scope in $f"
+  grep -Fq 'Do not silently' "$f" || fail "missing Do not silently in $f"
+  grep -Fq 'looping-review.md' "$f" || fail "missing looping-review pointer in $f"
 done
+
+diff -q "$ROOT/adapters/shared/AGENTS.vibage.md" "$ROOT/adapters/codex/AGENTS.vibage.md" >/dev/null \
+  || fail "adapters/codex/AGENTS.vibage.md must byte-match adapters/shared/AGENTS.vibage.md"
+
+UV="$ROOT/skills/using-vibage/SKILL.md"
+grep -Fq 'Routing scope' "$UV" || fail "using-vibage must name Routing scope"
+grep -Fq 'Do not silently' "$UV" || fail "using-vibage must forbid silent pick"
+grep -Fq 'routing-scope.md' "$UV" || fail "using-vibage must point at routing-scope.md"
+grep -Fq 'looping-review.md' "$UV" || fail "using-vibage must point at looping-review.md"
+[[ -f "$ROOT/references/routing-scope.md" ]] || fail "missing references/routing-scope.md"
+[[ -f "$ROOT/references/looping-review.md" ]] || fail "missing references/looping-review.md"
+grep -Fq 'Do not silently' "$ROOT/references/hard-stops.md" \
+  || fail "hard-stops must forbid silent routing pick"
 
 echo "ENTRY_DOCS_SYNC_OK"

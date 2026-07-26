@@ -1,0 +1,204 @@
+{
+  "run_id": "20260725T211958Z-round3",
+  "base": "/tmp/vibage-lab/20260725T211958Z-round3",
+  "prepare_ok": 32,
+  "prepare_fail": 0,
+  "prompts": [
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI-Project-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI-Project-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI-Project-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI-Project-grok-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI_Game-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI_Game-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI_Game-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/AI_Game-grok-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/LangSight-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/LangSight-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/LangSight-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/LangSight-grok-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/MindOwnBuz-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/MindOwnBuz-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/MindOwnBuz-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/MindOwnBuz-grok-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/OmRate_Phalanx-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/OmRate_Phalanx-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/OmRate_Phalanx-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/OmRate_Phalanx-grok-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Rust-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Rust-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Rust-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Rust-grok-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Termmax-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Termmax-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Termmax-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Termmax-grok-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Trading-composer-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Trading-composer-b.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Trading-grok-a.md",
+    "/tmp/vibage-lab/20260725T211958Z-round3/prompts/Trading-grok-b.md"
+  ],
+  "trials": [
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI-Project-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI-Project-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI-Project-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI-Project-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI-Project-grok-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI_Game-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI_Game-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI_Game-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/AI_Game-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-AI_Game-grok-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-LangSight-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-LangSight-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-LangSight-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/LangSight-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-LangSight-grok-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-MindOwnBuz-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-MindOwnBuz-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-MindOwnBuz-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/MindOwnBuz-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-MindOwnBuz-grok-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-OmRate_Phalanx-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-OmRate_Phalanx-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-OmRate_Phalanx-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/OmRate_Phalanx-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-OmRate_Phalanx-grok-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Rust-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Rust-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Rust-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Rust-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Rust-grok-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Termmax-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Termmax-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Termmax-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Termmax-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Termmax-grok-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-composer-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-composer-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Trading-composer-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-composer-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-composer-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Trading-composer-b"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-grok-a/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-grok-a",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Trading-grok-a"
+    },
+    {
+      "staging": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-grok-b/parent",
+      "trial": "/tmp/vibage-lab/20260725T211958Z-round3/Trading-grok-b",
+      "results_dir": "/tmp/vibage-lab/results/20260725T211958Z-round3-Trading-grok-b"
+    }
+  ],
+  "next": "Dispatch one L1 Cursor agent per prompts/*.md; workspace=STAGING_PARENT; LAB_NO_DELETE",
+  "lab_no_delete": true
+}
