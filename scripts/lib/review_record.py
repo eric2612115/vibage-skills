@@ -4,11 +4,13 @@
 diff_id = sha256 of sorted trigger paths + content digests.
 Excludes docs/evidence/reviews/** so writing a record cannot invalidate its id.
 exit 0 ≠ REVIEW_RECORD_OK — parse stdout tokens.
+
+Blast budget: N from trigger class; diversity axis = reviewer context (all classes).
+Model family is disclosure only — never a gate.
 """
 from __future__ import annotations
 
 import hashlib
-import os
 import re
 import subprocess
 import sys
@@ -34,6 +36,8 @@ TRIGGER_EXACT = {
 TRIGGER_VERIFY_GLOB = "scripts/verify-"
 
 REVIEWS_DIR = "docs/evidence/reviews"
+_SELECTED_BY = frozenset({"owner", "implementer", "host_default"})
+_SEVERITY = {"tests": 1, "narrative": 2, "gate": 3}
 
 
 def is_trigger(rel: str) -> bool:
@@ -47,6 +51,71 @@ def is_trigger(rel: str) -> bool:
     if rel in TRIGGER_EXACT:
         return True
     return False
+
+
+def classify_path(rel: str) -> str | None:
+    """Return blast class for a path, or None if not a trigger."""
+    rel = rel.replace("\\", "/").lstrip("./")
+    if not is_trigger(rel):
+        return None
+    if rel.startswith("tests/"):
+        return "tests"
+    if rel.startswith("adapters/") or rel.startswith("skills/"):
+        return "narrative"
+    if rel.startswith("references/") and rel in TRIGGER_EXACT:
+        return "narrative"
+    if rel.startswith(TRIGGER_VERIFY_GLOB) and rel.endswith(".sh"):
+        return "gate"
+    if rel.startswith("scripts/lib/"):
+        return "gate"
+    if rel in TRIGGER_EXACT and not rel.startswith("references/"):
+        return "gate"
+    # Unknown trigger shape: still gate (fail-closed upgrade)
+    return "gate"
+
+
+def blast_class_for(triggers: list[str]) -> str:
+    if not triggers:
+        raise ValueError("blast_class_for requires non-empty triggers")
+    best, best_s = None, -1
+    for t in triggers:
+        if not is_trigger(t):
+            continue
+        c = classify_path(t)
+        if c is None:
+            raise ValueError(f"trigger without class: {t}")
+        s = _SEVERITY[c]
+        if s > best_s:
+            best, best_s = c, s
+    if best is None:
+        raise ValueError("no trigger paths classified")
+    return best
+
+
+def budget_for(cls: str) -> dict:
+    # A1: every class uses context diversity; model family is never diversity_kind
+    table = {
+        "gate": {"min_reviewers": 2, "diversity_kind": "context"},
+        "narrative": {"min_reviewers": 2, "diversity_kind": "context"},
+        "tests": {"min_reviewers": 2, "diversity_kind": "context"},
+    }
+    if cls not in table:
+        raise ValueError(cls)
+    return table[cls]
+
+
+def effective_min_reviewers(loop: str, blast_n: int) -> int:
+    if loop == "plan":
+        return max(3, blast_n)
+    if loop == "impl":
+        return blast_n
+    raise ValueError("loop must be plan|impl")
+
+
+def contexts_ok(revs: list) -> bool:
+    ctx = {(r.get("context") or "").strip() for r in revs}
+    ctx.discard("")
+    return len(ctx) >= 2
 
 
 def git_stdout(pkg: Path, args: list[str]) -> str:
@@ -109,11 +178,9 @@ def changed_paths(pkg: Path, base: str | None) -> list[str]:
     if base:
         out = git_stdout(pkg, ["diff", "--name-only", f"{base}...HEAD"])
         paths.update(p for p in out.splitlines() if p.strip())
-    # worktree + index vs HEAD
     for args in (["diff", "--name-only"], ["diff", "--name-only", "--cached"]):
         out = git_stdout(pkg, args)
         paths.update(p for p in out.splitlines() if p.strip())
-    # untracked (needed for first landing of new guarded files)
     out = git_stdout(pkg, ["ls-files", "--others", "--exclude-standard"])
     paths.update(p for p in out.splitlines() if p.strip())
     return sorted(paths)
@@ -145,7 +212,6 @@ def parse_front_matter(text: str) -> dict:
     if len(parts) < 3:
         raise ValueError("unterminated front matter")
     body = parts[1]
-    # Minimal YAML subset for our schema (no PyYAML dependency)
     data: dict = {"reviewers": []}
     cur_rev: dict | None = None
     in_paths = False
@@ -171,7 +237,6 @@ def parse_front_matter(text: str) -> dict:
             if key == "blocking":
                 in_blocking = True
                 if val not in ("", "[]"):
-                    # inline list not supported beyond empty
                     pass
                 cur_rev["blocking"] = []
                 continue
@@ -223,9 +288,41 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     missing = [t for t in triggers if t not in subjects]
     if missing:
         errs.append(f"subject_paths missing triggers: {missing}")
+
+    loop = data.get("loop")
+    if loop not in ("plan", "impl"):
+        errs.append("loop must be plan|impl")
+
+    try:
+        cls = blast_class_for(triggers)
+        budget = budget_for(cls)
+    except ValueError as e:
+        errs.append(str(e))
+        return errs
+
+    try:
+        n = effective_min_reviewers(
+            str(loop) if loop is not None else "", budget["min_reviewers"]
+        )
+    except ValueError as e:
+        errs.append(str(e))
+        n = budget["min_reviewers"]
+
+    if "blast_class" in data and data.get("blast_class") != cls:
+        errs.append(f"blast_class mismatch record={data.get('blast_class')} expected={cls}")
+    if "review_budget_n" in data:
+        try:
+            declared = int(data.get("review_budget_n"))
+        except (TypeError, ValueError):
+            declared = -1
+        if declared != budget["min_reviewers"]:
+            errs.append("review_budget_n disagrees with script-derived Impl floor")
+    if "min_reviewers" in data:
+        errs.append("min_reviewers must not be declared; omit field")
+
     revs = data.get("reviewers") or []
-    if len(revs) < 3:
-        errs.append(f"need ≥3 reviewers, got {len(revs)}")
+    if len(revs) < n:
+        errs.append(f"need ≥{n} reviewers, got {len(revs)}")
     for i, r in enumerate(revs):
         if r.get("verdict") == "FAIL":
             errs.append(f"reviewer[{i}] verdict FAIL")
@@ -233,18 +330,24 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
             errs.append(f"reviewer[{i}] blocking non-empty: {r.get('blocking')}")
         if not r.get("model"):
             errs.append(f"reviewer[{i}] missing model")
+        sel = (r.get("reviewer_selected_by") or "").strip()
+        if sel not in _SELECTED_BY:
+            errs.append(
+                f"reviewer[{i}] reviewer_selected_by must be owner|implementer|host_default"
+            )
     if not data.get("frozen"):
         errs.append("frozen must be true")
+
     div = data.get("diversity")
-    if div == "ok":
-        models = {r.get("model") for r in revs if r.get("model")}
-        if len(models) < 2:
-            errs.append("diversity=ok requires ≥2 distinct model strings")
-    elif div == "waived":
-        if not (data.get("diversity_reason") or "").strip():
-            errs.append("diversity=waived requires diversity_reason")
-    else:
+    if div not in ("ok", "waived"):
         errs.append("diversity must be ok|waived")
+    else:
+        # A1: context required for both ok and waived (waived does not skip context).
+        if not contexts_ok(revs):
+            errs.append("need ≥2 distinct non-empty reviewer context fields")
+        if div == "waived" and not (data.get("diversity_reason") or "").strip():
+            errs.append("diversity=waived requires diversity_reason")
+    # A2: never require distinct model / model_family
     if not (data.get("conclusion") or "").strip():
         errs.append("missing conclusion")
     return errs
@@ -278,7 +381,6 @@ def main(argv: list[str]) -> int:
         else:
             base, mode = resolve_base(pkg)
         if base is None:
-            # History insufficient to evaluate — FAIL (not SKIP / not fake-green)
             print("REVIEW_RECORD_FAIL reason=no_git_base")
             print("Honesty: no_git_base cannot pass pack-health; need fetch-depth:0 / git history")
             return 1
@@ -293,6 +395,19 @@ def main(argv: list[str]) -> int:
         print("REVIEW_RECORD_SKIP reason=no_trigger_paths")
         print("Honesty: exit 0 is not the OK token; SKIP ≠ reviewed")
         return 0
+
+    try:
+        cls = blast_class_for(triggers)
+        budget = budget_for(cls)
+    except ValueError as e:
+        print(f"FAIL: {e}", file=sys.stderr)
+        print("REVIEW_RECORD_FAIL reason=blast_class")
+        return 1
+
+    print(f"blast_class={cls}")
+    print(f"review_budget_n={budget['min_reviewers']}")
+    print("Honesty: implementer/model/context/reviewer_selected_by are self-declared and unverifiable")
+    print("Honesty: model family is disclosure only; diversity gate is reviewer context")
 
     diff_id = compute_diff_id(pkg, triggers)
     rec_path = pkg / REVIEWS_DIR / f"{diff_id}.md"
@@ -313,6 +428,13 @@ def main(argv: list[str]) -> int:
         print(f"FAIL: parse record: {e}", file=sys.stderr)
         print("REVIEW_RECORD_FAIL reason=parse")
         return 1
+
+    if data.get("loop") == "plan":
+        try:
+            eff = effective_min_reviewers("plan", budget["min_reviewers"])
+            print(f"review_budget_n_effective={eff}")
+        except ValueError:
+            pass
 
     errs = validate_record(data, triggers, diff_id)
     if errs:
