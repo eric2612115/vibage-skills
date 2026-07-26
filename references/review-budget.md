@@ -13,6 +13,11 @@ requires. Agents must **not** declare N — the script derives it from trigger p
 
 Severity: `gate` > `narrative` > `tests`. Mixed diffs use the highest class.
 
+**V1 N is identical across classes (G3):** every class has Impl min N=2. Classification
+is for stdout disclosure (`blast_class=`) and future budget tuning — **not** a stricter
+constraint today. Plan records still use `max(3, blast_N)` (so the Plan floor is 3, not
+class differentiation).
+
 **Plan records (`loop: plan`):** mechanical floor is `max(3, blast_N)` so Plan-loop process ≥3 is not silently lowered by the Impl blast table.
 
 **No `low` class.** Adapters / skill prose are never “docs/copy → low”.
@@ -34,12 +39,26 @@ Severity: `gate` > `narrative` > `tests`. Mixed diffs use the highest class.
 ## Required / optional fields (honesty)
 
 - Required per reviewer: `reviewer_selected_by: owner|implementer|host_default` (A3). Missing → schema FAIL. The value itself is **self-declared and unverifiable** (visible for review, not proof).
-- `implementer`, per-reviewer `model`, and per-reviewer `context` are **self-declared and unverifiable** (A6). Prefer `context` as the gated axis because faking it requires inventing a session; satisfying model distinctness only required flipping a menu item.
+- `implementer`, per-reviewer `model`, and per-reviewer `context` are **self-declared and unverifiable** (A6).
+
+### Why context (A1) despite weaker mechanical forge cost (G2)
+
+| Axis | Mechanical forge cost | Incentive under a competent agent |
+|------|----------------------|-----------------------------------|
+| `model` (old gate) | Must call another model (API cost) — **or** lie in the string (also cheap if unverified) | Induced slug rotation to satisfy the gate (observed) |
+| `context` (current gate) | Typing two different strings — **zero cost**; script cannot tell `a`/`b` from real sessions | Induces opening separate sessions when agents act in good faith (observed) |
+
+A1 fixed **incentive direction** for good-faith agents; it did **not** raise the
+mechanical floor against careless/malicious forgery. Do **not** add string-length or
+regex cosmetics on `context`. Host-injected unforgeable session ids are out of V1 scope.
+Stdout discloses `reviewer_selected_by` counts (G1) — same idiom as proven-lock: do not
+block, make the risk configuration visible (all-`implementer` prints an explicit honesty line).
 
 ## Tokens
 
 - `blast_class=<gate|narrative|tests>`
 - `review_budget_n=<int>` (Impl floor; Plan effective N may be higher — also print `review_budget_n_effective=` when `loop: plan`)
+- `reviewer_selected_by: owner=N implementer=N host_default=N` (after record parse; G1)
 - `REVIEW_RECORD_OK` only after schema + budget pass.
 
 `REVIEW_RECORD_OK` ≠ review quality. ∉ Tier-0.

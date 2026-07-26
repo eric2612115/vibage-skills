@@ -86,13 +86,14 @@ Pass predicate (mechanical) — script-derived; see `references/review-budget.md
 - Model family / distinct model strings are **not** gated (disclosure only)
 - Top-level `min_reviewers` must be omitted; optional `blast_class` / `review_budget_n` must match script if present
 
-**Honesty:** `model`, `context`, and `reviewer_selected_by` are self-declared and unverifiable. Prefer context as the gated axis (forging it invents a session; shopping model slugs only flips a menu). Do not key budget on implementer model tier. Do not rotate reviewer models to satisfy diversity — ask owner for roster once when multi-review is first needed. `REVIEW_RECORD_OK` ≠ high-quality review.
+**Honesty:** `model`, `context`, and `reviewer_selected_by` are self-declared and unverifiable. Context is the gated axis for **incentive** (good-faith agents open separate sessions) — mechanically forging `context: a`/`b` is still zero-cost; see `references/review-budget.md` G2. Do not key budget on implementer model tier. Do not rotate reviewer models to satisfy diversity — ask owner for roster once when multi-review is first needed. `REVIEW_RECORD_OK` ≠ high-quality review.
 
 ## Tokens
 
 - No trigger path changes → `REVIEW_RECORD_SKIP` (exit 0). **Never** print `REVIEW_RECORD_OK` on a clean/non-trigger tree. SKIP ≠ reviewed.
 - Insufficient git history → `REVIEW_RECORD_FAIL reason=no_git_base` (exit ≠ 0) — must not pass pack-health.
 - When triggers exist: stdout includes `blast_class=` and `review_budget_n=` (and `review_budget_n_effective=` for `loop: plan`).
+- After record parse: `reviewer_selected_by: owner=N implementer=N host_default=N`; all-`implementer` adds a highest-risk honesty line (disclosure only — does not FAIL).
 - Qualified record → `REVIEW_RECORD_OK`
 - **Forbidden:** treat exit 0 as `REVIEW_RECORD_OK` (same class of bug as freshness).
 

@@ -170,6 +170,44 @@ A_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --
 echo "$A_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "Fixture A expected OK"
 echo "$A_OUT" | grep -Fq 'blast_class=gate' || fail "Fixture A blast_class"
 echo "$A_OUT" | grep -Fq 'review_budget_n=2' || fail "Fixture A review_budget_n"
+echo "$A_OUT" | grep -Fq 'reviewer_selected_by: owner=2 implementer=0 host_default=0' \
+  || fail "Fixture A must disclose selected_by counts (G1)"
+
+# G1: all-implementer → highest-risk honesty line
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: implementer
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: implementer
+    blocking: []
+conclusion: \"fixture G1 all implementer\"
+---
+"
+G1_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
+echo "$G1_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "G1 all-implementer still OK"
+echo "$G1_OUT" | grep -Fq 'reviewer_selected_by: owner=0 implementer=2 host_default=0' \
+  || fail "G1 counts"
+echo "$G1_OUT" | grep -Fq 'all reviewers selected by the implementing agent' \
+  || fail "G1 highest-risk honesty line"
 
 # --- Fixture B: gate FAIL same context ---
 B_ID="$(diff_id_for scripts/assert_gate.sh)"

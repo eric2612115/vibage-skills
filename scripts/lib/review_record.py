@@ -118,6 +118,34 @@ def contexts_ok(revs: list) -> bool:
     return len(ctx) >= 2
 
 
+def selected_by_counts(revs: list) -> dict[str, int]:
+    counts = {"owner": 0, "implementer": 0, "host_default": 0, "other": 0}
+    for r in revs:
+        sel = (r.get("reviewer_selected_by") or "").strip()
+        if sel in ("owner", "implementer", "host_default"):
+            counts[sel] += 1
+        else:
+            counts["other"] += 1
+    return counts
+
+
+def print_selected_by_disclosure(revs: list) -> None:
+    """Disclose reviewer_selected_by distribution (G1). Does not fail the gate."""
+    c = selected_by_counts(revs)
+    print(
+        "reviewer_selected_by: "
+        f"owner={c['owner']} implementer={c['implementer']} "
+        f"host_default={c['host_default']}"
+        + (f" other={c['other']}" if c["other"] else "")
+    )
+    n = len(revs)
+    if n > 0 and c["implementer"] == n:
+        print(
+            "Honesty: all reviewers selected by the implementing agent "
+            "— highest-risk configuration"
+        )
+
+
 def git_stdout(pkg: Path, args: list[str]) -> str:
     r = subprocess.run(
         ["git", "-C", str(pkg), *args],
@@ -428,6 +456,9 @@ def main(argv: list[str]) -> int:
         print(f"FAIL: parse record: {e}", file=sys.stderr)
         print("REVIEW_RECORD_FAIL reason=parse")
         return 1
+
+    # G1: disclose after parse (visible even when schema later FAIL)
+    print_selected_by_disclosure(data.get("reviewers") or [])
 
     if data.get("loop") == "plan":
         try:
