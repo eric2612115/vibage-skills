@@ -64,4 +64,4 @@ Field meanings:
 
 ## Honesty
 
-`LAB_CASE_OK` ≠ live mutated ≠ `TIER0_OK` ≠ 掃透 ≠ letter B.
+`LAB_CASE_OK` ≠ live mutated ≠ `TIER0_OK` ≠ full-sweep ≠ letter B.

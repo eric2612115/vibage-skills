@@ -202,7 +202,7 @@ Must cover Spec §8:
 - Modify: `STATUS.md` continuum one-liner
 
 - [x] **Step 1: Only after Task 7 green — freeze-lift: `W1 freshness On-tree (HEAD+TTL subset) ≠ Sync contract DONE`**
-- [x] **Step 2: STATUS note W1 freshness On-tree; still ≠ letter B / 掃透 / Tier-0**
+- [x] **Step 2: STATUS note W1 freshness On-tree; still ≠ letter B / full-sweep / Tier-0**
 
 ---
 

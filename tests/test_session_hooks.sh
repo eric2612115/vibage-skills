@@ -14,7 +14,7 @@ fi
 [[ -f skills/using-vibage/SKILL.md ]] || fail "missing using-vibage skill"
 FIX_OWNER="tests/fixtures/owner-zero-bash-path.md"
 [[ -f "$FIX_OWNER" ]] || fail "missing $FIX_OWNER (S1 evidence)"
-grep -Eiq 'do not type bash|0.?bash|Owner should \*\*not\*\* type bash|不要求.*bash|不.*打 bash' "$FIX_OWNER" \
+grep -Eiq 'do not type bash|0.?bash|Owner should \*\*not\*\* type bash|must not type bash' "$FIX_OWNER" \
   || grep -Fq 'does not require the owner to type bash' "$FIX_OWNER" \
   || fail "owner-zero-bash fixture missing 0-bash semantics"
 grep -Eiq 'Agent runs|agent runs' "$FIX_OWNER" \

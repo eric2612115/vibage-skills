@@ -1,6 +1,6 @@
 # Ask-pressure sample B — eric.fang dirs (full run)
 
-**Verdict:** Sample-B Ask 文案壓力 **20/20 PASS**（parent oracle）  
+**Verdict:** Sample-B Ask copy pressure **20/20 PASS** (parent oracle)  
 **≠** letter B · ≠ Proven-green · ≠ ship-ready
 
 ## Disk probe (why these dirs matter)

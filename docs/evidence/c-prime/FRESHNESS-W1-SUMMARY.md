@@ -17,6 +17,6 @@
 
 - ≠ Sync contract (§2.5) DONE
 - ≠ letter B / Gate B / dig-ready
-- ≠ full-pile 掃透
+- ≠ full-pile full-sweep
 - ≠ Tier-0 membership
 - ≠ dimension fill

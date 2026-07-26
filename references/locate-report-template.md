@@ -1,8 +1,8 @@
 # Vibage Locate — <date>
 <!-- Deliverable filename: VIBAGE-ISSUE-LOCATE.md -->
 
-Status — 找問題: open | done | blocked — …
-Status — 架構檢視: not started | in progress | done | n/a — …
+Status — find-issue: open | done | blocked — …
+Status — architecture review: not started | in progress | done | n/a — …
 
 ## Coverage (machine-filled)
 
@@ -55,7 +55,7 @@ These numbers bound every claim in this report.
 
 ## Held tokens
 <!-- Machine-readable; one token per line. Required only if body uses Gate A slogans. -->
-- _(none — do not claim 掃透 / 立體場景 / 全懂 without tokens + Token evidence)_
+- _(none — do not claim full-sweep / scene-cover / full-understanding without tokens + Token evidence)_
 
 ## Token evidence
 <!-- Paste exact script stdout lines for each Held token (e.g. MATRIX_SWEEP_SUBSTANTIVE_OK). -->

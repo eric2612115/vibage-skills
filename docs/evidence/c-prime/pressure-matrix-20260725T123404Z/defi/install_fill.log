@@ -106,7 +106,7 @@ OK: freshness marked success repo=termmax_remotion
 freshness_mark_summary ok=16 fail=1 skipped=0
 NOTE: FULL_MOTHER_FILL_REFRESH does not imply FRESHNESS_OK when mark fail>0
 MATRIX_INCOMPLETE
-NOTE: not 掃透 (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
+NOTE: not full-sweep (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
 Installed. PKG_ROOT=/Users/eric.fang/MindOwnBuz/vibage-skills
 Surfaces: cursor,claude,codex
 MANIFEST skills linked under enabled global skill homes.

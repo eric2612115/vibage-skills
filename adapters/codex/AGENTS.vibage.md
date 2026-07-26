@@ -8,20 +8,20 @@ Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA
 
 ## Routing scope (applies before rules 1–N)
 
-Apply Skill routing / continuum **only** when in scope (install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·掃透). Details: `$PKG_ROOT/references/routing-scope.md`.
+Apply Skill routing / continuum **only** when in scope (install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·full-sweep). Details: `$PKG_ROOT/references/routing-scope.md`.
 
 **Out of scope** (one-line disclosure, then proceed — **do not** init/orient/locate): vibage-skills package work; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig; established single work root.
 
 When unclear: ask. **Do not silently** pick either side.
 
 When **in scope** only: Session routing follows **using-vibage** (pointer skill). Parent routers remain SSOT — no second state machine.
-If owner says **幫我裝 Vibage** / install Vibage → follow using-vibage § Install continuum:
+If owner says **Install Vibage** / install Vibage → follow using-vibage § Install continuum:
 `PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` (via **vibage-pile-index**) → matrix sweep → freshness → env-vacancy → optional deferred dimension fill → ticket or scene → `SCENE_BRIEF_OK` when scene set → orient → CONFIRM → locate.
 Do not claim installed without verify. Do not dig yet.
-掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `DIMENSION_FILL_*` (legacy `MAP_DEEPEN_OK` brand retired) ≠ full-understanding.
+full-sweep only with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Scene cover via `verify-scene-cover`. `PILE_INDEX_OK` / `DIMENSION_FILL_*` (legacy `MAP_DEEPEN_OK` brand retired) ≠ full-understanding.
 After `PILE_INDEX_OK` / `GRAPH_FLOOR_OK`: nameplate only; cost/deepen ask (ticket paste = skip deepen).
 Freshness: parse `verify-freshness.sh` stdout — need `FRESHNESS_OK` or (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`). **Forbidden:** treat exit 0 as `FRESHNESS_OK`. Session start: disclose stale_count + incomplete_matrix (+ escalate).
-Env vacancy: `verify-env-vacancy.sh` — ANSWERED ≠ CLEAR ≠ 掃透; exit 0 ≠ 掃透.
+Env vacancy: `verify-env-vacancy.sh` — ANSWERED ≠ CLEAR ≠ full-sweep; exit 0 ≠ full-sweep.
 
 ## Looping review (guarded paths / plans)
 
@@ -31,7 +31,7 @@ Writing a plan or changing guarded paths requires Plan/Impl **looping review** u
 
 1. No `docs/vibage/STATUS.md` → **vibage-init** (install + hub; no dig, no dual reports).
 2. Hub ready, no graph floor / qualified map (unless MAP_SKIP) → **vibage-pile-index** (`GRAPH_FLOOR_OK`; then matrix sweep / `c-prime-fill`).
-3. Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; claiming 多領域立體場景切換 also requires `verify-scene-cover.sh` exit 0 (BRIEF alone ≠ cover).
+3. Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; claiming multi-domain scene cover also requires `verify-scene-cover.sh` exit 0 (BRIEF alone ≠ cover).
 4. Map/graph ready, no valid CONFIRM (= owner OK on the scan plan; file `docs/vibage/CONFIRM.json`) → **vibage-orient** (stop until owner confirms).
 5. CONFIRM OK → **vibage-issue-locate** (consume briefs/ledger; ignore deepen-as-auth; nested dig ⊆ planned_dig_ids; legacy `vibage-locate` OK).
 6. Paste NEW-CHAT / unclear install → **vibage-bootstrap** or **vibage-init** (then using-vibage).

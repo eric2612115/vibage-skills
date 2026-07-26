@@ -1,11 +1,5 @@
-# Vibage — Owner Brief
+# Vibage Owner — forbidden understanding claim
 
-## Symptom (owner words)
-系統已懂（不是誇飾）
+Plain brief for the owner.
 
-## Nested pass
-- Investigators: 0
-- Reviewers: 0
-- Mode: degraded
-
-Evidence: `src/x.py` ok.
+system understood (not exaggeration)

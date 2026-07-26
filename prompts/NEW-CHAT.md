@@ -11,7 +11,7 @@ Cold-start SSOT (live only):
 - Plans (live stub): docs/superpowers/plans/README.md
 - Pre-C′ plans: removed from tree (git history only; do not load unless owner asks archaeology)
 - Parent entry should already exist via --with-project-rule; run verify-project-entry and expect PROJECT_ENTRY_OK
-- If owner says 幫我裝 Vibage / install Vibage → follow using-vibage Install phrase (prompts/SAY-INSTALL-VIBAGE.md); do not ask them to type bash
+- If owner says Install Vibage / install Vibage → follow using-vibage Install phrase (prompts/SAY-INSTALL-VIBAGE.md); do not ask them to type bash
 
 Plain words:
 - CONFIRM = the owner's OK on the scan plan (file: docs/vibage/CONFIRM.json)

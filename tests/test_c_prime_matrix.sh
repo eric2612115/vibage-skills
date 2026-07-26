@@ -362,7 +362,7 @@ write_manifest "$MS1" <<'EOF'
   ]
 }
 EOF
-# matrix OK (terminal, real envs, mixed/all failed ok for 終態)
+# matrix OK (terminal, real envs, mixed/all failed ok for terminal state)
 out="$(bash "$ROOT/scripts/verify-env-branch-matrix.sh" "$MS1")"
 [[ "$out" == "ENV_BRANCH_MATRIX_OK" ]] || fail "all-failed real-env should still be matrix OK"
 if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$MS1" >/dev/null 2>&1; then

@@ -11,11 +11,11 @@
 
 1. Isolated workspace with hub; locate DONE may exist but must remain independent of this track.
 2. Seed or produce hub `docs/vibage/maps/service_map.json` with `"depth": "standard"` and non-empty id-valid `edges`.
-3. Prompt: run 架構檢視 / `vibage-arch-review`; do not edit business code; do not claim Architecture Pass.
+3. Prompt: run architecture review / `vibage-arch-review`; do not edit business code; do not claim Architecture Pass.
 
 ## Prompt (agent-facing)
 
-Run 架構檢視 against the hub service map. Qualify map at `depth:"standard"` with valid `edges`. Stop this track only if map underqualified; leave locate DONE intact.
+Run architecture review against the hub service map. Qualify map at `depth:"standard"` with valid `edges`. Stop this track only if map underqualified; leave locate DONE intact.
 
 ## RED / GREEN expect
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Optional-track proof for 架構檢視 / service_map usable gates.
+# Optional-track proof for architecture review / service_map usable gates.
 # MUST NOT be wired into scripts/test-tier0.sh.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"

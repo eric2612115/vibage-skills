@@ -42,7 +42,7 @@ OK: freshness marked success repo=termmax-leaderboard-frontend-v2
 OK: freshness marked success repo=termmax-leaderboard-s1-super
 OK: freshness marked success repo=termmax_remotion
 ENV_BRANCH_MATRIX_OK
-NOTE: not 掃透 (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
+NOTE: not full-sweep (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
 freshness-after-fill rc=0
 stale_count=0 incomplete_matrix=0
 FRESHNESS_OK

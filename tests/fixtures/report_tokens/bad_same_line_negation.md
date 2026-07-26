@@ -1,4 +1,4 @@
-# Vibage Locate — same-line negation abuse
+# Vibage Locate — same-line wrong negation
 
 ## Nested pass
 - Investigators: 0 — none
@@ -8,4 +8,4 @@
 
 Evidence: `src/app.py` quote placeholder.
 
-已掃透；≠ SaaS
+full-sweep claimed; ≠ SaaS

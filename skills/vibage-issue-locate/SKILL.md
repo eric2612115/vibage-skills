@@ -107,7 +107,7 @@ Rules:
     every sentence you write below them — if a claim sounds broader than the box,
     rewrite the claim, not the box. `## Held tokens` must be a **subset** of the
     box's `held:` list.
-    - Fill `## Held tokens` + `## Token evidence` when body uses Gate A slogans (掃透/立體…); deliverable lint ≠ chat proof. Prefer no slogans on degraded digs.
+    - Fill `## Held tokens` + `## Token evidence` when body uses Gate A slogans (full-sweep/scene-cover…); deliverable lint ≠ chat proof. Prefer no slogans on degraded digs.
     Capability branching: if tests/git/docker = no|unsure, owner actions must not require local runs.
     **OWNER must plain-list** unchecked external gaps (DB / log / container / not connected) — S06. Do not claim code-only completeness when externals were named.
 12. **Verify (optional checklist):**  
@@ -124,7 +124,7 @@ Rules:
     Start serve in background (or copy-only, then tell the human the URL) so later steps are not blocked by http.server.
 14. Local delivery ends at dual Markdown reports + optional preview. Cloud deepening is out of scope this phase.
 15. **locate end / success or stop** milestone: Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`. On `failed`|`aborted` fill STATUS STOP + `handoff` and do **not** write dual reports. Plain chat only — never dump JSON.
-16. **Finishing (required on success path):** After dual reports exist / phase `done`, **must** follow `using-vibage` finishing options (owner language): optional localhost preview (fail-soft), handoff/STOP if needed, or stop — local delivery complete. Optional issue-fix / 架構檢視 only if owner asks. **No soft CTA / no register.** Do not skip this step after DONE.
+16. **Finishing (required on success path):** After dual reports exist / phase `done`, **must** follow `using-vibage` finishing options (owner language): optional localhost preview (fail-soft), handoff/STOP if needed, or stop — local delivery complete. Optional issue-fix / architecture review only if owner asks. **No soft CTA / no register.** Do not skip this step after DONE.
 
 ## Stale / resume
 

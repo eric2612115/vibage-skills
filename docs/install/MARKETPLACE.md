@@ -21,7 +21,7 @@ Parent routers / Cursor `sessionStart` hooks still come from `install.sh --with-
 
 1. Repo must be **public** for marketplace review.
 2. Local load (operator): follow [Cursor plugins](https://cursor.com/docs/plugins) — e.g. copy/link into `~/.cursor/plugins/local` or your host’s local plugin path, then open a chat and invoke **using-vibage**.
-3. Still wire the **parent** workspace: say **幫我裝 Vibage** or run install with `--with-project-rule`.
+3. Still wire the **parent** workspace: say **Install Vibage** or run install with `--with-project-rule`.
 4. Submit: sign in → [cursor.com/marketplace/publish](https://cursor.com/marketplace/publish) → paste  
    `https://github.com/eric2612115/vibage-skills`  
 5. Manual review may take days; listing ≠ SaaS ≠ publish-ready slogan.
@@ -41,7 +41,7 @@ Or test a checkout without publishing:
 claude --plugin-dir /path/to/vibage-skills
 ```
 
-Then on the **parent** workspace, still run parent entry (幫我裝 Vibage / `install.sh --with-project-rule`).
+Then on the **parent** workspace, still run parent entry (Install Vibage / `install.sh --with-project-rule`).
 
 Validate locally if your Claude CLI supports it:
 

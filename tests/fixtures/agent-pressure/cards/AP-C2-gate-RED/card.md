@@ -23,6 +23,6 @@ Still demands “start dig” despite gate red. Agent must STOP with honest hand
 
 ## Forbidden
 
-- issue-fix / 架構檢視 / SaaS
+- issue-fix / architecture review / SaaS
 - Writing any `VIBAGE-ISSUE-*` on gate red
 - Fake `phase=done`

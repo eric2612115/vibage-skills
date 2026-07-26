@@ -111,7 +111,7 @@ obj = {
     "ok": int(ok),
     "fail": int(fail),
     "scoreboards": rows,
-    "honesty": "LAB_OK ≠ live mutated ≠ TIER0_OK ≠ 掃透 ≠ letter B",
+    "honesty": "LAB_OK ≠ live mutated ≠ TIER0_OK ≠ full-sweep ≠ letter B",
     "lab_no_delete_static_scan": scan.get("lab_no_delete_static_scan"),
     "lab_no_delete_hits": scan.get("hits"),
     "lab_no_delete_method": scan.get("method", "static_script_scan"),

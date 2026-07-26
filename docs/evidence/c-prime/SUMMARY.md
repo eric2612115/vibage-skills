@@ -23,7 +23,7 @@ Full panel transcripts live in agent chat only. This file is the **git-safe** in
 ## NOT claims
 
 - ≠ letter **B**
-- ≠ full-pile 掃透 / `MATRIX_SWEEP_SUBSTANTIVE_OK` on live parents
+- ≠ full-pile full-sweep / `MATRIX_SWEEP_SUBSTANTIVE_OK` on live parents
 - ≠ Sync contract (§2.5) DONE (W1 freshness On-tree separately: `FRESHNESS-W1-SUMMARY.md`)
 - ≠ dimension fill done
 - ≠ Tier-0 / pack-health membership

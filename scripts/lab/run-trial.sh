@@ -59,7 +59,7 @@ on_exit() {
 trap on_exit EXIT
 
 echo "LAB_TRIAL_START case=$CASE_ID model=$MODEL slot=$SLOT trial=$TRIAL"
-echo "Honesty: LAB_OK ≠ live mutated ≠ TIER0_OK ≠ 掃透 ≠ letter B"
+echo "Honesty: LAB_OK ≠ live mutated ≠ TIER0_OK ≠ full-sweep ≠ letter B"
 echo "LAB_NO_DELETE=1"
 
 if [[ -n "$FIXTURE" ]]; then

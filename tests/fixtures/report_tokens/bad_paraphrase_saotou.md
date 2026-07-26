@@ -1,4 +1,4 @@
-# Vibage Locate — paraphrase of 掃透 (no Held)
+# Vibage Locate — paraphrase saotou
 
 ## Nested pass
 - Investigators: 0 — none
@@ -8,4 +8,4 @@
 
 Evidence: `src/app.py` quote placeholder.
 
-所有環境與所有 branch 我都已經完整掃過一遍，沒有遺漏。
+Every environment and every branch has already been fully scanned with no misses.

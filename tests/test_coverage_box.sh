@@ -40,13 +40,13 @@ mk_hub() { # <parent>
 EOF
 }
 
-# --- Parent A: everything proven (掃透 YES) ---
+# --- Parent A: everything proven (full-sweep YES) ---
 A="$TMP/A"
 mk_repo "$A/svc-a" env
 mk_repo "$A/svc-b" env
 mk_hub "$A"
 
-# --- Parent B: one repo with no env config (掃透 NO) ---
+# --- Parent B: one repo with no env config (full-sweep NO) ---
 B="$TMP/B"
 mk_repo "$B/app-a" env
 mk_repo "$B/app-b" env
@@ -86,7 +86,7 @@ pass "honest report → COVERAGE_BOX_OK"
 
 # 2. Hand-editing ANY number in the box fails (it is machine-generated).
 for probe in 's/repos_discovered: 2/repos_discovered: 99/' \
-             's/掃透 (MATRIX_SWEEP_SUBSTANTIVE_OK): YES/掃透 (MATRIX_SWEEP_SUBSTANTIVE_OK): NO/' \
+             's/full-sweep (MATRIX_SWEEP_SUBSTANTIVE_OK): YES/full-sweep (MATRIX_SWEEP_SUBSTANTIVE_OK): NO/' \
              's/freshness: FRESHNESS_OK/freshness: STALE_BLOCKS_MOTHER/'; do
   cp "$R" "$R.bak"
   python3 - "$R" "$probe" <<'PY'
@@ -157,23 +157,23 @@ echo "$out" | grep -qx 'COVERAGE_BOX_SKIPPED reason=no-derivable-hub' \
 pass "no derivable hub → COVERAGE_BOX_SKIPPED (not a silent pass)"
 
 # 6. The point of the whole mechanism: on a parent where nothing was dug and
-#    掃透 is NO, a second-order paraphrase still passes the phrase lint — but it
+#    full-sweep is NO, a second-order paraphrase still passes the phrase lint — but it
 #    now sits under machine-authored numbers that contradict it. Assert BOTH:
 #    the prose is not blocked, AND the box states the refuting facts.
-PARA='每一個 repo 的每一條 branch 都檢查完畢，沒有漏網之魚。
-這個系統的架構我已經完全掌握了。
+PARA='Every repo and every branch has been checked; nothing slipped through.
+I have fully mastered this system'\''s architecture.
 Evidence: `app-a/docker-compose.yml`'
 R4="$(write_report "$B" "$PARA" '`GRAPH_FLOOR_OK`')"
 out="$(verify "$R4" "$B")" || fail "paraphrase report should still verify: $out"
 echo "$out" | grep -qx 'COVERAGE_BOX_OK' || fail "expect COVERAGE_BOX_OK on B, got: $out"
-grep -q '掃透 (MATRIX_SWEEP_SUBSTANTIVE_OK): NO' "$R4" \
-  || fail "box must state 掃透 NO on parent B"
+grep -q 'full-sweep (MATRIX_SWEEP_SUBSTANTIVE_OK): NO' "$R4" \
+  || fail "box must state full-sweep NO on parent B"
 grep -qE 'repos_dug: 0 / 3' "$R4" || fail "box must state repos_dug 0 / 3"
 grep -q 'missing-env-config 1' "$R4" || fail "box must state the missing env cell"
 pass "paraphrase passes the lint but the box contradicts it (bounded, not blocked)"
 
 # 7. The coverage FENCE is exempt from the phrase lint (it legitimately contains
-#    掃透), but prose under the `## Coverage` heading is NOT exempt — that heading
+#    full-sweep), but prose under the `## Coverage` heading is NOT exempt — that heading
 #    must not become a hiding place.
 R5="$(write_report "$A" 'Suspect `svc-a/docker-compose.yml` wiring.' '`GRAPH_FLOOR_OK`')"
 python3 - "$R5" <<'PY'
@@ -183,7 +183,7 @@ t = open(p, encoding="utf-8").read()
 marker = "## Coverage (machine-filled)\n"
 i = t.index(marker) + len(marker)
 open(p, "w", encoding="utf-8").write(
-    t[:i] + "\n全環境全 branch 掃透。\n" + t[i:]
+    t[:i] + "\nfull-environment full-branch full-sweep.\n" + t[i:]
 )
 PY
 set +e

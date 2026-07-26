@@ -17,12 +17,12 @@ All must hold:
 1. **Script suite:** every `tests/test_c_prime_*.sh` exits 0 (orchestrator `tests/test_c_prime_suite.sh` prints `C_PRIME_SUITE_OK`).
 2. **Live pressure (mandatory fresh run before flip):** DefiStrategy + MindOwnBuz both PRESSURE_PASS on the **same** `run_ts` written into SUMMARY (no reuse of stale R2 alone).
 3. **Evidence on tree:** `docs/evidence/c-prime/SUMMARY.md` binds that `run_ts` only; panel tally; mechanical tokens; explicit NOT claims.
-4. **STATUS:** Proven-green=YES, Scope=`script+live-pressure`, C′ carve-out paragraph; freeze-lift splits Proven-green vs letter B; design header updated. Banner: ≠ letter B ≠ 掃透 ≠ sync/dimension/Tier-0.
+4. **STATUS:** Proven-green=YES, Scope=`script+live-pressure`, C′ carve-out paragraph; freeze-lift splits Proven-green vs letter B; design header updated. Banner: ≠ letter B ≠ full-sweep ≠ sync/dimension/Tier-0.
 5. After flip: clean live hubs (`docs/vibage`); keep project entry.
 
-**Explicitly NOT required:** substantive 掃透 on full DefiStrategy; sync §2.5; dimension fill; Tier-0 membership; letter B.
+**Explicitly NOT required:** substantive full-sweep on full DefiStrategy; sync §2.5; dimension fill; Tier-0 membership; letter B.
 
-**Loop:** if any fail → clean hubs → amend Gaps → 3-review → implement → suite → pressure → score. Max **5** rounds from this plan. Abort to owner if blocked on non-code (e.g. demand full-pile 掃透).
+**Loop:** if any fail → clean hubs → amend Gaps → 3-review → implement → suite → pressure → score. Max **5** rounds from this plan. Abort to owner if blocked on non-code (e.g. demand full-pile full-sweep).
 
 ---
 
@@ -74,7 +74,7 @@ All must hold:
 ## Honesty locks
 
 - Never set Proven-green from suite alone without live pressure evidence.
-- Never claim 掃透 or letter B from this flip.
+- Never claim full-sweep or letter B from this flip.
 - Presence-local ≠ env swept.
 - Waiver never grants substantive.
 

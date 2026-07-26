@@ -74,7 +74,7 @@ Absorb umbrella **§11.1**, **D4**, **§4.4**:
 |-------------|--------|
 | No local CTA | No register / pairing / API keys copy in local happy path, errors, or entry docs |
 | UploadManifest stub | Schema stub only (`docs/vibage/UploadManifest.stub.json` / hub copy) — **no upload** |
-| Name boundary | Cloud **Architecture Pass** ≠ local **架構檢視 / Service map** (`service_map`) |
+| Name boundary | Cloud **Architecture Pass** ≠ local **architecture review / Service map** (`service_map`) |
 | Thicken later | Next-phase may expand this SAT; this wave stays blank/reserve |
 | Deferred ≠ forever-ban | Explicit; blanks are intentional seams |
 | No shape freeze | Stub must **not** lock future cloud product APIs, pricing, or UX |
@@ -126,7 +126,7 @@ Thin `SAT-saas-blank.md` MUST separate:
 
 | Block | Role |
 |-------|------|
-| **Normative locks** | No local CTA; Architecture Pass ≠ 架構檢視 / `service_map`; UploadManifest stub ≠ upload; STATUS SaaS stays blank; thin SAT ≠ SaaS YES |
+| **Normative locks** | No local CTA; Architecture Pass ≠ architecture review / `service_map`; UploadManifest stub ≠ upload; STATUS SaaS stays blank; thin SAT ≠ SaaS YES |
 | **Non-normative blanks** | Next-phase may thicken cloud product, APIs, UX — intentionally empty now |
 
 **UploadManifest stub SSOT chain (locked):** package `references/hub/UploadManifest.stub.json` → install → hub `docs/vibage/UploadManifest.stub.json`. This wave **documents** that chain only — no second stub schema / path.
@@ -179,7 +179,7 @@ Thin `SAT-saas-blank.md` MUST separate:
 
 - Package STATUS remains SSOT for Designed / On-tree / Proven-green.
 - Thin SaaS satellite = **reserved seam**, not product delivery.
-- Local **架構檢視 / service_map** remains distinct from cloud **Architecture Pass**.
+- Local **architecture review / service_map** remains distinct from cloud **Architecture Pass**.
 - UploadManifest stub presence ≠ upload capability.
 - `deferred ≠ forever-ban`; stub ≠ freeze of future cloud shape.
 - This design does **not** change letter B, Focus Proven-green, or Tier-0 meaning.
@@ -193,7 +193,7 @@ Thin `SAT-saas-blank.md` MUST separate:
 | A0 | Approach A |
 | A1 | STATUS firewall — align/point only; no Proven / B / Focus rewrite |
 | A2 | SaaS row stays blank; thin SAT ≠ SaaS YES |
-| A3 | SAT minimum: no CTA; UploadManifest stub SSOT chain only; Architecture Pass ≠ 架構檢視; thicken OK; deferred≠forever-ban; no shape freeze |
+| A3 | SAT minimum: no CTA; UploadManifest stub SSOT chain only; Architecture Pass ≠ architecture review; thicken OK; deferred≠forever-ban; no shape freeze |
 | A4 | README prefer “see STATUS.md”; do not permanently bind README `P*` to plan-index |
 | A5 | `docs-hygiene` remove/SelfAutoBuz-only in README **and** adapters same wave (or explicit Non-goal residual) |
 | A6 | NEW-CHAT thin dispatcher; **package** STATUS first; dual-STATUS rule; no CTA |

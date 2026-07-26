@@ -13,7 +13,7 @@ So: name the surfaces, name the inequality.
 | Surface | What can go wrong | Instrument | Ceiling |
 |---------|-------------------|------------|---------|
 | **Capability SSOT** | `STATUS.md` says Proven-green=YES for something that was never proven, or drifts silently across repair waves | `verify-proven-lock.sh` (`PROVEN_LOCK_OK`), `test_status_capability_table.sh` (`STATUS_CAPABILITY_TABLE_OK`) | **Reachable for the signed fields** — tri-state cells, scope kind, cited tokens and cited `run_ts`. Scope caveat prose stays unsigned |
-| **Deliverable** | `VIBAGE-ISSUE-OWNER/LOCATE.md` narrate 掃透 / 立體場景 / dig-ready without holding the token | `verify-report.sh` → `REPORT_TOKEN_LINT_OK` + `COVERAGE_BOX_OK`, `verify-run.sh` mode honesty | **Partial — Wave-2 closed.** Dig coverage reader-proven (Q1). Second-order paraphrase still passes the lint by design (bounded by the box, not blocked). Per-finding script gate = **WONT_BUILD** (see below) |
+| **Deliverable** | `VIBAGE-ISSUE-OWNER/LOCATE.md` narrate full-sweep / scene-cover / dig-ready without holding the token | `verify-report.sh` → `REPORT_TOKEN_LINT_OK` + `COVERAGE_BOX_OK`, `verify-run.sh` mode honesty | **Partial — Wave-2 closed.** Dig coverage reader-proven (Q1). Second-order paraphrase still passes the lint by design (bounded by the box, not blocked). Per-finding script gate = **WONT_BUILD** (see below) |
 | **Chat** | The agent tells the owner something truer-sounding than the artifacts support | optional milestone paste of script stdout (no receipt product) | **CLOSED — accepted ceiling.** Not reachable; no future wave. Do not reopen as a backlog item |
 
 ## The inequality
@@ -46,11 +46,11 @@ The deliverable lint blocks exact slogans plus a closed set of universal-complet
 and env-vacancy phrases. Rewording outside those patterns passes. This is measured,
 not estimated — probes that pass today:
 
-- 「每一個 repo 的每一條 branch 都檢查完畢，沒有漏網之魚。」(「檢查」∉ 掃/scan)
-- 「環境變數的疑慮都已排除。」(「排除」∉ 確認/釐清/clear)
+- "Every repo and every branch has been checked; nothing slipped through." (`checked` ∉ scanned/scan)
+- "Environment-variable concerns are all eliminated." (`eliminated` ∉ confirm/clear)
 - "I have completed a full sweep of every environment and branch." (`sweep` ∉ scanned/mapped)
-- 「這個系統的架構我已經完全掌握了。」(「掌握」∉ understood/全懂)
-- 「可以直接開挖了。」(「開挖」∉ dig-ready/ready to dig)
+- "I have fully mastered this system's architecture." (`mastered` ∉ understood/full-understanding)
+- "We can start digging right away." (`start digging` ∉ dig-ready/ready to dig)
 
 **Do not close this with more regex.** Every added pattern enumerates one more bad
 sentence out of an infinite set while adding a surface that *looks* covered — using
@@ -101,7 +101,7 @@ on that question. **The mechanism is bounded reading, not blocked writing.**
   arm had a **zero baseline** (both arms ran the full skills + hard-stops
   apparatus, which already instructs honest disclosure). No dynamic range, no
   result, in either direction.
-- **Not** that the box improves 掃透 or gap judgement: Q2/Q3 were 100% in *both*
+- **Not** that the box improves full-sweep or gap judgement: Q2/Q3 were 100% in *both*
   arms. The prose already carried enough. There is no increment to claim here.
 - **Not** that it reduces overconfidence: both arms were 0%. Nothing to reduce.
 - **Not** validated on the live 17-repo DefiStrategy — synthetic hubs only.

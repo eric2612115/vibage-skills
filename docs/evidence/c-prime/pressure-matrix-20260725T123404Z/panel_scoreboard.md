@@ -12,4 +12,4 @@
 | mindown-composer-b | MindOwnBuz | PASS_WITH_DISCLOSURE | YES | 4 | NO |
 
 \* field formatting noisy but VERDICT/KILL/quoted tokens valid.
-PASS-family: 8/8. KILL false-掃透: 0.
+PASS-family: 8/8. KILL false-full-sweep: 0.

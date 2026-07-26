@@ -1,7 +1,7 @@
 # SAT-map-schema
 
 **Owns:** Service map schema, Hybrid Tiny / Subset / Large rhythm, qualification bar, script-verifiable floor.  
-**Consumed by:** 架構檢視 (`vibage-arch-review`)  
+**Consumed by:** architecture review (`vibage-arch-review`)  
 **Verify:** `scripts/verify-service-map.sh <workspace_root>`  
 **Hub path (fixed):** `docs/vibage/maps/service_map.json`  
 **Umbrella:** §5.1 Maps
@@ -17,7 +17,7 @@
 | **quality_bar** | Always **`MEDIUM`** (string). Any other value → underqualified. |
 | **scale** | Rhythm only: `Tiny` \| `Subset` \| `Large`. Does not lower the quality bar. |
 
-Map **missing** or **underqualified** → block **only** the 架構檢視 track. Locate DONE stays intact.
+Map **missing** or **underqualified** → block **only** the architecture review track. Locate DONE stays intact.
 
 ---
 
@@ -87,7 +87,7 @@ Print clear `OK:` / `FAIL:` lines. Fixture proof: `tests/test_arch_review_usable
 
 ## 5. Honesty
 
-- `usable` + package `STATUS` Proven-green(script) for 架構檢視 = **map qualification gates verifiable**.
+- `usable` + package `STATUS` Proven-green(script) for architecture review = **map qualification gates verifiable**.
 - Does **not** mean letter **B** from this track alone.
 - Does **not** guarantee agent E2E arch quality.
 - Does **not** equal cloud **Architecture Pass**.
@@ -114,9 +114,9 @@ Print clear `OK:` / `FAIL:` lines. Fixture proof: `tests/test_arch_review_usable
 | Graphify CLI | `OK:GRAPHIFY_SKIP` = **CLI path skipped only** — never means “no graph artifact”. CLI present → best-effort or honest limitation (`OK:GRAPHIFY_LIMITATION`). **Never** overwrite `graph.mmd` with empty; **never** claim `OK:GRAPHIFY wrote` for an empty stub |
 | Coverage | Auto-written by the same generate script (single writer) with at least `services_count` / `edges_count` from JSON |
 
-**Honesty:** Plan-G M Pretty-local **≠终局**. Plan-L **local-maps deepen ≠终局**; **≠** SAT platform option-L (coverage gates / interactive dashboard); **≠** Architecture Pass; **≠** letter B. `deferred-closed ≠ forever-forbidden`. Cloud whole-repo upload/analysis remain out of scope (do not rewrite PRODUCT-LOCKS to a forever local ban).
+**Honesty:** Plan-G M Pretty-local **≠end-state**. Plan-L **local-maps deepen ≠end-state**; **≠** SAT platform option-L (coverage gates / interactive dashboard); **≠** Architecture Pass; **≠** letter B. `deferred-closed ≠ forever-forbidden`. Cloud whole-repo upload/analysis remain out of scope (do not rewrite PRODUCT-LOCKS to a forever local ban).
 
 **Still out of this wave (adjacent):**
 
-- Agent E2E / Focus cards for 架構檢視
+- Agent E2E / Focus cards for architecture review
 - Changing Tier-0 to require `test_arch_review_usable.sh`

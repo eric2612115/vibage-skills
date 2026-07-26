@@ -1,21 +1,21 @@
 # Vibage v2 — Superpowers-grade (Local Complete) — Umbrella Design
 
-**Date:** 2026-07-23  
-**Status:** Spec ✅ Approved (shipped-baseline / historical).  
-**Plans:** pre-C′ plan tree deleted — not live C′ SSOT (git history only).  
-**Active design draft:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`  
-**Branch:** `feature/vibage-v2-superpowers-grade`  
-**Package SSOT:** `/Users/eric.fang/MindOwnBuz/vibage-skills`  
-**Doc shape:** This file is the **umbrella** contract. Thick topics get **satellite** specs; implementation is **many small plans** (not one mega-plan).  
-**Note on section labels:** Parenthetical marks like “(§3)” in later headings mean **frozen brainstorm section IDs**, not this file’s heading numbers.  
+**Date:** 2026-07-23 
+**Status:** Spec ✅ Approved (shipped-baseline / historical). 
+**Plans:** pre-C′ plan tree deleted — not live C′ SSOT (git history only). 
+**Active design draft:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md` 
+**Branch:** `feature/vibage-v2-superpowers-grade` 
+**Package SSOT:** `/Users/eric.fang/MindOwnBuz/vibage-skills` 
+**Doc shape:** This file is the **umbrella** contract. Thick topics get **satellite** specs; implementation is **many small plans** (not one mega-plan). 
+**Note on section labels:** Parenthetical marks like “(§3)” in later headings mean **frozen brainstorm section IDs**, not this file’s heading numbers. 
 **Supersedes for development:** Conflicting older STATUS / coverage / plans / soft-CTA feature-call copy must leave the live tree (delete; git history is enough). Do not use retired `2026-07-22-vibage-os-p1-design` as live SSOT.
 
 ### Local DoD letters (plain)
 
 | Letter | Means (owner-plain) |
 |--------|---------------------|
-| **C** | “找問題” closed loop works: confirm → gate → locate → dual reports + indexes + script tests green |
-| **B** | C **plus** optional issue-fix (scoped edit after unlock) **and** 架構檢視 (Service map) usable when map qualifies |
+| **C** | “find-issue” closed loop works: confirm → gate → locate → dual reports + indexes + script tests green |
+| **B** | C **plus** optional issue-fix (scoped edit after unlock) **and** architecture review (Service map) usable when map qualifies |
 
 This phase **ships C**. B is designed in (optional tracks + satellites) so we do not redesign later.
 
@@ -37,7 +37,7 @@ P1 design (2026-07-22) started the parent-folder OS + confirm-before-dig path, b
 ## 2. Goals (this phase — local complete body)
 
 1. **Approach 1 (thin runtime):** Thicken contracts, templates, skills, and **script-backed tests**. No FSM engine, daemon, or orchestrator binary.
-2. **Local complete DoD = C → path to B:** Ship **C** (issue-locate loop: indexes, confirm, gate, dual reports, script tests). Design includes optional **issue-fix** and **架構檢視 (Service map)** so the package can grow to **B** without redesign. (See letter table above.)
+2. **Local complete DoD = C → path to B:** Ship **C** (issue-locate loop: indexes, confirm, gate, dual reports, script tests). Design includes optional **issue-fix** and **architecture review (Service map)** so the package can grow to **B** without redesign. (See letter table above.)
 3. **Hard truth = scripts:** Script fail means definitely wrong. Agent self-claim can be wrong. This-wave ship gate is **Tier-0 script/contract green**, not full agent RED→GREEN.
 4. **Owner UX:** One chat end-to-end; plain language in chat; agent **dual-writes** milestone progress into `docs/vibage/` (SelfOwnBuz-like stacking under caps).
 5. **Honest Mode / nested / review ladder:** Never fake premium nested or L3; degrade with one OWNER sentence when deliverable is degraded.
@@ -56,34 +56,34 @@ P1 design (2026-07-22) started the parent-folder OS + confirm-before-dig path, b
 
 ```text
 Cursor opens parent folder
-  → vibage-init (skills allowlist + hub skeleton)
-  → vibage-orient (SCAN_PLAN)
-  → ask code-edit preference (default NO) → docs/vibage/OWNER_POLICY.json
-  → human CONFIRM + script assert_gate (hash)
-  → vibage-issue-locate (indexes; dig confirmed set only; never edit business code)
-  → VIBAGE-ISSUE-OWNER.md + VIBAGE-ISSUE-LOCATE.md (+ preview fail-soft)
-  → optional vibage-issue-fix (preference ≠ unlock; file-backed scope confirm after report)
-  → optional 架構檢視 / Service map (qualified map required; failure blocks only this track)
+ → vibage-init (skills allowlist + hub skeleton)
+ → vibage-orient (SCAN_PLAN)
+ → ask code-edit preference (default NO) → docs/vibage/OWNER_POLICY.json
+ → human CONFIRM + script assert_gate (hash)
+ → vibage-issue-locate (indexes; dig confirmed set only; never edit business code)
+ → VIBAGE-ISSUE-OWNER.md + VIBAGE-ISSUE-LOCATE.md (+ preview fail-soft)
+ → optional vibage-issue-fix (preference ≠ unlock; file-backed scope confirm after report)
+ → optional architecture review / Service map (qualified map required; failure blocks only this track)
 ```
 
 ### 3.1 Hub layout (normative)
 
 ```text
 docs/vibage/
-  STATUS.md                 # OS pointer + STOP card (thin)
-  RUNS/<run_id>.json        # RunEnvelope (+ handoff SSOT)
-  SCAN_PLAN.md
-  CONFIRM.json
-  OWNER_POLICY.json         # code-edit preference; NOT in scan_plan hash
-  DECISIONS.md
-  indexes/<root_id>/        # local root indexes
-  maps/                     # Service map artifacts
-  # optional: model-routing.json, UploadManifest stub (no upload)
+ STATUS.md # OS pointer + STOP card (thin)
+ RUNS/<run_id>.json # RunEnvelope (+ handoff SSOT)
+ SCAN_PLAN.md
+ CONFIRM.json
+ OWNER_POLICY.json # code-edit preference; NOT in scan_plan hash
+ DECISIONS.md
+ indexes/<root_id>/ # local root indexes
+ maps/ # Service map artifacts
+ # optional: model-routing.json, UploadManifest stub (no upload)
 
 Workspace root (deliverable only when complete):
-  VIBAGE-ISSUE-OWNER.md
-  VIBAGE-ISSUE-LOCATE.md
-  vibage-preview/           # fail-soft
+ VIBAGE-ISSUE-OWNER.md
+ VIBAGE-ISSUE-LOCATE.md
+ vibage-preview/ # fail-soft
 ```
 
 **Rules:** Hub disk is authority for vibage artifacts. Git tracks vibage docs/maps only — never copy microservice trees. Verify + pollution + size caps apply (§3 locks). Fingerprint: git HEAD+identity when available; no-git cheap signals; **no full-tree** hash; lazy index for `planned_dig_ids` only.
@@ -94,9 +94,9 @@ Workspace root (deliverable only when complete):
 |-------|------|----------|
 | `vibage-init` | install allowlist, hub skeleton, thin rules entry | dig, reports |
 | `vibage-orient` | roots, SCAN_PLAN, awaiting confirm | deep dig |
-| `vibage-issue-locate` | indexes, dig after gate, dual reports | edit business code; claim fix/架構 done |
+| `vibage-issue-locate` | indexes, dig after gate, dual reports | edit business code; claim fix/ done |
 | `vibage-issue-fix` | scoped edits after dual consent + file confirm; prefer branch/PR | run without unlock |
-| 架構檢視 (Service map track) | map-qualified architecture review | block locate DONE on map fail |
+| architecture review (Service map track) | map-qualified architecture review | block locate DONE on map fail |
 
 **This-wave skill directories:** Install/docs may briefly keep a redirect from `vibage-locate` → `vibage-issue-locate`. Report filenames hard-cut immediately; skill folder rename may lag one small plan if install breakage risk is high.
 | `research-survey-review` | survey when matrix MUST | pretend MUST when SKIP |
@@ -109,7 +109,7 @@ Rename hard cut: reports are **`VIBAGE-ISSUE-OWNER.md`** / **`VIBAGE-ISSUE-LOCAT
 | Layer | Role |
 |-------|------|
 | OS | Hub ready; STATUS pointer (`focus_run_id`, `focus_pipeline_id`) + STOP card |
-| Pipeline | `locate` / optional fix / 架構檢視 — `pipeline_id` |
+| Pipeline | `locate` / optional fix / architecture review — `pipeline_id` |
 | Run | `RunEnvelope` per run — phase, mode, handoff; **not** a global FSM engine |
 
 ---
@@ -118,26 +118,26 @@ Rename hard cut: reports are **`VIBAGE-ISSUE-OWNER.md`** / **`VIBAGE-ISSUE-LOCAT
 
 ### 4.1 Dual consent for code edit
 
-1. **Preference** (may ask early; default NO) → `OWNER_POLICY.json` (not in scan hash).  
+1. **Preference** (may ask early; default NO) → `OWNER_POLICY.json` (not in scan hash). 
 2. **Unlock** = after locate report, file-backed scope confirm. Preference ≠ unlock.
 
 **Hard gates:**
 
-- If preference is **NO** (default): agent **must not** enter `vibage-issue-fix` or solicit unlock. Locate may still DONE.  
-- If owner later wants fix: update `OWNER_POLICY.json` to YES (plain ask in chat + write file), **then** after a locate report, run unlock (scope confirm file). Both preference=YES **and** unlock file are required before any business-code edit.  
+- If preference is **NO** (default): agent **must not** enter `vibage-issue-fix` or solicit unlock. Locate may still DONE. 
+- If owner later wants fix: update `OWNER_POLICY.json` to YES (plain ask in chat + write file), **then** after a locate report, run unlock (scope confirm file). Both preference=YES **and** unlock file are required before any business-code edit. 
 - Unlock without preference=YES is forbidden. Preference=YES without unlock is forbidden.
 
 ### 4.2 Confirm + gate
 
-- Human plain confirm (e.g. 「確認」 / “confirm” / clear synonym) triggers writing `CONFIRM.json` with plan hash.  
-- Dig requires `assert_gate` success (non-zero + plain reason + **dig forbidden** on fail).  
-- Plan change → stale confirm → re-confirm.  
+- Human plain confirm (e.g. 「confirm」 / “confirm” / clear synonym) triggers writing `CONFIRM.json` with plan hash. 
+- Dig requires `assert_gate` success (non-zero + plain reason + **dig forbidden** on fail). 
+- Plan change → stale confirm → re-confirm. 
 - Resume: if script says confirm still valid → continue **without** re-ask; else re-confirm.
 
 ### 4.3 MANIFEST / DoD
 
-- This phase installs issue-fix + 架構檢視 as **optional** tracks.  
-- Locate DONE does **not** require them.  
+- This phase installs issue-fix + architecture review as **optional** tracks. 
+- Locate DONE does **not** require them. 
 - Local complete body = issue-locate loop + indexes + gates/tests (C). Path to B stays in design.
 
 ### 4.4 No register CTA
@@ -150,22 +150,22 @@ Local happy path, errors, and preview copy must not push registration. SaaS blan
 
 ### 5.1 Indexes and maps
 
-- Root indexes: `docs/vibage/indexes/<root_id>/`  
-- Service maps: `docs/vibage/maps/`  
-- Map qualification: **Hybrid** — quality bar always MEDIUM; scale sets rhythm Tiny / Subset / Large.  
-- Map fail blocks **only** 架構檢視 track.
+- Root indexes: `docs/vibage/indexes/<root_id>/` 
+- Service maps: `docs/vibage/maps/` 
+- Map qualification: **Hybrid** — quality bar always MEDIUM; scale sets rhythm Tiny / Subset / Large. 
+- Map fail blocks **only** architecture review track.
 
 ### 5.2 Reports
 
-- Header: two status lines (找問題 / 架構檢視).  
-- **Assumption-challenge** fixed section in `VIBAGE-ISSUE-LOCATE.md` (2–5 bullets). OWNER may briefly reference.  
-- HTML preview fail-soft.  
+- Header: two status lines (find-issue / architecture review). 
+- **Assumption-challenge** fixed section in `VIBAGE-ISSUE-LOCATE.md` (2–5 bullets). OWNER may briefly reference. 
+- HTML preview fail-soft. 
 - Fingerprint after assert_gate; fingerprint ∉ scan_plan hash.
 
 ### 5.3 Caps
 
-- Default cap table; agent may adjust with **WARN**.  
-- Hard FAIL raise only via **this-run** RunEnvelope / DECISIONS (+ timestamp).  
+- Default cap table; agent may adjust with **WARN**. 
+- Hard FAIL raise only via **this-run** RunEnvelope / DECISIONS (+ timestamp). 
 - Exception does **not** rewrite default table or future cloud quota.
 
 ---
@@ -174,8 +174,8 @@ Local happy path, errors, and preview copy must not push registration. SaaS blan
 
 ### 6.1 Map-reduce fan-out
 
-- Degrade + record if model missing; never fake premium/nested.  
-- Fake full nested: empty-dispatch → verify FAIL. No 100% nested SLA.  
+- Degrade + record if model missing; never fake premium/nested. 
+- Fake full nested: empty-dispatch → verify FAIL. No 100% nested SLA. 
 - Thin: skills / templates / existing verify family only.
 
 ### 6.2 Review ladder (task difficulty; orthogonal to L0–L3)
@@ -186,9 +186,9 @@ Local happy path, errors, and preview copy must not push registration. SaaS blan
 | MED | 3× faster model (e.g. Composer 2.5) |
 | LOW | tests / verify / self-check (not empty 3-lens theater) |
 
-- Forbidden: claim done with **zero** evidence/script gate.  
-- Owner locate defaults toward **LOW**. HIGH/MED mainly for Vibage self-build / high-risk contracts.  
-- OWNER: one plain-language **degrade** sentence when applicable.  
+- Forbidden: claim done with **zero** evidence/script gate. 
+- Owner locate defaults toward **LOW**. HIGH/MED mainly for Vibage self-build / high-risk contracts. 
+- OWNER: one plain-language **degrade** sentence when applicable. 
 - Model slugs are suggestions only; routing B semantics remain (L0–L3; no fake L3).
 
 ---
@@ -199,20 +199,20 @@ Local happy path, errors, and preview copy must not push registration. SaaS blan
 
 **Merge recipe (one line):** Commit vibage naming on p1 if still dirty → merge into trunk → on conflict **vibage live paths win** → rewrite any brought-in `docs/war-room/` / `war-room-*` fixtures/smoke/skills to `docs/vibage/` / `vibage-*` → discard live war-room SSOT → archive soft CTA / feature-call / conflicting STATUS.
 
-1. Merge `feature/vibage-os-p1` into the executable line after resolving conflicts.  
-2. Discard live `war-room-*` paths; **vibage** names/paths win as live SSOT.  
-3. **Path rewrite DoD:** after merge, all live hub paths, fixtures, and smoke scripts use `docs/vibage/` (no live `docs/war-room/`).  
-4. Ensure `scan_plan_hash` + gate scripts + tests are on the tree.  
-5. Result: **one clean `main` (or equivalent trunk)**; further work lands on that trunk.  
+1. Merge `feature/vibage-os-p1` into the executable line after resolving conflicts. 
+2. Discard live `war-room-*` paths; **vibage** names/paths win as live SSOT. 
+3. **Path rewrite DoD:** after merge, all live hub paths, fixtures, and smoke scripts use `docs/vibage/` (no live `docs/war-room/`). 
+4. Ensure `scan_plan_hash` + gate scripts + tests are on the tree. 
+5. Result: **one clean `main` (or equivalent trunk)**; further work lands on that trunk. 
 6. Plan 0 DoD **includes** archive of conflicting docs + **unlink** soft CTA / `references/feature-call.md` (and similar) from happy path + thin package STATUS (three-state) — merge alone is not done.
 
 ### 7.2 This-wave ship (Tier-0)
 
-- Single local entry: `bash scripts/test-tier0.sh` (smoke + pytest).  
-- Must cover: gate **RED** (no dig) → GREEN → verify green; hard-cut report names.  
-- **SHIP_MEANS_TIER0_ONLY:** this-wave “可交貨” = Plan 0 + Tier-0 green.  
-  - ≠ agent E2E proven  
-  - ≠ publish-ready  
+- Single local entry: `bash scripts/test-tier0.sh` (smoke + pytest). 
+- Must cover: gate **RED** (no dig) → GREEN → verify green; hard-cut report names. 
+- **SHIP_MEANS_TIER0_ONLY:** this-wave “deliverable” = Plan 0 + Tier-0 green. 
+ - ≠ agent E2E proven 
+ - ≠ publish-ready 
 
 ### 7.3 Proven scope
 
@@ -225,29 +225,29 @@ Package STATUS uses Designed / On-tree / Proven-green with scope. Hub STATUS is 
 
 ### 7.4 Focus: agent-pressure (deferred)
 
-- Listed as a fixed row on **package STATUS** (meta track).  
-- **Not** a product `pipeline_id` and **not** the same as STATUS `focus_pipeline_id` (which points at locate/fix/架構檢視 runs).  
-- Protocol: scenario card → RED without skill → GREEN with skill → pre-locked checklist + evidence pack.  
-- Synthetic parent primary; real project spot-check only.  
+- Listed as a fixed row on **package STATUS** (meta track). 
+- **Not** a product `pipeline_id` and **not** the same as STATUS `focus_pipeline_id` (which points at locate/fix/architecture review runs). 
+- Protocol: scenario card → RED without skill → GREEN with skill → pre-locked checklist + evidence pack. 
+- Synthetic parent primary; real project spot-check only. 
 - Tier-0 green **must not** mark this track Proven-green (`agent`).
 
 ### 7.5 Docs archive
 
-- Move conflicting old docs to `docs/archive/<date>/` + banner `DO NOT USE FOR DEV` + unlink from README / NEW-CHAT / live STATUS.  
-- Archive is one-way this wave; reactivation = new Designed item + re-link.  
+- Move conflicting old docs to `docs/archive/<date>/` + banner `DO NOT USE FOR DEV` + unlink from README / NEW-CHAT / live STATUS. 
+- Archive is one-way this wave; reactivation = new Designed item + re-link. 
 - Later version milestone may delete archived files.
 
 ### 7.6 CI
 
-- Mentioned in design + plans.  
-- Local green = this-wave ship.  
-- When remote exists, CI mirrors the same entry command.  
+- Mentioned in design + plans. 
+- Local green = this-wave ship. 
+- When remote exists, CI mirrors the same entry command. 
 - No remote ≠ publish-ready.
 
 ### 7.7 Plain language
 
-- Owner-facing sentences vs stable English IDs.  
-- ≥3 counterexamples in rules (no invented Phase/Mode synonyms for owners).  
+- Owner-facing sentences vs stable English IDs. 
+- ≥3 counterexamples in rules (no invented Phase/Mode synonyms for owners). 
 - Prefer “acceptance / tests / proof” over overloaded “evidence” as a section label where it clashes with locate path+quote evidence.
 
 ---
@@ -258,13 +258,13 @@ Package STATUS uses Designed / On-tree / Proven-green with scope. Hub STATUS is 
 
 On **milestones** (orient done, confirm, gate, locate start/end, success/stop) — not every tool call:
 
-1. **Chat (same conversation SSOT for owner):** plain language progress / STOP. Never paste RunEnvelope JSON / hashes / internal fields as the owner message. Do not assign hub homework on the happy path.  
+1. **Chat (same conversation SSOT for owner):** plain language progress / STOP. Never paste RunEnvelope JSON / hashes / internal fields as the owner message. Do not assign hub homework on the happy path. 
 2. **Disk:** update `docs/vibage/` (STATUS STOP card + RunEnvelope, etc.) under allowlist / pollution / size caps. Never dump full chat logs or business trees into the hub.
 
 ### 8.2 Mid-fail
 
-- **No** fake-DONE `VIBAGE-ISSUE-*` reports.  
-- Write STATUS STOP + RunEnvelope.handoff.  
+- **No** fake-DONE `VIBAGE-ISSUE-*` reports. 
+- Write STATUS STOP + RunEnvelope.handoff. 
 - Deliverable degrade (completed but shallow) → OWNER one-liner; mid-fail → chat + disk handoff only.
 
 ### 8.3 Handoff fields (RunEnvelope SSOT)
@@ -273,22 +273,22 @@ On **milestones** (orient done, confirm, gate, locate start/end, success/stop) �
 
 **Prior-run pointer (single rule):**
 
-- After Terminal-then-mint, the **new** run MUST set root `supersedes_run_id` = prior terminal `run_id` (this is the SSOT).  
-- `handoff.prior_run_id` is an **optional mirror** for Focus/humans; if present it MUST equal `supersedes_run_id`.  
-- On conflict, **root wins**; rewrite the mirror.  
+- After Terminal-then-mint, the **new** run MUST set root `supersedes_run_id` = prior terminal `run_id` (this is the SSOT). 
+- `handoff.prior_run_id` is an **optional mirror** for Focus/humans; if present it MUST equal `supersedes_run_id`. 
+- On conflict, **root wins**; rewrite the mirror. 
 - Fresh runs with no predecessor: both null/omitted.
 
 **Nested `handoff` object only:**
 
-- `stop_reason`  
-- structured `progress` (`steps_done`, `dig_ids_done` / `dig_ids_pending`, `confirm_payload_hash`, optional `notes`)  
-- `blockers`, `next_action`  
-- `artifacts_ok` (`SCAN_PLAN|CONFIRM|OWNER_POLICY` → `reuse|redo|unknown`) with **script/hash > agent**; gate red forces `CONFIRM=redo`. This wave: only `CONFIRM` is expected script-proven via gate; `OWNER_POLICY` / `SCAN_PLAN` may be `unknown|agent` until scripts exist.  
-- `artifacts_ok_source` (`script|agent`)  
-- `known_incompleteness`  
-- optional `track`  
-- optional `prior_run_id` (mirror only; see rule above)  
-- `handoff_honored` reserved for Focus  
+- `stop_reason` 
+- structured `progress` (`steps_done`, `dig_ids_done` / `dig_ids_pending`, `confirm_payload_hash`, optional `notes`) 
+- `blockers`, `next_action` 
+- `artifacts_ok` (`SCAN_PLAN|CONFIRM|OWNER_POLICY` → `reuse|redo|unknown`) with **script/hash > agent**; gate red forces `CONFIRM=redo`. This wave: only `CONFIRM` is expected script-proven via gate; `OWNER_POLICY` / `SCAN_PLAN` may be `unknown|agent` until scripts exist. 
+- `artifacts_ok_source` (`script|agent`) 
+- `known_incompleteness` 
+- optional `track` 
+- optional `prior_run_id` (mirror only; see rule above) 
+- `handoff_honored` reserved for Focus 
 
 Do **not** duplicate `phase` / `pipeline_id` / `run_id` inside `handoff`.
 
@@ -298,10 +298,10 @@ Do **not** duplicate `phase` / `pipeline_id` / `run_id` inside `handoff`.
 
 ### 8.4 Resume (Terminal-then-mint)
 
-- Continue same `run_id` until terminal (`done|failed|aborted|stale_confirm`).  
-- Further progress after terminal → **new** `run_id` and **MUST** set `supersedes_run_id` per §8.3.  
-- Never rewrite old failed/aborted → done.  
-- Confirm-valid (script) → no re-ask; plan change / gate red → re-confirm.  
+- Continue same `run_id` until terminal (`done|failed|aborted|stale_confirm`). 
+- Further progress after terminal → **new** `run_id` and **MUST** set `supersedes_run_id` per §8.3. 
+- Never rewrite old failed/aborted → done. 
+- Confirm-valid (script) → no re-ask; plan change / gate red → re-confirm. 
 - `artifacts_ok` does **not** cross pipelines by default.
 
 ### 8.5 Error table (owner)
@@ -312,7 +312,7 @@ Do **not** duplicate `phase` / `pipeline_id` / `run_id` inside `handoff`.
 | Stale confirm | Plan changed; confirm again | stale; re-confirm |
 | Missing roots | List missing; use visible subset | RootRef missing |
 | Degrade | One plain sentence | Footprint actual depth |
-| Map underqualified | 架構檢視 blocked; locate may still DONE | Track-local fail |
+| Map underqualified | architecture review blocked; locate may still DONE | Track-local fail |
 | Preview fail | MD reports still OK | fail-soft; no CTA |
 | Script/verify red | Auto-check failed; not complete | No Proven / fake done |
 | Cap / pollution / size hard FAIL | Hub too large or wrong files written; stop and clean | verify FAIL; dig forbidden until fixed; no fake DONE |
@@ -334,7 +334,7 @@ Do **not** duplicate `phase` / `pipeline_id` / `run_id` inside `handoff`.
 |--------------|------|
 | `SAT-map-schema` | Service map schema, Hybrid Tiny/Subset/Large rhythm, qualification |
 | `SAT-issue-fix-unlock` | Unlock file shape, branch/PR default, dual-consent edge cases |
-| `SAT-arch-review` | 架構檢視 track behavior given qualified map |
+| `SAT-arch-review` | architecture review track behavior given qualified map |
 | `SAT-agent-pressure` | Focus protocol details + scenario library |
 | `SAT-ci-remote` | CI workflow when origin exists (mirrors `test-tier0.sh`) |
 | `SAT-saas-blank` | Reserved blank shapes for next-phase cloud (no local CTA) |
@@ -347,7 +347,7 @@ Do **not** duplicate `phase` / `pipeline_id` / `run_id` inside `handoff`.
 | `P1-report-hardcut` | `VIBAGE-ISSUE-*` names in templates/skills/verify |
 | `P2-tier0-entry` | `scripts/test-tier0.sh` green (gate RED→GREEN + hard-cut) |
 | `P3-handoff-schema` | RunEnvelope.handoff + STATUS STOP template + milestone dual-write hooks |
-| `P4-optional-tracks` | Thin MANIFEST wiring for issue-fix / 架構檢視 (optional; locate DONE independent) |
+| `P4-optional-tracks` | Thin MANIFEST wiring for issue-fix / architecture review (optional; locate DONE independent) |
 | `P5-skill-rename` | `vibage-issue-locate` dir + install redirect cleanup |
 | `P6-focus-stub` | Package STATUS row for Focus: agent-pressure (no agent runs yet) |
 | `P7-ci-when-remote` | Only after origin exists; same command as Tier-0 |
@@ -360,11 +360,11 @@ Prior S15–S25 checklist intent is covered by the above IDs; old coverage docs 
 
 ## 10. Success criteria (this phase)
 
-1. Clean trunk with working `scan_plan_hash` + `assert_gate` / `write_confirm`.  
-2. `bash scripts/test-tier0.sh` green (includes gate RED→GREEN + hard-cut names).  
-3. Conflicting old docs archived; soft CTA unlinked; package STATUS honest (three-state + scope).  
-4. Owner can complete locate in one chat with dual-write milestones; mid-fail leaves resumable STOP/handoff (**script-proven** when tests cover it; not Focus agent-proven).  
-5. No register CTA; SaaS left blank.  
+1. Clean trunk with working `scan_plan_hash` + `assert_gate` / `write_confirm`. 
+2. `bash scripts/test-tier0.sh` green (includes gate RED→GREEN + hard-cut names). 
+3. Conflicting old docs archived; soft CTA unlinked; package STATUS honest (three-state + scope). 
+4. Owner can complete locate in one chat with dual-write milestones; mid-fail leaves resumable STOP/handoff (**script-proven** when tests cover it; not Focus agent-proven). 
+5. No register CTA; SaaS left blank. 
 6. Focus: agent-pressure visible as deferred meta row, not marked agent-proven by Tier-0.
 
 ---
@@ -376,14 +376,14 @@ Prior S15–S25 checklist intent is covered by the above IDs; old coverage docs 
 | Reserved | Local rule |
 |----------|------------|
 | `docs/vibage/UploadManifest.stub.json` | Schema stub only; no upload |
-| Cloud product name **Architecture Pass** | **≠** local track name **架構檢視 / Service map** — local English/IDs stay `service_map` / 架構檢視 |
+| Cloud product name **Architecture Pass** | **≠** local track name **architecture review / Service map** — local English/IDs stay `service_map` / architecture review |
 | Register / pairing / API keys | Next phase only; no copy in local happy path or errors |
 
 ### 11.2 Plan-level blanks
 
-- Exact pytest file list inside `test-tier0.sh`.  
-- Full RunEnvelope JSON Schema file path (`P3-handoff-schema`).  
-- Agent-pressure scenario library (`SAT-agent-pressure`).  
+- Exact pytest file list inside `test-tier0.sh`. 
+- Full RunEnvelope JSON Schema file path (`P3-handoff-schema`). 
+- Agent-pressure scenario library (`SAT-agent-pressure`). 
 - Optional `docs/archive/<date>/INDEX.md` listing source path + why archived (recommended in `P0`).
 
 ---
@@ -393,11 +393,11 @@ Prior S15–S25 checklist intent is covered by the above IDs; old coverage docs 
 | ID | Decision |
 |----|----------|
 | D1 | Approach 1 thin runtime |
-| D2 | Ship C now (locate loop); design path to B (fix + 架構檢視) |
+| D2 | Ship C now (locate loop); design path to B (fix + architecture review) |
 | D13 | Preference NO blocks fix; dual consent both hard gates |
 | D14 | Focus agent-pressure = package STATUS meta row, not pipeline_id |
 | D15 | Plan order P0→P2 ship; satellites SAT-* for thick topics |
-| D3 | Names: issue-locate / issue-fix; 架構檢視 = Service map (local) |
+| D3 | Names: issue-locate / issue-fix; architecture review = Service map (local) |
 | D4 | Dual consent; OWNER_POLICY; no register CTA |
 | D5 | Report hard cut `VIBAGE-ISSUE-*` |
 | D6 | Hybrid map bar; map fail ≠ locate fail |

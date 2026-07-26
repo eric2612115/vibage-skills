@@ -32,7 +32,7 @@ rg -q 'locate report|VIBAGE-ISSUE-LOCATE' "$FIX" || fail "issue-fix missing loca
 rg -q 'Locate may still DONE|locate DONE' "$FIX" || fail "issue-fix must keep locate DONE independent"
 rg -q 'artifacts_ok' "$FIX" || fail "issue-fix must note artifacts_ok non-cross-pipeline"
 
-# 架構檢視: qualified map; failure does not undo locate DONE (thin rg only — no verify calls)
+# architecture review: qualified map; failure does not undo locate DONE (thin rg only — no verify calls)
 rg -q 'qualified' "$ARCH" || fail "arch-review missing qualified map gate"
 rg -q 'locate DONE' "$ARCH" || fail "arch-review must not undo locate DONE"
 rg -q 'artifacts_ok' "$ARCH" || fail "arch-review must note artifacts_ok non-cross-pipeline"

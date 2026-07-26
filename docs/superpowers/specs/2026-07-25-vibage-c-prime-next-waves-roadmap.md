@@ -15,10 +15,10 @@ Four owner themes are **four subsystems**. One mega-spec mixes ship gates, UX, a
 
 | Wave | Theme | Delivers | Explicitly out |
 |------|-------|----------|----------------|
-| **W1** | Sync / freshness (HEAD+TTL subset) | Mark stale; **HARD_MOTHER**; **SOFT_CHILD** + ask + non-silent refuse; tokens below | Env-vacancy dialogue; 掃透; letter B; dimension; Tier-0; edge invalidate; brief refresh; other §2.5 triggers |
+| **W1** | Sync / freshness (HEAD+TTL subset) | Mark stale; **HARD_MOTHER**; **SOFT_CHILD** + ask + non-silent refuse; tokens below | Env-vacancy dialogue; full-sweep; letter B; dimension; Tier-0; edge invalidate; brief refresh; other §2.5 triggers |
 | **W1b** | Sync remainder (optional later) | Remaining §2.5: edge invalidate, brief refresh, branch/env path rebuild, compose/deploy, scene registry, ledger pointer mismatch, session auto-continue incomplete | Not scheduled until after W1 On-tree; **out of this roadmap’s committed sequence** until owner opens W1b |
-| **W2** | Missing-env → ask / configure | Answerable gaps; per-gap skip / point / classify + ask tokens; binary `env_vacancy_waiver` kept as hatch | Asking / skip / classify / waiver **never** grant 掃透; ≠ freshness waiver |
-| **W3a** | Dimension fill (may split N plans) | Repo synthesizer + dimension searchers → ledger `dimension_*`; **migrate deepen → retire `MAP_DEEPEN_OK` brand** | ≠ 掃透; ≠ “understood”; **implement after W2 On-tree** |
+| **W2** | Missing-env → ask / configure | Answerable gaps; per-gap skip / point / classify + ask tokens; binary `env_vacancy_waiver` kept as hatch | Asking / skip / classify / waiver **never** grant full-sweep; ≠ freshness waiver |
+| **W3a** | Dimension fill (may split N plans) | Repo synthesizer + dimension searchers → ledger `dimension_*`; **migrate deepen → retire `MAP_DEEPEN_OK` brand** | ≠ full-sweep; ≠ “understood”; **implement after W2 On-tree** |
 | **W3b** | Letter B (**thin**) | Clarify: B-path agent-proven (AP-C4/C5 evidence already on-tree) ≠ C′ Proven-green ≠ Gate B; optional RUNBOOK re-verify for new `run_ts` | **No new cards**; **no** rebuild Focus C1–C3; C′/W1 **never** auto-flip letter B |
 | **W4** | Tier-0 policy | Thin C′ subset ship-gate **On-tree** (YES = `graph_floor` + `ledger` only; `TIER0_C_PRIME_THIN_OK`) | Rejects whole `test_c_prime_suite`; **excludes** freshness / matrix / fixtures / defi_pile / dimension |
 
@@ -44,9 +44,9 @@ Wiring C′ into Tier-0 means: **if those C′ tests fail, the package must not 
 
 ## Honesty locks (all waves)
 
-- C′ Proven-green ≠ letter B ≠ Gate B (CONFIRM/dig) ≠ full-pile 掃透  
+- C′ Proven-green ≠ letter B ≠ Gate B (CONFIRM/dig) ≠ full-pile full-sweep  
 - `freshness_skip_waiver` **never** grants `FRESHNESS_OK` or `MATRIX_SWEEP_SUBSTANTIVE_OK`  
-- `env_vacancy_waiver` never grants 掃透  
+- `env_vacancy_waiver` never grants full-sweep  
 - W1 On-tree phrase must be: `W1 freshness On-tree (HEAD+TTL subset) ≠ Sync contract DONE` — never “Sync On-tree” alone  
 - Never read real `.env`; no vector / RAG / SaaS  
 

@@ -1,6 +1,6 @@
 # Service map — AI-first (humans optional)
 
-**Who cares:** agents doing 架構檢視 / locate context. Humans rarely stare at big graphs.
+**Who cares:** agents doing architecture review / locate context. Humans rarely stare at big graphs.
 
 | Artifact | Role |
 |----------|------|

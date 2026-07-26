@@ -11,14 +11,14 @@ fi
 
 [[ -f prompts/SAY-INSTALL-VIBAGE.md ]] || fail "missing SAY-INSTALL-VIBAGE.md"
 [[ -f tests/fixtures/install-vibage-phrase.md ]] || fail "missing install-vibage-phrase fixture"
-grep -Fq '幫我裝 Vibage' prompts/SAY-INSTALL-VIBAGE.md || fail "phrase missing in prompt"
-grep -Fq '幫我裝 Vibage' README.md || fail "README must show install phrase"
+grep -Fq 'Install Vibage' prompts/SAY-INSTALL-VIBAGE.md || fail "phrase missing in prompt"
+grep -Fq 'Install Vibage' README.md || fail "README must show install phrase"
 grep -Eiq 'Install phrase|Install continuum' skills/using-vibage/SKILL.md \
   || fail "using-vibage missing Install phrase/continuum section"
 grep -Fq 'PILE_INDEX_OK' skills/using-vibage/SKILL.md || fail "using-vibage must continuum to PILE_INDEX_OK"
 grep -Fq 'vibage-pile-index' adapters/cursor/vibage.mdc || fail "cursor adapter must route pile-index"
 grep -Fq 'EXTREMELY-IMPORTANT' skills/using-vibage/SKILL.md || fail "using-vibage missing pack-feel MUST invoke block"
-grep -Fq '幫我裝 Vibage' adapters/cursor/vibage.mdc || fail "cursor adapter missing phrase"
+grep -Fq 'Install Vibage' adapters/cursor/vibage.mdc || fail "cursor adapter missing phrase"
 # Continuum must not skip cost/deepen ask after PILE_INDEX_OK (ask-pressure Round0 lock)
 for f in \
   adapters/cursor/vibage.mdc \

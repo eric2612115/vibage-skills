@@ -13,7 +13,7 @@ A sentence claiming full coverage sitting under
 
     repos_dug: 1 / 3
     matrix: proven 0 / failed 0 / missing-env-config 1
-    掃透 (MATRIX_SWEEP_SUBSTANTIVE_OK): NO
+    full-sweep (MATRIX_SWEEP_SUBSTANTIVE_OK): NO
 
 is self-refuting to the owner without the lint understanding any language.
 Paraphrase stops being *blocked* and starts being *pointless*.
@@ -215,7 +215,7 @@ def render(d: Dict[str, Any]) -> str:
         f"repos_dug: {dug} / {d['repos_discovered']}  [{ids}]",
         f"matrix_cells: {d['matrix_cells']}  (proven {d['matrix_proven']} /"
         f" failed {d['matrix_failed']} / missing-env-config {d['matrix_missing_env']})",
-        f"掃透 (MATRIX_SWEEP_SUBSTANTIVE_OK): {d['saotou']}",
+        f"full-sweep (MATRIX_SWEEP_SUBSTANTIVE_OK): {d['saotou']}",
         f"scene: {d['scene']}   stereoscopic cover: {d['scene_cover']}",
         f"freshness: {d['freshness']}",
         f"env_vacancy: {d['env_vacancy']}",
@@ -256,7 +256,7 @@ def _keys(block: str) -> set:
     from tampering."""
     out = set()
     for line in block.splitlines():
-        m = re.match(r"^([A-Za-z_一-鿿][^:]*):", line.strip())
+        m = re.match(r"^([A-Za-z_][^:]*):", line.strip())
         if m:
             out.add(m.group(1).strip())
     return out

@@ -17,7 +17,7 @@ Lock narrative honesty for **letter B** after C′ Proven-green and W1 freshness
 | Claim | Means | Does **not** mean |
 |-------|--------|-------------------|
 | **B-path agent-proven** | AP-C4 (`issue-fix`) + AP-C5 (`service-map`) dual-PHASE scorer-PASS; indexed at focus `SUMMARY.md` `run_ts=20260723T105500Z` | C′ Proven-green; Gate B CONFIRM; Focus C1–C3 redefinition |
-| **C′ Proven-green** | Graph/brief/ledger (and related C′ evidence) green under C′ scope | Letter B; Gate B; full-pile 掃透 |
+| **C′ Proven-green** | Graph/brief/ledger (and related C′ evidence) green under C′ scope | Letter B; Gate B; full-pile full-sweep |
 | **Gate B (CONFIRM)** | Owner OK on SCAN_PLAN → dig-ready via `CONFIRM.json` / `assert_gate` | Agent-pressure letter B; C′ On-tree / Proven-green |
 
 **Phrase lock:** `B-path agent-proven ≠ C′ Proven-green ≠ Gate B (CONFIRM)`.

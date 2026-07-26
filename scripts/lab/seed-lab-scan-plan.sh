@@ -72,7 +72,7 @@ obj = {
     "root_refs": root_refs,
     "budgets": {"max_wall_min": 25, "max_files": 40, "max_depth": 3},
     "hot_path_ids": list(ids),
-    "known_incompleteness": "lab seed — dig ⊆ planned_dig_ids only; ≠ 掃透",
+    "known_incompleteness": "lab seed — dig ⊆ planned_dig_ids only; ≠ full-sweep",
     "planned_dig_ids": ids,
 }
 fence = json.dumps(obj, indent=2, ensure_ascii=False)

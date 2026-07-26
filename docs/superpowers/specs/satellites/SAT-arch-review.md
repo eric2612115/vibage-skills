@@ -1,6 +1,6 @@
 # SAT-arch-review
 
-**Owns:** 架構檢視 track behavior given a qualified map.  
+**Owns:** architecture review track behavior given a qualified map.  
 **Skill:** `skills/vibage-arch-review/SKILL.md`  
 **Verify:** `scripts/verify-service-map.sh <workspace_root>`  
 **Map schema:** `SAT-map-schema.md`  
@@ -8,7 +8,7 @@
 
 **Usable (this wave):** Map qualification gates are **script-proven**. That is **not** letter **B** complete, **not** agent E2E architecture quality, and **not** cloud Architecture Pass.
 
-**Track / `pipeline_id`:** `service_map` (exact). Local name: **架構檢視** / Service map.
+**Track / `pipeline_id`:** `service_map` (exact). Local name: **architecture review** / Service map.
 
 ---
 
@@ -16,9 +16,9 @@
 
 1. Require a **qualified** map at workspace `docs/vibage/maps/service_map.json` (Hybrid: `quality_bar=MEDIUM`; `scale` ∈ Tiny/Subset/Large; floor schema per `SAT-map-schema`).
 2. Map **missing** or **underqualified** → stop **only** this track with a plain owner sentence; **do not** rewrite locate DONE / dual reports (`VIBAGE-ISSUE-OWNER.md` / `VIBAGE-ISSUE-LOCATE.md`).
-3. Locate DONE does **not** require 架構檢視 (bidirectional independence).
+3. Locate DONE does **not** require architecture review (bidirectional independence).
 4. Do **not** edit business code here (that is `vibage-issue-fix` after dual consent).
-5. Do **not** claim cloud Architecture Pass; English IDs stay `service_map` / 架構檢視.
+5. Do **not** claim cloud Architecture Pass; English IDs stay `service_map` / architecture review.
 6. No SaaS / register CTA.
 
 ---
@@ -63,7 +63,7 @@ After `verify-service-map.sh` exits 0, agents **may**:
    → `vibage-preview/service_map.html` + `vibage-preview/service_map.svg`.  
    On soft skip/failure → exit 0 + `OK:RENDER_SKIP` + owner sentence; does not undo map usable / locate DONE.
 
-Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. Plan-L local-maps deepen ≠终局 ≠ SAT option-L platform (deferred≠forever-ban).
+Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. Plan-L local-maps deepen ≠end-state ≠ SAT option-L platform (deferred≠forever-ban).
 
 ---
 
@@ -71,8 +71,8 @@ Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. Plan-L local-maps
 
 | Case | Behavior |
 |------|----------|
-| Locate DONE, no map | Locate stays DONE; 架構檢視 blocked |
-| Map underqualified | 架構檢視 blocked; locate DONE unchanged; dual reports untouched |
+| Locate DONE, no map | Locate stays DONE; architecture review blocked |
+| Map underqualified | architecture review blocked; locate DONE unchanged; dual reports untouched |
 | Map qualified (verify OK) | May proceed with this track |
 | This track fails mid-flight | Still must not rewrite locate DONE / dual reports |
 
@@ -89,7 +89,7 @@ Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. Plan-L local-maps
 
 ## 6. Letter B / path-to-B
 
-- Letter **B** needs issue-fix **usable** **and** 架構檢視 **usable**.
+- Letter **B** needs issue-fix **usable** **and** architecture review **usable**.
 - When both are script-green: STATUS may note **path-to-B script-usable** (≠ agent-proven B).
 - This track alone never completes letter B.
 
@@ -97,7 +97,7 @@ Still ≠ cloud Architecture Pass. Still ≠ letter B upgrade. Plan-L local-maps
 
 ## 7. Out of scope (this wave / deferred — not forever-forbidden)
 
-- Agent E2E / Focus agent-pressure cards for 架構檢視
-- Option **L** deeper Graphify-class platform / coverage gates / interactive dashboard (M Pretty-local ≠终局; `deferred-closed ≠ forever-forbidden`). Cloud whole-repo upload/analysis remains out of this track’s job.
+- Agent E2E / Focus agent-pressure cards for architecture review
+- Option **L** deeper Graphify-class platform / coverage gates / interactive dashboard (M Pretty-local ≠end-state; `deferred-closed ≠ forever-forbidden`). Cloud whole-repo upload/analysis remains out of this track’s job.
 - Wiring `test_arch_review_usable.sh` or `test_prettier_maps.sh` into Tier-0
 - SaaS / register CTA

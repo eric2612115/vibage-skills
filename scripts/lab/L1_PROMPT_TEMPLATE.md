@@ -25,7 +25,7 @@ Copy this into each L1 subagent. Fill every `{{...}}` field. One agent = one sta
 4. All install / hub / CONFIRM / dig / reports must use `STAGING_PARENT` as workspace root / cwd.
 5. Set `HOME={{FAKE_HOME}}` for any `install.sh` / skill link commands (already used by continuum if pre-run).
 6. Do not share this staging with another agent. Do not read other slots' parents.
-7. Do not claim 掃透 / letter B / SaaS / `TIER0_OK` from lab success.
+7. Do not claim full-sweep / letter B / SaaS / `TIER0_OK` from lab success.
 8. If `planned_dig_ids` is empty → print `LAB_L1_SKIP_DIG empty_mother` and stop (still no deletes).
 
 ## Steps

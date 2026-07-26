@@ -4,7 +4,7 @@
 #
 # Scope: locate-wave shaped only (pipeline_id locate + locate artifacts keys).
 # Not pipeline-agnostic — do not reuse as a generic handoff verifier for fix /
-# 架構檢視 / other pipelines without a dedicated contract.
+# architecture review / other pipelines without a dedicated contract.
 # artifacts_ok does not cross pipelines by default (umbrella §8.4).
 set -euo pipefail
 RUN="${1:-}"

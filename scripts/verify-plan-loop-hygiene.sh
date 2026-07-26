@@ -20,7 +20,7 @@ PLANS="$PKG_ROOT/docs/superpowers/plans"
 }
 
 # Forbidden: Plan-loop-as-Implement phrases (word-level; rewrite still possible)
-FAIL_RE='plan-loop-converge|run[[:space:]]+[0-9]+[[:space:]]+plan[[:space:]]+reviews|run[[:space:]]+N[[:space:]]+plan[[:space:]]+reviews|plan[[:space:]]*三審|審[[:space:]]*plan'
+FAIL_RE='plan-loop-converge|run[[:space:]]+[0-9]+[[:space:]]+plan[[:space:]]+reviews|run[[:space:]]+N[[:space:]]+plan[[:space:]]+reviews|plan[[:space:]]*three reviews'
 
 is_todoish_line() {
   local line="$1"
@@ -46,7 +46,7 @@ while IFS= read -r -d '' f; do
     is_todoish_line "$line" || continue
     # allow deliverable / token names unless also forbidden task phrases
     if echo "$line" | grep -Eiq 'verify-plan-loop-hygiene|plan-loop-hygiene|PLAN_LOOP_HYGIENE_OK|references/looping-review'; then
-      if echo "$line" | grep -Eiq 'plan-loop-converge|run[[:space:]]+[0-9N]+[[:space:]]+plan[[:space:]]+reviews|plan[[:space:]]*三審'; then
+      if echo "$line" | grep -Eiq 'plan-loop-converge|run[[:space:]]+[0-9N]+[[:space:]]+plan[[:space:]]+reviews|plan[[:space:]]*three reviews'; then
         :
       else
         continue

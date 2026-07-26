@@ -20,7 +20,7 @@ mkdir -p "$HOME"
 
 LOG="$OUT/continuum.log"
 echo "LAB_CONTINUUM_START parent=$PARENT home=$HOME" | tee "$LOG"
-echo "Honesty: LAB_OK ≠ live parent mutated ≠ TIER0_OK ≠ 掃透 ≠ letter B" | tee -a "$LOG"
+echo "Honesty: LAB_OK ≠ live parent mutated ≠ TIER0_OK ≠ full-sweep ≠ letter B" | tee -a "$LOG"
 
 echo "== install pins + project rule ==" | tee -a "$LOG"
 bash "$PKG_ROOT/scripts/install.sh" --with-project-rule="$PARENT" 2>&1 | tee -a "$LOG"
@@ -92,7 +92,7 @@ sb = {
     "pile_index_exit": int(pi),
     "c_prime_fill_exit": int(cf),
     "freshness_exit": int(fr),
-    "honesty": "LAB_OK ≠ live mutated ≠ TIER0_OK ≠ 掃透 ≠ letter B",
+    "honesty": "LAB_OK ≠ live mutated ≠ TIER0_OK ≠ full-sweep ≠ letter B",
 }
 open(f"{out}/SCOREBOARD.json", "w", encoding="utf-8").write(json.dumps(sb, indent=2) + "\n")
 print(json.dumps(sb, indent=2))

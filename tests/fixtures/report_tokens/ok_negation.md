@@ -8,4 +8,4 @@
 
 Evidence: `src/app.py` quote placeholder.
 
-Honesty: ≠ 掃透；Asking ≠ 掃透。
+Honesty: ≠ full-sweep; Asking ≠ full-sweep.

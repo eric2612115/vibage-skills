@@ -198,9 +198,9 @@ set -e
 mout="$(bash "$ROOT/scripts/verify-env-branch-matrix.sh" "$M2")"
 [[ "$mout" == "ENV_BRANCH_MATRIX_OK" ]] || fail "skip answers should matrix OK via (C), got: $mout"
 if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$M2" >/dev/null 2>&1; then
-  fail "skip must never grant 掃透"
+  fail "skip must never grant full-sweep"
 fi
-[[ "$out" != *"MATRIX_SWEEP_SUBSTANTIVE_OK"* ]] || fail "vacancy scripts must not print 掃透"
+[[ "$out" != *"MATRIX_SWEEP_SUBSTANTIVE_OK"* ]] || fail "vacancy scripts must not print full-sweep"
 pass "skip + reason → ANSWERED; matrix (C); substantive fail"
 
 # --- classify + class ---

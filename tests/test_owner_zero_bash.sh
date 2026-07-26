@@ -18,7 +18,7 @@ say_line="$(grep -n '## What you say' README.md | head -1 | cut -d: -f1)"
 ops_line="$(grep -n 'Operator commands' README.md | head -1 | cut -d: -f1)"
 [[ -n "$say_line" && -n "$ops_line" ]] || fail "README missing What you say or Operator commands"
 [[ "$say_line" -lt "$ops_line" ]] || fail "What you say must appear before Operator commands"
-grep -Fq '幫我裝 Vibage' README.md || fail "README must show install phrase"
+grep -Fq 'Install Vibage' README.md || fail "README must show install phrase"
 grep -Fq 'You should not type bash' README.md || fail "README must say owner should not type bash"
 grep -Fq 'test_install_phrase_e2e.sh' README.md || fail "README must point install phrase e2e"
 

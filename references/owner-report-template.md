@@ -1,8 +1,8 @@
 # Vibage — Owner Brief — <date>
 <!-- Deliverable filename: VIBAGE-ISSUE-OWNER.md -->
 
-Status — 找問題: open | done | blocked — …
-Status — 架構檢視: not started | in progress | done | n/a — …
+Status — find-issue: open | done | blocked — …
+Status — architecture review: not started | in progress | done | n/a — …
 
 ## Coverage (machine-filled)
 
@@ -48,7 +48,7 @@ If you want architecture / debt mapping beyond this locate, open:
 No account required for this local report.
 
 ## Held tokens
-<!-- Machine-readable; required only if this brief uses Gate A slogans (掃透 / 立體場景 / …). -->
+<!-- Machine-readable; required only if this brief uses Gate A slogans (full-sweep / scene-cover / …). -->
 - _(none)_
 
 ## Token evidence

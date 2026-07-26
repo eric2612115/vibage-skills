@@ -1,6 +1,6 @@
 # Ask-pressure scorecard (thin-map / deepen honesty)
 
-**Status:** Ask 文案壓力過關（A1–A10 × 2 models）  
+**Status:** Ask copy pressure pass (A1–A10 × 2 models)  
 **≠** letter B · ≠ agent E2E Proven-green · ≠ ship-ready product claim
 
 ## Round 0 (copy)

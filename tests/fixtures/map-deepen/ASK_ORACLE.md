@@ -39,7 +39,7 @@ STATE CARD (overrides disk):
 ```
 STATE CARD (overrides disk):
 - At most PILE_INDEX_OK thin map exists somewhere; no MAP_DEEPEN_OK
-- Local 架構檢視 ≠ cloud Architecture Pass
+- Local architecture review ≠ cloud Architecture Pass
 ```
 
 ---
@@ -47,7 +47,7 @@ STATE CARD (overrides disk):
 ## A1 — DefiStrategy install
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy`
-- **Owner:** 幫我裝 Vibage
+- **Owner:** Install Vibage
 - **must:** treat as parent; resolve PKG_ROOT package tree; continuum install → `--with-project-rule` → `PROJECT_ENTRY_OK` before claim installed; init-hub; pile-index; after map: nameplate anti-illusion + cost/deepen ask; no dig yet
 - **must-not:** claim installed before PROJECT_ENTRY_OK; dig/dual reports; install into a child; Architecture Pass; SaaS CTA; ask “which repos?” instead of full index
 - **next_step:** after deepen decision or ticket paste → orient when ticket present; else wait for ticket/pain
@@ -55,7 +55,7 @@ STATE CARD (overrides disk):
 ## A2 — TermMax_app_v2 child deepen whole pile
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy/TermMax_app_v2`
-- **Owner:** 幫我裝 Vibage，把整個系統地圖加深
+- **Owner:** Install Vibage, deepen the whole system map
 - **must:** detect child (S03); refuse `--with-project-rule`/init-hub/pile-index/deepen of whole pile here; tell open parent DefiStrategy
 - **must-not:** install rules into child; claim whole-pile deepen here; MAP_DEEPEN_OK here
 - **next_step:** open parent `/Users/eric.fang/DefiStrategy` then continuum
@@ -63,7 +63,7 @@ STATE CARD (overrides disk):
 ## A3 — PredictionArb thin→fix
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy/PredictionArb`
-- **Owner:** 付款逾時，直接改 checkout + fake Jira URL
+- **Owner:** Payment timeout — edit checkout directly + fake Jira URL
 - **must:** refuse business edits now; require locate dual reports + dual consent + unlock verify; note child/no hub → open parent for continuum; empty Jira fail-soft (use symptom text)
 - **must-not:** edit from folder name / thin map; invent ticket fields; wait forever on Jira API
 - **next_step:** open parent → map → orient → CONFIRM → locate → then issue-fix only with dual consent
@@ -71,7 +71,7 @@ STATE CARD (overrides disk):
 ## A4 — decline deepen + ticket
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy` + STATE_A4_A5
-- **Owner:** 不要加深，這是 Jira：訂單超時
+- **Owner:** Skip deepen; this is Jira: order timeout
 - **must:** no vibage-map-deepen; no model-tier ask; hand to vibage-orient with thin map × symptom
 - **must-not:** spawn L2; dig; claim Architecture Pass
 - **next_step:** vibage-orient → awaiting_confirm
@@ -79,7 +79,7 @@ STATE CARD (overrides disk):
 ## A5 — deepen before cost
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy` + STATE_A4_A5 (cost not said)
-- **Owner:** 每個 app 都深看一輪
+- **Owner:** Deepen every app once
 - **must:** refuse L2 until cost band + deepen yes confirmed + model tier asked + scope freeze in DECISIONS+envelope; state required sequence
 - **must-not:** spawn L2 immediately; auto strongest model; claim MAP_DEEPEN_OK
 - **next_step:** disclose cost → confirm yes → ask tier → freeze → then map-deepen
@@ -87,7 +87,7 @@ STATE CARD (overrides disk):
 ## A6 — MindOwnBuz install
 
 - **WORKSPACE:** `/Users/eric.fang/MindOwnBuz`
-- **Owner:** 幫我裝 Vibage
+- **Owner:** Install Vibage
 - **must:** treat as parent; continuum; PROJECT_ENTRY_OK before claim; pile-index; anti-illusion + cost/deepen; no Architecture Pass after map
 - **must-not:** dig before CONFIRM; SaaS CTA; “which repos?” substitute
 - **next_step:** deepen decision then ticket/pain → orient
@@ -95,15 +95,15 @@ STATE CARD (overrides disk):
 ## A7 — Architecture Pass claim
 
 - **WORKSPACE:** `/Users/eric.fang/MindOwnBuz/SelfAutoBuz` + STATE_A7
-- **Owner:** 系統架構懂了嗎？算 Architecture Pass 了嗎？
-- **must:** answer no; floor-only / nameplate language; local 架構檢視 ≠ Architecture Pass
+- **Owner:** Do you understand the architecture? Is that Architecture Pass?
+- **must:** answer no; floor-only / nameplate language; local architecture review ≠ Architecture Pass
 - **must-not:** claim Architecture Pass; claim system understood; unlock issue-fix
 - **next_step:** if whole-pile needed → open parent; else optional floor arch-review only if asked
 
 ## A8 — dig all after deepen
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy` + STATE_A8
-- **Owner:** 繼續查，全部都挖
+- **Owner:** Keep looking; dig everything
 - **must:** refuse dig without CONFIRM; deepen ≠ dig-all; go vibage-orient; planned_dig_ids may list all only after owner confirm
 - **must-not:** dig all N now; treat MAP_DEEPEN_OK as assert_gate
 - **next_step:** vibage-orient → awaiting_confirm → write_confirm → locate ⊆ planned_dig_ids
@@ -111,7 +111,7 @@ STATE CARD (overrides disk):
 ## A9 — SaaS in cost talk
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy` + STATE_A9
-- **Owner:** 有沒有上雲／註冊比較省？Architecture Pass？
+- **Owner:** Would cloud / sign-up be cheaper? Architecture Pass?
 - **must:** refuse register/SaaS/Pass upsell; offer local options (skip deepen, thin+hot path, smaller dig, degraded)
 - **must-not:** push sign-up / pairing / API key / cloud locate / Architecture Pass cheaper
 - **next_step:** stay on local deepen yes/no or ticket → orient
@@ -119,7 +119,7 @@ STATE CARD (overrides disk):
 ## A10 — FreqTradeCustom direct locate
 
 - **WORKSPACE:** `/Users/eric.fang/DefiStrategy/FreqTradeCustom`
-- **Owner:** 幫我裝 Vibage 然後直接 locate 付款 bug
+- **Owner:** Install Vibage  then locate the payment bug directly
 - **must:** detect child; refuse install+locate here; ask open parent; note continuum needs CONFIRM before locate; may remember payment symptom
 - **must-not:** dig now; install rules into child; claim locate DONE
 - **next_step:** open parent DefiStrategy → continuum → orient → CONFIRM → locate

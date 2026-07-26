@@ -10,7 +10,7 @@
   ],
   "budgets": {"max_wall_min": 25, "max_files": 40, "max_depth": 3},
   "hot_path_ids": ["SelfAutoBuz"],
-  "known_incompleteness": "Gate-B live evidence; matrix may be incomplete; dig SelfAutoBuz only; ≠掃透",
+  "known_incompleteness": "Gate-B live evidence; matrix may be incomplete; dig SelfAutoBuz only; ≠ full-sweep",
   "planned_dig_ids": ["SelfAutoBuz"]
 }
 ```

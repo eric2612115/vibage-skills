@@ -12,7 +12,7 @@ git clone https://github.com/eric2612115/vibage-skills.git
 
 ## Language
 
-Default prose / agent docs / code comments are **English**. A small set of **owner-facing product phrases stay Chinese by design** and are tested (do not delete them), including `幫我裝 Vibage`, `掃透`, and related honesty slogans. English synonyms (e.g. “install Vibage”) are also accepted where adapters say so.
+Package files (skills, adapters, scripts, tests, references) are **English**. Owner chat may be any language; agents still recognize the English product phrases (`Install Vibage`, `full-sweep`, scene-cover slogans) and the script tokens that gate them. Do not put Chinese product slogans back into the pack.
 
 ## Stranger start (parent folder only)
 
@@ -20,7 +20,7 @@ Default prose / agent docs / code comments are **English**. A small set of **own
 2. In Cursor / Claude / Codex, open the **parent** folder that contains your many apps — **not** a single child repo.  
 3. Say:
 
-> 幫我裝 Vibage
+> Install Vibage
 
 Or just describe the pain (“checkout is broken”) — the agent must still wire parent rules first if missing.
 
@@ -30,9 +30,9 @@ You should not type bash. The agent runs scripts.
 
 **First time — install continuum:**
 
-> 幫我裝 Vibage
+> Install Vibage
 
-The agent must: wire **parent** routers (`PROJECT_ENTRY_OK`) → create the hub checklist → graph floor / pile index (`GRAPH_FLOOR_OK`; `PILE_INDEX_OK` = wrapper) → matrix sweep (掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`) → freshness (`FRESHNESS_OK` or WAIVED+DISCLOSED; exit 0 ≠ OK) → say the map is a nameplate (not “system understood”) → cost/deepen ask (ticket paste = skip deepen) → then ticket or symptom → orient → **CONFIRM** → locate.  
+The agent must: wire **parent** routers (`PROJECT_ENTRY_OK`) → create the hub checklist → graph floor / pile index (`GRAPH_FLOOR_OK`; `PILE_INDEX_OK` = wrapper) → matrix sweep (full-sweep only with `MATRIX_SWEEP_SUBSTANTIVE_OK`) → freshness (`FRESHNESS_OK` or WAIVED+DISCLOSED; exit 0 ≠ OK) → say the map is a nameplate (not “system understood”) → cost/deepen ask (ticket paste = skip deepen) → then ticket or symptom → orient → **CONFIRM** → locate.  
 It must **not** stop after install only, and must **not** dig yet.  
 Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`
 
@@ -77,7 +77,7 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 - **SaaS / sign-up** = blank (no register CTA in this pack).
 - **This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
 - Plugin manifests are on-tree (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). **≠** store listing until you submit and pass review.
-- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `GRAPH_FLOOR_OK` / `PILE_INDEX_OK` ≠ matrix 掃透 ≠ freshness ≠ `DIMENSION_FILL_OK` ≠ “scan confirmed” ≠ “locate finished”.
+- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `GRAPH_FLOOR_OK` / `PILE_INDEX_OK` ≠ matrix full-sweep ≠ freshness ≠ `DIMENSION_FILL_OK` ≠ “scan confirmed” ≠ “locate finished”.
 - Pile-index / dimension-fill ≠ Architecture Pass; Graphify optional / fail-soft; Plan-L prettier ≠ nested deepen; `MAP_DEEPEN_OK` brand retired.
 - `REVIEW_RECORD_OK` ≠ review quality; `REVIEW_RECORD_SKIP` ≠ reviewed.
 - Cost talk stays local — no register / SaaS CTA.

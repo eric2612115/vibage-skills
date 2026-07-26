@@ -22,7 +22,7 @@ This satellite is the thin contract only: **no** cloud app body, **no** upload c
 
 | Block | Content |
 |-------|---------|
-| **Normative locks** | No local CTA; Architecture Pass ≠ local 架構檢視 / `service_map`; UploadManifest stub ≠ upload; STATUS SaaS stays blank; thin SAT ≠ SaaS YES |
+| **Normative locks** | No local CTA; Architecture Pass ≠ local architecture review / `service_map`; UploadManifest stub ≠ upload; STATUS SaaS stays blank; thin SAT ≠ SaaS YES |
 | **Non-normative blanks** | Cloud product shape, APIs, UX, register flows — intentionally empty; next-phase may fill without this stub freezing them |
 
 **No shape freeze:** documenting a stub path must **not** lock future cloud APIs, pricing, or UX.
@@ -44,7 +44,7 @@ Stub presence ≠ upload capability. Do **not** invent a second stub schema or p
 
 | Local (this package) | Cloud (deferred) |
 |----------------------|------------------|
-| 架構檢視 / `pipeline_id=service_map` | **Architecture Pass** |
+| architecture review / `pipeline_id=service_map` | **Architecture Pass** |
 
 Do not equate map qualification or prettier maps with Architecture Pass.
 

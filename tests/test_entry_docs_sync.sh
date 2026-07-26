@@ -35,7 +35,7 @@ grep -Fq 'STATUS.md' "$NEWCHAT" || fail "NEW-CHAT must point at package STATUS.m
 
 # Stranger hero — chat-first, not bash-first
 grep -Fq '## What you say' "$README" || fail "README must have What you say hero"
-grep -Fq '幫我裝 Vibage' "$README" || fail "README must show install phrase"
+grep -Fq 'Install Vibage' "$README" || fail "README must show install phrase"
 grep -Fq 'docs/install/' "$README" || fail "README must link docs/install/"
 if grep -Eiq 'CI SKIPPED|no git remote here' "$README"; then
   fail "README must not keep stale CI SKIPPED / no-remote wording"

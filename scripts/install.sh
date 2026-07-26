@@ -28,7 +28,7 @@ Usage: $0 [options]
   --init-hub=/abs/path             Copy references/hub/* into path/docs/vibage/
   --c-prime-fill=/abs/parent       After hub exists: run c-prime-fill (graph+matrix sweep).
       Prints ENV_BRANCH_MATRIX_OK | MATRIX_INCOMPLETE | MATRIX_SWEEP_SUBSTANTIVE_OK.
-      Substantive miss → MATRIX_INCOMPLETE, exit 0 (honest; not greenwash 掃透).
+      Substantive miss → MATRIX_INCOMPLETE, exit 0 (honest; not greenwash full-sweep).
       Default: off. Prefer with --init-hub on same parent.
   --force                          Replace package-owned stale project skill symlinks only
   --force-hub                      Overwrite existing hub files (never deletes CONFIRM)

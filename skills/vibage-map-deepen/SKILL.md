@@ -5,7 +5,7 @@ description: >-
   PILE_INDEX_OK now route to W3a dimension-fill (ledger dimension_* claims).
   Never claim MAP_DEEPEN_OK. Success = DIMENSION_FILL_OK / PARTIAL / BLOCKED from
   verify-dimension-fill.sh. Not Plan-L Mermaid/Graphify. Not Architecture Pass.
-  Not system-understood. Not Gate A 掃透. Not dig/CONFIRM substitute. ∉ Tier-0.
+  Not system-understood. Not Gate A full-sweep. Not dig/CONFIRM substitute. ∉ Tier-0.
 ---
 
 # Vibage Map Deepen → Dimension Fill (migrated)
@@ -15,7 +15,7 @@ description: >-
 
 **Name lock:** This skill ≠ Plan-L「local-maps deepen」(Mermaid/Graphify prettier).
 
-**Honest scope:** Ledger `dimension_*` notes ≠ Architecture Pass ≠ CONFIRM ≠ dig-all ≠ Gate A 掃透 ≠ full-understanding ≠ dig-ready-after-install.
+**Honest scope:** Ledger `dimension_*` notes ≠ Architecture Pass ≠ CONFIRM ≠ dig-all ≠ Gate A full-sweep ≠ full-understanding ≠ dig-ready-after-install.
 
 ## When / Not
 
@@ -34,7 +34,7 @@ bash /path/to/vibage-skills/scripts/resolve-pkg-root.sh
 
 ## Procedure (MUST)
 
-1. Anti-illusion already said (nameplate ≠ understood; ≠ dig-ready; ≠ 掃透).
+1. Anti-illusion already said (nameplate ≠ understood; ≠ dig-ready; ≠ full-sweep).
 2. Cost band for N repos; owner **yes** dimension-fill (not deepen slogan).
 3. Freeze DECISIONS with `dimension_yes` / `dimension_scope_ids` / classes per design §4.
 4. Run:
@@ -51,6 +51,6 @@ bash "$PKG_ROOT/scripts/verify-dimension-fill.sh" "<mother>"
 ## Forbidden
 
 - green-shrink after partial to mint OK
-- narrating understood / dig-ready / ready-after-install-alone / 掃透 from fill or deepen
+- narrating understood / dig-ready / ready-after-install-alone / full-sweep from fill or deepen
 - wiring into Tier-0 / pack-health / `assert_gate`
 - treating dossiers stub alone as depth without ledger claim ids

@@ -1,9 +1,9 @@
 ---
 name: using-vibage
 description: >-
-  Use for in-scope Vibage conversations only: install Vibage / 幫我裝 Vibage,
+  Use for in-scope Vibage conversations only: install Vibage / Install Vibage,
   NEW-CHAT/bootstrap, cross-repo locate on a parent, or explicit
-  orient/CONFIRM/locate/pile-index/掃透. Not for vibage-skills package work,
+  orient/CONFIRM/locate/pile-index/full-sweep. Not for vibage-skills package work,
   single-repo named-file tasks, or research/review/Q&A/plan with no dig.
   When unclear, ask — do not silently pick. Must run before dig when in scope.
   Do not paste nested locate procedure here. See references/routing-scope.md.
@@ -24,7 +24,7 @@ Thin router only. **Parent project entry** (`.cursor/rules/vibage.mdc` / `CLAUDE
 
 ## Routing scope (before continuum / S08)
 
-**Vibage conversation (in scope)** = install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·掃透.
+**Vibage conversation (in scope)** = install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·full-sweep.
 
 **Out of scope** examples: work inside **vibage-skills** `PKG_ROOT`; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig. Gold example: workspace=`vibage-skills`, edit lab/tests/adapters → skip init even if parent lacks hub STATUS.
 
@@ -47,7 +47,7 @@ Say these in owner language (no jargon):
 | Entry OK | Parent routers on disk (`PROJECT_ENTRY_OK`) | Hub / graph / dig |
 | Hub ready | Checklist folder `docs/vibage/` exists | Graph / dig |
 | Graph floor | Structural index (`GRAPH_FLOOR_OK`; `PILE_INDEX_OK` = wrapper echo) | Matrix / dig |
-| Matrix sweep | Env×branch cells terminal; 掃透 only if `MATRIX_SWEEP_SUBSTANTIVE_OK` | Dig |
+| Matrix sweep | Env×branch cells terminal; full-sweep only if `MATRIX_SWEEP_SUBSTANTIVE_OK` | Dig |
 | Scene brief | When a scene is set: `SCENE_BRIEF_OK` (+ cover via `verify-scene-cover`) | Confirm / dig |
 | Confirm | Owner OK on this ticket’s hot path | Dig reports |
 
@@ -58,16 +58,16 @@ Optional dimension-fill (`DIMENSION_FILL_*`; legacy `MAP_DEEPEN_OK` brand retire
 | Claim language | Requires |
 |----------------|----------|
 | Floor / qualified map narrative | `UNDERSTANDING_ROLLUP_OK` (matrix not required) |
-| 矩陣終態／無漏掃 | `ENV_BRANCH_MATRIX_OK` |
-| 全環境全 branch 掃透 | **`MATRIX_SWEEP_SUBSTANTIVE_OK` only** |
-| 多領域立體場景切換 | `SCENE_BRIEF_OK` + `verify-scene-cover.sh` exit 0 |
+| matrix-terminal-state／no-missed-scan | `ENV_BRANCH_MATRIX_OK` |
+| full-environment full-branch full-sweep | **`MATRIX_SWEEP_SUBSTANTIVE_OK` only** |
+| multi-domain scene cover | `SCENE_BRIEF_OK` + `verify-scene-cover.sh` exit 0 |
 
 Gate A ≠ Gate B (orient → CONFIRM → `assert_gate` → dig).  
 `PILE_INDEX_OK` / `DIMENSION_FILL_*` (retired `MAP_DEEPEN_OK`) must **not** be narrated as full-understanding or dig-ready by themselves.
 
 ## Install phrase / continuum (C′)
 
-**Only when in scope.** Trigger examples: `幫我裝 Vibage` · `Please install Vibage` · Vibage intent on a parent with missing entry.
+**Only when in scope.** Trigger examples: `Install Vibage` · `Please install Vibage` · Vibage intent on a parent with missing entry.
 
 **Authoritative continuum:**
 
@@ -76,7 +76,7 @@ Gate A ≠ Gate B (orient → CONFIRM → `assert_gate` → dig).
 **Freshness (W1 — HARD_MOTHER / SOFT_CHILD):**
 
 - Mother: `bash "$PKG_ROOT/scripts/verify-freshness.sh" "$PARENT"` (or `freshness-check.sh --mode=mother`).
-- Continuum / hub-ready / 掃透 / dig-ready slogans require stdout **`FRESHNESS_OK`** **or** (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`).
+- Continuum / hub-ready / full-sweep / dig-ready slogans require stdout **`FRESHNESS_OK`** **or** (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`).
 - **Forbidden:** treating exit code 0 as `FRESHNESS_OK` (waived-stale also exits 0).
 - Hard-fail stdout: `STALE_BLOCKS_MOTHER count=<n>` — do not claim continuum ready; may still run refresh / graph-floor / matrix sweep.
 - Child: after commit/push emit `VIBAGE_FRESHNESS_ASK: Mother hub may be stale for this repo. Update docs/vibage map/matrix/progress now? [yes/no]`. yes → `freshness-refresh-repo.sh`; no → `freshness-mark.sh --refuse`. Refusal cannot stay silent (`VIBAGE_FRESHNESS_ESCALATE` at refuse_count≥3).
@@ -85,7 +85,7 @@ Gate A ≠ Gate B (orient → CONFIRM → `assert_gate` → dig).
 
 - Mother: `bash "$PKG_ROOT/scripts/verify-env-vacancy.sh" "$PARENT"` after matrix fill / session start.
 - Tokens (exactly one): `ENV_VACANCY_CLEAR` | `ENV_VACANCY_ASK count=<n>` | `ENV_VACANCY_ANSWERED count=<n>` | `ENV_VACANCY_BLOCKED`.
-- **ANSWERED ≠ CLEAR ≠ 掃透.** Exit 0 on CLEAR/ANSWERED still requires token parse; ASK/BLOCKED exit ≠ 0.
+- **ANSWERED ≠ CLEAR ≠ full-sweep.** Exit 0 on CLEAR/ANSWERED still requires token parse; ASK/BLOCKED exit ≠ 0.
 - Unanswered missing → emit `VIBAGE_ENV_VACANCY_ASK` and record skip|point|classify via `env-vacancy-answer.sh` (point-pending stays ASK until `env-vacancy-apply-point.sh`).
 - skip/classify/binary `env_vacancy_waiver` **never** grant `MATRIX_SWEEP_SUBSTANTIVE_OK`.
 
@@ -100,14 +100,14 @@ Agent **must** (owner: do not type bash):
 7. Plain explain (owner language):
    - init = “set up a small checklist folder here”
    - graph / pile-index = “list every app folder and how they seem linked — not read every file”
-   - matrix = “check env/branch evidence cells (掃透 only when substantive OK)”
+   - matrix = “check env/branch evidence cells (full-sweep only when substantive OK)”
    - orient = “for this ticket, which hot path on the map?”
    - Explicitly: **not** SaaS signup; **not** Graphify-first; **not** embedding pipelines as memory
 8. If hub missing → prefer one-shot glue when owner wants continuum fill:
    `bash "$PKG_ROOT/scripts/install.sh" --init-hub="$PARENT" --c-prime-fill="$PARENT"`
    (or `--init-hub` then hand to **`vibage-pile-index`** / `c-prime-fill`). `--c-prime-fill` default off.
 9. Hand to **`vibage-pile-index`** → expect `GRAPH_FLOOR_OK` (script also echoes `PILE_INDEX_OK` for freeze compat). Continuum exit ≠ “intent only” (F15).
-10. After graph floor / `PILE_INDEX_OK`: nameplate only; **cost/deepen ask** (`ticket paste = skip deepen`; optional **`vibage-map-deepen`** / dimension-fill only if owner says yes). Then matrix path (`c-prime-fill` prints `ENV_BRANCH_MATRIX_OK` **or** `MATRIX_INCOMPLETE`, and `MATRIX_SWEEP_SUBSTANTIVE_OK` only when 掃透). May accept ticket with honest incomplete disclosure; **never** claim 掃透 without `MATRIX_SWEEP_SUBSTANTIVE_OK`. Dimension fill stays optional/deferred unless owner yes. Success to CONFIRM-ready ≠ 掃透.
+10. After graph floor / `PILE_INDEX_OK`: nameplate only; **cost/deepen ask** (`ticket paste = skip deepen`; optional **`vibage-map-deepen`** / dimension-fill only if owner says yes). Then matrix path (`c-prime-fill` prints `ENV_BRANCH_MATRIX_OK` **or** `MATRIX_INCOMPLETE`, and `MATRIX_SWEEP_SUBSTANTIVE_OK` only when full-sweep). May accept ticket with honest incomplete disclosure; **never** claim full-sweep without `MATRIX_SWEEP_SUBSTANTIVE_OK`. Dimension fill stays optional/deferred unless owner yes. Success to CONFIRM-ready ≠ full-sweep.
 11. Ticket / pain **or** scene switch: if scene set → `scene-brief` + expect `SCENE_BRIEF_OK`; stereoscopic cover via `verify-scene-cover.sh` (independent of matrix).
 12. Hand to **`vibage-orient`** → CONFIRM → **`vibage-issue-locate`**. **No dig / no dual reports** until CONFIRM. Optional `DIMENSION_FILL_*` / retired `MAP_DEEPEN_OK` ≠ CONFIRM ≠ dig-all ≠ Gate A understood.
 
@@ -123,7 +123,7 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 4. **In scope only** — follow **parent** routing (mdc/CLAUDE/AGENTS — hooks may drop; alwaysApply mdc is reliable):
    - No hub → **vibage-init**
    - Hub ready, no graph floor (and no owner `MAP_SKIP`) → **vibage-pile-index** → then matrix sweep (`c-prime-fill` path)
-   - Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; 多領域立體場景切換 also needs `verify-scene-cover.sh` exit 0
+   - Scene set / switch → scene-brief → `SCENE_BRIEF_OK`; multi-domain scene cover also needs `verify-scene-cover.sh` exit 0
    - Map/graph ready, no valid CONFIRM → **vibage-orient** (only if freshness allows or stale disclosed)
    - CONFIRM OK → **vibage-issue-locate**
 5. Dual-STATUS: package `STATUS.md` ≠ hub `docs/vibage/STATUS.md`.
@@ -131,7 +131,7 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
 ## Lifecycle
 
-`PROJECT_ENTRY_OK → hub → GRAPH_FLOOR_OK → matrix sweep → freshness (exit 0 ≠ FRESHNESS_OK) → env-vacancy (ANSWERED ≠ CLEAR ≠ 掃透) → (optional deferred dimension fill) → ticket or scene → SCENE_BRIEF_OK when scene set → orient → CONFIRM → locate → finish`
+`PROJECT_ENTRY_OK → hub → GRAPH_FLOOR_OK → matrix sweep → freshness (exit 0 ≠ FRESHNESS_OK) → env-vacancy (ANSWERED ≠ CLEAR ≠ full-sweep) → (optional deferred dimension fill) → ticket or scene → SCENE_BRIEF_OK when scene set → orient → CONFIRM → locate → finish`
 
 ## Finishing (required after locate success)
 
@@ -142,7 +142,7 @@ Owner-language only (no soft CTA / no register / no pairing / no API-key / no Ar
 1. Optional localhost preview — fail-soft  
 2. Handoff / STOP if mid-fail  
 3. Stop — local delivery complete  
-4. Optional issue-fix / 架構檢視 **only if owner asks**
+4. Optional issue-fix / architecture review **only if owner asks**
 
 ### Cost / deepen talk (any time)
 
