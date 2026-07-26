@@ -53,4 +53,26 @@ EOF
 bash scripts/verify-plan-loop-hygiene.sh "$FIX2" | grep -Fq 'PLAN_LOOP_HYGIENE_OK' \
   || fail "deliverable-named todos must pass"
 
+# G1: numbered / bullet / table row forms must also FAIL (not only - [ ])
+for kind in numbered bullet table; do
+  FIXK=$(mktemp -d)
+  mkdir -p "$FIXK/docs/superpowers/plans"
+  case "$kind" in
+    numbered)
+      printf '%s\n' '# x' '1. plan-loop-converge' >"$FIXK/docs/superpowers/plans/k.md"
+      ;;
+    bullet)
+      printf '%s\n' '# x' '* plan-loop-converge' >"$FIXK/docs/superpowers/plans/k.md"
+      ;;
+    table)
+      printf '%s\n' '# x' '| Step | plan-loop-converge | pending |' >"$FIXK/docs/superpowers/plans/k.md"
+      ;;
+  esac
+  set +e
+  bash scripts/verify-plan-loop-hygiene.sh "$FIXK" >/dev/null 2>&1
+  EC=$?
+  set -e
+  [[ "$EC" -ne 0 ]] || fail "G1 line form $kind must FAIL hygiene"
+done
+
 echo "PLAN_LOOP_HYGIENE_TEST_OK"

@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Fail if package plans put Plan-loop work into Implement todos (word-level).
-# Scans only docs/superpowers/plans/**/*.md checklist/todo lines.
+# Scans only docs/superpowers/plans/**/*.md "todo-ish" lines:
+#   - [ ] / - [x] checklists
+#   - id: plan-loop* yaml-ish
+#   numbered steps: 1. / 1)
+#   bullets: * / +
+#   markdown table rows: |
 # Does NOT scan ~/.cursor/plans. ∉ Tier-0. Token: PLAN_LOOP_HYGIENE_OK
 # Usage: bash verify-plan-loop-hygiene.sh [<pkg_root>]
 set -euo pipefail
@@ -14,22 +19,33 @@ PLANS="$PKG_ROOT/docs/superpowers/plans"
   exit 0
 }
 
-# Todo/checklist lines only
-# Forbidden: Plan-loop-as-Implement phrases
-# Allowed on same line: verify-plan-loop-hygiene, PLAN_LOOP_HYGIENE_OK, references/looping-review
+# Forbidden: Plan-loop-as-Implement phrases (word-level; rewrite still possible)
 FAIL_RE='plan-loop-converge|run[[:space:]]+[0-9]+[[:space:]]+plan[[:space:]]+reviews|run[[:space:]]+N[[:space:]]+plan[[:space:]]+reviews|plan[[:space:]]*三審|審[[:space:]]*plan'
+
+is_todoish_line() {
+  local line="$1"
+  # checklist
+  [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]xX]\] ]] && return 0
+  # yaml-ish id
+  [[ "$line" =~ ^[[:space:]]*-[[:space:]]*id:[[:space:]]*plan-loop ]] && return 0
+  # numbered: 1. or 1)
+  [[ "$line" =~ ^[[:space:]]*[0-9]+\.[[:space:]] ]] && return 0
+  [[ "$line" =~ ^[[:space:]]*[0-9]+\)[[:space:]] ]] && return 0
+  # bullets * or + (not --- rules)
+  [[ "$line" =~ ^[[:space:]]*[*+][[:space:]]+ ]] && return 0
+  # markdown table row (must look like a row, not |---| separator alone)
+  if [[ "$line" =~ ^[[:space:]]*\| ]] && [[ ! "$line" =~ ^[[:space:]]*\|[[:space:]]*[-:]+ ]]; then
+    return 0
+  fi
+  return 1
+}
 
 hits=0
 while IFS= read -r -d '' f; do
   while IFS= read -r line || [[ -n "$line" ]]; do
-    # checklist / todo-ish lines
-    if ! [[ "$line" =~ ^[[:space:]]*-[[:space:]]*\[[[:space:]xX]\] ]] \
-      && ! [[ "$line" =~ ^[[:space:]]*-[[:space:]]*id:[[:space:]]*plan-loop ]]; then
-      continue
-    fi
-    # allow deliverable / token names
+    is_todoish_line "$line" || continue
+    # allow deliverable / token names unless also forbidden task phrases
     if echo "$line" | grep -Eiq 'verify-plan-loop-hygiene|plan-loop-hygiene|PLAN_LOOP_HYGIENE_OK|references/looping-review'; then
-      # still fail if also has converge / run N plan reviews as the task
       if echo "$line" | grep -Eiq 'plan-loop-converge|run[[:space:]]+[0-9N]+[[:space:]]+plan[[:space:]]+reviews|plan[[:space:]]*三審'; then
         :
       else

@@ -93,4 +93,4 @@ Plan-loop hygiene (todo-line phrase lint on `docs/superpowers/plans/**`) via **s
 
 ## Plan-loop hygiene (mechanical, word-level)
 
-`scripts/verify-plan-loop-hygiene.sh` fails if **todo/checklist lines** in `docs/superpowers/plans/**/*.md` contain Plan-loop-as-Implement phrases (`plan-loop-converge`, `run 3 plan reviews`, …). Narrative “Plan loop already frozen…” is OK. Does **not** scan `~/.cursor/plans`. Token: `PLAN_LOOP_HYGIENE_OK`.
+`scripts/verify-plan-loop-hygiene.sh` fails if **todo-ish lines** in `docs/superpowers/plans/**/*.md` contain Plan-loop-as-Implement phrases (`plan-loop-converge`, `run 3 plan reviews`, …). Todo-ish = checkbox rows, numbered steps (`1.` / `1)`), `*`/`+` bullets, and markdown table rows (`|…|`). Narrative “Plan loop already frozen…” is OK. Does **not** scan `~/.cursor/plans`. Rewrite still possible (word-level only). Token: `PLAN_LOOP_HYGIENE_OK`.
