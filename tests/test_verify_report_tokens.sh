@@ -19,7 +19,7 @@ bash scripts/verify-report.sh tests/fixtures/sample_LOCATE_degraded.md \
   || fail "clean degraded sample must still pass"
 pass "ok_clean sample_LOCATE_degraded"
 
-bash scripts/verify-report.sh "$FX/ok_negation.md" || fail "≠ 掃透 must pass"
+bash scripts/verify-report.sh "$FX/ok_negation.md" || fail "≠ full-sweep must pass"
 pass "ok_negation"
 
 bash scripts/verify-report.sh "$FX/ok_held_saotou.md" || fail "held+evidence must pass"
@@ -31,17 +31,17 @@ fi
 pass "bad_saotou fails"
 
 if bash scripts/verify-report.sh "$FX/bad_same_line_negation.md" >/dev/null 2>&1; then
-  fail "已掃透；≠ SaaS must fail"
+  fail "full-sweep; ≠ SaaS must fail"
 fi
 pass "bad_same_line_negation fails"
 
 if bash scripts/verify-report.sh "$FX/bad_cross_negation.md" >/dev/null 2>&1; then
-  fail "已掃透；≠ 立體 must fail (cross-slogan)"
+  fail "full-sweep; ≠ scene-cover must fail (cross-slogan)"
 fi
 pass "bad_cross_negation fails"
 
 if bash scripts/verify-report.sh "$FX/bad_cross_negation_scene.md" >/dev/null 2>&1; then
-  fail "立體…；≠ 掃透 must fail (cross-slogan)"
+  fail "scene-cover…；≠ full-sweep must fail (cross-slogan)"
 fi
 pass "bad_cross_negation_scene fails"
 
@@ -51,12 +51,12 @@ fi
 pass "bad_held_no_fence fails"
 
 if bash scripts/verify-report.sh "$FX/bad_paraphrase_saotou.md" >/dev/null 2>&1; then
-  fail "universal 掃 paraphrase must fail"
+  fail "universal scan paraphrase must fail"
 fi
 pass "bad_paraphrase_saotou fails"
 
 if bash scripts/verify-report.sh "$FX/bad_env_vacancy_inflation.md" >/dev/null 2>&1; then
-  fail "環境都確認/全部釐清 without ENV_VACANCY_CLEAR must fail"
+  fail "env all-confirmed without ENV_VACANCY_CLEAR must fail"
 fi
 pass "bad_env_vacancy_inflation fails"
 
@@ -76,13 +76,13 @@ trap 'rm -rf "$TMP"' EXIT
 cp tests/fixtures/sample_LOCATE_degraded.md "$TMP/VIBAGE-ISSUE-LOCATE.md"
 cp "$FX/bad_owner_quandong.md" "$TMP/VIBAGE-ISSUE-OWNER.md"
 if bash scripts/verify-report.sh "$TMP/VIBAGE-ISSUE-LOCATE.md" --owner "$TMP/VIBAGE-ISSUE-OWNER.md" >/dev/null 2>&1; then
-  fail "OWNER 系統已懂 must fail"
+  fail "OWNER system understood must fail"
 fi
 pass "bad_owner fails via --owner"
 
 # sibling auto-pick
 if bash scripts/verify-report.sh "$TMP/VIBAGE-ISSUE-LOCATE.md" >/dev/null 2>&1; then
-  fail "sibling OWNER with 全懂 must fail"
+  fail "sibling OWNER with system understood must fail"
 fi
 pass "sibling OWNER lint"
 

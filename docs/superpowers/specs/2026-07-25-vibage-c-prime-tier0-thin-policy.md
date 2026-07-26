@@ -24,7 +24,7 @@ Wire a **thin C′ subset** into `scripts/test-tier0.sh` so ship-gate fails if f
 
 ## Honesty
 
-- Thin Tier-0 C′ ≠ C′ Proven-green ≠ letter B ≠ Gate B ≠ 掃透  
+- Thin Tier-0 C′ ≠ C′ Proven-green ≠ letter B ≠ Gate B ≠ full-sweep  
 - `TIER0_OK` with thin C′ still ≠ Sync contract DONE ≠ dimension understood  
 - W1–W3 scripts remain out of Tier-0 required path except the two named tests above  
 

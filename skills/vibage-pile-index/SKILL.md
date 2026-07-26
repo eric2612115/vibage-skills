@@ -21,7 +21,7 @@ Goal: structural **graph floor** of the mother directory before locate — every
 | Owner cannot name repos / only pasted a ticket | Deep-read every file in 22 repos |
 | Continuum after install + init-hub | Cloud Architecture Pass / SaaS CTA |
 | Parent workspace only | Install/deepen into a child checkout (S03) |
-| Before matrix sweep | Claim 掃透 / dig-ready-after-install / full-understanding |
+| Before matrix sweep | Claim full-sweep / dig-ready-after-install / full-understanding |
 
 ## PKG_ROOT
 
@@ -35,7 +35,7 @@ Say plain words only:
 
 - “I’m building a structural map of every app folder in this parent.”
 - “This is not reading every file — just names, READMEs, and obvious links.”
-- “Next we fill env/branch evidence cells; 掃透 only when that substantive gate passes.”
+- “Next we fill env/branch evidence cells; full-sweep only when that substantive gate passes.”
 - “When the floor is ready, paste the ticket or switch scene — or say what hurts.”
 
 Do **not** ask “which repos?” as a substitute for indexing the discovery set.
@@ -77,7 +77,7 @@ Do **not** claim full-understanding, or dig-ready after install alone, from this
    ```bash
    bash "$PKG_ROOT/scripts/c-prime-fill.sh" "$WORKSPACE"
    ```
-   (or inventory + cell sweep). Aim `ENV_BRANCH_MATRIX_OK`; claim 掃透 **only** with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Incomplete matrix → disclose; tickets still OK.
+   (or inventory + cell sweep). Aim `ENV_BRANCH_MATRIX_OK`; claim full-sweep **only** with `MATRIX_SWEEP_SUBSTANTIVE_OK`. Incomplete matrix → disclose; tickets still OK.
 7. Optional dimension-fill / legacy `vibage-map-deepen` pointer: after anti-illusion + cost band, ask only if owner wants it. **Ticket paste alone = implicit no** (do not enter deepen/fill). Never narrate deepen/fill as understood.
 8. Ticket / pain **or** scene switch → if scene set, scene-brief → `SCENE_BRIEF_OK`; hand to `vibage-orient`. Owner-stated names **correct** hot path only — never shrink the full discovery index (F10).
 

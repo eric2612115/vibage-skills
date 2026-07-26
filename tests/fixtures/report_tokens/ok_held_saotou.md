@@ -8,7 +8,7 @@
 
 Evidence: `src/app.py` quote placeholder.
 
-本輪已掃透。
+This round: full-sweep.
 
 ## Held tokens
 - `MATRIX_SWEEP_SUBSTANTIVE_OK`

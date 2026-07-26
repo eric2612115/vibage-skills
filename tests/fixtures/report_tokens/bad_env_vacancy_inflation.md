@@ -1,4 +1,4 @@
-# Vibage Locate — env vacancy ANSWERED inflation paraphrase
+# Vibage Locate — env vacancy inflation
 
 ## Nested pass
 - Investigators: 0 — none
@@ -8,4 +8,4 @@
 
 Evidence: `src/app.py` quote placeholder.
 
-環境設定的部分都已經跟你確認過了，全部釐清。
+Environment config concerns are all confirmed and fully clear.

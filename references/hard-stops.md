@@ -41,7 +41,7 @@ Shared DO NOT / MUST for all surfaces (Cursor, Claude Code, Codex). Thin IDE ada
 - `vibage-orient` — SCAN_PLAN + awaiting_confirm; no dig; no dual reports. Deepen ≠ dig authorization.
 - `vibage-locate` / `vibage-issue-locate` — dig only after `assert_gate`; dig ⊆ `planned_dig_ids`; do not redefine model routing; do not dig all map services because deepen finished.
 - `vibage-issue-fix` — optional; dual consent (OWNER_POLICY YES + unlock); preference NO does not block locate DONE; **never** fix from thin map / folder-name match alone.
-- `vibage-arch-review` (架構檢視) — optional; qualified map required; without dimension-fill depth stay floor-only / nameplate; map fail does not undo locate DONE; ≠ Architecture Pass; does not unlock issue-fix.
+- `vibage-arch-review` (architecture review) — optional; qualified map required; without dimension-fill depth stay floor-only / nameplate; map fail does not undo locate DONE; ≠ Architecture Pass; does not unlock issue-fix.
 - `vibage-bootstrap` — hand off to `vibage-init`.
 - `research-survey-review` / `section-gate-review` — do not call `vibage-*` product skills.
 

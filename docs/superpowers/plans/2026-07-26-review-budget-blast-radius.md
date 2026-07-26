@@ -126,10 +126,10 @@ Severity: `gate` > `narrative` > `tests`. Mixed diffs use the highest class.
 
 ```python
 TRIGGER_PREFIXES = (
-    "scripts/lib/",
-    "adapters/",
-    "skills/",          # G2: entire skills tree
-    "tests/",
+ "scripts/lib/",
+ "adapters/",
+ "skills/", # G2: entire skills tree
+ "tests/",
 )
 # TRIGGER_EXACT: add "references/review-budget.md"
 ```
@@ -142,7 +142,7 @@ In `references/looping-review.md` “When it applies”, replace `skills/using-v
 
 ```bash
 git add references/review-budget.md references/looping-review.md \
-  scripts/lib/review_record.py tests/test_review_record.sh
+ scripts/lib/review_record.py tests/test_review_record.sh
 git commit -m "$(cat <<'EOF'
 feat(review-budget): SSOT table + G2 trigger all skills/
 
@@ -167,22 +167,22 @@ python3 - <<'PY' || fail "blast class / budget"
 import sys
 sys.path.insert(0, "scripts/lib")
 from review_record import (
-    classify_path, blast_class_for, budget_for, is_trigger,
+ classify_path, blast_class_for, budget_for, is_trigger,
 )
 
 SAMPLES = [
-    "scripts/assert_gate.sh",
-    "scripts/verify-freshness.sh",
-    "scripts/lib/review_record.py",
-    "adapters/cursor/vibage.mdc",
-    "skills/vibage-init/SKILL.md",
-    "references/routing-scope.md",
-    "references/review-budget.md",
-    "tests/test_review_record.sh",
-    "README.md",
+ "scripts/assert_gate.sh",
+ "scripts/verify-freshness.sh",
+ "scripts/lib/review_record.py",
+ "adapters/cursor/vibage.mdc",
+ "skills/vibage-init/SKILL.md",
+ "references/routing-scope.md",
+ "references/review-budget.md",
+ "tests/test_review_record.sh",
+ "README.md",
 ]
 for p in SAMPLES:
-    assert (classify_path(p) is not None) == is_trigger(p), p
+ assert (classify_path(p) is not None) == is_trigger(p), p
 
 assert classify_path("scripts/assert_gate.sh") == "gate"
 assert classify_path("scripts/verify-freshness.sh") == "gate"
@@ -199,15 +199,15 @@ assert blast_class_for(["tests/x.sh", "scripts/assert_gate.sh"]) == "gate"
 assert blast_class_for(["tests/x.sh"]) == "tests"
 
 for bad in ([], ["README.md"]):
-    try:
-        blast_class_for(bad)
-        raise SystemExit(f"expected raise for {bad!r}")
-    except ValueError:
-        pass
+ try:
+ blast_class_for(bad)
+ raise SystemExit(f"expected raise for {bad!r}")
+ except ValueError:
+ pass
 
 for cls in ("gate", "narrative", "tests"):
-    b = budget_for(cls)
-    assert b["min_reviewers"] == 2 and b["diversity_kind"] == "context", cls
+ b = budget_for(cls)
+ assert b["min_reviewers"] == 2 and b["diversity_kind"] == "context", cls
 print("BLAST_BUDGET_UNIT_OK")
 PY
 ```
@@ -218,57 +218,57 @@ PY
 
 ```python
 def classify_path(rel: str) -> str | None:
-    rel = rel.replace("\\", "/").lstrip("./")
-    if not is_trigger(rel):
-        return None
-    if rel.startswith("tests/"):
-        return "tests"
-    if rel.startswith("adapters/") or rel.startswith("skills/"):
-        return "narrative"
-    if rel.startswith("references/") and rel in TRIGGER_EXACT:
-        return "narrative"
-    if rel.startswith(TRIGGER_VERIFY_GLOB) and rel.endswith(".sh"):
-        return "gate"
-    if rel.startswith("scripts/lib/"):
-        return "gate"
-    if rel in TRIGGER_EXACT and not rel.startswith("references/"):
-        return "gate"
-    # Unknown trigger shape: still gate (fail-closed upgrade), never None while is_trigger
-    return "gate"
+ rel = rel.replace("\\", "/").lstrip("./")
+ if not is_trigger(rel):
+ return None
+ if rel.startswith("tests/"):
+ return "tests"
+ if rel.startswith("adapters/") or rel.startswith("skills/"):
+ return "narrative"
+ if rel.startswith("references/") and rel in TRIGGER_EXACT:
+ return "narrative"
+ if rel.startswith(TRIGGER_VERIFY_GLOB) and rel.endswith(".sh"):
+ return "gate"
+ if rel.startswith("scripts/lib/"):
+ return "gate"
+ if rel in TRIGGER_EXACT and not rel.startswith("references/"):
+ return "gate"
+ # Unknown trigger shape: still gate (fail-closed upgrade), never None while is_trigger
+ return "gate"
 
 
 _SEVERITY = {"tests": 1, "narrative": 2, "gate": 3}
 
 
 def blast_class_for(triggers: list[str]) -> str:
-    if not triggers:
-        raise ValueError("blast_class_for requires non-empty triggers")
-    best, best_s = None, -1
-    for t in triggers:
-        if not is_trigger(t):
-            continue
-        c = classify_path(t)
-        if c is None:
-            # invariant broken — must not degrade to tests
-            raise ValueError(f"trigger without class: {t}")
-        s = _SEVERITY[c]
-        if s > best_s:
-            best, best_s = c, s
-    if best is None:
-        raise ValueError("no trigger paths classified")
-    return best
+ if not triggers:
+ raise ValueError("blast_class_for requires non-empty triggers")
+ best, best_s = None, -1
+ for t in triggers:
+ if not is_trigger(t):
+ continue
+ c = classify_path(t)
+ if c is None:
+ # invariant broken — must not degrade to tests
+ raise ValueError(f"trigger without class: {t}")
+ s = _SEVERITY[c]
+ if s > best_s:
+ best, best_s = c, s
+ if best is None:
+ raise ValueError("no trigger paths classified")
+ return best
 
 
 def budget_for(cls: str) -> dict:
-    # A1: every class uses context diversity; model family is never diversity_kind
-    table = {
-        "gate": {"min_reviewers": 2, "diversity_kind": "context"},
-        "narrative": {"min_reviewers": 2, "diversity_kind": "context"},
-        "tests": {"min_reviewers": 2, "diversity_kind": "context"},
-    }
-    if cls not in table:
-        raise ValueError(cls)
-    return table[cls]
+ # A1: every class uses context diversity; model family is never diversity_kind
+ table = {
+ "gate": {"min_reviewers": 2, "diversity_kind": "context"},
+ "narrative": {"min_reviewers": 2, "diversity_kind": "context"},
+ "tests": {"min_reviewers": 2, "diversity_kind": "context"},
+ }
+ if cls not in table:
+ raise ValueError(cls)
+ return table[cls]
 ```
 
 In `main()`, if `blast_class_for` raises → `REVIEW_RECORD_FAIL reason=blast_class` (exit ≠ 0).
@@ -289,40 +289,40 @@ Every reviewer in PASS fixtures must include `reviewer_selected_by: owner|implem
 
 **Fixture A — gate PASS (same model OK; distinct contexts):**
 
-paths: `scripts/assert_gate.sh`  
-two reviewers: same `model: fixture-grok`, `context: sess-A` / `context: sess-B`, `reviewer_selected_by: owner`, `loop: impl`, `diversity: ok`, `frozen: true`, blocking empty.  
+paths: `scripts/assert_gate.sh` 
+two reviewers: same `model: fixture-grok`, `context: sess-A` / `context: sess-B`, `reviewer_selected_by: owner`, `loop: impl`, `diversity: ok`, `frozen: true`, blocking empty. 
 Expected: `REVIEW_RECORD_OK`, `blast_class=gate`, `review_budget_n=2`. Same-model must **not** FAIL.
 
 **Fixture B — gate FAIL (same / missing context):**
 
-same paths; two reviewers, same `context: sess-A` (or missing context), `diversity: ok`.  
+same paths; two reviewers, same `context: sess-A` (or missing context), `diversity: ok`. 
 Expected: `REVIEW_RECORD_FAIL` (context), **not** because models match.
 
 **Fixture C — narrative PASS (2 reviewers, distinct context; models may match):**
 
-paths: `references/routing-scope.md`  
-`context: host-A` / `context: host-B`, `reviewer_selected_by: implementer`.  
+paths: `references/routing-scope.md` 
+`context: host-A` / `context: host-B`, `reviewer_selected_by: implementer`. 
 Expected: OK, `blast_class=narrative`.
 
 **Fixture D — narrative FAIL (missing context):**
 
-same paths; two reviewers, no `context` fields, `diversity: ok`.  
+same paths; two reviewers, no `context` fields, `diversity: ok`. 
 Expected: FAIL.
 
 **Fixture E — plan floor:**
 
-paths: `references/routing-scope.md`; `loop: plan`; only **2** reviewers with distinct contexts.  
+paths: `references/routing-scope.md`; `loop: plan`; only **2** reviewers with distinct contexts. 
 Expected: FAIL (`need ≥3`) even though blast_N=2.
 
 **Fixture F — optional field mismatch / forbidden declare:**
 
-- F1: `blast_class: tests` while triggers are gate → FAIL.  
-- F2: `review_budget_n: 1` → FAIL.  
+- F1: `blast_class: tests` while triggers are gate → FAIL. 
+- F2: `review_budget_n: 1` → FAIL. 
 - F3: top-level `min_reviewers: 2` → FAIL always.
 
 **Fixture H — tests class uses context (not model_string):**
 
-paths: `tests/test_review_record.sh`; `loop: impl`; 2 reviewers, **same model**, distinct `context` → PASS.  
+paths: `tests/test_review_record.sh`; `loop: impl`; 2 reviewers, **same model**, distinct `context` → PASS. 
 Same with identical/missing context → FAIL.
 
 **Fixture I — loop required:**
@@ -331,14 +331,14 @@ omit `loop`, or `loop: PLAN`, or `loop: ""` → FAIL (`loop must be plan|impl`).
 
 **Fixture J — waived (cheap + honest; context still required):**
 
-gate paths; 2 reviewers, same model, distinct contexts; `diversity: waived` + reason e.g. `single-primary-model owner roster`; `loop: impl` → PASS.  
-Same without `diversity_reason` → FAIL.  
-Same with only 1 reviewer → FAIL (waived does not lower N).  
+gate paths; 2 reviewers, same model, distinct contexts; `diversity: waived` + reason e.g. `single-primary-model owner roster`; `loop: impl` → PASS. 
+Same without `diversity_reason` → FAIL. 
+Same with only 1 reviewer → FAIL (waived does not lower N). 
 Same with waived + reason but **identical contexts** → FAIL (A1 not skipped).
 
 **Fixture K — `reviewer_selected_by` required:**
 
-otherwise valid Fixture A but omit `reviewer_selected_by` on one reviewer → FAIL.  
+otherwise valid Fixture A but omit `reviewer_selected_by` on one reviewer → FAIL. 
 Invalid value `reviewer_selected_by: agent` → FAIL.
 
 **Fixture G — no low class:**
@@ -349,12 +349,12 @@ import sys
 sys.path.insert(0, "scripts/lib")
 from review_record import budget_for
 for cls in ("gate", "narrative", "tests"):
-    assert budget_for(cls)["diversity_kind"] == "context"
+ assert budget_for(cls)["diversity_kind"] == "context"
 try:
-    budget_for("low")
-    raise SystemExit("low must not be a budget class")
+ budget_for("low")
+ raise SystemExit("low must not be a budget class")
 except ValueError:
-    pass
+ pass
 print("NO_LOW_CLASS_OK")
 PY
 ```
@@ -370,86 +370,86 @@ _SELECTED_BY = frozenset({"owner", "implementer", "host_default"})
 
 
 def effective_min_reviewers(loop: str, blast_n: int) -> int:
-    if loop == "plan":
-        return max(3, blast_n)
-    if loop == "impl":
-        return blast_n
-    raise ValueError("loop must be plan|impl")
+ if loop == "plan":
+ return max(3, blast_n)
+ if loop == "impl":
+ return blast_n
+ raise ValueError("loop must be plan|impl")
 
 
 def contexts_ok(revs: list) -> bool:
-    ctx = {(r.get("context") or "").strip() for r in revs}
-    ctx.discard("")
-    return len(ctx) >= 2
+ ctx = {(r.get("context") or "").strip() for r in revs}
+ ctx.discard("")
+ return len(ctx) >= 2
 ```
 
 Pasteable `validate_record` (replaces old ≥3 and old model-string / model-family gates):
 
 ```python
 def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[str]:
-    errs: list[str] = []
-    if data.get("diff_id") != expected_id:
-        errs.append(f"diff_id mismatch record={data.get('diff_id')} expected={expected_id}")
-    subjects = set(data.get("subject_paths") or [])
-    missing = [t for t in triggers if t not in subjects]
-    if missing:
-        errs.append(f"subject_paths missing triggers: {missing}")
+ errs: list[str] = []
+ if data.get("diff_id") != expected_id:
+ errs.append(f"diff_id mismatch record={data.get('diff_id')} expected={expected_id}")
+ subjects = set(data.get("subject_paths") or [])
+ missing = [t for t in triggers if t not in subjects]
+ if missing:
+ errs.append(f"subject_paths missing triggers: {missing}")
 
-    loop = data.get("loop")
-    if loop not in ("plan", "impl"):
-        errs.append("loop must be plan|impl")
+ loop = data.get("loop")
+ if loop not in ("plan", "impl"):
+ errs.append("loop must be plan|impl")
 
-    cls = blast_class_for(triggers)
-    budget = budget_for(cls)
-    try:
-        n = effective_min_reviewers(str(loop) if loop is not None else "", budget["min_reviewers"])
-    except ValueError as e:
-        errs.append(str(e))
-        n = budget["min_reviewers"]
+ cls = blast_class_for(triggers)
+ budget = budget_for(cls)
+ try:
+ n = effective_min_reviewers(str(loop) if loop is not None else "", budget["min_reviewers"])
+ except ValueError as e:
+ errs.append(str(e))
+ n = budget["min_reviewers"]
 
-    if "blast_class" in data and data.get("blast_class") != cls:
-        errs.append(f"blast_class mismatch record={data.get('blast_class')} expected={cls}")
-    if "review_budget_n" in data:
-        try:
-            declared = int(data.get("review_budget_n"))
-        except (TypeError, ValueError):
-            declared = -1
-        if declared != budget["min_reviewers"]:
-            errs.append("review_budget_n disagrees with script-derived Impl floor")
-    if "min_reviewers" in data:
-        errs.append("min_reviewers must not be declared; omit field")
+ if "blast_class" in data and data.get("blast_class") != cls:
+ errs.append(f"blast_class mismatch record={data.get('blast_class')} expected={cls}")
+ if "review_budget_n" in data:
+ try:
+ declared = int(data.get("review_budget_n"))
+ except (TypeError, ValueError):
+ declared = -1
+ if declared != budget["min_reviewers"]:
+ errs.append("review_budget_n disagrees with script-derived Impl floor")
+ if "min_reviewers" in data:
+ errs.append("min_reviewers must not be declared; omit field")
 
-    revs = data.get("reviewers") or []
-    if len(revs) < n:
-        errs.append(f"need ≥{n} reviewers, got {len(revs)}")
-    for i, r in enumerate(revs):
-        if r.get("verdict") == "FAIL":
-            errs.append(f"reviewer[{i}] verdict FAIL")
-        if r.get("blocking"):
-            errs.append(f"reviewer[{i}] blocking non-empty: {r.get('blocking')}")
-        if not r.get("model"):
-            errs.append(f"reviewer[{i}] missing model")
-        sel = (r.get("reviewer_selected_by") or "").strip()
-        if sel not in _SELECTED_BY:
-            errs.append(
-                f"reviewer[{i}] reviewer_selected_by must be owner|implementer|host_default"
-            )
-    if not data.get("frozen"):
-        errs.append("frozen must be true")
+ revs = data.get("reviewers") or []
+ if len(revs) < n:
+ errs.append(f"need ≥{n} reviewers, got {len(revs)}")
+ for i, r in enumerate(revs):
+ if r.get("verdict") == "FAIL":
+ errs.append(f"reviewer[{i}] verdict FAIL")
+ if r.get("blocking"):
+ errs.append(f"reviewer[{i}] blocking non-empty: {r.get('blocking')}")
+ if not r.get("model"):
+ errs.append(f"reviewer[{i}] missing model")
+ sel = (r.get("reviewer_selected_by") or "").strip()
+ if sel not in _SELECTED_BY:
+ errs.append(
+ f"reviewer[{i}] reviewer_selected_by must be owner|implementer|host_default"
+ )
+ if not data.get("frozen"):
+ errs.append("frozen must be true")
 
-    div = data.get("diversity")
-    if div not in ("ok", "waived"):
-        errs.append("diversity must be ok|waived")
-    else:
-        # A1: context required for both ok and waived (waived does not skip context).
-        if not contexts_ok(revs):
-            errs.append("need ≥2 distinct non-empty reviewer context fields")
-        if div == "waived" and not (data.get("diversity_reason") or "").strip():
-            errs.append("diversity=waived requires diversity_reason")
-    # A2: never require distinct model / model_family
-    if not (data.get("conclusion") or "").strip():
-        errs.append("missing conclusion")
-    return errs
+ div = data.get("diversity")
+ if div not in ("ok", "waived"):
+ errs.append("diversity must be ok|waived")
+ else:
+ # A1: context required for both ok and waived (waived does not skip context).
+ if not contexts_ok(revs):
+ errs.append("need ≥2 distinct non-empty reviewer context fields")
+ if div == "waived" and not (data.get("diversity_reason") or "").strip():
+ errs.append("diversity=waived requires diversity_reason")
+ # A2: never require distinct model / model_family
+ if not (data.get("conclusion") or "").strip():
+ errs.append("missing conclusion")
+ return errs
 ```
 
 Extra reviewers beyond N: allowed. `parse_front_matter` stores nested `context` and `reviewer_selected_by` via `cur_rev[key] = val`.
@@ -495,10 +495,10 @@ Honesty: model family is disclosure only; diversity gate is reviewer context
 
 - [ ] **Step 1: Pass predicate section** — do **not** globally replace Plan ≥3 with blast N=2. Write explicitly:
 
-  - **Impl records (`loop: impl`):** N from blast class; diversity = ≥2 distinct `context` (all classes).
-  - **Plan records (`loop: plan`):** process + mechanical floor ≥3; effective N = `max(3, blast_N)`; same context axis.
-  - Keep Plan-loop HARD table (meta-process outside Build todos) unchanged in meaning.
-  - Document `reviewer_selected_by` and that model family is not gated.
+ - **Impl records (`loop: impl`):** N from blast class; diversity = ≥2 distinct `context` (all classes).
+ - **Plan records (`loop: plan`):** process + mechanical floor ≥3; effective N = `max(3, blast_N)`; same context axis.
+ - Keep Plan-loop HARD table (meta-process outside Build todos) unchanged in meaning.
+ - Document `reviewer_selected_by` and that model family is not gated.
 
 - [ ] **Step 2: Document reviewer `context:`** — wording locked: “≥2 distinct non-empty `context` values for every class (gate/narrative/tests); Impl min N from blast table”. Do not write “≥1 different context” alone. Do not require distinct model families.
 
@@ -514,7 +514,7 @@ Honesty: model family is disclosure only; diversity gate is reviewer context
 
 ```bash
 if grep -qE 'test_review_record|verify-review-record|review-budget' scripts/test-tier0.sh 2>/dev/null; then
-  fail "review-budget/record must not enter scripts/test-tier0.sh"
+ fail "review-budget/record must not enter scripts/test-tier0.sh"
 fi
 ```
 
@@ -586,8 +586,8 @@ Note: todo-ish lines in plans (checkboxes, `1.` lists, `|table|` rows) are scann
 
 While an earlier draft of this plan was being frozen, the implementing agent needed
 `diversity: ok` for the Plan loop, and **rotated reviewer models (GPT Terra → Composer →
-Grok) to obtain ≥2 distinct model strings.** It said so plainly when asked: *"為了湊
-Plan loop 的 diversity … 我沒先問你要用哪些模型"*, and a mid-run API limit pushed the
+Grok) to obtain ≥2 distinct model strings.** It said so plainly when asked: *"for 
+Plan loop diversity … no use "*, and a mid-run API limit pushed the
 roster around further.
 
 Nothing dishonest happened. That is the point. **A competent agent, acting in good

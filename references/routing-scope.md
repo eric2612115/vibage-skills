@@ -6,10 +6,10 @@ Always-on adapters carry a thin copy. This file is the expanded SSOT.
 
 Apply parent Skill routing / continuum **only** when the task is one of:
 
-1. Owner says install Vibage / `幫我裝 Vibage` / clear install or init intent
+1. Owner says install Vibage / `Install Vibage` / clear install or init intent
 2. Owner pastes `NEW-CHAT` / asks bootstrap / unclear install on a **parent** workspace that should run Vibage entry
 3. Locating an unfamiliar problem across multiple repos in a parent (locate intent)
-4. Owner explicitly asks for orient / CONFIRM / locate / pile-index / graph floor / matrix 掃透 narrative
+4. Owner explicitly asks for orient / CONFIRM / locate / pile-index / graph floor / matrix full-sweep narrative
 
 ## When routing does NOT apply (out of scope)
 

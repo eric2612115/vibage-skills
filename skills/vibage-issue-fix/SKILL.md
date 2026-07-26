@@ -26,7 +26,7 @@ description: >-
 3. If preference is **NO**: do **not** enter this skill or solicit unlock.
 4. **No dig without locate report:** require workspace `VIBAGE-ISSUE-OWNER.md` + `VIBAGE-ISSUE-LOCATE.md` (or prior locate run DONE) before unlock/edits.
 5. Prefer **branch/PR** for edits; no silent push; no deploy.
-6. Stay inside unlock `allowed_paths`. Do not redefine model routing; do not claim 架構檢視 DONE.
+6. Stay inside unlock `allowed_paths`. Do not redefine model routing; do not claim architecture review DONE.
 7. **Thin map alone never unlocks fix (M01):** `PILE_INDEX_OK` / folder-name match / thin `service_map` is **not** permission to edit business code. Never “map says checkout so patch checkout” without locate dual reports + dual consent + `verify-issue-fix-unlock.sh` green.
 
 ## Usable procedure

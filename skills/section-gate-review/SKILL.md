@@ -33,7 +33,7 @@ Use hub model-routing for L1/L2 slugs. Reference **level ids only**.
   "schema_version": "1",
   "section_id": "<string>",
   "draft_digest": "<string>",
-  "lenses": ["契約", "可執行", "擴展"],
+  "lenses": ["contract", "executable", "extension"],
   "max_rounds": 2
 }
 ```

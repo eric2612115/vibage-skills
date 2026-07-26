@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Close live-parent pressure gaps so DefiStrategy + MindOwnBuz reach honest `PRESSURE_PASS` (CONFIRM-path with disclosure), without greenwashing 掃透.
+**Goal:** Close live-parent pressure gaps so DefiStrategy + MindOwnBuz reach honest `PRESSURE_PASS` (CONFIRM-path with disclosure), without greenwashing full-sweep.
 
-**Architecture:** Keep「誠實終點」— continuum success = entry→hub→floor→matrix terminal → ticket/orient ready. Fix discovery/inventory/exclude leaks found in pressure round-1. Loop: clean hubs → patch → unit tests → re-pressure until PASS.
+**Architecture:** Keep「」— continuum success = entry→hub→floor→matrix terminal → ticket/orient ready. Fix discovery/inventory/exclude leaks found in pressure round-1. Loop: clean hubs → patch → unit tests → re-pressure until PASS.
 
 **Tech Stack:** bash + Python 3 (no PyYAML/RAG); fixtures under `tests/fixtures/c-prime/`.
 
@@ -26,8 +26,8 @@ Mechanical (must):
 
 Agent panel (8 agents: 2 grok + 2 composer × 2 parents) — majority (≥6/8):
 - VERDICT ∈ {`READY_CONFIRM_PATH`, `PASS`, `PASS_WITH_DISCLOSURE`, `CONTINUUM_OK`} and **not** `FAIL`
-- `VACANT_HONEST` not NO (presence→local is honest non-vacant; must not claim 掃透)
-- No KILL false 掃透 / false ready
+- `VACANT_HONEST` not NO (presence→local is honest non-vacant; must not claim full-sweep)
+- No KILL false full-sweep / false ready
 - Reading ≥ 3 average
 
 **Explicitly NOT required for PASS:** `MATRIX_SWEEP_SUBSTANTIVE_OK`.
@@ -40,10 +40,10 @@ Agent panel (8 agents: 2 grok + 2 composer × 2 parents) — majority (≥6/8):
 
 | ID | Gap | Fix |
 |----|-----|-----|
-| G1 | `.env.example` empty/comment-only → false `missing-env-config` | Presence→`local` **same class as bare-compose→local** (path+synthetic quote may proven for matrix terminal). Still **≠** 掃透 alone; true-vacant repos without file keep missing. Order: named envs 1–5; if empty → compose→local; elif example→local. Never read real `.env`. No `*skills` heuristic. |
+| G1 | `.env.example` empty/comment-only → false `missing-env-config` | Presence→`local` **same class as bare-compose→local** (path+synthetic quote may proven for matrix terminal). Still **≠** full-sweep alone; true-vacant repos without file keep missing. Order: named envs 1–5; if empty → compose→local; elif example→local. Never read real `.env`. No `*skills` heuristic. |
 | G2 | `global_envs` fan-out → foreign extract_error | Remove attach; delete dead `global_envs` / deploy-edge fan-out helpers if unused. |
 | G3 | `war-room-skills` as product | **Union** hard defaults `{vibage-skills,vibage-skills-*,war-room-skills,war-room-skills-*}` with OWNER_POLICY globs (policy cannot drop hard defaults). Narrow globs only. |
-| G4 | MATRIX OK ≠ 掃透 | Keep fill NOTE; panel must not treat presence-local as 掃透. |
+| G4 | MATRIX OK ≠ full-sweep | Keep fill NOTE; panel must not treat presence-local as full-sweep. |
 
 ---
 
@@ -110,7 +110,7 @@ Agent panel (8 agents: 2 grok + 2 composer × 2 parents) — majority (≥6/8):
 
 - Never grant `MATRIX_SWEEP_SUBSTANTIVE_OK` via waiver or dotenv existence alone without proven path+quote
 - Never read real `.env`
-- `ENV_BRANCH_MATRIX_OK` ≠ 掃透 ≠ dig-ready
+- `ENV_BRANCH_MATRIX_OK` ≠ full-sweep ≠ dig-ready
 - C′ Proven-green stays NO until owner promotes after PASS (optional; this wave does not flip STATUS Proven-green without owner ask)
 
 ---

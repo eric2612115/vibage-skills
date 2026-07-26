@@ -10,12 +10,12 @@
 | `bash scripts/test-tier0.sh` → `TIER0_OK` | Core locate ship gate + W4 thin C′ (`graph_floor` + `ledger` tests) | whole C′ suite · freshness · vacancy · dimension · letter B · remote CI |
 | `bash tests/test_tier0_c_prime_thin.sh` → `TIER0_C_PRIME_THIN_OK` | Tier-0 wiring matches thin policy | Fat-wiring suite/W1–W3 into Tier-0 |
 | `bash scripts/pack-health.sh <parent>` → `PACK_HEALTH_OK` | pins + parent entry + entry-docs + `OWNER_ZERO_BASH_OK` + `INSTALL_PHRASE_OK` + `INSTALL_PHRASE_E2E_OK` | Tier-0 · letter B (CI job `pack-health` may mirror via `tests/test_pack_health.sh`; still ≠ `TIER0_OK`) |
-| `bash tests/test_install_phrase.sh` → `INSTALL_PHRASE_OK` | 「幫我裝 Vibage」docs + markers | dig |
+| `bash tests/test_install_phrase.sh` → `INSTALL_PHRASE_OK` | 「Install Vibage」docs + markers | dig |
 | `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK` | Agent-equivalent install steps on temp parent | screen recording · dig |
 | `bash tests/test_plugin_manifests.sh` → `PLUGIN_MANIFESTS_OK` | Cursor + Claude plugin/marketplace JSON on-tree | store listing approved · SaaS |
 | `bash scripts/pile-index.sh <parent>` → `PILE_INDEX_OK` | Shallow map of one-level child git checkouts | Architecture Pass · locate DONE · Graphify required |
 | `bash tests/test_pile_index.sh` → `PILE_INDEX_TEST_OK` | Script + skill + 3-app fixture | Tier-0 |
-| `bash scripts/verify-dimension-fill.sh <parent>` → `DIMENSION_FILL_*` | Optional ledger dimension_* notes after `dimension_yes` freeze (`exit 0 ≠ OK`) | Architecture Pass · understood · 掃透 · dig-ready · Tier-0 · assert_gate |
+| `bash scripts/verify-dimension-fill.sh <parent>` → `DIMENSION_FILL_*` | Optional ledger dimension_* notes after `dimension_yes` freeze (`exit 0 ≠ OK`) | Architecture Pass · understood · full-sweep · dig-ready · Tier-0 · assert_gate |
 | `bash scripts/verify-map-deepen.sh <parent>` | Migrate shim only — never emits retired `MAP_DEEPEN_OK`; wraps fill or `deepen_retired` | Claiming deepen brand success |
 | `bash tests/test_verify_map_deepen.sh` → `DIMENSION_FILL_W3A_P2_OK` / `MAP_DEEPEN_TEST_OK` | Migrate honesty + firewall | Tier-0 · pack-health |
 | `bash scripts/verify-project-entry.sh <parent>` → `PROJECT_ENTRY_OK` | Parent Cursor/Claude/Codex routers on disk | CONFIRM · locate DONE |

@@ -1,2 +1,2 @@
 ENV_VACANCY_ASK count=1
-VIBAGE_ENV_VACANCY_ASK: repo=SelfAutoBuz has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=SelfAutoBuz has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ full-sweep.

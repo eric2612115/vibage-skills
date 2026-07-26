@@ -1,7 +1,7 @@
 {
   "schema_version": "1",
   "hash_alg": "sha256",
-  "payload_hash": "e716326aace336e5bc23b610671383fa501f965f634904d07e122ac0093df989",
+  "payload_hash": "723c95dd6184b7193fb1bb7d7348c3f5db35d0d5b1eca2b771a657f2356e12f0",
   "note": "Signed assertion = STATUS.md `## Capability` projection AND the evidence pointers below. Re-sign only with evidence. PROVEN_LOCK_OK != claims true != letter B != panel re-run.",
   "projection": [
     {
@@ -87,7 +87,7 @@
       "scope_run_ts": []
     },
     {
-      "capability": "Optional: issue-fix",
+      "capability": "Optional: architecture review",
       "designed": "YES",
       "on_tree": "YES",
       "proven_green": "YES",
@@ -96,7 +96,7 @@
       "scope_run_ts": []
     },
     {
-      "capability": "Optional: 架構檢視",
+      "capability": "Optional: issue-fix",
       "designed": "YES",
       "on_tree": "YES",
       "proven_green": "YES",
@@ -214,22 +214,22 @@
       "evidence_run_ts": ""
     },
     {
+      "capability": "Optional: architecture review",
+      "proven_green": "YES",
+      "scope_kind": "script",
+      "evidence_kind": "script",
+      "evidence_paths": [
+        "tests/test_arch_review_usable.sh"
+      ],
+      "evidence_run_ts": ""
+    },
+    {
       "capability": "Optional: issue-fix",
       "proven_green": "YES",
       "scope_kind": "script",
       "evidence_kind": "script",
       "evidence_paths": [
         "tests/test_issue_fix_usable.sh"
-      ],
-      "evidence_run_ts": ""
-    },
-    {
-      "capability": "Optional: 架構檢視",
-      "proven_green": "YES",
-      "scope_kind": "script",
-      "evidence_kind": "script",
-      "evidence_paths": [
-        "tests/test_arch_review_usable.sh"
       ],
       "evidence_run_ts": ""
     },

@@ -11,7 +11,7 @@ Rules (priority; normalize + aliases; dedupe):
 8) still empty → caller may emit missing-env-config
 
 Presence-local (6/7) is the same class as bare-compose→local for matrix
-terminal proven; it is NOT 掃透 by itself.
+terminal proven; it is NOT full-sweep by itself.
 
 Never reads real `.env` / secret dotenv files.
 """

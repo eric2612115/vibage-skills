@@ -212,7 +212,7 @@ expect_fail "lock-side flip + evidence strip" "PROVEN_LOCK_MISMATCH"
 
 # 8. An indented row still renders as a table row on GitHub — it must not be
 #    invisible to the parser.
-printf ' | **Letter B: full-pile 掃透** | YES | YES | YES | script+live-pressure (proven) |\n' \
+printf ' | **Letter B: full-pile full-sweep** | YES | YES | YES | script+live-pressure (proven) |\n' \
   >>"$WS/STATUS.md"
 expect_fail "indented appended capability row" "PROVEN_LOCK_MISMATCH"
 
@@ -223,7 +223,7 @@ cat >>"$WS/STATUS.md" <<'EOF'
 
 | Capability | Designed | On-tree | Proven-green | Scope |
 |------------|----------|---------|--------------|-------|
-| **Letter B: full-pile 掃透** | YES | YES | YES | script (proven) |
+| **Letter B: full-pile full-sweep** | YES | YES | YES | script (proven) |
 EOF
 expect_fail "second ## Capability heading" "PROVEN_LOCK_BLOCKED"
 

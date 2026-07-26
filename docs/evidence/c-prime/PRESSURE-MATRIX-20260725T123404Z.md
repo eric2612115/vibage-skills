@@ -36,12 +36,12 @@ See `pressure-matrix-20260725T123404Z/panel_scoreboard.md`. Attach pack: `PANEL_
 
 - ≠ letter **B**
 - ≠ Sync contract DONE
-- ≠ live parent `MATRIX_SWEEP_SUBSTANTIVE_OK` / 掃透 cover on Defi/MindOwn
+- ≠ live parent `MATRIX_SWEEP_SUBSTANTIVE_OK` / full-sweep cover on Defi/MindOwn
 - ≠ L1 fixture scene = MindOwnBuz live stereoscopic switch
 - ≠ W2 Proven-green scope upgrade to script+live-pressure
 - ≠ STATUS.md Proven-green / scope flip (forbidden this plan)
 - ≠ dig-ready without CONFIRM; ≠ SaaS / register
-- `PASS_WITH_DISCLOSURE` / `PRESSURE_MATRIX_OK` ≠ 掃透 ≠ continuum-complete slogan
+- `PASS_WITH_DISCLOSURE` / `PRESSURE_MATRIX_OK` ≠ full-sweep ≠ continuum-complete slogan
 
 ## Result
 

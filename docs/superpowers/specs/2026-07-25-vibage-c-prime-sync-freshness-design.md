@@ -43,7 +43,7 @@ Hard block = script exit + skill/adapter obedience. **Not** git-hook-only. Paren
 
 **Blocked when mother check is hard-fail** (see §6 exit table):
 
-1. Claiming continuum / hub ready / understood / 掃透 without stale disclosure  
+1. Claiming continuum / hub ready / understood / full-sweep without stale disclosure  
 2. Orient presenting hot-path as authoritative without stale disclosure  
 3. Any path that would print `FRESHNESS_OK`  
 4. Narrating dig-ready / install→ready  

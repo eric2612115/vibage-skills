@@ -4,7 +4,7 @@ This is the **expected chat shape** when the owner says only the install line.
 Mechanical double-check: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 
 ```
-Owner: 幫我裝 Vibage
+Owner: Install Vibage
 
 Agent: [invokes using-vibage § Install continuum]
 Agent: [runs] install.sh
@@ -19,7 +19,7 @@ Agent: Nameplate map ready (N apps) — not system-understood / not Architecture
 Agent: Deeper pass costs more; skip ok — paste ticket or say deepen yes/no.
 Agent: Then ask ticket/pain if not already pasted. (Do not dig yet.)
 
-Owner: （貼票或白話症狀；仍不打 bash）
+Owner: (paste a ticket or plain symptom; still no bash)
 ```
 
 

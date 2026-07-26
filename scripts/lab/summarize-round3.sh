@@ -182,7 +182,7 @@ obj = {
     "trials_order": "lexicographic_by_results_dirname",
     "trials": trials,
     "honesty": (
-        "LAB_OK ≠ live mutated ≠ TIER0_OK ≠ 掃透 ≠ letter B; "
+        "LAB_OK ≠ live mutated ≠ TIER0_OK ≠ full-sweep ≠ letter B; "
         "dig_status_counts/dual_report_files_present = filesystem scan ≠ true dig proof; "
         "lab_no_delete_static_scan ≠ runtime zero-delete"
     ),

@@ -30,5 +30,5 @@ Flow: `run-round3-prepare.sh` → L1 digs → **`finalize-round3.sh`** (after sn
 
 ## Honesty
 
-`LAB_L1_DONE` ≠ live mutated ≠ `TIER0_OK` ≠ 掃透 ≠ letter B.
+`LAB_L1_DONE` ≠ live mutated ≠ `TIER0_OK` ≠ full-sweep ≠ letter B.
 Filesystem SUMMARY ≠ true dig proof.

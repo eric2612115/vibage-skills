@@ -1,7 +1,7 @@
 # Honesty hardening (rg fail-closed + phrase lint + W3a doc sync)
 
-**Date:** 2026-07-25  
-**Design:** `docs/superpowers/specs/2026-07-25-vibage-honesty-followup-design.md` §9  
+**Date:** 2026-07-25 
+**Design:** `docs/superpowers/specs/2026-07-25-vibage-honesty-followup-design.md` §9 
 **Locks:** ≠ Proven-green flip; ≠ chat firewall claim; ≠ semantic lint claim; ≠ W3a Tier-0 / `script+live-pressure`
 
 ## Task H1 — rg fail-closed
@@ -13,8 +13,8 @@
 
 ## Task H2 — deliverable phrase rules
 
-- [x] Universal 掃 / fully-mapped patterns → Held `MATRIX_SWEEP_SUBSTANTIVE_OK` + fence
-- [x] Env 「都確認/全部釐清」 → Held `ENV_VACANCY_CLEAR` + fence
+- [x] Universal scan / fully-mapped patterns → Held `MATRIX_SWEEP_SUBSTANTIVE_OK` + fence
+- [x] Env 「confirm/allclarify」 → Held `ENV_VACANCY_CLEAR` + fence
 - [x] `ready to dig` / `dig anywhere` → forbidden
 - [x] Design §9 residual disclosure (literal ≠ semantic)
 - [x] Fixtures + `VERIFY_REPORT_TOKENS_OK`

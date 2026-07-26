@@ -4,7 +4,7 @@
 
 **Goal:** Implement W2 env-vacancy ask/configure per `docs/superpowers/specs/2026-07-25-vibage-c-prime-env-vacancy-ask-design.md`.
 
-**Architecture:** `scripts/lib/env_vacancy.py` owns answers JSON + resolved/unanswered logic + token selection. Thin bash wrappers print one primary token and exit per §6. `verify-env-branch-matrix.sh` applies W2 §5 (A|B|C). Skills parse tokens; exit 0 ≠ 掃透. Tests in `tests/test_env_vacancy_w2.sh` (outside suite glob).
+**Architecture:** `scripts/lib/env_vacancy.py` owns answers JSON + resolved/unanswered logic + token selection. Thin bash wrappers print one primary token and exit per §6. `verify-env-branch-matrix.sh` applies W2 §5 (A|B|C). Skills parse tokens; exit 0 ≠ full-sweep. Tests in `tests/test_env_vacancy_w2.sh` (outside suite glob).
 
 **Tech Stack:** bash + python3 JSON; reuse `env_discovery.SECRET_DOTENV_NAMES`; existing matrix-inventory / matrix-sweep-cell for point apply.
 
@@ -45,6 +45,6 @@
 - Modify: freeze-lift / STATUS / plan-index after green
 - Verify: ∉ `test-tier0.sh` / pack-health / `test_c_prime_*.sh` glob
 
-- [x] Document ENV_VACANCY_* tokens; exit0≠掃透; ANSWERED≠CLEAR
+- [x] Document ENV_VACANCY_* tokens; exit0≠ full-sweep; ANSWERED≠CLEAR
 - [x] `bash tests/test_env_vacancy_w2.sh` → `ENV_VACANCY_W2_OK`
 - [x] suite + tier0 still green without vacancy

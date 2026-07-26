@@ -1,4 +1,4 @@
-# Vibage Locate — cross-slogan negation abuse
+# Vibage Locate — cross-slogan negation
 
 ## Nested pass
 - Investigators: 0 — none
@@ -8,4 +8,4 @@
 
 Evidence: `src/app.py` quote placeholder.
 
-本輪已掃透；≠ 立體
+This round: full-sweep; ≠ scene-cover

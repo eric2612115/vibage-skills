@@ -1,6 +1,6 @@
 # Vibage — Owner Brief — Gate B live
 
-Status — 找問題: done — degraded dig on SelfAutoBuz only
+Status — find-issue: done — degraded dig on SelfAutoBuz only
 
 ## Symptom (owner words)
 Need proof that CONFIRM→locate→dual reports works on MindOwnBuz.

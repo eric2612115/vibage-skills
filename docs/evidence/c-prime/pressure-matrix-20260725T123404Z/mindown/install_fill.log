@@ -72,7 +72,7 @@ OK: freshness marked success repo=vibage-app
 OK: freshness marked success repo=vibage-web
 freshness_mark_summary ok=3 fail=0 skipped=0
 MATRIX_INCOMPLETE
-NOTE: not 掃透 (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
+NOTE: not full-sweep (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure
 Installed. PKG_ROOT=/Users/eric.fang/MindOwnBuz/vibage-skills
 Surfaces: cursor,claude,codex
 MANIFEST skills linked under enabled global skill homes.

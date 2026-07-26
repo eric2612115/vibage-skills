@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [x]`) syntax for tracking.
 
-**Goal:** Implement the C′ understanding substrate (graph floor, evidence ledger, env/branch matrix with substantive 掃透 gates, domain/scene briefs) per the approved design — zero vector/RAG dependencies.
+**Goal:** Implement the C′ understanding substrate (graph floor, evidence ledger, env/branch matrix with substantive full-sweep gates, domain/scene briefs) per the approved design — zero vector/RAG dependencies.
 
 **Architecture:** Evolve `service_map.json` via structural index scripts; append-only `claims.jsonl` + `ROLLUP.md`; sparse env×branch matrix with hard caps; scene registry + bounded briefs. Gate A (narrative tokens) ≠ Gate B (CONFIRM dig). Sync (stale→reindex) is **deferred** after P3 fixture green — document in STATUS; F1 On-tree for this plan = discovery + matrix + substantive + scenes, not sync.
 
@@ -336,7 +336,7 @@ EOF
 
 - [x] **Step 1: Continuum text** = `PROJECT_ENTRY_OK` → hub → `GRAPH_FLOOR_OK` → matrix sweep → **optional deferred dimension fill** → ticket **or** scene switch → **`SCENE_BRIEF_OK` when scene set** → orient → CONFIRM → locate. Dimension fill explicitly **deferred** this plan.
 
-- [x] **Step 2: Gate A slogans** — 掃透 only `MATRIX_SWEEP_SUBSTANTIVE_OK`; scene cover via verify-scene-cover; pile-index/deepen must not say system understood.
+- [x] **Step 2: Gate A slogans** — full-sweep only `MATRIX_SWEEP_SUBSTANTIVE_OK`; scene cover via verify-scene-cover; pile-index/deepen must not say system understood.
 
 - [x] **Step 3: issue-locate** — consume briefs/ledger pointers; ignore deepen-as-auth.
 

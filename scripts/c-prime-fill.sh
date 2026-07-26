@@ -188,6 +188,6 @@ if out_sub="$(bash "$PKG_ROOT/scripts/verify-matrix-substantive.sh" "$PARENT" 2>
   && [[ "$out_sub" == "MATRIX_SWEEP_SUBSTANTIVE_OK" ]]; then
   echo "MATRIX_SWEEP_SUBSTANTIVE_OK"
 else
-  echo "NOTE: not 掃透 (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure" >&2
+  echo "NOTE: not full-sweep (no MATRIX_SWEEP_SUBSTANTIVE_OK) — ticket/orient still allowed with disclosure" >&2
 fi
 # Always exit 0 after successful fill orchestration (gates are informational)

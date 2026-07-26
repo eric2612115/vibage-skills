@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Agent-equivalent of owner saying only「幫我裝 Vibage」— Install continuum.
+# Agent-equivalent of owner saying only「Install Vibage」— Install continuum.
 # Re-runnable evidence. MUST NOT enter Tier-0.
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -35,13 +35,13 @@ bash "$ROOT/scripts/install.sh" --init-hub="$PARENT" >/tmp/ipv-e2e-hub.out
 pout="$(bash "$ROOT/scripts/pile-index.sh" "$PARENT")"
 echo "$pout" | grep -Fq 'PILE_INDEX_OK' || fail "expected PILE_INDEX_OK in continuum"
 
-if grep -Eiq '請(你|主人|用戶).*執行.*(bash|終端|terminal)' prompts/SAY-INSTALL-VIBAGE.md; then
+if grep -Eiq 'please.*(run|execute).*(bash|terminal)|you must type bash' prompts/SAY-INSTALL-VIBAGE.md; then
   fail "SAY-INSTALL must not require owner to run shell"
 fi
 
 TRANS="$ROOT/tests/fixtures/install-vibage-agent-transcript.md"
 [[ -f "$TRANS" ]] || fail "missing $TRANS"
-grep -Fq '幫我裝 Vibage' "$TRANS" || fail "transcript missing owner phrase"
+grep -Fq 'Install Vibage' "$TRANS" || fail "transcript missing owner phrase"
 grep -Fq 'PROJECT_ENTRY_OK' "$TRANS" || fail "transcript missing PROJECT_ENTRY_OK"
 grep -Fq 'PILE_INDEX_OK' "$TRANS" || fail "transcript missing PILE_INDEX_OK continuum"
 grep -Fq 'Nameplate' "$TRANS" || fail "transcript missing nameplate anti-illusion after map"

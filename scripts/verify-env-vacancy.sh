@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Thin wrap → env-vacancy-check. Skills MUST parse stdout tokens.
-# Exit 0 ≠ 掃透 ≠ continuum-complete (CLEAR/ANSWERED both exit 0).
+# Exit 0 ≠ full-sweep ≠ continuum-complete (CLEAR/ANSWERED both exit 0).
 # Usage: verify-env-vacancy.sh <mother-workspace>
 set -euo pipefail
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"

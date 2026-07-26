@@ -96,7 +96,7 @@ if bash "$ROOT/scripts/verify-env-branch-matrix.sh" "$PARENT" >/dev/null 2>&1; t
   fail "mixed pile with unanswered missing must not MATRIX_OK before W2 answer"
 fi
 pass "fill incomplete until vacancy answered (W2 honest)"
-# skip orphan-lib → matrix OK; still not 掃透
+# skip orphan-lib → matrix OK; still not full-sweep
 bash "$ROOT/scripts/env-vacancy-answer.sh" --skip --reason="fixture orphan no-deploy" \
   --repo=orphan-lib --branch=main --env=missing-env-config "$PARENT" \
   || fail "skip orphan-lib"
@@ -106,7 +106,7 @@ ans="$(bash "$ROOT/scripts/verify-env-vacancy.sh" "$PARENT" 2>/dev/null || true)
 echo "$ans" | grep -q 'ENV_VACANCY_ANSWERED' \
   || fail "expect ANSWERED after skip, got: $ans"
 if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$PARENT" >/dev/null 2>&1; then
-  fail "skip must not grant 掃透"
+  fail "skip must not grant full-sweep"
 fi
 pass "ENV_BRANCH_MATRIX_OK after W2 skip; substantive still withheld"
 

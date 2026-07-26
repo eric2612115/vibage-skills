@@ -26,5 +26,5 @@ Do **not** change `scripts/verify-handoff.sh` to require `handoff_honored` (scor
 
 ## Forbidden
 
-- issue-fix / 架構檢視 / SaaS
+- issue-fix / architecture review / SaaS
 - Rewriting old terminal envelope → `done`

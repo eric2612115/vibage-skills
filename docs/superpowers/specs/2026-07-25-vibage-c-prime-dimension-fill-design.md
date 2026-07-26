@@ -8,7 +8,7 @@
 
 **Phrase locks:**
 
-- Dimension fill ≠ 掃透 ≠ “understood” ≠ dig-ready ≠ letter B ≠ Gate B  
+- Dimension fill ≠ full-sweep ≠ “understood” ≠ dig-ready ≠ letter B ≠ Gate B  
 - `exit 0 ≠ DIMENSION_FILL_OK` (`PARTIAL` also exits 0 — skills **must** parse exact tokens)  
 - `dimension_*` claims **never** satisfy `UNDERSTANDING_ROLLUP_OK` / floor rollup slices  
 - Vacancy `ENV_VACANCY_ASK` anywhere in discovery set ⇒ forbid `DIMENSION_FILL_OK`  
@@ -53,7 +53,7 @@ Fill non-matrix understanding dimensions via **repo synthesizer → dimension se
 
 Before any synthesizer/searcher:
 
-1. Anti-illusion already said (nameplate ≠ understood; ≠ dig-ready; ≠ 掃透).  
+1. Anti-illusion already said (nameplate ≠ understood; ≠ dig-ready; ≠ full-sweep).  
 2. Cost band for N repos already said.  
 3. Owner **yes** to dimension-fill (ticket paste alone = implicit **no**).  
 
@@ -61,10 +61,10 @@ Before any synthesizer/searcher:
 
 ```text
 VIBAGE_DIMENSION_ASK: Run optional dimension-fill (behavior/tests/security/ops ledger notes) for N repos?
-This is NOT 掃透 / NOT system-understood / NOT dig-ready. [yes/no + model tier]
+This is NOT full-sweep / NOT system-understood / NOT dig-ready. [yes/no + model tier]
 ```
 
-**Forbidden slogans in the ask or success path:** understood, dig-ready, install→ready, 掃透, Architecture Pass.
+**Forbidden slogans in the ask or success path:** understood, dig-ready, install→ready, full-sweep, Architecture Pass.
 
 Append DECISIONS fence **before** work:
 
@@ -188,9 +188,9 @@ Outside suite glob; grep-firewall ∉ Tier-0 / pack-health.
 
 ## 11. Out of scope
 
-W1b; W3b cards; W4 Tier-0; vector/RAG; silent class expansion; auto-fill on install; real `.env` reads; dimension satisfying rollup/掃透/dig-ready.
+W1b; W3b cards; W4 Tier-0; vector/RAG; silent class expansion; auto-fill on install; real `.env` reads; dimension satisfying rollup/full-sweep/dig-ready.
 
 ## 12. Freeze-lift note
 
 Until green: **W3a dimension-fill design exists; On-tree=NO**.  
-After green: **W3a dimension-fill On-tree ≠ 掃透 ≠ understood ≠ letter B**; `MAP_DEEPEN_OK` brand retired.
+After green: **W3a dimension-fill On-tree ≠ full-sweep ≠ understood ≠ letter B**; `MAP_DEEPEN_OK` brand retired.

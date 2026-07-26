@@ -46,7 +46,7 @@ for c in cells:
     if eid == "unknown-env":
         die("unknown-env blocks MATRIX_SWEEP_SUBSTANTIVE_OK")
     if eid == "missing-env-config":
-        die("missing-env-config blocks MATRIX_SWEEP_SUBSTANTIVE_OK (waiver never grants 掃透)")
+        die("missing-env-config blocks MATRIX_SWEEP_SUBSTANTIVE_OK (waiver never grants full-sweep)")
 
 real = [c for c in cells if c.get("env_id") not in SPECIAL]
 if len(real) < 1:

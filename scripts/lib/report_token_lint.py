@@ -16,15 +16,15 @@ FENCE = re.compile(r"```(?:[^\n`]*)\n(.*?)```", re.S)
 
 # Per-slogan adjacent negation (must bind to that slogan; NOT any ≠ on the line).
 NEG_SAOTOU = [
-    re.compile(r"≠\s*掃透"),
-    re.compile(r"\bnot\s+掃透", re.I),
-    re.compile(r"\bnever\s+掃透", re.I),
-    re.compile(r"不得掃透"),
-    re.compile(r"Asking\s*≠\s*掃透", re.I),
-    re.compile(r"never\s+claim\s+掃透", re.I),
+    re.compile(r"≠\s*full-sweep"),
+    re.compile(r"\bnot\s+full-sweep", re.I),
+    re.compile(r"\bnever\s+full-sweep", re.I),
+    re.compile(r"must not claim full-sweep"),
+    re.compile(r"Asking\s*≠\s*full-sweep", re.I),
+    re.compile(r"never\s+claim\s+full-sweep", re.I),
 ]
 NEG_LITI = [
-    re.compile(r"≠\s*立體"),
+    re.compile(r"≠\s*scene-cover"),
 ]
 NEG_UNDERSTOOD = [
     re.compile(r"≠\s*full-understanding", re.I),
@@ -37,32 +37,22 @@ NEG_DIG_READY = [
 ]
 NEG_VACANCY = [
     re.compile(r"≠\s*ENV_VACANCY_CLEAR"),
-    re.compile(r"≠\s*(?:環境|vacancy).{0,12}(?:清|clear)", re.I),
+    re.compile(r"≠\s*(?:vacancy|env).{0,12}clear", re.I),
 ]
 
 # (slogan_pat, required Held tokens or None=always forbidden, negation pats)
 RULES: List[Tuple[re.Pattern[str], Optional[Set[str]], List[re.Pattern[str]]]] = [
     (
-        re.compile(r"全環境全\s*branch\s*掃透|全環境掃透|掃透"),
+        re.compile(r"full-environment\s+full-branch\s+full-sweep|full-environment\s+full-sweep|\bfull-sweep\b"),
         {"MATRIX_SWEEP_SUBSTANTIVE_OK"},
         NEG_SAOTOU,
     ),
     (
-        re.compile(r"無漏掃|矩陣終態"),
+        re.compile(r"no-missed-scan|matrix-terminal-state"),
         {"ENV_BRANCH_MATRIX_OK"},
         [],
     ),
     # Universal completion phrases (raise paraphrase cost; ≠ semantic firewall)
-    (
-        re.compile(
-            r"(?:全部|所有).{0,48}(?:掃|掃過|掃一遍)|"
-            r"(?:都).{0,24}(?:已經)?(?:完整)?掃|"
-            r"(?:掃|掃過|掃一遍).{0,32}沒有遺漏|"
-            r"沒有遺漏.{0,32}(?:掃|掃過)"
-        ),
-        {"MATRIX_SWEEP_SUBSTANTIVE_OK"},
-        NEG_SAOTOU,
-    ),
     (
         re.compile(
             r"(?:all|every|fully).{0,48}(?:scanned|scan(?:ned)?)\b|"
@@ -74,26 +64,26 @@ RULES: List[Tuple[re.Pattern[str], Optional[Set[str]], List[re.Pattern[str]]]] =
         {"MATRIX_SWEEP_SUBSTANTIVE_OK"},
         NEG_SAOTOU,
     ),
-    # Env-vacancy inflation: only ENV_VACANCY_CLEAR legitimizes "環境都確認/釐清"
+    # Env-vacancy inflation: only ENV_VACANCY_CLEAR legitimizes all-clear claims
     (
         re.compile(
-            r"(?:環境|env(?:ironment)?|env-?config|環境設定).{0,48}"
-            r"(?:都|全部|全都).{0,32}(?:確認|釐清|清掉|清楚)|"
-            r"(?:都|全部).{0,32}(?:確認|釐清).{0,24}(?:環境|env)|"
-            r"全部釐清|"
-            r"(?:env(?:ironment)?|環境).{0,32}(?:all|fully).{0,24}(?:confirm|clear)",
+            r"(?:env(?:ironment)?|env-?config).{0,48}"
+            r"(?:all|every|fully).{0,32}(?:confirm|clear|cleared)|"
+            r"(?:all|every).{0,32}(?:confirm|clear|cleared).{0,24}(?:env|environment)|"
+            r"fully\s+clear|"
+            r"(?:env(?:ironment)?).{0,32}(?:all|fully).{0,24}(?:confirm|clear)",
             re.I,
         ),
         {"ENV_VACANCY_CLEAR"},
         NEG_VACANCY,
     ),
     (
-        re.compile(r"多領域立體場景(?:切換)?|立體場景切換|立體場景"),
+        re.compile(r"multi-domain\s+scene\s+cover|scene-cover"),
         {"SCENE_BRIEF_OK", "SCENE_COVER_OK"},
         NEG_LITI,
     ),
     (
-        re.compile(r"系統已懂|全懂|full-understanding|system\s+understood", re.I),
+        re.compile(r"full-understanding|system\s+understood", re.I),
         None,
         NEG_UNDERSTOOD,
     ),
@@ -115,7 +105,7 @@ COVERAGE_FENCE = re.compile(r"```vibage_coverage_v1\s*\n.*?```", re.S)
 def _strip_coverage_fence(text: str) -> str:
     """The machine-filled coverage box is not a claim by the agent — it is the
     fact box the claims are measured against, and it legitimately contains the
-    word 掃透. Exempt the FENCE ONLY, never the whole `## Coverage` section, or
+    word full-sweep. Exempt the FENCE ONLY, never the whole `## Coverage` section, or
     that heading becomes a place to hide prose."""
     return COVERAGE_FENCE.sub("", text)
 

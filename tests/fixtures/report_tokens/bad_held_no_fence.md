@@ -1,4 +1,4 @@
-# Vibage Locate — Held without evidence fence
+# Vibage Locate — held without evidence fence
 
 ## Nested pass
 - Investigators: 0 — none
@@ -8,10 +8,7 @@
 
 Evidence: `src/app.py` quote placeholder.
 
-本輪已掃透。
+This round: full-sweep.
 
 ## Held tokens
 - `MATRIX_SWEEP_SUBSTANTIVE_OK`
-
-## Token evidence
-MATRIX_SWEEP_SUBSTANTIVE_OK

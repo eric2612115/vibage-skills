@@ -1,7 +1,7 @@
 # C′ Wave-2 — Env Vacancy Ask / Configure Design
 
 **Date:** 2026-07-25  
-**Status:** Design-FULL — **On-tree=YES** (`ENV_VACANCY_W2_OK`); phrase: `W2 env-vacancy On-tree ≠ 掃透 ≠ letter B`  
+**Status:** Design-FULL — **On-tree=YES** (`ENV_VACANCY_W2_OK`); phrase: `W2 env-vacancy On-tree ≠ full-sweep ≠ letter B`  
 **Roadmap:** `docs/superpowers/specs/2026-07-25-vibage-c-prime-next-waves-roadmap.md`  
 **Tri-review fold:** `docs/superpowers/specs/2026-07-25-vibage-c-prime-next-waves-tri-review.md`  
 **Parent matrix rules:** `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md` §2.3  
@@ -17,14 +17,14 @@
 
 ## 1. Goal
 
-Turn `missing-env-config` cells from a dead-end (manual binary waiver only) into **answerable gaps**: the agent must ask; the owner chooses skip / point / classify; the mother hub records answers without pretending 掃透.
+Turn `missing-env-config` cells from a dead-end (manual binary waiver only) into **answerable gaps**: the agent must ask; the owner chooses skip / point / classify; the mother hub records answers without pretending full-sweep.
 
 ## 2. Coexistence with binary `env_vacancy_waiver`
 
 | Mechanism | SSOT | When | Grants |
 |-----------|------|------|--------|
-| **Binary hatch (kept)** | `OWNER_POLICY.json` → `env_vacancy_waiver=true` + non-empty `env_vacancy_reason` | Whole matrix is special-only (`missing-env-config` / formerly blocked all-missing) | May allow `ENV_BRANCH_MATRIX_OK` only; **never** 掃透 |
-| **Per-gap answers (W2)** | `docs/vibage/maps/env_vacancy_answers.json` | One or more `missing-env-config` cells need owner choice | Same: matrix terminal honesty; **never** 掃透 |
+| **Binary hatch (kept)** | `OWNER_POLICY.json` → `env_vacancy_waiver=true` + non-empty `env_vacancy_reason` | Whole matrix is special-only (`missing-env-config` / formerly blocked all-missing) | May allow `ENV_BRANCH_MATRIX_OK` only; **never** full-sweep |
+| **Per-gap answers (W2)** | `docs/vibage/maps/env_vacancy_answers.json` | One or more `missing-env-config` cells need owner choice | Same: matrix terminal honesty; **never** full-sweep |
 
 **Rules:**
 
@@ -120,7 +120,7 @@ A missing cell is **resolved** only if:
 | `scripts/env-vacancy-check.sh` | List unanswered missing cells; print tokens |
 | `scripts/env-vacancy-answer.sh` | Record skip/point/classify into answers JSON |
 | `scripts/env-vacancy-apply-point.sh` | Bounded: re-inventory mother + sweep cells for `repo_id` after point (not silent full fill) |
-| `scripts/verify-env-vacancy.sh` | Thin wrap for skills — parse tokens; exit 0 ≠ 掃透 |
+| `scripts/verify-env-vacancy.sh` | Thin wrap for skills — parse tokens; exit 0 ≠ full-sweep |
 
 ### Frozen stdout tokens (exactly one primary status line)
 
@@ -138,22 +138,22 @@ Priority (first match wins; never print two status tokens):
 
 | Primary token | Exit | Skill rule |
 |---------------|------|------------|
-| `ENV_VACANCY_CLEAR` | 0 | Parse token; exit 0 ≠ 掃透 ≠ continuum-complete |
+| `ENV_VACANCY_CLEAR` | 0 | Parse token; exit 0 ≠ full-sweep ≠ continuum-complete |
 | `ENV_VACANCY_ANSWERED` | 0 | Parse token; **≠ CLEAR**; disclose substantive still FAIL while any missing remains |
 | `ENV_VACANCY_ASK` | ≠ 0 | Must ask; do not claim matrix vacancy settled |
 | `ENV_VACANCY_BLOCKED` | ≠ 0 | Fix answers / path; do not proceed as settled |
 
-**Token honesty:** `ANSWERED` ≠ `CLEAR` ≠ continuum-complete ≠ 掃透. Never print `MATRIX_SWEEP_SUBSTANTIVE_OK` / `FRESHNESS_OK` / dig-ready from vacancy scripts.
+**Token honesty:** `ANSWERED` ≠ `CLEAR` ≠ continuum-complete ≠ full-sweep. Never print `MATRIX_SWEEP_SUBSTANTIVE_OK` / `FRESHNESS_OK` / dig-ready from vacancy scripts.
 
 Frozen ask (English for hooks; agent may translate):
 
 ```text
-VIBAGE_ENV_VACANCY_ASK: repo=<id> has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透.
+VIBAGE_ENV_VACANCY_ASK: repo=<id> has missing-env-config. Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ full-sweep.
 ```
 
 ## 7. Skill / adapter surface
 
-- After matrix fill / session start on mother: if missing cells unanswered → emit `ENV_VACANCY_ASK` + ask line; do not claim continuum complete / 掃透.  
+- After matrix fill / session start on mother: if missing cells unanswered → emit `ENV_VACANCY_ASK` + ask line; do not claim continuum complete / full-sweep.  
 - Continuum may proceed to ticket/orient with **disclosure** when `ENV_BRANCH_MATRIX_OK` via (B) or (C), same honesty as today for incomplete substantive.  
 - Child repos: no hard git block; optional soft note only.  
 - Point path: refuse if basename is a secret dotenv (`.env`, `.env.local`, …) — reuse `env_discovery.SECRET_DOTENV_NAMES` class.
@@ -165,7 +165,7 @@ Named outside `test_c_prime_*.sh` suite glob. Must grep-firewall ∉ `test-tier0
 | Case | Expect |
 |------|--------|
 | Unanswered missing | `ENV_VACANCY_ASK`; substantive fail |
-| skip + reason (all-special) | matrix OK via (C); `ANSWERED`; substantive fail; no 掃透 |
+| skip + reason (all-special) | matrix OK via (C); `ANSWERED`; substantive fail; no full-sweep |
 | classify + class | same as skip |
 | point recorded, not applied | still `ENV_VACANCY_ASK`; not ANSWERED; not matrix (C) |
 | point applied → real-env | may CLEAR that gap; substantive only if parent rules met |
@@ -178,11 +178,11 @@ Named outside `test_c_prime_*.sh` suite glob. Must grep-firewall ∉ `test-tier0
 
 ## 9. Out of scope
 
-W3a dimension; W3b letter B; W4 Tier-0; W1b sync remainder; reading real `.env`; silent full `c-prime-fill` as the only point path; granting 掃透 via ask.
+W3a dimension; W3b letter B; W4 Tier-0; W1b sync remainder; reading real `.env`; silent full `c-prime-fill` as the only point path; granting full-sweep via ask.
 
 ## 10. Freeze-lift note
 
-**W2 env-vacancy On-tree ≠ 掃透 ≠ letter B** — scripts + `tests/test_env_vacancy_w2.sh`.
+**W2 env-vacancy On-tree ≠ full-sweep ≠ letter B** — scripts + `tests/test_env_vacancy_w2.sh`.
 
 ## 11. Next after this design
 

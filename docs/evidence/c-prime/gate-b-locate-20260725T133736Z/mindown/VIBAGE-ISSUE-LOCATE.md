@@ -1,6 +1,6 @@
 # Vibage Locate — Gate B live
 
-Status — 找問題: done — degraded
+Status — find-issue: done — degraded
 
 ## Symptom
 Prove Gate B continuum on MindOwnBuz after pressure restore.

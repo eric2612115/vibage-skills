@@ -10,7 +10,7 @@ description: >-
 
 Goal: discover RootRefs, write SCAN_PLAN, stop at `awaiting_confirm`.
 
-**C′ continuum position:** after `GRAPH_FLOOR_OK` + matrix sweep (disclose if incomplete) + ticket **or** scene switch with **`SCENE_BRIEF_OK` when scene set** → then this skill → CONFIRM → locate. Gate A slogans (掃透 / scene cover) ≠ dig auth.
+**C′ continuum position:** after `GRAPH_FLOOR_OK` + matrix sweep (disclose if incomplete) + ticket **or** scene switch with **`SCENE_BRIEF_OK` when scene set** → then this skill → CONFIRM → locate. Gate A slogans (full-sweep / scene cover) ≠ dig auth.
 
 ## When / Not
 
@@ -66,7 +66,7 @@ Consider **before** writing SCAN_PLAN:
 
 1. Ticket text in chat (if only a URL / empty body → say plainly “I cannot read the ticket body”; ask for a short symptom summary — S07; never invent ticket fields; never freeze waiting for Jira API).
 2. Graph floor at `docs/vibage/maps/service_map.json` — if missing/underqualified and owner did **not** say `MAP_SKIP` → hand to **`vibage-pile-index`** first (S05). Prefer `verify-graph-floor.sh` → `GRAPH_FLOOR_OK`.
-3. If hub has `active_scene` / scene briefs: require `SCENE_BRIEF_OK` before claiming scene cover; run `verify-scene-cover.sh` when narrating stereoscopic cover. Matrix incomplete ≠ block orient; disclose if no `ENV_BRANCH_MATRIX_OK` / no 掃透.
+3. If hub has `active_scene` / scene briefs: require `SCENE_BRIEF_OK` before claiming scene cover; run `verify-scene-cover.sh` when narrating stereoscopic cover. Matrix incomplete ≠ block orient; disclose if no `ENV_BRANCH_MATRIX_OK` / no full-sweep.
 4. Owner-stated repos / deps = **hot-path correction only** (F10). Never shrink the full discovery index to “the two they named.” Named-but-missing checkouts → `missing` / `external_ref` still listed.
 5. Owner-stated DB / log / container → `external_ref` + `known_incompleteness` + later OWNER gaps (S06).
 6. Prefer brief + ledger pointers under `docs/vibage/briefs/` and `docs/vibage/ledger/` when present — still ≠ dig auth.

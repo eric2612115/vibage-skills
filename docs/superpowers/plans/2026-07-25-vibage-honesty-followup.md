@@ -6,7 +6,7 @@
 
 **Architecture:** Approach 1 thin — bash/Python verify helpers + templates + one live evidence pack. Spec: `docs/superpowers/specs/2026-07-25-vibage-honesty-followup-design.md`.
 
-**Honesty locks:** ③ is deliverable-report token lint only — does **not** replace C′ Proven-green live panel / `PRESSURE_PASS`. ② claims `GATE_B_LOCATE_OK` only — ≠ 掃透 ≠ C′ Proven flip. Slogan claims need Held **and** Token evidence fence (not Held alone).
+**Honesty locks:** ③ is deliverable-report token lint only — does **not** replace C′ Proven-green live panel / `PRESSURE_PASS`. ② claims `GATE_B_LOCATE_OK` only — ≠ full-sweep ≠ C′ Proven flip. Slogan claims need Held **and** Token evidence fence (not Held alone).
 
 **Tech Stack:** bash, Python 3, existing verify-report / assert_gate / graph-floor.
 
@@ -18,7 +18,7 @@
 - Modify: `STATUS.md`
 - Create: `tests/test_status_capability_table.sh`
 
-- [x] **Step 1:** Fix W3a row to `YES | YES | YES | script (\`DIMENSION_FILL_W3A_P2_OK\`; P0–P2; ...)`
+- [x] **Step 1:** Fix W3a row to `YES | YES | YES | script (\`DIMENSION_FILL_W3A_P2_OK\`; P0–P2;...)`
 - [x] **Step 2:** Write failing-then-passing lint test per design §3.2; echo `STATUS_CAPABILITY_TABLE_OK`
 - [x] **Step 3:** Confirm not wired into `scripts/test-tier0.sh` **or** `scripts/pack-health.sh`
 
@@ -32,7 +32,7 @@
 - Modify: `skills/using-vibage/SKILL.md` (one honesty line)
 - Create: `tests/test_verify_report_tokens.sh` + `tests/fixtures/report_tokens/*`
 
-- [x] **Step 1:** Fixtures: bad_saotou, bad_scene, bad_same_line_negation (`已掃透；≠ SaaS`), ok_negation (`≠ 掃透`), ok_held+evidence fence, ok_clean; OWNER bad
+- [x] **Step 1:** Fixtures: bad_saotou, bad_scene, bad_same_line_negation (`full-sweep；≠ SaaS`), ok_negation (`≠ full-sweep`), ok_held+evidence fence, ok_clean; OWNER bad
 - [x] **Step 2:** Implement lint (adjacent negation only; Held + Token evidence; OWNER+LOCATE)
 - [x] **Step 3:** `verify-scene-cover.sh` prints `SCENE_COVER_OK`; wire lint into `verify-report.sh` before OK
 - [x] **Step 4:** `VERIFY_REPORT_TOKENS_OK`; firewall ∉ tier0/pack-health; existing report fixtures still green
@@ -44,7 +44,7 @@
 
 - [x] **Step 1:** init-hub + graph-floor on MindOwnBuz; verify map
 - [x] **Step 2:** SCAN_PLAN `scan_plan_v1` with SelfAutoBuz in root_refs/hot_path/planned_dig_ids; write_confirm; ASSERT_GATE_OK
-- [x] **Step 3:** Degraded dig + dual reports (no 掃透/立體/全懂 slogans) + RUNS; verify-report **OWNER+LOCATE**
+- [x] **Step 3:** Degraded dig + dual reports (no full-sweep/scene-cover/full-understanding slogans) + RUNS; verify-report **OWNER+LOCATE**
 - [x] **Step 4:** Copy evidence; index NOT-claims; **assert** C′/Focus/letter B Proven columns unchanged vs `e8aa1eb`
 - [x] **Step 5:** Restore parent hub/reports; do not flip those Proven columns
 

@@ -24,7 +24,7 @@ REPO_CLASSES = frozenset({"no-deploy", "docs-only", "tooling", "other"})
 MISSING_ENV = "missing-env-config"
 ASK_LINE = (
     "VIBAGE_ENV_VACANCY_ASK: repo={rid} has missing-env-config. "
-    "Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ 掃透."
+    "Choose skip | point:<rel-path> | classify:<class> — reason required. Asking ≠ full-sweep."
 )
 
 

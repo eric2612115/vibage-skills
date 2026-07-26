@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # W2 env vacancy check — print one ENV_VACANCY_* token.
-# Exit 0 for CLEAR/ANSWERED; ≠0 for ASK/BLOCKED. Exit 0 ≠ 掃透.
+# Exit 0 for CLEAR/ANSWERED; ≠0 for ASK/BLOCKED. Exit 0 ≠ full-sweep.
 # Usage: env-vacancy-check.sh <mother-workspace>
 set -euo pipefail
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"

@@ -1,22 +1,22 @@
 # SAT-agent-pressure — Focus protocol + scenario library (Approach A)
 
-**Owns:** Focus: agent-pressure protocol, dual-phase agent evidence, scenario card library, scorer contract.  
-**STATUS row:** `Focus: agent-pressure` — Designed=YES; On-tree / Proven-green per §9 carve-out; Scope=`agent`.  
-**Not a `pipeline_id`:** distinct from hub `focus_pipeline_id` (locate / issue-fix / 架構檢視). Focus does **not** mint product hub runs.  
-**Umbrella:** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md` §7.4 / §8.  
+**Owns:** Focus: agent-pressure protocol, dual-phase agent evidence, scenario card library, scorer contract. 
+**STATUS row:** `Focus: agent-pressure` — Designed=YES; On-tree / Proven-green per §9 carve-out; Scope=`agent`. 
+**Not a `pipeline_id`:** distinct from hub `focus_pipeline_id` (locate / issue-fix / architecture review). Focus does **not** mint product hub runs. 
+**Umbrella:** `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md` §7.4 / §8. 
 **Approach:** **A** — this file is the SSOT (thickened from stub). **Approach 1** harness stays thin: invoke existing scripts + scorer asserts; **no** new FSM engine.
 
 Fixture paths below are **normative for later plans**. This SAT does **not** create fixture files by itself.
 
 ---
 
-## 1. Goal and success (目標與成功標準)
+## 1. Goal and success
 
 Prove locate closed-loop skill pressure with observable, reviewable agent RED→GREEN evidence.
 
 **Success (this wave):** all cards in the **this-wave required set** (§5) achieve dual-phase scorer `verdict=PASS`. Only then may package `STATUS.md` Focus **Proven-green=YES** (scope=`agent`).
 
-### 1.1 “Card green” procedural skeleton (「卡綠」程序骨架)
+### 1.1 “Card green” procedural skeleton
 
 This section locks the **procedure**. Per-card oracles live in §6–§7.
 
@@ -29,7 +29,7 @@ For each card:
 
 ---
 
-## 2. Locks A1–A9 (本波鎖定)
+## 2. Locks A1–A9
 
 | ID | Decision |
 |----|----------|
@@ -41,7 +41,7 @@ For each card:
 | **A6** | Happy path: report basename **hard-cut**; mid-fail: **no fake DONE** `VIBAGE-ISSUE-*`. |
 | **A7** | Evidence R (templates tracked; packs gitignored; no dump into product `docs/vibage/`). |
 | **A8** | Never gate Tier-0 / future remote CI on agent Proven-green; **locate DONE ⊥ Focus**. |
-| **A9** | SaaS = **deferred this wave**, not forever-forbidden. Fix / 架構檢視 agent cards = Plan F / `B-path agent-proven set` (in-scope when that plan runs); still ≠ locate this-wave required-set. |
+| **A9** | SaaS = **deferred this wave**, not forever-forbidden. Fix / architecture review agent cards = Plan F / `B-path agent-proven set` (in-scope when that plan runs); still ≠ locate this-wave required-set. |
 
 **Also locked:**
 
@@ -51,7 +51,7 @@ For each card:
 
 ---
 
-## 3. Protocol timeline (協議時序) — per card
+## 3. Protocol timeline (protocoltimeline) — per card
 
 Strict order for every card:
 
@@ -66,7 +66,7 @@ After the this-wave required set all dual-phase scorer-PASS → Focus Proven-gre
 
 ---
 
-## 4. Fresh agent isolation (新鮮隔離)
+## 4. Fresh agent isolation (freshisolation)
 
 **Fresh** = new agent instance + new workspace, and:
 
@@ -83,12 +83,12 @@ After the this-wave required set all dual-phase scorer-PASS → Focus Proven-gre
 | **Agent2** | GREEN | **with** Vibage skill |
 | **Scorer** | Score (third / separate turn) | evaluates frozen checklist + oracles; writes `score/score.json` |
 
-Per card = **exactly two** agent-runs (RED then GREEN), plus scorer.  
+Per card = **exactly two** agent-runs (RED then GREEN), plus scorer. 
 **Forbidden:** Runner A/B each doing a full RED→GREEN suite (that would be four agent-runs per card).
 
 ---
 
-## 5. Normative paths (路徑規範)
+## 5. Normative paths (pathsnormative)
 
 | Role | Path | Git |
 |------|------|-----|
@@ -103,7 +103,7 @@ Per card = **exactly two** agent-runs (RED then GREEN), plus scorer.
 - Do not dump Focus RUNS / chat logs / evidence into product `docs/vibage/`.
 - Do not use hub as Focus workspace.
 
-### 5.1 Card ID aliases (本波 gate 正規名)
+### 5.1 Card ID aliases ( gate )
 
 | Path / template id (`card_id`) | Short name (gate-canonical) |
 |--------------------------------|-----------------------------|
@@ -111,7 +111,7 @@ Per card = **exactly two** agent-runs (RED then GREEN), plus scorer.
 | `AP-C2-gate-RED` | `gate-RED` |
 | `AP-C3-handoff-resume` | `handoff-resume` |
 
-Short names are this-wave gate-canonical; `AP-C*` is the path/template prefix.  
+Short names are this-wave gate-canonical; `AP-C*` is the path/template prefix. 
 **This-wave required set** = the three rows above (**only** `AP-C1`…`C3`). Library may append `AP-C4+` (new directory + new short name) without rewriting protocol constants. Later cards must not redefine “already green this wave.”
 
 ### 5.2 B-path agent-proven set (set claim id)
@@ -131,7 +131,7 @@ Public / STATUS wording is **`letter B agent-proven`** only; `B-path agent-prove
 
 ---
 
-## 6. Scenario cards (場景卡目錄)
+## 6. Scenario cards (scene)
 
 ### 6.1 Catalog
 
@@ -141,17 +141,17 @@ Public / STATUS wording is **`letter B agent-proven`** only; `B-path agent-prove
 | `AP-C2-gate-RED` | `gate-RED` | Gate red → **no dig**; STOP + handoff; no fake-DONE |
 | `AP-C3-handoff-resume` | `handoff-resume` | Terminal-then-mint; honest `supersedes_run_id` / resume; `handoff_honored` |
 | `AP-C4-issue-fix` | `issue-fix` | After locate reports + `fix_preference=YES` + unlock; GREEN proves `verify-issue-fix-unlock` |
-| `AP-C5-service-map` | `service-map` | 架構檢視 with hub map `depth:"standard"` + valid `edges`; GREEN proves `verify-service-map` |
+| `AP-C5-service-map` | `service-map` | architecture review with hub map `depth:"standard"` + valid `edges`; GREEN proves `verify-service-map` |
 
 ### 6.2 Shared anti-goals
 
-- Locate **this-wave required-set** does **not** enter issue-fix / 架構檢視. Fix/arch agent cards = Plan F / `B-path agent-proven set` (§5.2); still ≠ this-wave required-set.
+- Locate **this-wave required-set** does **not** enter issue-fix / architecture review. Fix/arch agent cards = Plan F / `B-path agent-proven set` (§5.2); still ≠ this-wave required-set.
 - **No** register / SaaS CTA.
 - Focus does **not** mint product hub runs; evidence does **not** land in product `docs/vibage/`.
 - Smoke / fixture presence **must not** enter `scripts/test-tier0.sh` / CI as Focus Proven-green or letter B agent-proven.
 - Scorer must not let another phase PASS mask this card’s FAIL.
 
-### 6.3 RED PASS morphology (三審 must_fix — 正向預期失敗)
+### 6.3 RED PASS morphology (three reviews must_fix — )
 
 **`phases.red=PASS` requires a POSITIVE expected-failure morphology** — an observable product-contract breach consistent with the card, for example:
 
@@ -237,7 +237,7 @@ Vague “could not produce compliant reports” alone is **insufficient** (crash
 
 ---
 
-## 7. Scorer beyond the four scripts (腳本之外斷言)
+## 7. Scorer beyond the four scripts (outside )
 
 Thin Approach-1 may call existing scripts:
 
@@ -258,46 +258,46 @@ Do **not** claim `assert_gate` / `verify-*` alone cover the above.
 
 ---
 
-## 8. `score.json` schema (評分產物)
+## 8. `score.json` schema ()
 
 **Path:** `tests/artifacts/agent-pressure/<run_ts>/<card_id>/score/score.json`
 
 ```json
 {
-  "schema_version": "1",
-  "card_id": "AP-C1-happy",
-  "short_name": "happy",
-  "run_ts": "<iso_or_slug>",
-  "phases": {
-    "red": {
-      "verdict": "PASS|FAIL|INCONCLUSIVE",
-      "failure_class": "<see whitelist below>",
-      "notes": "<short>",
-      "script_exit": {},
-      "evidence_path": "tests/artifacts/agent-pressure/<run_ts>/<card_id>/red/"
-    },
-    "green": {
-      "verdict": "PASS|FAIL|INCONCLUSIVE",
-      "notes": "<short>",
-      "script_exit": {
-        "assert_gate": 0,
-        "verify_report": 0,
-        "verify_run": 0,
-        "verify_handoff": null
-      },
-      "evidence_path": "tests/artifacts/agent-pressure/<run_ts>/<card_id>/green/"
-    }
-  },
-  "checklist_pass": true,
-  "oracle_pass": true,
-  "verdict": "PASS|FAIL|INCONCLUSIVE",
-  "handoff_honored": null,
-  "script_refs": [
-    "assert_gate.sh",
-    "verify-report.sh",
-    "verify-run.sh",
-    "verify-handoff.sh"
-  ]
+ "schema_version": "1",
+ "card_id": "AP-C1-happy",
+ "short_name": "happy",
+ "run_ts": "<iso_or_slug>",
+ "phases": {
+ "red": {
+ "verdict": "PASS|FAIL|INCONCLUSIVE",
+ "failure_class": "<see whitelist below>",
+ "notes": "<short>",
+ "script_exit": {},
+ "evidence_path": "tests/artifacts/agent-pressure/<run_ts>/<card_id>/red/"
+ },
+ "green": {
+ "verdict": "PASS|FAIL|INCONCLUSIVE",
+ "notes": "<short>",
+ "script_exit": {
+ "assert_gate": 0,
+ "verify_report": 0,
+ "verify_run": 0,
+ "verify_handoff": null
+ },
+ "evidence_path": "tests/artifacts/agent-pressure/<run_ts>/<card_id>/green/"
+ }
+ },
+ "checklist_pass": true,
+ "oracle_pass": true,
+ "verdict": "PASS|FAIL|INCONCLUSIVE",
+ "handoff_honored": null,
+ "script_refs": [
+ "assert_gate.sh",
+ "verify-report.sh",
+ "verify-run.sh",
+ "verify-handoff.sh"
+ ]
 }
 ```
 
@@ -325,7 +325,7 @@ Only classes in the RED-PASS whitelist rows above may yield `phases.red.verdict=
 
 ---
 
-## 9. STATUS carve-out (套件 STATUS 例外)
+## 9. STATUS carve-out ( STATUS outside )
 
 Package `STATUS.md` contains a general line:
 
@@ -343,7 +343,7 @@ Tier-0 ship remains independent: Focus failure does not rewrite Tier-0 Proven-gr
 
 ---
 
-## 10. Optional script smoke (可選煙測)
+## 10. Optional script smoke ()
 
 **May prove:**
 
@@ -361,7 +361,7 @@ Smoke green ≠ Focus green.
 
 ---
 
-## 11. Synthetic parent requirements (合成父倉)
+## 11. Synthetic parent requirements ()
 
 - At least two checked_out roots (`app-a` / `app-b`); content thick enough (in later plans) to exercise orient → confirm → gate → dig (happy) and controllable gate-RED.
 - Card3 needs a constructible **terminal handoff** fixture (may derive from `tests/fixtures/run_failed_handoff.json` shape) for resume / mint.
@@ -370,7 +370,7 @@ Smoke green ≠ Focus green.
 
 ---
 
-## 12. Out of scope this wave (本波非目標)
+## 12. Out of scope this wave (non-goal)
 
 - Register / SaaS CTA / preview CTA pressure.
 - Changing `scripts/verify-handoff.sh` for `handoff_honored`.
@@ -379,13 +379,13 @@ Smoke green ≠ Focus green.
 - Creating the fixture/artifact trees in-repo (paths normative only until a plan lands them).
 - New FSM / orchestration engine (Approach 1 stays thin).
 
-**In-scope under Plan F / `B-path agent-proven set` (not locate this-wave OOS):** issue-fix unlock / dual-consent execution under pressure (`AP-C4-issue-fix`); 架構檢視 / map qualification agent cards (`AP-C5-service-map`). These are **not** the locate Focus this-wave required-set and must **not** redefine Focus Proven-green for `AP-C1`…`C3`.
+**In-scope under Plan F / `B-path agent-proven set` (not locate this-wave OOS):** issue-fix unlock / dual-consent execution under pressure (`AP-C4-issue-fix`); architecture review / map qualification agent cards (`AP-C5-service-map`). These are **not** the locate Focus this-wave required-set and must **not** redefine Focus Proven-green for `AP-C1`…`C3`.
 
 Deferred ≠ forever-forbidden (lock **A9**).
 
 ---
 
-## 13. Later append seams (後續擴充縫)
+## 13. Later append seams (after )
 
 | Seam | Intent |
 |------|--------|

@@ -1,21 +1,21 @@
 ---
 name: vibage-arch-review
 description: >-
-  Optional 架構檢視 / Service map track. Requires a qualified map at
+  Optional architecture review / Service map track. Requires a qualified map at
   docs/vibage/maps/service_map.json. Map failure blocks only this track —
   never undoes locate DONE. Script-verify via verify-service-map.sh.
   pipeline_id=service_map; not cloud Architecture Pass.
 ---
 
-# Vibage 架構檢視 (Service map — optional track — usable)
+# Vibage architecture review (Service map — optional track — usable)
 
 **Status:** usable — map qualification gates are script-verifiable. Thick contract → `SAT-arch-review` + `SAT-map-schema`.
 
 **Honest scope:** Usable + package Proven-green(script) means **map qualification gates are verifiable**. It does **not** mean letter **B** complete from this track alone, does **not** guarantee agent E2E arch quality, and is **not** cloud Architecture Pass.
 
-**Track / `pipeline_id`:** exact `service_map`. Local name: 架構檢視 / Service map.
+**Track / `pipeline_id`:** exact `service_map`. Local name: architecture review / Service map.
 
-**Track independence:** Locate DONE does **not** require this track. Map missing/underqualified → block **only** 架構檢視; leave locate DONE and dual reports intact.
+**Track independence:** Locate DONE does **not** require this track. Map missing/underqualified → block **only** architecture review; leave locate DONE and dual reports intact.
 
 **Handoff:** `artifacts_ok` does **not** cross pipelines by default. Do not treat locate-wave handoff reuse as map/architecture proof.
 
@@ -26,7 +26,7 @@ description: >-
 3. Do not edit business code here (that is `vibage-issue-fix` after dual consent).
 4. Do not dig without locate/orient gates when locating is still needed; this track is not a locate substitute.
 5. English IDs: `pipeline_id` = exact `service_map` — not cloud "Architecture Pass". No SaaS / register CTA.
-6. **Thin-map floor (M07):** If there is no successful `verify-map-deepen.sh` / no `MAP_DEEPEN_OK` for this workspace, chat **must** say floor-only / nameplate inventory. **Forbid** “系統已懂 / Architecture Pass / 可安心改碼”. `verify-service-map` green = inventory qualification only, not understanding. This track does **not** unlock `issue-fix`. Plan-L Mermaid/Graphify prettier ≠ `vibage-map-deepen`.
+6. **Thin-map floor (M07):** If there is no successful `verify-map-deepen.sh` / no `MAP_DEEPEN_OK` for this workspace, chat **must** say floor-only / nameplate inventory. **Forbid** “system understood / Architecture Pass / safe to rewrite code”. `verify-service-map` green = inventory qualification only, not understanding. This track does **not** unlock `issue-fix`. Plan-L Mermaid/Graphify prettier ≠ `vibage-map-deepen`.
 
 ## Usable procedure
 
@@ -53,7 +53,7 @@ bash "$PKG_ROOT/scripts/verify-service-map.sh" <workspace_root>
      - If Graphify CLI missing → exit 0 + `OK:GRAPHIFY_SKIP` + owner sentence = CLI path skipped only (≠ no graph artifact).
      - If CLI present → best-effort or honest limitation; never empty-overwrite Mermaid; never claim `OK:GRAPHIFY wrote` for a stub.
    - REQUIRED pure-local preview: `bash "$PKG_ROOT/scripts/render-service-map-preview.sh" <workspace_root>` → `vibage-preview/service_map.html` + `.svg`. Soft skip → exit 0 + `OK:RENDER_SKIP` + owner sentence.
-6. Summarize for owner; do not claim letter B or agent E2E proof from this script alone. Plan-L local-maps deepen ≠终局 (deferred≠forever-ban).
+6. Summarize for owner; do not claim letter B or agent E2E proof from this script alone. Plan-L local-maps deepen ≠end-state (deferred≠forever-ban).
 
 ### Thin coverage notes (auto; single writer)
 

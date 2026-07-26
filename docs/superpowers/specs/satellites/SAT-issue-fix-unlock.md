@@ -122,6 +122,6 @@ Print clear `OK:` / `FAIL:` lines. Fixture proof: `tests/test_issue_fix_usable.s
 ## 8. Out of scope (this wave)
 
 - Agent E2E fix quality / Focus agent-pressure cards for issue-fix
-- Letter **B** (needs issue-fix **and** 架構檢視 usable)
+- Letter **B** (needs issue-fix **and** architecture review usable)
 - SaaS / register CTA
 - Changing Tier-0 body to require `test_issue_fix_usable.sh`

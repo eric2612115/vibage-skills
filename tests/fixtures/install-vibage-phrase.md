@@ -1,6 +1,6 @@
 # Fixture: owner says only “install Vibage”
 
-**Owner (one line):** 幫我裝 Vibage  
+**Owner (one line):** Install Vibage  
 
 **Agent must (no owner bash):**
 

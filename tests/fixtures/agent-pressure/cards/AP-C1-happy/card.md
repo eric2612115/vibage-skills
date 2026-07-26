@@ -24,5 +24,5 @@ One-glance symptom: locate closed loop on synthetic parent — dig `planned_dig_
 
 ## Forbidden
 
-- issue-fix / 架構檢視 / SaaS / register CTA
+- issue-fix / architecture review / SaaS / register CTA
 - Digging inside package product hub; dumping evidence into product `docs/vibage/`

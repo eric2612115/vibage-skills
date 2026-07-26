@@ -3,7 +3,8 @@
 Copy-paste this to the agent on your **parent** folder chat:
 
 ```text
-幫我裝 Vibage（或：Please install Vibage for this parent workspace）.
+Install Vibage
+(or: Please install Vibage for this parent workspace).
 Package is at /path/to/vibage-skills — or discover via resolve-pkg-root / skill homes.
 Run install for cursor,claude,codex; attach parent routers with --with-project-rule on THIS workspace
 (required — not optional); verify-project-entry until PROJECT_ENTRY_OK (alwaysApply mdc);
