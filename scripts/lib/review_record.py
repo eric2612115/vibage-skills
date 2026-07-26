@@ -38,6 +38,12 @@ TRIGGER_VERIFY_GLOB = "scripts/verify-"
 REVIEWS_DIR = "docs/evidence/reviews"
 _SELECTED_BY = frozenset({"owner", "implementer", "host_default"})
 _SEVERITY = {"tests": 1, "narrative": 2, "gate": 3}
+# Ban overclaim words in conclusion. "unverified" OK (no word-boundary hit).
+# "not verified" OK via negative lookbehind. Positive "verified"/"proven"/"confirmed" FAIL.
+_CONCLUSION_OVERCLAIM = re.compile(
+    r"(?<!not )(?<!NOT )\b(verified|proven|confirmed)\b",
+    re.IGNORECASE,
+)
 
 
 def is_trigger(rel: str) -> bool:
@@ -259,23 +265,34 @@ def parse_front_matter(text: str) -> dict:
             in_blocking = False
             in_paths = False
             continue
+        # Blocking list items: any indent whose strip is "- …" (4-space or 6-space YAML)
+        if cur_rev is not None and in_blocking and line.strip().startswith("- "):
+            cur_rev["blocking"].append(line.strip()[2:].strip().strip("\"'"))
+            continue
         if cur_rev is not None and re.match(r"^    \w", line):
             key, _, val = line.strip().partition(":")
             key, val = key.strip(), val.strip().strip("\"'")
             if key == "blocking":
-                in_blocking = True
-                if val not in ("", "[]"):
-                    pass
                 cur_rev["blocking"] = []
-                continue
-            if in_blocking and line.strip().startswith("- "):
-                cur_rev["blocking"].append(line.strip()[2:].strip().strip("\"'"))
+                if val in ("", "[]"):
+                    in_blocking = True
+                    continue
+                # Inline list: blocking: [a, b]
+                if val.startswith("[") and val.endswith("]"):
+                    inner = val[1:-1].strip()
+                    if inner:
+                        for part in inner.split(","):
+                            item = part.strip().strip("\"'")
+                            if item:
+                                cur_rev["blocking"].append(item)
+                    in_blocking = False
+                    continue
+                # Non-empty scalar must count as a blocking finding (not wiped to [])
+                cur_rev["blocking"].append(val)
+                in_blocking = False
                 continue
             in_blocking = False
             cur_rev[key] = val
-            continue
-        if cur_rev is not None and line.startswith("    - ") and in_blocking:
-            cur_rev["blocking"].append(line.strip()[2:].strip().strip("\"'"))
             continue
         if not line.startswith(" ") and ":" in line:
             if cur_rev:
@@ -352,7 +369,7 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     if len(revs) < n:
         errs.append(f"need ≥{n} reviewers, got {len(revs)}")
     for i, r in enumerate(revs):
-        if r.get("verdict") == "FAIL":
+        if (r.get("verdict") or "").strip().upper() == "FAIL":
             errs.append(f"reviewer[{i}] verdict FAIL")
         if r.get("blocking"):
             errs.append(f"reviewer[{i}] blocking non-empty: {r.get('blocking')}")
@@ -376,8 +393,14 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
         if div == "waived" and not (data.get("diversity_reason") or "").strip():
             errs.append("diversity=waived requires diversity_reason")
     # A2: never require distinct model / model_family
-    if not (data.get("conclusion") or "").strip():
+    conclusion = (data.get("conclusion") or "").strip()
+    if not conclusion:
         errs.append("missing conclusion")
+    elif _CONCLUSION_OVERCLAIM.search(conclusion):
+        errs.append(
+            "conclusion must not claim verified|proven|confirmed "
+            "(self-declared fields are unverifiable; use disclosed/unverified)"
+        )
     return errs
 
 

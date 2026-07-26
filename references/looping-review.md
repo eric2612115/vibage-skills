@@ -86,6 +86,7 @@ Pass predicate (mechanical) — script-derived; see `references/review-budget.md
 - `diversity: waived` requires non-empty `diversity_reason`; does **not** lower N; does **not** skip the context requirement
 - Model family / distinct model strings are **not** gated (disclosure only)
 - Top-level `min_reviewers` must be omitted; optional `blast_class` / `review_budget_n` must match script if present
+- `conclusion` non-empty; must not claim `verified` / `proven` / `confirmed` (positive word match; `unverified` / `not verified` OK)
 
 **Honesty:** `model`, `context`, and `reviewer_selected_by` are self-declared and unverifiable. Context is the gated axis for **incentive** (good-faith agents open separate sessions) — mechanically forging `context: a`/`b` is still zero-cost; see `references/review-budget.md` G2. Do not key budget on implementer model tier. Do not rotate reviewer models to satisfy diversity — ask owner for roster once when multi-review is first needed. `REVIEW_RECORD_OK` ≠ high-quality review.
 

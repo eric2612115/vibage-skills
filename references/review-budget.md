@@ -65,4 +65,12 @@ forge cost.)
 - `reviewer_selected_by: owner=N implementer=N host_default=N` (after record parse; G1)
 - `REVIEW_RECORD_OK` only after schema + budget pass.
 
+**Conclusion lint:** `conclusion` must be non-empty and must **not** contain the
+overclaim words `verified` / `proven` / `confirmed` as positive claims (word match;
+`unverified` and `not verified` are allowed). Same class of bug as writing "verified"
+into a record while SSOT says those fields are unverifiable.
+
+**V1 known gap:** homoglyph / fullwidth spellings of those words are not normalized
+(script is ASCII word-match only). Do not treat the lint as unicode-proof.
+
 `REVIEW_RECORD_OK` ≠ review quality. ∉ Tier-0.

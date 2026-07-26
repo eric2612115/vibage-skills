@@ -744,6 +744,133 @@ K2_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --
 set -e
 [[ "$K2_EC" -ne 0 ]] || fail "Fixture K invalid reviewer_selected_by must FAIL"
 
+# --- Conclusion overclaim lint ---
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"context axis verified\"
+---
+"
+set +e
+CL_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+CL_EC=$?
+set -e
+[[ "$CL_EC" -ne 0 ]] || fail "conclusion with 'verified' must FAIL"
+echo "$CL_OUT" | grep -Fq 'verified|proven|confirmed' || fail "conclusion lint message"
+
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"fields disclosed; unverifiable; not verified\"
+---
+"
+CL_OK="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
+echo "$CL_OK" | grep -Fq 'REVIEW_RECORD_OK' || fail "unverified / not verified must PASS conclusion lint"
+echo "CONCLUSION_LINT_OK"
+
+# --- Lens A: blocking list / scalar / verdict case must not fake-green ---
+python3 - <<'PY' || fail "blocking/verdict parser bypass still open"
+import sys
+sys.path.insert(0, "scripts/lib")
+from review_record import parse_front_matter, validate_record
+
+def fm(blocking_block: str, verdict: str = "PASS") -> dict:
+    return parse_front_matter(f"""---
+diff_id: "x"
+diff_base: "fixture"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: ""
+reviewers:
+  - id: A
+    lens: scope
+    verdict: {verdict}
+    model: m
+    context: a
+    reviewer_selected_by: owner
+{blocking_block}
+  - id: B
+    lens: e
+    verdict: PASS
+    model: m
+    context: b
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: "parser bypass check"
+---
+""")
+
+# six-space YAML list under blocking
+d = fm("    blocking:\n      - should-block")
+assert d["reviewers"][0]["blocking"] == ["should-block"], d["reviewers"][0]
+errs = validate_record(d, ["scripts/assert_gate.sh"], "x")
+assert any("blocking" in e for e in errs), errs
+
+# scalar blocking must not wipe to []
+d = fm("    blocking: critical-finding")
+assert d["reviewers"][0]["blocking"] == ["critical-finding"], d["reviewers"][0]
+errs = validate_record(d, ["scripts/assert_gate.sh"], "x")
+assert any("blocking" in e for e in errs), errs
+
+# inline list
+d = fm('    blocking: ["a", "b"]')
+assert d["reviewers"][0]["blocking"] == ["a", "b"], d["reviewers"][0]
+
+# verdict case
+d = fm("    blocking: []", verdict="fail")
+errs = validate_record(d, ["scripts/assert_gate.sh"], "x")
+assert any("verdict FAIL" in e for e in errs), errs
+print("BLOCKING_VERDICT_PARSE_OK")
+PY
+
 # empty paths → SKIP
 : >"$FIX/empty.txt"
 SKIP_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/empty.txt" --base=fixture "$ROOT")"
