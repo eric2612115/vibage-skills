@@ -54,6 +54,10 @@ regex cosmetics on `context`. Host-injected unforgeable session ids are out of V
 Stdout discloses `reviewer_selected_by` counts (G1) — same idiom as proven-lock: do not
 block, make the risk configuration visible (all-`implementer` prints an explicit honesty line).
 
+`reviewer_selected_by: owner` silences the highest-risk line. Nothing verifies it. The line
+is a prompt for the reader, not a proof. (Same class of self-declaration as G2 context
+forge cost.)
+
 ## Tokens
 
 - `blast_class=<gate|narrative|tests>`

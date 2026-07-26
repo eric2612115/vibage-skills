@@ -93,7 +93,7 @@ Pass predicate (mechanical) — script-derived; see `references/review-budget.md
 - No trigger path changes → `REVIEW_RECORD_SKIP` (exit 0). **Never** print `REVIEW_RECORD_OK` on a clean/non-trigger tree. SKIP ≠ reviewed.
 - Insufficient git history → `REVIEW_RECORD_FAIL reason=no_git_base` (exit ≠ 0) — must not pass pack-health.
 - When triggers exist: stdout includes `blast_class=` and `review_budget_n=` (and `review_budget_n_effective=` for `loop: plan`).
-- After record parse: `reviewer_selected_by: owner=N implementer=N host_default=N`; all-`implementer` adds a highest-risk honesty line (disclosure only — does not FAIL).
+- After record parse: `reviewer_selected_by: owner=N implementer=N host_default=N`; all-`implementer` adds a highest-risk honesty line (disclosure only — does not FAIL). Writing `owner` silences that line; nothing verifies it (reader prompt, not proof).
 - Qualified record → `REVIEW_RECORD_OK`
 - **Forbidden:** treat exit 0 as `REVIEW_RECORD_OK` (same class of bug as freshness).
 
