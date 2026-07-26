@@ -4,11 +4,15 @@
 
 Works with **Cursor**, **Claude Code**, and **Codex**.
 
-**Public repo:** [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) (MIT)
+**Public repo:** [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) (MIT) · package version **0.8.0**
 
 ```bash
 git clone https://github.com/eric2612115/vibage-skills.git
 ```
+
+## Language
+
+Default prose / agent docs / code comments are **English**. A small set of **owner-facing product phrases stay Chinese by design** and are tested (do not delete them), including `幫我裝 Vibage`, `掃透`, and related honesty slogans. English synonyms (e.g. “install Vibage”) are also accepted where adapters say so.
 
 ## Stranger start (parent folder only)
 
@@ -28,7 +32,7 @@ You should not type bash. The agent runs scripts.
 
 > 幫我裝 Vibage
 
-The agent must: wire **parent** routers (`PROJECT_ENTRY_OK`) → create the checklist folder → build a **draft map of every app folder** (`PILE_INDEX_OK`) → say the map is a nameplate (not “system understood”) → tell you deepen costs more and ask if you want it (you can skip and paste a ticket) → then ask for your ticket or symptom.  
+The agent must: wire **parent** routers (`PROJECT_ENTRY_OK`) → create the hub checklist → graph floor / pile index (`GRAPH_FLOOR_OK`; `PILE_INDEX_OK` = wrapper) → matrix sweep (掃透 only with `MATRIX_SWEEP_SUBSTANTIVE_OK`) → freshness (`FRESHNESS_OK` or WAIVED+DISCLOSED; exit 0 ≠ OK) → say the map is a nameplate (not “system understood”) → cost/deepen ask (ticket paste = skip deepen) → then ticket or symptom → orient → **CONFIRM** → locate.  
 It must **not** stop after install only, and must **not** dig yet.  
 Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`
 
@@ -59,6 +63,8 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 | Install continuum | `tests/test_install_phrase_e2e.sh` | `INSTALL_PHRASE_E2E_OK` |
 | Pile index | `scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` |
 | Optional dimension-fill | `scripts/verify-dimension-fill.sh <parent>` (legacy `verify-map-deepen.sh` = migrate shim) | `DIMENSION_FILL_*` (`MAP_DEEPEN_OK` retired) |
+| Review record (guarded paths) | `scripts/verify-review-record.sh <pkg>` | `REVIEW_RECORD_OK` (∉ Tier-0; exit 0 ≠ OK) |
+| Plan-loop hygiene | `scripts/verify-plan-loop-hygiene.sh` | `PLAN_LOOP_HYGIENE_OK` (∉ Tier-0) |
 | Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
 | Capability table | [`STATUS.md`](STATUS.md) | — |
@@ -71,8 +77,9 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 - **SaaS / sign-up** = blank (no register CTA in this pack).
 - **This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
 - Plugin manifests are on-tree (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). **≠** store listing until you submit and pass review.
-- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `PILE_INDEX_OK` ≠ `DIMENSION_FILL_OK` ≠ “scan confirmed” ≠ “locate finished”.
+- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `GRAPH_FLOOR_OK` / `PILE_INDEX_OK` ≠ matrix 掃透 ≠ freshness ≠ `DIMENSION_FILL_OK` ≠ “scan confirmed” ≠ “locate finished”.
 - Pile-index / dimension-fill ≠ Architecture Pass; Graphify optional / fail-soft; Plan-L prettier ≠ nested deepen; `MAP_DEEPEN_OK` brand retired.
+- `REVIEW_RECORD_OK` ≠ review quality; `REVIEW_RECORD_SKIP` ≠ reviewed.
 - Cost talk stays local — no register / SaaS CTA.
 
 ---
@@ -80,13 +87,14 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 ## Deeper (agents)
 
 - Spec: `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
-- Active design (C′ draft): `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`
-- Plans (live stub): `docs/superpowers/plans/README.md`
-- Pre-C′ plans: removed from tree (git history only; do not load unless archaeology)  
-
-- Optional paste: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md)  
-- Hard stops: [`references/hard-stops.md`](references/hard-stops.md)  
-- GitHub + CI: `https://github.com/eric2612115/vibage-skills`  
+- C′ design: `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`
+- Plans index (SHIPPED / historical — do not treat as current Build): [`docs/superpowers/plans/README.md`](docs/superpowers/plans/README.md)
+- Pre-C′ plans: removed from tree (git history only; do not load unless archaeology)
+- Routing scope: [`references/routing-scope.md`](references/routing-scope.md)
+- Looping review + review budget: [`references/looping-review.md`](references/looping-review.md) · [`references/review-budget.md`](references/review-budget.md)
+- Hard stops: [`references/hard-stops.md`](references/hard-stops.md)
+- Optional paste: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md)
+- GitHub + CI: `https://github.com/eric2612115/vibage-skills`
 
 ### Operator commands (owner should not need these)
 
