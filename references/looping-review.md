@@ -78,7 +78,8 @@ Pass predicate (mechanical) — script-derived; see `references/review-budget.md
 
 - **Impl records (`loop: impl`):** `reviewers` length ≥ blast-class N (from trigger paths); ≥2 distinct non-empty reviewer `context` values (all classes).
 - **Plan records (`loop: plan`):** effective N = `max(3, blast_N)` so Plan-loop process ≥3 is not silently lowered; same context axis.
-- each reviewer has `model`, `context`, and `reviewer_selected_by: owner|implementer|host_default`
+- each reviewer has `model` and `reviewer_selected_by: owner|implementer|host_default` (per-reviewer required)
+- across reviewers: ≥2 distinct non-empty `context` values (`contexts_ok` is set-level — a reviewer may omit `context` if others already supply two distinct values)
 - no `verdict: FAIL`; every `blocking` list empty; `frozen: true`
 - trigger paths ⊆ `subject_paths`
 - `diversity: ok` means the context axis is satisfied — **not** “model families were diversified”
