@@ -1,6 +1,10 @@
 # Review budget (blast-radius) Implementation Plan
 
-> **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **SHIPPED — do not re-execute Build todos.** Implemented on `feat/review-budget-blast-radius`
+> (tip includes conclusion lint + Lens A blocking-parser fixes). Keep as historical record only.
+> New work needs a new plan or an explicit owner reopen.
+
+> **For agentic workers (historical):** REQUIRED: Use superpowers:subagent-driven-development (if subagents available) or superpowers:executing-plans to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Derive review-record minimum reviewer count and diversity rules from trigger-path blast class (not implementer model tier), expand triggers to all `skills/`, and document the budget table in references.
 

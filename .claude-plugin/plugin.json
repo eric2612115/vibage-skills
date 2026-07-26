@@ -1,7 +1,7 @@
 {
   "name": "vibage",
   "description": "Find where a problem lives across messy multi-app folders. Plain-language locate reports for owners and engineers. Not a ticket/log/SaaS platform.",
-  "version": "1.0.0",
+  "version": "0.8.0",
   "author": {
     "name": "Eric Fang"
   },
