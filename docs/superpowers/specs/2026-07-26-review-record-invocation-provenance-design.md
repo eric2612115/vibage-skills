@@ -461,7 +461,14 @@ Four details, each from a measurement:
 - **The wrapper redacts its own three diagnostics**, which echo argv and paths before python runs.
   They all exit non-zero, so `pack-health.sh` catches them on the exit check regardless, but the
   invariant is what makes the namespace worth splitting. The rule now exists twice, in Python and in
-  `sed`; a test runs both over one table so neither drifts.
+  `sed`; a test runs both over one table so neither drifts. The `sed` runs under `LC_ALL=C`: argv can
+  carry any byte, and BSD `sed` rejects an illegal UTF-8 sequence under a UTF-8 locale. A reviewer
+  measured the first version of this returning 1 instead of 2 for an unknown flag, with `sed`'s error
+  in place of the diagnostic — a control that removed information and broke the wrapper's exit
+  contract. The pattern is ASCII, so byte-wise matching leaves legitimate multibyte paths intact,
+  which is asserted. The callers build the message before exiting, so the exit code no longer depends
+  on the redaction succeeding; that fallback is defensive and no test exercises it, because nothing
+  known makes `sed` fail once the locale is fixed.
 - **`--help` deliberately names the tokens** and is left alone: it is a human request that prints no
   outcome, and redacting it would leave the usage text unable to say what it documents.
 

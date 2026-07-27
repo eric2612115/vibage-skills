@@ -2341,6 +2341,35 @@ echo "$WRAP_DIR" | grep -Fq "not a directory: $LEAK_ROOT/absent/" \
   || fail "wrapper must still name the path: $WRAP_DIR"
 echo "$WRAP_DIR" | grep -Fq 'REVIEW_RECORD_<redacted>' \
   || fail "wrapper path diagnostic must show the redaction: $WRAP_DIR"
+# argv can carry any byte. BSD sed rejects an illegal UTF-8 sequence under a UTF-8
+# locale, which under set -e replaced the diagnostic with sed's own error and changed
+# the unknown-flag exit code from 2 to 1.
+set +e
+WRAP_BAD="$(bash scripts/verify-review-record.sh $'--bad=REVIEW_RECORD_OK-\xff' 2>&1)"
+WRAP_BAD_EC=$?
+WRAP_BADDIR="$(bash scripts/verify-review-record.sh "$LEAK_ROOT/absent-REVIEW_RECORD_SKIP-"$'\xff' 2>&1)"
+WRAP_BADDIR_EC=$?
+set -e
+[[ "$WRAP_BAD_EC" == "2" ]] \
+  || fail "illegal byte must not change the unknown-flag exit code: got $WRAP_BAD_EC"
+[[ "$WRAP_BADDIR_EC" == "1" ]] \
+  || fail "illegal byte must not change the bad-directory exit code: got $WRAP_BADDIR_EC"
+assert_no_production_token "$WRAP_BAD" "wrapper unknown-flag diagnostic, illegal byte"
+assert_no_production_token "$WRAP_BADDIR" "wrapper not-a-directory diagnostic, illegal byte"
+echo "$WRAP_BAD" | grep -Fq 'unknown flag --bad=' \
+  || fail "illegal byte must not cost the flag diagnostic: $WRAP_BAD"
+echo "$WRAP_BADDIR" | grep -Fq "not a directory: $LEAK_ROOT/absent-" \
+  || fail "illegal byte must not cost the path diagnostic: $WRAP_BADDIR"
+for o in "$WRAP_BAD" "$WRAP_BADDIR"; do
+  echo "$o" | grep -Fq 'illegal byte sequence' \
+    && fail "redaction must not surface its own tool error: $o"
+done
+# A legitimate multibyte path must survive byte-wise matching intact.
+set +e
+WRAP_UTF8="$(bash scripts/verify-review-record.sh "$LEAK_ROOT/中文-REVIEW_RECORD_OK" 2>&1)"
+set -e
+echo "$WRAP_UTF8" | grep -Fq "not a directory: $LEAK_ROOT/中文-REVIEW_RECORD_<redacted>" \
+  || fail "multibyte path must pass through unharmed: $WRAP_UTF8"
 
 # The two implementations of the rule must agree, or one drifts silently.
 while IFS= read -r probe; do
