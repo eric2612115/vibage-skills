@@ -2268,6 +2268,43 @@ SUB_GDIR="$(printf '%s\n' "$SUB_OUT" | sed -n 's/^review_record_git_dir=//p' | h
 samefile_py "$SUB_GDIR" "$SUB_GITDIR" || fail "submodule git_dir samefile: got=$SUB_GDIR want=$SUB_GITDIR"
 rm -rf "$SUB_SUPER"
 
+# Token literals must come from this program's own outcome, never from its inputs.
+# Diagnostics echo the package path, the --base value, trigger paths and the
+# offending front-matter line, so each is a route for a token spelled in an input
+# to appear in output a consumer greps. Both directions are checked.
+LEAK_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/rr-leak.XXXXXX")"
+LEAK_PKG="$LEAK_ROOT/REVIEW_RECORD_OK"
+mkdir -p "$LEAK_PKG/docs/evidence/reviews" "$LEAK_PKG/scripts"
+printf 'scripts/assert_gate.sh\n' >"$LEAK_ROOT/paths.txt"
+# Front matter carrying a production literal: the schema path echoes the line.
+LEAK_ID="$(python3 -c '
+import sys
+from pathlib import Path
+sys.path.insert(0, "scripts/lib")
+from review_record import compute_diff_id
+sys.path.pop(0)
+print(compute_diff_id(Path(sys.argv[1]), ["scripts/assert_gate.sh"]))
+' "$LEAK_PKG")"
+printf -- '---\nREVIEW_RECORD_OK\n---\n' >"$LEAK_PKG/docs/evidence/reviews/${LEAK_ID}.md"
+set +e
+LEAK_OUT="$(python3 scripts/lib/review_record.py "$LEAK_PKG" \
+  --paths-file="$LEAK_ROOT/paths.txt" --base=REVIEW_RECORD_SKIP 2>&1)"
+set -e
+assert_no_production_token "$LEAK_OUT" "token-named path, record content and --base value"
+echo "$LEAK_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL reason=schema' \
+  || fail "leak case must still reach the schema FAIL: $LEAK_OUT"
+echo "$LEAK_OUT" | grep -Fq 'REVIEW_RECORD_<redacted>' \
+  || fail "leak case must show the redaction, proving the route was exercised: $LEAK_OUT"
+# Reverse direction: a production run must not emit a fixture literal either.
+REV_PKG="$LEAK_ROOT/REVIEW_RECORD_FIXTURE_PASS"
+mkdir -p "$REV_PKG"
+set +e
+REV_OUT="$(bash scripts/verify-review-record.sh "$REV_PKG" 2>&1)"
+set -e
+echo "$REV_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE' \
+  && fail "production run must not emit a fixture literal: $REV_OUT"
+rm -rf "$LEAK_ROOT"
+
 echo "INVOCATION_PROVENANCE_CASES_OK"
 
 echo "REVIEW_RECORD_TEST_OK"

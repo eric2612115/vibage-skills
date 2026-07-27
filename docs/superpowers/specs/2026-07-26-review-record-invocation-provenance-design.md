@@ -428,6 +428,19 @@ lines, NOTE lines, and error messages. Fixture honesty text must be written with
 example `Honesty: a fixture run is not a production acceptance path`. The wrapper's `NOTE:` line at
 `:37` names no token and may stay. P4's test asserts over the whole captured output.
 
+The rule cannot be met by choosing careful wording alone, because diagnostics echo untrusted input:
+the package path, the `--base=` value, trigger paths, and the offending front-matter line. A reviewer
+measured `FAIL: front matter line 2 not recognised: REVIEW_RECORD_OK` in flagged output from a record
+whose front matter contained that literal, and a package directory named `REVIEW_RECORD_OK` producing
+`review_record_pkg=…/REVIEW_RECORD_OK`, which `pack-health.sh:70`'s word-boundary pattern matches
+because `/` is not a word character. Neither turns that consumer green today — it tests for the `FAIL`
+literal and for a non-zero exit before it looks for `OK|SKIP` — but the namespace is only worth
+splitting if a token in the stream means an outcome. So every diagnostic that embeds input passes
+through one substitution that rewrites token literals to `REVIEW_RECORD_<redacted>`, a string matched
+by neither the bare nor the word-boundary patterns. Enumerating the sites instead of routing them
+through one function is what let this through the first time: the reviewer-content route existed
+before this batch and the path route was created by §4.3's provenance lines.
+
 Naming check. The measured result, not a characterisation of it:
 
 | String | `-Fq 'REVIEW_RECORD_OK'` | `-Fq 'REVIEW_RECORD_FAIL'` | `-Fq 'REVIEW_RECORD_SKIP'` | `-Eq 'REVIEW_RECORD_(OK\|SKIP)'` |

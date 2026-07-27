@@ -606,11 +606,26 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     return errs
 
 
+_TOKEN_LITERAL = re.compile(r"REVIEW_RECORD_(?:FIXTURE_)?(?:OK|SKIP|FAIL|PASS)")
+
+
+def redact(value: object) -> str:
+    """Keep token literals out of diagnostic text.
+
+    Paths, record content, reviewer names and git output all reach the stream as
+    diagnostics, and a consumer greps that stream for tokens, so a token spelled
+    inside any of them is indistinguishable from an outcome. Substituting keeps the
+    namespace a property of this program's output rather than of its inputs. The
+    replacement matches neither a bare grep nor the word-boundary form consumers use.
+    """
+    return _TOKEN_LITERAL.sub("REVIEW_RECORD_<redacted>", str(value))
+
+
 def print_provenance(mode: str, pkg: Path, toplevel: str, git_dir: str) -> None:
     print(f"review_record_mode={mode}")
-    print(f"review_record_pkg={pkg}")
-    print(f"review_record_toplevel={toplevel}")
-    print(f"review_record_git_dir={git_dir}")
+    print(f"review_record_pkg={redact(pkg)}")
+    print(f"review_record_toplevel={redact(toplevel)}")
+    print(f"review_record_git_dir={redact(git_dir)}")
 
 
 def emit_outcome(flagged: bool, kind: str, detail: str) -> int:
@@ -717,7 +732,7 @@ def main(argv: list[str]) -> int:
         cls = blast_class_for(triggers)
         budget = budget_for(cls)
     except ValueError as e:
-        print(f"FAIL: {e}", file=sys.stderr)
+        print(f"FAIL: {redact(e)}", file=sys.stderr)
         return emit_outcome(flagged, "FAIL", "reason=blast_class")
 
     print(f"blast_class={cls}")
@@ -734,20 +749,20 @@ def main(argv: list[str]) -> int:
     diff_id = compute_diff_id(pkg, triggers)
     rec_path = pkg / REVIEWS_DIR / f"{diff_id}.md"
     print(f"diff_id={diff_id}")
-    print(f"diff_base={base}")
+    print(f"diff_base={redact(base)}")
     print(f"trigger_count={len(triggers)}")
     for t in triggers:
-        print(f"trigger={t}")
+        print(f"trigger={redact(t)}")
 
     if not rec_path.is_file():
-        print(f"FAIL: missing review record path={rec_path}", file=sys.stderr)
+        print(f"FAIL: missing review record path={redact(rec_path)}", file=sys.stderr)
         return emit_outcome(flagged, "FAIL", "reason=missing_record")
 
     try:
         record_text = rec_path.read_text(encoding="utf-8")
         data = parse_front_matter(record_text)
     except Exception as e:
-        print(f"FAIL: parse record: {e}", file=sys.stderr)
+        print(f"FAIL: parse record: {redact(e)}", file=sys.stderr)
         return emit_outcome(flagged, "FAIL", "reason=parse")
 
     # G1: disclose after parse (visible even when schema later FAIL)
@@ -767,14 +782,14 @@ def main(argv: list[str]) -> int:
     errs = validate_record(data, triggers, diff_id)
     if errs:
         for e in errs:
-            print(f"FAIL: {e}", file=sys.stderr)
+            print(f"FAIL: {redact(e)}", file=sys.stderr)
         return emit_outcome(flagged, "FAIL", "reason=schema")
 
     if flagged:
         print("Honesty: a fixture run is not a production acceptance path")
     else:
         print("Honesty: REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof")
-    return emit_outcome(flagged, "OK", f"path={rec_path}")
+    return emit_outcome(flagged, "OK", f"path={redact(rec_path)}")
 
 
 if __name__ == "__main__":
