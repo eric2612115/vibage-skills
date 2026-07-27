@@ -268,7 +268,18 @@ The vendored row is the honest payoff. That installation today reports
 `SKIP reason=no_trigger_paths` — measured — because the monorepo names paths
 `vendor/vibage-skills/scripts/…` and no trigger prefix matches. That reason reads as "nothing needed
 review" when the truth is "the wrong tree was measured". The new reason is accurate and the outcome
-is unchanged, so nothing that works today breaks.
+is unchanged, so that installation does not break.
+
+**One case in this row does change outcome, and it is a downgrade.** Passing a *subdirectory of the
+package's own repository* as `pkg_root` — `verify-review-record.sh ./scripts` — measured
+`FAIL reason=missing_record` before and `SKIP reason=git_scope_mismatch` after, because the trigger
+prefixes still matched when the subdirectory sat inside the package's own history. A vendored package
+root and a mistyped subdirectory have the same probe signature (`pkg` strictly inside the toplevel),
+and the vendored installation must not break, so this design accepts the downgrade rather than
+splitting them. It is accident-reachable: a CI line that gains a stray path argument goes from red to
+a `SKIP` that `pack-health.sh` accepts. The structural close is on the accepting side — a consumer
+that stops treating `SKIP` as a pass — which is the next batch's scope, not this one's. Both classes
+are asserted in the suite so the delta stays visible rather than becoming folklore.
 
 Three details the implementer must not have to guess, each raised by a dry run that guessed
 differently:

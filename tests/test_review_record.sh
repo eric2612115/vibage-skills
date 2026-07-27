@@ -2148,16 +2148,29 @@ else
   echo "NOTE: skip unicode-normalisation layout (filesystem does not normalise)"
 fi
 
-# leftover replace ref — --no-replace-objects must keep the gate trigger visible
+# leftover replace ref — --no-replace-objects must keep the gate trigger visible.
+# The reset is what makes this case discriminating: with a dirty tree the gate file
+# differs from the replaced HEAD anyway, so an implementation that honours the
+# replace ref still reports the trigger and the case passes vacuously. Aligning the
+# tree with the replaced HEAD leaves the trigger visible only through the flag.
 INT_TIP="$(git -C "$INT_TMP" rev-parse HEAD)"
 INT_INIT="$(git -C "$INT_TMP" rev-parse HEAD~1)"
 git -C "$INT_TMP" replace "$INT_TIP" "$INT_INIT"
+git -C "$INT_TMP" reset -q --hard HEAD
 set +e
 REP_OUT="$(bash scripts/verify-review-record.sh "$INT_TMP" 2>&1)"
 set -e
 git -C "$INT_TMP" replace -d "$INT_TIP" >/dev/null 2>&1 || true
+git -C "$INT_TMP" reset -q --hard HEAD
+# Tracked content only: the planted review record is untracked by design, so
+# porcelain is never empty here.
+git -C "$INT_TMP" diff --quiet HEAD \
+  || fail "replace-ref: INT_TMP tracked content must be restored for the later layout cases"
+[[ -f "$INT_TMP/docs/evidence/reviews/${INT_DIFF_ID}.md" ]] \
+  || fail "replace-ref: the reset must not remove the planted record"
 echo "$REP_OUT" | grep -Fq 'trigger_count=1' || fail "replace-ref: trigger_count=1: $REP_OUT"
 echo "$REP_OUT" | grep -Fq 'trigger=scripts/assert_gate.sh' || fail "replace-ref: gate trigger: $REP_OUT"
+echo "$REP_OUT" | grep -Fq "diff_base=$INT_INIT" || fail "replace-ref: diff_base must be the real parent: $REP_OUT"
 echo "$REP_OUT" | grep -Fq 'reason=no_trigger_paths' && fail "replace-ref must not vacuous SKIP"
 
 # A directory that is not a git repository at all must keep the no_git_base FAIL.
@@ -2182,12 +2195,36 @@ echo "$NOGIT_BASE_OUT" | grep -Fq 'reason=no_trigger_paths' \
   && fail "non-git dir with --base must not report no_trigger_paths: $NOGIT_BASE_OUT"
 rm -rf "$NOGIT_TMP"
 
-# package root below toplevel → scope mismatch
+# package root below toplevel → scope mismatch. Two classes share this signature
+# and §4.2.2 accepts both: a vendored package root nested in an outer repository,
+# which reported SKIP before and still does, and a subdirectory of the package's
+# own repository, which reported FAIL reason=missing_record before. The second is
+# an accepted downgrade, recorded here so it stays visible.
 set +e
 SUBDIR_OUT="$(bash scripts/verify-review-record.sh "$INT_TMP/scripts" 2>&1)"
 set -e
 echo "$SUBDIR_OUT" | grep -Fq 'REVIEW_RECORD_SKIP reason=git_scope_mismatch' \
   || fail "subdir scope mismatch: $SUBDIR_OUT"
+
+# vendored shape: a package root nested inside an outer repository that names its
+# paths under a prefix, so no trigger matched even before the scope check.
+MONO_TMP="$(mktemp -d "${TMPDIR:-/tmp}/rr-mono.XXXXXX")"
+mkdir -p "$MONO_TMP/vendor/vibage-skills/scripts"
+git -C "$MONO_TMP" init -q
+git -C "$MONO_TMP" config user.email "rr-mono@example.com"
+git -C "$MONO_TMP" config user.name "rr-mono"
+printf '#!/usr/bin/env bash\n' >"$MONO_TMP/vendor/vibage-skills/scripts/assert_gate.sh"
+git -C "$MONO_TMP" add -A
+git -C "$MONO_TMP" commit -qm "mono baseline"
+printf '# marker\n' >>"$MONO_TMP/vendor/vibage-skills/scripts/assert_gate.sh"
+git -C "$MONO_TMP" add -A
+git -C "$MONO_TMP" commit -qm "mono gate change"
+set +e
+MONO_OUT="$(bash scripts/verify-review-record.sh "$MONO_TMP/vendor/vibage-skills" 2>&1)"
+set -e
+echo "$MONO_OUT" | grep -Fq 'REVIEW_RECORD_SKIP reason=git_scope_mismatch' \
+  || fail "vendored root must report scope mismatch, not no_trigger_paths: $MONO_OUT"
+rm -rf "$MONO_TMP"
 echo "$SUBDIR_OUT" | grep -Fq 'REVIEW_RECORD_OK' && fail "subdir must not OK"
 echo "$SUBDIR_OUT" | grep -Fq 'reason=no_trigger_paths' && fail "subdir must not no_trigger_paths"
 
