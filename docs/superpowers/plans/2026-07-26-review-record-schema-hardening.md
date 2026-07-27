@@ -21,7 +21,7 @@ scanning decisions, and the error strings are in the spec; do not re-derive them
 |------|------|
 | `scripts/lib/review_record.py` | spec §4.1 through §4.5 |
 | `tests/test_review_record.sh` | every case in spec §5, appended — the existing file must not lose or change a single assertion |
-| `references/looping-review.md` | spec §4.7: `verdict` is required, the delimiter must be an unindented line of its own, and the two disclosures §4.5 and §6.1 assign here |
+| `references/looping-review.md` | spec §4.7: `verdict` is required, the delimiter must be an unindented line of its own, and the S5 disclosure line from spec §4.5. An earlier version of this row also cited a "§6.1", which exists in the batch-2 spec, not this one — the implementer caught it |
 
 Nothing else. `scripts/verify-review-record.sh`, `scripts/pack-health.sh`, `README.md`,
 `references/review-budget.md`, `adapters/**` and `skills/**` were each checked during the plan loop
