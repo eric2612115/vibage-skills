@@ -43,6 +43,46 @@ If Plan loop was skipped and Build already started: **stop inventing plan edits 
 
 Always-on / skills point here; do **not** paste this table into Cursor plans as executable todos.
 
+### Finding class — apply vs disclose (HARD)
+
+Reviewers may keep asking. That is good. **What must not happen** is treating every ask as a
+must-edit. Endless “what if” without a gate is what turns a 2-round freeze into 5–9 rounds.
+
+**Unpromised surface (plain language):** something this plan/batch never said it would cover.
+Example: the plan promised “test flags must not print production tokens.” A review that then
+demands redacting directory names inside error text is on an *unpromised surface* — not proof the
+door-lock promise failed. Asking about it is fine; **auto-applying it is not.**
+
+Classify each finding before editing the plan or the tree:
+
+| Class | Meaning | Action |
+|-------|---------|--------|
+| **1 — Plan broken** | The plan’s own promises conflict, or following it yields false-green / false-red | Edit the plan; new Plan round (≥3). Do not paper over in Build. |
+| **2 — Impl missed the plan** | Plan is fine; code/docs do not match it | Fix the impl; may trigger Impl round |
+| **3 — Fix broke a contract** | This change introduced FAIL→SKIP/OK, wrong exit, or a vacuous test for a claimed control | Fix that regression; may trigger Impl round on the **delta only** |
+| **4 — Unpromised / proportional** | Extra ideation: nicer wording, future consumers, attacks outside the threat model, “could be tighter,” cost/shape debates with no false-green/false-red evidence | **Disclose** in freeze notes / residual risk. **Do not edit** the plan or tree for class 4 alone |
+
+**Blocking must-fix** (the freeze predicate above) means class **1–3** only.
+Class 4 is never blocking by itself.
+
+**Coordinator rules (parent agent):**
+
+1. **Ask freely; apply narrowly.** Do not skip adversarial review. After review, apply only 1–3.
+2. **Two class-4-only rounds → freeze.** If two consecutive rounds produce zero class 1–3 findings,
+   freeze and disclose leftovers — even if reviewers still have ideas. Ideas need not converge;
+   **edits** must.
+3. **No mid-flight edits.** Do not change the plan or tree while reviewers for the current round are
+   still running. Apply after the round returns; the next round reviews that delta only.
+4. **Impl budget.** Gate-class Impl is N=2 distinct `context` values (`references/review-budget.md`).
+   Do not default to three reviewers or rotate models for “diversity theater.” Model family is
+   disclosure only.
+5. **Measure, don’t vibe.** Prefer “relative to stated baseline / plan claim, does outcome worsen?”
+   over “can I invent another input?”
+
+**Honesty:** Reviewers will still invent class-4 findings. That does not mean the plan keeps failing.
+It means the search space is open. The freeze condition is empty blocking (1–3), not “no one can
+think of anything else.”
+
 ## Review record
 
 Path: `docs/evidence/reviews/<diff_id>.md`
