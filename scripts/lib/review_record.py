@@ -686,7 +686,11 @@ def main(argv: list[str]) -> int:
             return emit_outcome(flagged, "SKIP", "reason=git_scope_mismatch")
 
         if base_present:
-            base, mode = base_val, "base_override"
+            # An explicit base cannot rescue a tree git did not resolve: without a
+            # repository the diff is empty, which reads as no_trigger_paths and
+            # turns the FAIL into a SKIP.
+            base = None if scope == "absent" else base_val
+            mode = "base_override"
         else:
             base, mode = resolve_base(pkg)
 

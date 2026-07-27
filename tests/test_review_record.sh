@@ -2171,6 +2171,15 @@ echo "$NOGIT_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=no_git_base' \
   || fail "non-git dir must FAIL no_git_base, not downgrade: $NOGIT_OUT"
 echo "$NOGIT_OUT" | grep -Fq 'reason=git_scope_mismatch' \
   && fail "non-git dir must not report scope mismatch: $NOGIT_OUT"
+# An explicit --base must not rescue it either: the diff is empty without a
+# repository, which would read as no_trigger_paths and hide the same FAIL.
+set +e
+NOGIT_BASE_OUT="$(python3 scripts/lib/review_record.py "$NOGIT_TMP" --base=HEAD 2>&1)"
+set -e
+echo "$NOGIT_BASE_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL reason=no_git_base' \
+  || fail "non-git dir with --base must FAIL no_git_base: $NOGIT_BASE_OUT"
+echo "$NOGIT_BASE_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "non-git dir with --base must not report no_trigger_paths: $NOGIT_BASE_OUT"
 rm -rf "$NOGIT_TMP"
 
 # package root below toplevel → scope mismatch
