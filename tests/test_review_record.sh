@@ -1068,10 +1068,10 @@ reviewers:
   - id: B
     lens: evidence
     verdict: PASS
-    model: \"cross-ref --- thread\"
-    context: sess-B
+    model: fixture-grok
     reviewer_selected_by: owner
     blocking: []
+    context: \"cross-ref --- thread\"
   - id: C
     lens: adversarial
     verdict: FAIL
