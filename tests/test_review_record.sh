@@ -2324,74 +2324,46 @@ set -e
 echo "$BARE_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE' \
   && fail "production run must not emit the bare fixture prefix either: $BARE_OUT"
 
-# The wrapper's own diagnostics echo argv and paths before python runs.
+# The wrapper echoes argv and paths verbatim by design (§4.4). What must hold is its
+# exit contract and that the diagnostic still identifies what was rejected — a version
+# that redacted these returned 1 instead of 2 for an unknown flag carrying an illegal
+# UTF-8 byte, because sed failed under set -e and took the message with it.
 set +e
-WRAP_FLAG="$(bash scripts/verify-review-record.sh --paths-file=REVIEW_RECORD_OK 2>&1)"
+WRAP_FLAG="$(bash scripts/verify-review-record.sh --paths-file=x 2>&1)"
 WRAP_FLAG_EC=$?
-WRAP_DIR="$(bash scripts/verify-review-record.sh "$LEAK_ROOT/absent/REVIEW_RECORD_SKIP" 2>&1)"
+WRAP_DIR="$(bash scripts/verify-review-record.sh "$LEAK_ROOT/absent" 2>&1)"
 WRAP_DIR_EC=$?
+WRAP_BAD="$(bash scripts/verify-review-record.sh $'--bad=\xff' 2>&1)"
+WRAP_BAD_EC=$?
 set -e
 [[ "$WRAP_FLAG_EC" == "2" ]] || fail "wrapper unknown flag must exit 2: got $WRAP_FLAG_EC"
 [[ "$WRAP_DIR_EC" == "1" ]] || fail "wrapper missing dir must exit 1: got $WRAP_DIR_EC"
-assert_no_production_token "$WRAP_FLAG" "wrapper unknown-flag diagnostic"
-assert_no_production_token "$WRAP_DIR" "wrapper not-a-directory diagnostic"
-echo "$WRAP_FLAG" | grep -Fq 'unknown flag --paths-file=' \
-  || fail "wrapper must still name the rejected flag: $WRAP_FLAG"
-echo "$WRAP_DIR" | grep -Fq "not a directory: $LEAK_ROOT/absent/" \
-  || fail "wrapper must still name the path: $WRAP_DIR"
-echo "$WRAP_DIR" | grep -Fq 'REVIEW_RECORD_<redacted>' \
-  || fail "wrapper path diagnostic must show the redaction: $WRAP_DIR"
-# argv can carry any byte. BSD sed rejects an illegal UTF-8 sequence under a UTF-8
-# locale, which under set -e replaced the diagnostic with sed's own error and changed
-# the unknown-flag exit code from 2 to 1.
-set +e
-WRAP_BAD="$(bash scripts/verify-review-record.sh $'--bad=REVIEW_RECORD_OK-\xff' 2>&1)"
-WRAP_BAD_EC=$?
-WRAP_BADDIR="$(bash scripts/verify-review-record.sh "$LEAK_ROOT/absent-REVIEW_RECORD_SKIP-"$'\xff' 2>&1)"
-WRAP_BADDIR_EC=$?
-set -e
 [[ "$WRAP_BAD_EC" == "2" ]] \
-  || fail "illegal byte must not change the unknown-flag exit code: got $WRAP_BAD_EC"
-[[ "$WRAP_BADDIR_EC" == "1" ]] \
-  || fail "illegal byte must not change the bad-directory exit code: got $WRAP_BADDIR_EC"
-assert_no_production_token "$WRAP_BAD" "wrapper unknown-flag diagnostic, illegal byte"
-assert_no_production_token "$WRAP_BADDIR" "wrapper not-a-directory diagnostic, illegal byte"
-echo "$WRAP_BAD" | grep -Fq 'unknown flag --bad=' \
-  || fail "illegal byte must not cost the flag diagnostic: $WRAP_BAD"
-echo "$WRAP_BADDIR" | grep -Fq "not a directory: $LEAK_ROOT/absent-" \
-  || fail "illegal byte must not cost the path diagnostic: $WRAP_BADDIR"
-for o in "$WRAP_BAD" "$WRAP_BADDIR"; do
-  echo "$o" | grep -Fq 'illegal byte sequence' \
-    && fail "redaction must not surface its own tool error: $o"
-done
-# A legitimate multibyte path must survive byte-wise matching intact.
-set +e
-WRAP_UTF8="$(bash scripts/verify-review-record.sh "$LEAK_ROOT/中文-REVIEW_RECORD_OK" 2>&1)"
-set -e
-echo "$WRAP_UTF8" | grep -Fq "not a directory: $LEAK_ROOT/中文-REVIEW_RECORD_<redacted>" \
-  || fail "multibyte path must pass through unharmed: $WRAP_UTF8"
+  || fail "an illegal byte in argv must not change the exit code: got $WRAP_BAD_EC"
+echo "$WRAP_FLAG" | grep -Fq 'unknown flag --paths-file=' \
+  || fail "wrapper must name the rejected flag: $WRAP_FLAG"
+echo "$WRAP_DIR" | grep -Fq "not a directory: $LEAK_ROOT/absent" \
+  || fail "wrapper must name the path: $WRAP_DIR"
+# LC_ALL=C because grep itself cannot match a line carrying an illegal byte under a
+# UTF-8 locale — the same trap that broke the wrapper when it filtered through sed.
+echo "$WRAP_BAD" | LC_ALL=C grep -Fq 'unknown flag --bad=' \
+  || fail "an illegal byte must not cost the diagnostic: $WRAP_BAD"
 
-# The two implementations of the rule must agree, or one drifts silently.
-while IFS= read -r probe; do
-  py="$(python3 -c 'import sys; sys.path.insert(0, "scripts/lib"); from review_record import redact; print(redact(sys.argv[1]))' "$probe")"
-  sh="$(printf '%s\n' "$probe" | sed -E 's/REVIEW_RECORD_(FIXTURE(_(PASS|SKIP|FAIL))?|OK|SKIP|FAIL|PASS)/REVIEW_RECORD_<redacted>/g')"
-  [[ "$py" == "$sh" ]] \
-    || fail "redaction rule differs between library and wrapper for '$probe': py=$py sh=$sh"
-done <<'PROBES'
-REVIEW_RECORD_OK
-REVIEW_RECORD_SKIP
-REVIEW_RECORD_FAIL
-REVIEW_RECORD_PASS
-REVIEW_RECORD_FIXTURE
-REVIEW_RECORD_FIXTURE_PASS
-REVIEW_RECORD_FIXTURE_SKIP
-REVIEW_RECORD_FIXTURE_FAIL
-REVIEW_RECORD_OKAY
-REVIEW_RECORD_OK_FIXTURE
-/tmp/a/REVIEW_RECORD_OK/b REVIEW_RECORD_FAIL
-review_record_mode=none
-nothing to redact here
-PROBES
+# pack-health decides on anchored patterns, so a token spelled in a diagnostic cannot
+# change its verdict. Both directions, using that consumer's own patterns.
+DIAG_LINE="FAIL: not a directory: /tmp/x/REVIEW_RECORD_FAIL/y"
+printf '%s\n' "$DIAG_LINE" | grep -Eq '^REVIEW_RECORD_FAIL([^A-Za-z0-9_]|$)' \
+  && fail "anchored FAIL pattern must not match a token inside a diagnostic"
+printf '%s\n' "REVIEW_RECORD_FAIL reason=missing_record" \
+  | grep -Eq '^REVIEW_RECORD_FAIL([^A-Za-z0-9_]|$)' \
+  || fail "anchored FAIL pattern must still match the real outcome line"
+printf '%s\n' "trigger=tests/REVIEW_RECORD_OK.txt" \
+  | grep -Eq '^REVIEW_RECORD_(OK|SKIP)([^A-Za-z0-9_]|$)' \
+  && fail "anchored OK pattern must not match a token inside a trigger line"
+grep -Fq "^REVIEW_RECORD_FAIL(" scripts/pack-health.sh \
+  || fail "pack-health must keep its FAIL pattern anchored"
+grep -Fq "^REVIEW_RECORD_(OK|SKIP)(" scripts/pack-health.sh \
+  || fail "pack-health must keep its OK|SKIP pattern anchored"
 rm -rf "$LEAK_ROOT"
 
 echo "INVOCATION_PROVENANCE_CASES_OK"

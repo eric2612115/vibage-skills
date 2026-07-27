@@ -437,45 +437,51 @@ lines, NOTE lines, and error messages. Fixture honesty text must be written with
 example `Honesty: a fixture run is not a production acceptance path`. The wrapper's `NOTE:` line at
 `:37` names no token and may stay. P4's test asserts over the whole captured output.
 
-The rule cannot be met by choosing careful wording alone, because diagnostics echo untrusted input:
-the package path, the `--base=` value, trigger paths, and the offending front-matter line. A reviewer
-measured `FAIL: front matter line 2 not recognised: REVIEW_RECORD_OK` in flagged output from a record
-whose front matter contained that literal, and a package directory named `REVIEW_RECORD_OK` producing
-`review_record_pkg=…/REVIEW_RECORD_OK`, which `pack-health.sh:70`'s word-boundary pattern matches
-because `/` is not a word character. Neither turns that consumer green today — it tests for the `FAIL`
-literal and for a non-zero exit before it looks for `OK|SKIP` — but the namespace is only worth
-splitting if a token in the stream means an outcome. So every diagnostic that embeds input passes
-through one substitution that rewrites token literals to `REVIEW_RECORD_<redacted>`, a string matched
-by neither the bare nor the word-boundary patterns. Enumerating the sites instead of routing them
-through one function is what let this through the first time: the reviewer-content route existed
-before this batch and the path route was created by §4.3's provenance lines.
+Careful wording is not enough, because diagnostics echo untrusted input: the package path, the
+`--base=` value, and the offending front-matter line. A reviewer measured
+`FAIL: front matter line 2 not recognised: REVIEW_RECORD_OK` in flagged output from a record whose
+front matter contained that literal, and a package directory named `REVIEW_RECORD_OK` producing
+`review_record_pkg=…/REVIEW_RECORD_OK`. So those diagnostics pass through one substitution that
+rewrites token literals to `REVIEW_RECORD_<redacted>`.
 
-Four details, each from a measurement:
+**What that substitution is for, stated after two reviewers took the first version of this section
+apart.** It is not an integrity control, and an earlier draft of this paragraph claiming otherwise was
+wrong. An input cannot forge a pass at all: `pack-health.sh` requires exit 0, and exit 0 happens only
+on `OK` or `SKIP`, which print their own token — measured on a copy with the redaction removed, where
+a package directory named `REVIEW_RECORD_OK` with no record still ended red. What an input *can* do is
+turn a real pass red, by spelling `REVIEW_RECORD_FAIL` in a path that a diagnostic echoes; that was
+measured too. The substitution therefore buys one narrow thing: prose a person reads does not spell a
+token it does not mean, which matters because §1's accident is a person pasting this output somewhere.
 
-- **The bare `REVIEW_RECORD_FIXTURE` prefix is redacted too**, because that is what a consumer
-  separating the two namespaces greps for. A first implementation covered only the suffixed forms, and
-  a package directory named `REVIEW_RECORD_FIXTURE` defeated this batch's own reverse assertion.
-- **Substrings count.** `REVIEW_RECORD_OKAY` is matched by `grep -F REVIEW_RECORD_OK`, so it is
-  redacted even though it is not a token. Over-redaction costs a diagnostic some fidelity;
-  under-redaction costs the invariant.
-- **The wrapper redacts its own three diagnostics**, which echo argv and paths before python runs.
-  They all exit non-zero, so `pack-health.sh` catches them on the exit check regardless, but the
-  invariant is what makes the namespace worth splitting. The rule now exists twice, in Python and in
-  `sed`; a test runs both over one table so neither drifts. The `sed` runs under `LC_ALL=C`: argv can
-  carry any byte, and BSD `sed` rejects an illegal UTF-8 sequence under a UTF-8 locale. A reviewer
-  measured the first version of this returning 1 instead of 2 for an unknown flag, with `sed`'s error
-  in place of the diagnostic — a control that removed information and broke the wrapper's exit
-  contract. The pattern is ASCII, so byte-wise matching leaves legitimate multibyte paths intact,
-  which is asserted. The callers build the message before exiting, so the exit code no longer depends
-  on the redaction succeeding; that fallback is defensive and no test exercises it, because nothing
-  known makes `sed` fail once the locale is fixed.
-- **`--help` deliberately names the tokens** and is left alone: it is a human request that prints no
-  outcome, and redacting it would leave the usage text unable to say what it documents.
+**The false-red route is closed at the consumer, not here.** `pack-health.sh` anchors both patterns to
+the start of a line. The gate prints its outcome token at the start of a line and every diagnostic
+carries a prefix, so anchoring costs two characters and makes an input unable to decide the verdict.
+A reviewer measured a real pass going red through an unanchored pattern and green once anchored, on a
+tree with no redaction at all — which is why the anchors, not the substitution, are the control.
 
-The substitution also runs inside `emit_outcome`, so the one line that prints a token sanitises its
-own payload. That changes no output today — every caller passes a constant `reason=` or an
-already-redacted path — and exists because the reviewer who found this defect predicted its return
-through exactly that door.
+**Three things this section previously claimed and no longer does:**
+
+- **The wrapper is left alone.** A version of it redacted its three diagnostics with `sed`. Under
+  `set -e` that failed on an illegal UTF-8 byte in argv — BSD `sed` rejects the sequence — replacing
+  the diagnostic with `sed`'s own error and returning 1 where the contract says 2. Reimplementing the
+  rule in a second language cost a real regression to protect three diagnostics that all exit
+  non-zero, which `pack-health.sh` rejects on the exit check regardless. The gap is disclosed instead.
+  The suite asserts the exit contract and that each diagnostic still names what it rejected, including
+  under an illegal byte.
+- **The parity test is gone, because it did not do what it said.** It compared the Python function
+  against a third copy of the rule written inside the test file and never invoked the wrapper. A
+  reviewer cut five branches out of the wrapper's expression and the suite still printed
+  `REVIEW_RECORD_TEST_OK`. A test that cannot see its own subject is worse than none, because the next
+  maintainer believes drift is covered.
+- **`trigger=` lines are verbatim.** A maintainer copies them into the record's `subject_paths`, and
+  the schema check compares against the real path, so a redacted line produces a record that can never
+  validate. Silently unfixable is worse than cosmetically wrong. `--help` likewise names the tokens on
+  purpose: it is a human request that prints no outcome.
+
+`REVIEW_RECORD_OKAY` is still rewritten, because `grep -F REVIEW_RECORD_OK` matches it. No consumer in
+the package greps that way any more — a99d3f4 moved `pack-health.sh` to word boundaries and this
+section moved it to anchors — so this is redundancy kept for a consumer that may not exist. It costs
+one alternation branch.
 
 Naming check. The measured result, not a characterisation of it:
 

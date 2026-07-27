@@ -12,25 +12,11 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PKG_DEFAULT="$(cd "$SCRIPT_DIR/.." && pwd)"
 LIB="$SCRIPT_DIR/lib/review_record.py"
 
-# These diagnostics echo argv and paths, so a token spelled in either would reach a
-# stream consumers grep. Same rule as redact() in the library, kept in step by a test
-# that runs both over one table. Documentation below deliberately names the tokens;
-# --help is a human request, not a gate run, and prints no outcome.
-#
-# LC_ALL=C because BSD sed rejects an illegal UTF-8 byte with "RE error: illegal byte
-# sequence" under a UTF-8 locale, and argv can carry any byte. Under `set -e` that
-# failure replaced the diagnostic with sed's own error and took the exit code with it —
-# an unknown flag returned 1 instead of 2. The pattern is ASCII, so matching bytes
-# costs nothing. The callers below still build the message before exiting, so the
-# contract's exit code does not depend on the redaction succeeding.
-redact() {
-  LC_ALL=C sed -E 's/REVIEW_RECORD_(FIXTURE(_(PASS|SKIP|FAIL))?|OK|SKIP|FAIL|PASS)/REVIEW_RECORD_<redacted>/g'
-}
-
-diagnose() {
-  printf '%s\n' "$1" | redact || printf '%s\n' "(diagnostic withheld: undisplayable)"
-}
-
+# These diagnostics echo argv and paths verbatim, so a token spelled in either appears
+# here. That is disclosed rather than fixed: a version of this script redacted them and
+# the redaction cost more than the gap. See §4.4 of the design. All three exit non-zero,
+# and pack-health.sh anchors its patterns to the start of a line, so neither a consumer
+# nor the exit contract depends on the spelling.
 PKG=""
 for arg in "$@"; do
   case "$arg" in
@@ -39,7 +25,7 @@ for arg in "$@"; do
       exit 0
       ;;
     --*)
-      diagnose "FAIL: unknown flag $arg" >&2
+      echo "FAIL: unknown flag $arg" >&2
       exit 2
       ;;
     *)
@@ -48,8 +34,8 @@ for arg in "$@"; do
   esac
 done
 PKG="${PKG:-$PKG_DEFAULT}"
-[[ -d "$PKG" ]] || { diagnose "FAIL: not a directory: $PKG" >&2; exit 1; }
-[[ -f "$LIB" ]] || { diagnose "FAIL: missing $LIB" >&2; exit 1; }
+[[ -d "$PKG" ]] || { echo "FAIL: not a directory: $PKG" >&2; exit 1; }
+[[ -f "$LIB" ]] || { echo "FAIL: missing $LIB" >&2; exit 1; }
 
 # Header honesty always (avoid printing the OK token literally)
 echo "NOTE: exit 0 is not the OK token (same class as freshness)"

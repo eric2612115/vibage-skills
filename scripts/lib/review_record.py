@@ -612,19 +612,18 @@ _TOKEN_LITERAL = re.compile(
 
 
 def redact(value: object) -> str:
-    """Keep token literals out of diagnostic text.
+    """Keep token literals out of diagnostic prose.
 
-    Paths, record content, reviewer names and git output all reach the stream as
-    diagnostics, and a consumer greps that stream for tokens, so a token spelled
-    inside any of them is indistinguishable from an outcome. Substituting keeps the
-    namespace a property of this program's output rather than of its inputs. The
-    replacement matches neither a bare grep nor the word-boundary form consumers use.
+    Paths, record content and git output reach the stream as diagnostics, so a token
+    spelled inside one of them reads, to a person, like an outcome — and §1's accident is
+    a person pasting this output somewhere. It is not an integrity control. A reviewer
+    measured that an input cannot forge a pass at all: `pack-health.sh` requires exit 0,
+    and exit 0 happens only on `OK` or `SKIP`, which print their own token. What an input
+    could do is turn a real pass red, and that is closed at the consumer, where anchored
+    patterns cost two characters. This function is the narrower claim: prose a person
+    reads does not spell a token it does not mean.
 
-    The bare `REVIEW_RECORD_FIXTURE` prefix is included: a consumer distinguishing the
-    two namespaces greps for it without a suffix. Substrings of a token are included
-    for the same reason — `REVIEW_RECORD_OKAY` is matched by `grep -F REVIEW_RECORD_OK`,
-    so leaving it intact would leave the route open. Over-redaction costs a diagnostic
-    some fidelity; under-redaction costs the invariant.
+    `trigger=` lines are exempt — see the call site.
     """
     return _TOKEN_LITERAL.sub("REVIEW_RECORD_<redacted>", str(value))
 
@@ -766,7 +765,12 @@ def main(argv: list[str]) -> int:
     print(f"diff_base={redact(base)}")
     print(f"trigger_count={len(triggers)}")
     for t in triggers:
-        print(f"trigger={redact(t)}")
+        # Verbatim, unlike the other diagnostics: a maintainer copies these lines into
+        # the record's subject_paths, and the schema check compares against the real
+        # path, so a redacted one produces a record that can never validate. A guarded
+        # path spelling a token would appear here; pack-health's patterns are anchored,
+        # so it decides nothing.
+        print(f"trigger={t}")
 
     if not rec_path.is_file():
         print(f"FAIL: missing review record path={redact(rec_path)}", file=sys.stderr)
