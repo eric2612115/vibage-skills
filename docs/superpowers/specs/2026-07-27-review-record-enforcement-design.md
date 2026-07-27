@@ -1,9 +1,8 @@
 # Review-record enforcement (Batch 3)
 
 **Date:** 2026-07-27  
-**Status:** **Frozen** after plan-loop round 2 (three APPROVE, zero class 1–3).
-Build may start. Round-2 class-4 discloses left as residual (E5 window only before
-`no_trigger_paths`; status-lints test files untriggered by design).  
+**Status:** **Frozen** after plan-loop round 4 (three APPROVE, zero class 1–3).
+Build may start.  
 **Branch:** `feat/review-record-schema-hardening` (continues Batches 1–2)  
 **Baseline:** HEAD after `c1062e0` (Batch 2 + finding-class frozen)  
 **Prior:** Batch 1 schema hardening; Batch 2 invocation provenance  
@@ -15,6 +14,16 @@ Build may start. Round-2 class-4 discloses left as residual (E5 window only befo
 fail-closed; E1 verification requires token parse; gate entrypoint helper closure
 added to §4; tests-class list frozen from `test-tier0.sh` / `pack-health.sh`;
 STATUS.md sync in §8.
+
+**Round-3 delta (Opus cross-review class 1):** §5.2 vacuous base no longer requires
+disk dirtiness (dead branch); §7 adds solo-commit / shallow / assume-unchanged
+fixtures; §8.1 fixes `lstrip("./")` before E2; §9 retracts Batch 2 “consumer closes
+git_scope_mismatch” prose.
+
+**Round-4 delta (R3-C):** Pin vacuous_base detection in `main()` by comparing
+`resolve_base`'s returned sha to an independent `HEAD`; do **not** change
+`resolve_base`'s 2-tuple signature or the `merge_base|head1|none` mode enum
+(frozen test + `looping-review.md` Tokens).
 
 ## 1. The defect
 
@@ -52,7 +61,7 @@ threat model.
 | E2 | Workflow is guarded | `.github/workflows/tier0.yml` is a review-record trigger; changing it without a record fails the gate |
 | E3 | Dangerous SKIPs are not pack-health passes | After Batch-2 anchored FAIL/exit checks: `REVIEW_RECORD_SKIP` is a pack-health pass **only** for `reason=no_trigger_paths` or `reason=git_scope_mismatch`; any other `SKIP reason=` fails pack-health. A test locks that `git_scope_mismatch` remains accepted |
 | E4 | Triggers follow capability | `is_trigger` / blast match §4 allow-list + helper closure; tests assert membership and non-membership; `lab/` and `docs/evidence/reviews/` stay out |
-| E5 | Hidden worktree / vacuous base cannot look clean | Default (non-flagged) runs that would have emitted `no_trigger_paths` while a trigger path is `skip-worktree`/`assume-unchanged` with disk≠HEAD, or while `base == HEAD` yet trigger paths differ on disk/index, instead emit production `REVIEW_RECORD_FAIL` with a pinned reason (`hidden_worktree` and/or `vacuous_base` — pick in impl, tests pin). Pack-health fails on that FAIL |
+| E5 | Hidden worktree / vacuous base cannot look clean | Default (non-flagged) runs emit production `REVIEW_RECORD_FAIL` (pinned reasons below) instead of a lying `no_trigger_paths` when (a) a trigger path is `skip-worktree`/`assume-unchanged` with disk≠HEAD, **or** (b) the resolved diff base is degenerate (`base == HEAD`, including single-commit / shallow tip with no `HEAD~1`) — **without** requiring disk dirtiness for (b). Pack-health fails on that FAIL. Cost of (b): a legitimate single-commit repo with no unreviewed gate change also fails instead of SKIP — accepted and tested |
 
 **Non-goals (unpromised — class 4 if reviewers demand them):**
 
@@ -180,20 +189,44 @@ Unchanged severity order: `gate > narrative > tests`.
 
 ## 5. Measurement integrity (E5)
 
-Before emitting `no_trigger_paths` in default (non-flagged) mode:
+Before emitting `no_trigger_paths` in default (non-flagged) mode, run both checks.
+Either FAIL aborts the SKIP.
 
-1. **Hidden bits:** if any path that `is_trigger` would treat as a trigger is marked
-   `skip-worktree` or `assume-unchanged` **and** working-tree bytes differ from
-   `HEAD:<path>`, emit `REVIEW_RECORD_FAIL reason=hidden_worktree` (exact spelling
-   pinned by tests). Detection must compare disk to `git show HEAD:<path>` (or
-   equivalent); relying only on `git diff` is insufficient because skip-worktree
-   hides those paths from diff.
-2. **Vacuous base:** if `resolve_base` equals `HEAD` yet any trigger path differs
-   between HEAD and the index or worktree, emit `FAIL reason=vacuous_base` **or**
-   fold into `hidden_worktree` — one reason chosen in impl, pinned by tests.
+1. **Hidden bits (`reason=hidden_worktree`):** if any path that `is_trigger` would
+   treat as a trigger is marked `skip-worktree` **or** `assume-unchanged` **and**
+   working-tree bytes differ from `HEAD:<path>`, FAIL. Detection must compare disk
+   to `git show HEAD:<path>` (or equivalent); `git diff` alone is insufficient.
+   Both bit spellings are required; tests pin each (not only `skip-worktree`).
+
+2. **Degenerate base (`reason=vacuous_base`):** FAIL **even when the tree is clean**
+   when the revision returned by `resolve_base` equals `HEAD`. Do **not** require
+   “trigger paths differ on disk.”
+
+   **Detection site (normative — R3-C):** do this in `main()` on the default
+   (non-flagged) path **after** `resolve_base` returns and **before**
+   `changed_paths` / `no_trigger_paths`:
+
+   - Independently `git rev-parse HEAD` (same `git_run` clearing helper).
+   - If `base is not None` and `base == head` → emit
+     `REVIEW_RECORD_FAIL reason=vacuous_base` (and provenance already printed with
+     whatever mode `resolve_base` returned — today that is still `merge_base` when
+     `mb == head` and `HEAD~1` is missing; that mode string is **not** a signal).
+
+   **Forbidden:** changing `resolve_base` to a 3-tuple, adding a new
+   `review_record_mode=` value, or treating `mode == "merge_base"` as “healthy.”
+   Mode remains only `merge_base|head1|none` from `resolve_base` (plus
+   `fixture`/`base_override`/`none` from flag/scope paths). Frozen contract:
+   `tests/test_review_record.sh` unpacks `base, mode = resolve_base(pkg)` above the
+   append-only line; `references/looping-review.md` Tokens enumerates the five mode
+   strings.
+
+   Accepted false-red: honest single-commit / shallow tip with no pending gate edit
+   also gets `vacuous_base`. Honesty line must say so. Tests: solo-commit and
+   `git clone --depth 1` fixtures expect `FAIL reason=vacuous_base`, not
+   `SKIP no_trigger_paths`.
 
 Flagged library runs (`--paths-file=` / `--base=`) are unchanged by E5.
-If the probe cannot run, fail closed or print an honesty line and FAIL — never
+If a probe cannot run, fail closed or print an honesty line and FAIL — never
 silent `no_trigger_paths`.
 
 ## 6. CI shape
@@ -216,37 +249,61 @@ Parse tokens; exit 0 ≠ pass.
 2. `bash scripts/test-tier0.sh` → `TIER0_OK`
 3. `bash tests/test_pack_health.sh` → `TEST_PACK_HEALTH_OK`
 4. Fixture: `skip-worktree` on `scripts/assert_gate.sh` with disk≠HEAD → production
-   `FAIL reason=hidden_worktree` (or chosen spelling); pack-health fails
-5. Fixture: subdirectory / vendored scope mismatch → `SKIP reason=git_scope_mismatch`;
+   `FAIL reason=hidden_worktree`; pack-health fails
+5. Fixture: same with `assume-unchanged` (not only `skip-worktree`) → same FAIL family
+6. Fixture: single-commit repo (no `HEAD~1`) whose tip already contains a gate-class
+   file → `FAIL reason=vacuous_base` (not `SKIP no_trigger_paths`); pack-health fails
+7. Fixture: `git clone --depth 1` of a multi-commit history → same `vacuous_base` FAIL
+8. Fixture: subdirectory / vendored scope mismatch → `SKIP reason=git_scope_mismatch`;
    pack-health **passes** (asserted — must not regress)
-6. Fixture: unknown `SKIP reason=synthetic` in pack-health consumer test → pack-health fails
-7. `is_trigger` true for `.github/workflows/tier0.yml`, `scan_plan_hash.py`,
-   `proven_lock.py`, `coverage_box.py`; false for `scripts/verify-freshness.sh`
-8. Workflow YAML: job `review-record` exists, invokes `test_review_record.sh`, and
-   contains an explicit check for the string `REVIEW_RECORD_TEST_OK`
-9. Dirty tree with only `scripts/verify-freshness.sh` changed →
-   `REVIEW_RECORD_SKIP reason=no_trigger_paths` (intended)
+9. Fixture: unknown `SKIP reason=synthetic` in pack-health consumer test → pack-health fails
+10. `is_trigger('.github/workflows/tier0.yml')` true **and**
+    `is_trigger('.github/workflows/other.yml')` false; also true for
+    `scan_plan_hash.py`, `proven_lock.py`, `coverage_box.py`; false for
+    `scripts/verify-freshness.sh`
+11. Workflow YAML: job `review-record` exists, invokes `test_review_record.sh`, and
+    contains an explicit check for the string `REVIEW_RECORD_TEST_OK`
+12. Dirty tree with only `scripts/verify-freshness.sh` changed →
+    `REVIEW_RECORD_SKIP reason=no_trigger_paths` (intended)
 
 ## 8. Impl order
 
-1. Trigger allow-list + helper closure + frozen tests list + membership tests (E4)  
-2. E5 hidden worktree / vacuous base FAIL  
-3. pack-health SKIP allow-list (E3) + lock `git_scope_mismatch` still accepted  
-4. Guard `tier0.yml` (E2)  
-5. CI job `review-record` with token parse (E1)  
-6. Update `STATUS.md` P7/CI job list to name `review-record` (capability table /
-   prose as required by existing STATUS discipline)  
-7. Impl loop under finding-class; review record  
+1. **Fix path normalization in `is_trigger` / `classify_path`:** replace
+   `lstrip("./")` (character-class strip — turns `.github/…` into `github/…`) with
+   prefix-only stripping of `./` (e.g. `removeprefix("./")` in a loop). Pin with
+   §7 step 10 before relying on E2.  
+2. Trigger allow-list + helper closure + frozen tests list + membership tests (E4)  
+3. E5 hidden worktree + degenerate-base FAIL in `main()` per §5.2 normative site
+   (do not alter `resolve_base` signature/mode enum)  
+4. pack-health SKIP allow-list (E3) + lock `git_scope_mismatch` still accepted  
+5. Guard `tier0.yml` (E2) — only after step 1  
+6. CI job `review-record` with token parse (E1); ensure runner has `rsync` if the
+   suite needs it (class-4 risk called out by Opus — install in the job if missing)  
+7. Update `STATUS.md` P7/CI prose to name `review-record` (same discipline as
+   pack-health / status-lints — no new capability row required)  
+8. Impl loop under finding-class; review record  
 
 ## 9. Freeze disclosure (plan)
 
-Open and out of scope: record forgery; PATH-fake git; `.git` file redirects.
-Untriggered after migration (named): `scripts/verify-pins.sh`,
+Open and out of scope: record forgery; PATH-fake git; `.git` file redirects;
+Batch 2 §6 items not promised here (newline filenames, nested records, phantom
+`subject_paths`). Untriggered after migration (named): `scripts/verify-pins.sh`,
 `scripts/verify-project-entry.sh`, `scripts/verify-proven-lock.sh` (wrapper),
-and other non-listed verify/test files — they can still affect `PACK_HEALTH_OK` /
-other tokens without a review record; this batch only closes
-`REVIEW_RECORD_*` trigger honesty. E5 may be incomplete on exotic git builds —
-fail closed or disclose, never silent pass.
+`scripts/verify-report.sh` / `report_token_lint.py`, status-lints tests
+(`tests/test_proven_lock.sh`, `tests/test_status_capability_table.sh`), and other
+non-listed verify/test files — they can still affect `PACK_HEALTH_OK` / other
+tokens without a review record; this batch only closes `REVIEW_RECORD_*` trigger
+honesty.
+
+**Withdrawn Batch 2 prose:** Batch 2 §4.2.2 and impl record `6941f848…` said the
+subdirectory `FAIL→SKIP` closes when “a consumer stops treating SKIP as a pass”
+in the next batch. Batch 3 **keeps** pack-health accepting `git_scope_mismatch`
+(finding 45). That “next batch” sentence is retracted; the mistaken-subdir
+downgrade remains an accepted SKIP.
+
+E5 may be incomplete on exotic git builds — fail closed or disclose, never silent
+pass. E3 is fail-closed for *future* unknown SKIP reasons; today only the two
+allowed reasons are emitted.
 
 ---
 
