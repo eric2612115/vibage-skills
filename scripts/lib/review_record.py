@@ -27,26 +27,75 @@ _GIT_ENV_CLEAR = (
     "GIT_NAMESPACE",
 )
 
-TRIGGER_PREFIXES = (
-    "scripts/lib/",
-    "adapters/",
-    "skills/",  # G2: entire skills tree
-    "tests/",
+# Batch 3: triggers by capability (allow-list), not filename prefixes.
+# See docs/superpowers/specs/2026-07-27-review-record-enforcement-design.md §4.
+TRIGGER_GATE_EXACT = frozenset(
+    {
+        "scripts/lib/review_record.py",
+        "scripts/lib/scan_plan_hash.py",
+        "scripts/lib/coverage_box.py",
+        "scripts/lib/proven_lock.py",
+        "scripts/verify-review-record.sh",
+        "scripts/pack-health.sh",
+        "scripts/test-tier0.sh",
+        "scripts/assert_gate.sh",
+        "scripts/write_confirm.sh",
+        "scripts/coverage-box.sh",
+        ".github/workflows/tier0.yml",
+    }
 )
-TRIGGER_EXACT = {
-    "references/hard-stops.md",
-    "references/looping-review.md",
-    "references/routing-scope.md",
-    "references/review-budget.md",
-    "scripts/assert_gate.sh",
-    "scripts/write_confirm.sh",
-    "scripts/coverage-box.sh",
-    "scripts/test-tier0.sh",
-    "scripts/pack-health.sh",
-}
-TRIGGER_VERIFY_GLOB = "scripts/verify-"
+TRIGGER_NARRATIVE_EXACT = frozenset(
+    {
+        "references/hard-stops.md",
+        "references/looping-review.md",
+        "references/routing-scope.md",
+        "references/review-budget.md",
+    }
+)
+TRIGGER_NARRATIVE_PREFIXES = (
+    "adapters/",
+    "skills/",
+)
+TRIGGER_TESTS_EXACT = frozenset(
+    {
+        "tests/test_scan_plan_hash.py",
+        "tests/test_assert_gate.sh",
+        "tests/test_verify_run.sh",
+        "tests/test_report_names.sh",
+        "tests/test_handoff.sh",
+        "tests/test_optional_track_gates.sh",
+        "tests/test_p1_smoke.sh",
+        "tests/test_install_force_safety.sh",
+        "tests/test_install_manifest.sh",
+        "tests/test_c_prime_graph_floor.sh",
+        "tests/test_c_prime_ledger.sh",
+        "tests/test_entry_docs_sync.sh",
+        "tests/test_owner_zero_bash.sh",
+        "tests/test_install_phrase.sh",
+        "tests/test_install_phrase_e2e.sh",
+        "tests/test_plugin_manifests.sh",
+        "tests/test_pile_index.sh",
+        "tests/test_pack_health.sh",
+        "tests/test_review_record.sh",
+        "tests/test_plan_loop_hygiene.sh",
+    }
+)
 
 REVIEWS_DIR = "docs/evidence/reviews"
+
+
+def _norm_rel(rel: str) -> str:
+    """Normalize repo-relative paths without stripping leading dots from names.
+
+    `str.lstrip("./")` is a character-class strip and turns `.github/…` into
+    `github/…`, which broke allow-list membership for workflow files.
+    """
+    rel = rel.replace("\\", "/")
+    while rel.startswith("./"):
+        rel = rel[2:]
+    return rel
+
+
 _SELECTED_BY = frozenset({"owner", "implementer", "host_default"})
 _SEVERITY = {"tests": 1, "narrative": 2, "gate": 3}
 # Ban overclaim words in conclusion. "unverified" OK (no word-boundary hit).
@@ -58,34 +107,28 @@ _CONCLUSION_OVERCLAIM = re.compile(
 
 
 def is_trigger(rel: str) -> bool:
-    rel = rel.replace("\\", "/").lstrip("./")
-    if rel.startswith(REVIEWS_DIR + "/"):
+    rel = _norm_rel(rel)
+    if rel.startswith(REVIEWS_DIR + "/") or rel.startswith("lab/"):
         return False
-    if rel.startswith(TRIGGER_VERIFY_GLOB) and rel.endswith(".sh"):
+    if rel in TRIGGER_GATE_EXACT or rel in TRIGGER_NARRATIVE_EXACT or rel in TRIGGER_TESTS_EXACT:
         return True
-    if any(rel.startswith(p) for p in TRIGGER_PREFIXES):
-        return True
-    if rel in TRIGGER_EXACT:
+    if any(rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES):
         return True
     return False
 
 
 def classify_path(rel: str) -> str | None:
     """Return blast class for a path, or None if not a trigger."""
-    rel = rel.replace("\\", "/").lstrip("./")
+    rel = _norm_rel(rel)
     if not is_trigger(rel):
         return None
-    if rel.startswith("tests/"):
+    if rel in TRIGGER_TESTS_EXACT:
         return "tests"
-    if rel.startswith("adapters/") or rel.startswith("skills/"):
+    if rel in TRIGGER_NARRATIVE_EXACT or any(
+        rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES
+    ):
         return "narrative"
-    if rel.startswith("references/") and rel in TRIGGER_EXACT:
-        return "narrative"
-    if rel.startswith(TRIGGER_VERIFY_GLOB) and rel.endswith(".sh"):
-        return "gate"
-    if rel.startswith("scripts/lib/"):
-        return "gate"
-    if rel in TRIGGER_EXACT and not rel.startswith("references/"):
+    if rel in TRIGGER_GATE_EXACT:
         return "gate"
     # Unknown trigger shape: still gate (fail-closed upgrade)
     return "gate"
@@ -248,6 +291,43 @@ def changed_paths(pkg: Path, base: str | None) -> list[str]:
     out = git_stdout(pkg, ["ls-files", "--others", "--exclude-standard"])
     paths.update(p for p in out.splitlines() if p.strip())
     return sorted(paths)
+
+
+def hidden_worktree_paths(pkg: Path) -> list[str] | None:
+    """Trigger paths with skip-worktree/assume-unchanged whose disk ≠ HEAD.
+
+    `git ls-files -v`: `S` = skip-worktree; lowercase mark = assume-unchanged.
+    Compare disk oid to `HEAD:<path>` (equivalent to show); `git diff` alone is
+    insufficient. Returns None if the probe itself failed (caller fail-closes).
+    """
+    r_ls = git_run(pkg, ["ls-files", "-v"])
+    if r_ls.returncode != 0:
+        return None
+    marks: dict[str, str] = {}
+    for line in r_ls.stdout.splitlines():
+        if len(line) < 3 or line[1] != " ":
+            continue
+        marks[line[2:]] = line[0]
+    found: list[str] = []
+    for rel, mark in sorted(marks.items()):
+        if not is_trigger(rel):
+            continue
+        # S = skip-worktree; any lowercase mark = assume-unchanged bit set
+        if mark != "S" and not mark.islower():
+            continue
+        disk = pkg / rel
+        if not disk.is_file():
+            continue
+        r = git_run(pkg, ["hash-object", str(disk)])
+        if r.returncode != 0:
+            return None
+        disk_oid = r.stdout.strip()
+        r2 = git_run(pkg, ["rev-parse", f"HEAD:{rel}"])
+        if r2.returncode != 0:
+            return None
+        if disk_oid != r2.stdout.strip():
+            found.append(rel)
+    return found
 
 
 def file_digest(pkg: Path, rel: str) -> str:
@@ -730,6 +810,30 @@ def main(argv: list[str]) -> int:
                 "need fetch-depth:0 / git history"
             )
             return emit_outcome(flagged, "FAIL", "reason=no_git_base")
+
+        # E5 (default path only): vacuous_base then hidden_worktree, before
+        # changed_paths / no_trigger_paths. Do not alter resolve_base signature.
+        if not flagged:
+            head = git_stdout(pkg, ["rev-parse", "HEAD"]).strip()
+            if head and base == head:
+                print(
+                    "Honesty: vacuous_base — resolve_base sha equals HEAD "
+                    "(single-commit / shallow tip); not a clean SKIP"
+                )
+                return emit_outcome(False, "FAIL", "reason=vacuous_base")
+            hidden = hidden_worktree_paths(pkg)
+            if hidden is None:
+                print(
+                    "Honesty: hidden_worktree probe failed; "
+                    "refusing silent no_trigger_paths"
+                )
+                return emit_outcome(False, "FAIL", "reason=hidden_worktree")
+            if hidden:
+                print(
+                    "Honesty: skip-worktree/assume-unchanged hides trigger "
+                    f"paths: {', '.join(hidden[:5])}"
+                )
+                return emit_outcome(False, "FAIL", "reason=hidden_worktree")
 
         all_changed = changed_paths(pkg, base)
 

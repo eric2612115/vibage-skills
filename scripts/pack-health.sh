@@ -53,8 +53,8 @@ echo "== pack-health: proven-green lock =="
 bash "$PKG_ROOT/scripts/verify-proven-lock.sh" "$PKG_ROOT"
 
 echo "== pack-health: verify-review-record =="
-# no_trigger_paths → SKIP (exit 0) OK for pack-health.
-# no_git_base / missing record / schema → FAIL (exit ≠ 0) must fail pack-health.
+# SKIP allow-list (Batch 3 E3): only no_trigger_paths | git_scope_mismatch pass.
+# Any other SKIP reason (and all FAIL, incl. vacuous_base / hidden_worktree) fail pack-health.
 # exit 0 ≠ REVIEW_RECORD_OK.
 set +e
 RR_OUT="$(bash "$PKG_ROOT/scripts/verify-review-record.sh" "$PKG_ROOT" 2>&1)"
@@ -74,6 +74,12 @@ fi
 if ! printf '%s\n' "$RR_OUT" | grep -Eq '^REVIEW_RECORD_(OK|SKIP)([^A-Za-z0-9_]|$)'; then
   fail "verify-review-record missing SKIP|OK token"
 fi
+if printf '%s\n' "$RR_OUT" | grep -Eq '^REVIEW_RECORD_SKIP([^A-Za-z0-9_]|$)'; then
+  RR_SKIP_LINE="$(printf '%s\n' "$RR_OUT" | grep -E '^REVIEW_RECORD_SKIP([^A-Za-z0-9_]|$)' | head -1)"
+  if ! printf '%s\n' "$RR_SKIP_LINE" | grep -Eq 'reason=(no_trigger_paths|git_scope_mismatch)([^A-Za-z0-9_]|$)'; then
+    fail "verify-review-record SKIP reason not allow-listed: $RR_SKIP_LINE"
+  fi
+fi
 
 cat <<EOF
 PACK_HEALTH_OK parent=$PARENT
@@ -87,7 +93,9 @@ outside the signature by design.
 Plugin manifests on-tree ≠ Cursor/Claude store listing approved.
 PILE_INDEX_OK ≠ DIMENSION_FILL_OK ≠ Architecture Pass ≠ locate DONE.
 MAP_DEEPEN_OK brand retired (W3a); dimension-fill optional and not part of this pack-health gate.
-REVIEW_RECORD_SKIP (no_trigger_paths) OK for pack-health; SKIP ≠ reviewed.
-REVIEW_RECORD_FAIL (incl. no_git_base) must fail pack-health — not a silent pass.
+REVIEW_RECORD_SKIP OK for pack-health only when reason=no_trigger_paths or
+reason=git_scope_mismatch; any other SKIP reason fails. SKIP ≠ reviewed.
+REVIEW_RECORD_FAIL (incl. no_git_base / vacuous_base / hidden_worktree) must fail
+pack-health — not a silent pass.
 exit 0 ≠ REVIEW_RECORD_OK; REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof.
 EOF

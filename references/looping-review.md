@@ -9,14 +9,13 @@ Budget SSOT: `references/review-budget.md` (blast class → N; diversity axis = 
 ## When it applies
 
 - Authoring or revising an implementation **plan** that will drive guarded work
-- Changing guarded paths (see `scripts/verify-review-record.sh` trigger list +
-  `references/review-budget.md`):
-  `scripts/verify-*`, entire `scripts/lib/`, `adapters/**`, entire `skills/**`,
-  entire `tests/` (incl. fixtures — churn requires a record),
-  `references/hard-stops.md`, `references/looping-review.md`, `references/routing-scope.md`,
-  `references/review-budget.md`,
-  `scripts/assert_gate.sh`, `scripts/write_confirm.sh`, `scripts/coverage-box.sh`,
-  `scripts/test-tier0.sh`, `scripts/pack-health.sh`
+- Changing guarded paths (capability allow-list in `scripts/lib/review_record.py`
+  + `references/review-budget.md` — not blanket `verify-*` / `tests/` / `scripts/lib/`):
+  gate entrypoints + helper closure (`review_record.py`, `verify-review-record.sh`,
+  `pack-health.sh`, `test-tier0.sh`, `assert_gate.sh`, `write_confirm.sh`,
+  `coverage-box.sh`, `.github/workflows/tier0.yml`, plus `scan_plan_hash.py` /
+  `coverage_box.py` / `proven_lock.py`); narrative (`adapters/**`, `skills/**`,
+  four `references/*` files); frozen `tests/test_*.{sh,py}` enumeration only
 
 Not every commit message. Not a required git pre-commit hook in V1.
 

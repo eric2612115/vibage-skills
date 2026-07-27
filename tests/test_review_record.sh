@@ -41,7 +41,7 @@ import sys
 sys.path.insert(0, "scripts/lib")
 from review_record import is_trigger
 assert is_trigger("scripts/assert_gate.sh"), "assert_gate not trigger"
-assert is_trigger("tests/test_assert_gate.sh"), "tests/ not trigger"
+assert is_trigger("tests/test_assert_gate.sh"), "tests/test_assert_gate.sh must be trigger"
 assert not is_trigger("docs/evidence/reviews/x.md")
 print("TRIGGER_ASSERT_OK")
 PY
@@ -52,8 +52,32 @@ sys.path.insert(0, "scripts/lib")
 from review_record import is_trigger
 assert is_trigger("skills/vibage-orient/SKILL.md"), "skills/ not only using-vibage"
 assert is_trigger("skills/using-vibage/SKILL.md")
-assert is_trigger("references/review-budget.md"), "review-budget must be TRIGGER_EXACT"
+assert is_trigger("references/review-budget.md"), "review-budget must be TRIGGER_NARRATIVE_EXACT"
 print("TRIGGER_SKILLS_G2_OK")
+PY
+
+python3 - <<'PY' || fail "Batch 3 E4 allow-list membership"
+import sys
+sys.path.insert(0, "scripts/lib")
+from review_record import is_trigger, classify_path, _norm_rel
+
+assert _norm_rel("./.github/workflows/tier0.yml") == ".github/workflows/tier0.yml"
+assert is_trigger(".github/workflows/tier0.yml")
+assert is_trigger("./.github/workflows/tier0.yml")
+assert classify_path(".github/workflows/tier0.yml") == "gate"
+assert not is_trigger(".github/workflows/other.yml")
+for helper in (
+    "scripts/lib/scan_plan_hash.py",
+    "scripts/lib/proven_lock.py",
+    "scripts/lib/coverage_box.py",
+):
+    assert is_trigger(helper), helper
+    assert classify_path(helper) == "gate", helper
+assert not is_trigger("scripts/verify-freshness.sh")
+assert classify_path("scripts/verify-freshness.sh") is None
+assert not is_trigger("tests/test_status_capability_table.sh")
+assert not is_trigger("lab/x.sh")
+print("TRIGGER_ALLOWLIST_E4_OK")
 PY
 
 python3 - <<'PY' || fail "blast class / budget"
@@ -78,7 +102,7 @@ for p in SAMPLES:
     assert (classify_path(p) is not None) == is_trigger(p), p
 
 assert classify_path("scripts/assert_gate.sh") == "gate"
-assert classify_path("scripts/verify-freshness.sh") == "gate"
+assert classify_path("scripts/verify-freshness.sh") is None
 assert classify_path("scripts/lib/review_record.py") == "gate"
 assert classify_path("adapters/cursor/vibage.mdc") == "narrative"
 assert classify_path("skills/vibage-init/SKILL.md") == "narrative"
@@ -87,11 +111,11 @@ assert classify_path("references/review-budget.md") == "narrative"
 assert classify_path("tests/test_review_record.sh") == "tests"
 assert classify_path("README.md") is None
 
-assert blast_class_for(["tests/x.sh", "adapters/a.md"]) == "narrative"
-assert blast_class_for(["tests/x.sh", "scripts/assert_gate.sh"]) == "gate"
-assert blast_class_for(["tests/x.sh"]) == "tests"
+assert blast_class_for(["tests/test_review_record.sh", "adapters/a.md"]) == "narrative"
+assert blast_class_for(["tests/test_review_record.sh", "scripts/assert_gate.sh"]) == "gate"
+assert blast_class_for(["tests/test_review_record.sh"]) == "tests"
 
-for bad in ([], ["README.md"]):
+for bad in ([], ["README.md"], ["tests/x.sh"]):
     try:
         blast_class_for(bad)
         raise SystemExit(f"expected raise for {bad!r}")
@@ -2367,5 +2391,147 @@ grep -Fq "^REVIEW_RECORD_(OK|SKIP)(" scripts/pack-health.sh \
 rm -rf "$LEAK_ROOT"
 
 echo "INVOCATION_PROVENANCE_CASES_OK"
+
+# --- Batch 3 E5: hidden_worktree + vacuous_base (production tokens) ---
+
+E5_ROOT="$(mktemp -d "${TMPDIR:-/tmp}/rr-e5.XXXXXX")"
+
+# skip-worktree on a gate file with disk ≠ HEAD
+E5_SW="$E5_ROOT/skipwt"
+mkdir -p "$E5_SW/scripts" "$E5_SW/docs/evidence/reviews"
+git -C "$E5_SW" init -q
+git -C "$E5_SW" config user.email "rr-e5@example.com"
+git -C "$E5_SW" config user.name "rr-e5"
+# two commits so vacuous_base does not fire first
+printf '#!/usr/bin/env bash\necho baseline\n' >"$E5_SW/scripts/assert_gate.sh"
+git -C "$E5_SW" add -A
+git -C "$E5_SW" commit -qm "e5 sw c1"
+printf '#!/usr/bin/env bash\necho tip\n' >"$E5_SW/scripts/assert_gate.sh"
+git -C "$E5_SW" add -A
+git -C "$E5_SW" commit -qm "e5 sw c2"
+printf '#!/usr/bin/env bash\necho hidden dirty\n' >"$E5_SW/scripts/assert_gate.sh"
+git -C "$E5_SW" update-index --skip-worktree scripts/assert_gate.sh
+git -C "$E5_SW" status --porcelain | grep -q . && fail "skip-worktree must hide porcelain dirt" || true
+set +e
+E5_SW_OUT="$(bash scripts/verify-review-record.sh "$E5_SW" 2>&1)"
+E5_SW_EC=$?
+set -e
+echo "$E5_SW_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=hidden_worktree' \
+  || fail "skip-worktree dirty gate must FAIL hidden_worktree: $E5_SW_OUT"
+echo "$E5_SW_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "skip-worktree must not look like clean SKIP: $E5_SW_OUT"
+[[ "$E5_SW_EC" -ne 0 ]] || fail "hidden_worktree must be non-zero"
+git -C "$E5_SW" update-index --no-skip-worktree scripts/assert_gate.sh
+
+# assume-unchanged (not only skip-worktree)
+E5_AU="$E5_ROOT/assume"
+mkdir -p "$E5_AU/scripts"
+git -C "$E5_AU" init -q
+git -C "$E5_AU" config user.email "rr-e5@example.com"
+git -C "$E5_AU" config user.name "rr-e5"
+printf '#!/usr/bin/env bash\necho baseline\n' >"$E5_AU/scripts/assert_gate.sh"
+git -C "$E5_AU" add -A
+git -C "$E5_AU" commit -qm "e5 au c1"
+printf '#!/usr/bin/env bash\necho tip\n' >"$E5_AU/scripts/assert_gate.sh"
+git -C "$E5_AU" add -A
+git -C "$E5_AU" commit -qm "e5 au c2"
+printf '#!/usr/bin/env bash\necho assume dirty\n' >"$E5_AU/scripts/assert_gate.sh"
+git -C "$E5_AU" update-index --assume-unchanged scripts/assert_gate.sh
+set +e
+E5_AU_OUT="$(bash scripts/verify-review-record.sh "$E5_AU" 2>&1)"
+set -e
+echo "$E5_AU_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=hidden_worktree' \
+  || fail "assume-unchanged dirty gate must FAIL hidden_worktree: $E5_AU_OUT"
+echo "$E5_AU_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "assume-unchanged must not look like clean SKIP: $E5_AU_OUT"
+git -C "$E5_AU" update-index --no-assume-unchanged scripts/assert_gate.sh
+
+# single-commit repo (no HEAD~1) → vacuous_base even when clean
+E5_SOLO="$E5_ROOT/solo"
+mkdir -p "$E5_SOLO/scripts"
+git -C "$E5_SOLO" init -q
+git -C "$E5_SOLO" config user.email "rr-e5@example.com"
+git -C "$E5_SOLO" config user.name "rr-e5"
+printf '#!/usr/bin/env bash\necho solo\n' >"$E5_SOLO/scripts/assert_gate.sh"
+git -C "$E5_SOLO" add -A
+git -C "$E5_SOLO" commit -qm "e5 solo only"
+git -C "$E5_SOLO" rev-parse --verify HEAD~1 >/dev/null 2>&1 \
+  && fail "solo fixture must lack HEAD~1"
+set +e
+E5_SOLO_OUT="$(bash scripts/verify-review-record.sh "$E5_SOLO" 2>&1)"
+set -e
+echo "$E5_SOLO_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=vacuous_base' \
+  || fail "solo-commit must FAIL vacuous_base: $E5_SOLO_OUT"
+echo "$E5_SOLO_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "solo-commit must not SKIP no_trigger_paths: $E5_SOLO_OUT"
+
+# shallow clone --depth 1 of multi-commit history → vacuous_base
+E5_DEEP="$E5_ROOT/deep"
+mkdir -p "$E5_DEEP/scripts"
+git -C "$E5_DEEP" init -q
+git -C "$E5_DEEP" config user.email "rr-e5@example.com"
+git -C "$E5_DEEP" config user.name "rr-e5"
+printf '#!/usr/bin/env bash\necho c1\n' >"$E5_DEEP/scripts/assert_gate.sh"
+git -C "$E5_DEEP" add -A
+git -C "$E5_DEEP" commit -qm "e5 deep c1"
+printf '#!/usr/bin/env bash\necho c2\n' >"$E5_DEEP/scripts/assert_gate.sh"
+git -C "$E5_DEEP" add -A
+git -C "$E5_DEEP" commit -qm "e5 deep c2"
+E5_SHALLOW="$E5_ROOT/shallow"
+git clone -q --depth 1 "file://$E5_DEEP" "$E5_SHALLOW"
+git -C "$E5_SHALLOW" rev-parse --verify HEAD~1 >/dev/null 2>&1 \
+  && fail "depth-1 clone must lack HEAD~1"
+set +e
+E5_SH_OUT="$(bash scripts/verify-review-record.sh "$E5_SHALLOW" 2>&1)"
+set -e
+echo "$E5_SH_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=vacuous_base' \
+  || fail "depth-1 clone must FAIL vacuous_base: $E5_SH_OUT"
+echo "$E5_SH_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "depth-1 clone must not SKIP no_trigger_paths: $E5_SH_OUT"
+
+# dirty only unlisted verify script → honest no_trigger_paths SKIP
+E5_NT="$E5_ROOT/notrig"
+mkdir -p "$E5_NT/scripts"
+git -C "$E5_NT" init -q
+git -C "$E5_NT" config user.email "rr-e5@example.com"
+git -C "$E5_NT" config user.name "rr-e5"
+printf '#!/usr/bin/env bash\necho v\n' >"$E5_NT/scripts/verify-freshness.sh"
+printf '#!/usr/bin/env bash\necho g\n' >"$E5_NT/scripts/assert_gate.sh"
+git -C "$E5_NT" add -A
+git -C "$E5_NT" commit -qm "e5 nt c1"
+printf '#!/usr/bin/env bash\necho v2\n' >"$E5_NT/scripts/verify-freshness.sh"
+git -C "$E5_NT" add -A
+git -C "$E5_NT" commit -qm "e5 nt c2"
+printf '# dirt\n' >>"$E5_NT/scripts/verify-freshness.sh"
+set +e
+E5_NT_OUT="$(bash scripts/verify-review-record.sh "$E5_NT" 2>&1)"
+set -e
+echo "$E5_NT_OUT" | grep -Fq 'REVIEW_RECORD_SKIP reason=no_trigger_paths' \
+  || fail "unlisted verify dirt must SKIP no_trigger_paths: $E5_NT_OUT"
+
+# CI job review-record must exist and parse REVIEW_RECORD_TEST_OK
+grep -Fq 'review-record:' .github/workflows/tier0.yml \
+  || fail "workflow missing job review-record"
+grep -Fq 'tests/test_review_record.sh' .github/workflows/tier0.yml \
+  || fail "workflow must invoke test_review_record.sh"
+grep -Fq 'REVIEW_RECORD_TEST_OK' .github/workflows/tier0.yml \
+  || fail "workflow must parse REVIEW_RECORD_TEST_OK"
+
+# pack-health E3 allow-list: accept the two reasons; reject unknown SKIP
+ph_allow() {
+  local line="$1"
+  printf '%s\n' "$line" | grep -Eq 'reason=(no_trigger_paths|git_scope_mismatch)([^A-Za-z0-9_]|$)'
+}
+ph_allow "REVIEW_RECORD_SKIP reason=no_trigger_paths" \
+  || fail "E3 must allow no_trigger_paths"
+ph_allow "REVIEW_RECORD_SKIP reason=git_scope_mismatch" \
+  || fail "E3 must allow git_scope_mismatch"
+ph_allow "REVIEW_RECORD_SKIP reason=synthetic" \
+  && fail "E3 must reject unknown SKIP reason"
+grep -Fq 'reason=(no_trigger_paths|git_scope_mismatch)' scripts/pack-health.sh \
+  || fail "pack-health must keep SKIP reason allow-list"
+
+rm -rf "$E5_ROOT"
+echo "ENFORCEMENT_E5_E3_CASES_OK"
 
 echo "REVIEW_RECORD_TEST_OK"

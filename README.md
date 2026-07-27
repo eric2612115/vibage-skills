@@ -4,7 +4,7 @@
 
 Works with **Cursor**, **Claude Code**, and **Codex**.
 
-**Public repo:** [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) (MIT) · package version **0.8.0**
+**Public repo:** [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) (MIT) · package version **0.9.0**
 
 ```bash
 git clone https://github.com/eric2612115/vibage-skills.git
