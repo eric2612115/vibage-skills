@@ -63,7 +63,9 @@ forge cost.)
 - `blast_class=<gate|narrative|tests>`
 - `review_budget_n=<int>` (Impl floor; Plan effective N may be higher — also print `review_budget_n_effective=` when `loop: plan`)
 - `reviewer_selected_by: owner=N implementer=N host_default=N` (after record parse; G1)
-- `REVIEW_RECORD_OK` only after schema + budget pass.
+- `review_record_mode=` / `review_record_pkg=` / `review_record_toplevel=` / `review_record_git_dir=` on every token-emitting path (`none` when base resolution failed or scope mismatch on the default path; `fixture` / `base_override` for flagged library runs).
+- `REVIEW_RECORD_OK` only after schema + budget pass under default resolution.
+- Flagged library runs (`--paths-file=` / `--base=`) emit `REVIEW_RECORD_FIXTURE_PASS` / `_SKIP` / `_FAIL` only — not a production acceptance path. `blast_class` on a fixture run reflects the supplied path list, not the working tree.
 
 **Conclusion lint:** `conclusion` must be non-empty and must **not** contain the
 overclaim words `verified` / `proven` / `confirmed` as positive claims (word match;

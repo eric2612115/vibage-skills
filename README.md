@@ -63,7 +63,7 @@ Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash
 | Install continuum | `tests/test_install_phrase_e2e.sh` | `INSTALL_PHRASE_E2E_OK` |
 | Pile index | `scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` |
 | Optional dimension-fill | `scripts/verify-dimension-fill.sh <parent>` (legacy `verify-map-deepen.sh` = migrate shim) | `DIMENSION_FILL_*` (`MAP_DEEPEN_OK` retired) |
-| Review record (guarded paths) | `scripts/verify-review-record.sh <pkg>` | `REVIEW_RECORD_OK` (∉ Tier-0; exit 0 ≠ OK) |
+| Review record (guarded paths) | `scripts/verify-review-record.sh <pkg>` | `REVIEW_RECORD_OK` only from default resolution (∉ Tier-0; exit 0 ≠ OK; fixture runs use `REVIEW_RECORD_FIXTURE_*`) |
 | Plan-loop hygiene | `scripts/verify-plan-loop-hygiene.sh` | `PLAN_LOOP_HYGIENE_OK` (∉ Tier-0) |
 | Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |

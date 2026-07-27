@@ -61,13 +61,13 @@ RR_OUT="$(bash "$PKG_ROOT/scripts/verify-review-record.sh" "$PKG_ROOT" 2>&1)"
 RR_EC=$?
 set -e
 printf '%s\n' "$RR_OUT"
-if printf '%s\n' "$RR_OUT" | grep -Fq 'REVIEW_RECORD_FAIL'; then
+if printf '%s\n' "$RR_OUT" | grep -Eq 'REVIEW_RECORD_FAIL([^A-Za-z0-9_]|$)'; then
   fail "verify-review-record FAIL (incl. no_git_base — not a pass)"
 fi
 if [[ "$RR_EC" -ne 0 ]]; then
   fail "verify-review-record exit=$RR_EC"
 fi
-if ! printf '%s\n' "$RR_OUT" | grep -Eq 'REVIEW_RECORD_(OK|SKIP)'; then
+if ! printf '%s\n' "$RR_OUT" | grep -Eq 'REVIEW_RECORD_(OK|SKIP)([^A-Za-z0-9_]|$)'; then
   fail "verify-review-record missing SKIP|OK token"
 fi
 

@@ -11,10 +11,21 @@ Model family is disclosure only — never a gate.
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
+
+_GIT_ENV_CLEAR = (
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_INDEX_FILE",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_COMMON_DIR",
+    "GIT_NAMESPACE",
+)
 
 TRIGGER_PREFIXES = (
     "scripts/lib/",
@@ -152,16 +163,39 @@ def print_selected_by_disclosure(revs: list) -> None:
         )
 
 
-def git_stdout(pkg: Path, args: list[str]) -> str:
-    r = subprocess.run(
-        ["git", "-C", str(pkg), *args],
+def git_run(pkg: Path, args: list[str]) -> subprocess.CompletedProcess[str]:
+    """Run git with redirecting env cleared and --no-replace-objects on every call."""
+    env = os.environ.copy()
+    for key in _GIT_ENV_CLEAR:
+        env.pop(key, None)
+    return subprocess.run(
+        ["git", "--no-replace-objects", "-C", str(pkg), *args],
         capture_output=True,
         text=True,
         check=False,
+        env=env,
     )
+
+
+def git_stdout(pkg: Path, args: list[str]) -> str:
+    r = git_run(pkg, args)
     if r.returncode != 0:
         return ""
     return r.stdout
+
+
+def check_git_scope(pkg: Path) -> tuple[bool, str, str]:
+    """Require show-toplevel samefile as pkg. Return (ok, toplevel, git_dir)."""
+    top = git_stdout(pkg, ["rev-parse", "--show-toplevel"]).strip()
+    gdir = git_stdout(pkg, ["rev-parse", "--absolute-git-dir"]).strip()
+    if not top:
+        return False, "-", "-"
+    try:
+        if not os.path.samefile(top, str(pkg)):
+            return False, top, gdir or "-"
+    except OSError:
+        return False, top, gdir or "-"
+    return True, top, gdir or "-"
 
 
 def resolve_base(pkg: Path) -> tuple[str | None, str]:
@@ -177,24 +211,14 @@ def resolve_base(pkg: Path) -> tuple[str | None, str]:
     head = git_stdout(pkg, ["rev-parse", "HEAD"]).strip()
     mb = ""
     for cand in ("main", "master", "origin/main", "origin/master"):
-        r = subprocess.run(
-            ["git", "-C", str(pkg), "rev-parse", "--verify", cand],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        r = git_run(pkg, ["rev-parse", "--verify", cand])
         if r.returncode != 0:
             continue
         mb = git_stdout(pkg, ["merge-base", "HEAD", cand]).strip()
         if mb:
             break
     parent = ""
-    r = subprocess.run(
-        ["git", "-C", str(pkg), "rev-parse", "--verify", "HEAD~1"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    r = git_run(pkg, ["rev-parse", "--verify", "HEAD~1"])
     if r.returncode == 0:
         parent = r.stdout.strip()
 
@@ -576,61 +600,126 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     return errs
 
 
-def main(argv: list[str]) -> int:
-    pkg = Path(argv[1] if len(argv) > 1 else ".").resolve()
-    paths_file = None
-    base_override = None
-    i = 2
-    while i < len(argv):
-        a = argv[i]
-        if a.startswith("--paths-file="):
-            paths_file = a.split("=", 1)[1]
-        elif a.startswith("--base="):
-            base_override = a.split("=", 1)[1]
-        i += 1
+def print_provenance(mode: str, pkg: Path, toplevel: str, git_dir: str) -> None:
+    print(f"review_record_mode={mode}")
+    print(f"review_record_pkg={pkg}")
+    print(f"review_record_toplevel={toplevel}")
+    print(f"review_record_git_dir={git_dir}")
 
-    mode = "fixture"
-    if paths_file:
-        # --paths-file is TEST-ONLY; must not be used as production acceptance path.
-        all_changed = [
-            ln.strip()
-            for ln in Path(paths_file).read_text(encoding="utf-8").splitlines()
-            if ln.strip()
-        ]
-        base = base_override or "fixture"
+
+def emit_outcome(flagged: bool, kind: str, detail: str) -> int:
+    """Emit production or fixture token. kind is OK|SKIP|FAIL."""
+    if flagged:
+        tok = {
+            "OK": "REVIEW_RECORD_FIXTURE_PASS",
+            "SKIP": "REVIEW_RECORD_FIXTURE_SKIP",
+            "FAIL": "REVIEW_RECORD_FIXTURE_FAIL",
+        }[kind]
     else:
-        if base_override:
-            base, mode = base_override, "override"
+        tok = {
+            "OK": "REVIEW_RECORD_OK",
+            "SKIP": "REVIEW_RECORD_SKIP",
+            "FAIL": "REVIEW_RECORD_FAIL",
+        }[kind]
+    print(f"{tok} {detail}")
+    if kind == "FAIL":
+        return 1
+    return 0
+
+
+def main(argv: list[str]) -> int:
+    args = argv[1:]
+    paths_file_present = False
+    base_present = False
+    paths_file_val = ""
+    base_val = ""
+    for a in args:
+        if a.startswith("--paths-file="):
+            paths_file_present = True
+            paths_file_val = a.split("=", 1)[1]
+        elif a.startswith("--base="):
+            base_present = True
+            base_val = a.split("=", 1)[1]
+
+    pkg_arg = "."
+    for a in args:
+        if not a.startswith("--"):
+            pkg_arg = a
+            break
+    pkg = Path(pkg_arg).resolve()
+    flagged = paths_file_present or base_present
+
+    if (paths_file_present and paths_file_val == "") or (
+        base_present and base_val == ""
+    ):
+        mode = "fixture" if paths_file_present else "base_override"
+        print_provenance(mode, pkg, "-", "-")
+        return emit_outcome(True, "FAIL", "reason=empty_flag_value")
+
+    if paths_file_present:
+        mode = "fixture"
+        pf = Path(paths_file_val)
+        try:
+            if not pf.is_file():
+                print_provenance(mode, pkg, "-", "-")
+                return emit_outcome(True, "FAIL", "reason=paths_file_unreadable")
+            raw = pf.read_text(encoding="utf-8")
+        except OSError:
+            print_provenance(mode, pkg, "-", "-")
+            return emit_outcome(True, "FAIL", "reason=paths_file_unreadable")
+        print_provenance(mode, pkg, "-", "-")
+        all_changed = [
+            ln.strip() for ln in raw.splitlines() if ln.strip()
+        ]
+        base = base_val if base_present else "fixture"
+    else:
+        scope_ok, toplevel, git_dir = check_git_scope(pkg)
+        if not scope_ok:
+            mode = "base_override" if base_present else "none"
+            print_provenance(mode, pkg, toplevel, git_dir)
+            return emit_outcome(flagged, "SKIP", "reason=git_scope_mismatch")
+
+        if base_present:
+            base, mode = base_val, "base_override"
         else:
             base, mode = resolve_base(pkg)
+
+        print_provenance(mode, pkg, toplevel, git_dir)
+
         if base is None:
-            print("REVIEW_RECORD_FAIL reason=no_git_base")
-            print("Honesty: no_git_base cannot pass pack-health; need fetch-depth:0 / git history")
-            return 1
-        if mode == "head1":
-            print("review_record_mode=head1")
-        elif mode == "merge_base":
-            print("review_record_mode=merge_base")
+            print(
+                "Honesty: no_git_base cannot pass pack-health; "
+                "need fetch-depth:0 / git history"
+            )
+            return emit_outcome(flagged, "FAIL", "reason=no_git_base")
+
         all_changed = changed_paths(pkg, base)
 
     triggers = [p for p in all_changed if is_trigger(p)]
     if not triggers:
-        print("REVIEW_RECORD_SKIP reason=no_trigger_paths")
-        print("Honesty: exit 0 is not the OK token; SKIP ≠ reviewed")
-        return 0
+        if flagged:
+            print("Honesty: exit 0 is not a production acceptance path")
+        else:
+            print("Honesty: exit 0 is not the OK token; SKIP ≠ reviewed")
+        return emit_outcome(flagged, "SKIP", "reason=no_trigger_paths")
 
     try:
         cls = blast_class_for(triggers)
         budget = budget_for(cls)
     except ValueError as e:
         print(f"FAIL: {e}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=blast_class")
-        return 1
+        return emit_outcome(flagged, "FAIL", "reason=blast_class")
 
     print(f"blast_class={cls}")
     print(f"review_budget_n={budget['min_reviewers']}")
-    print("Honesty: implementer/model/context/reviewer_selected_by are self-declared and unverifiable")
-    print("Honesty: model family is disclosure only; diversity gate is reviewer context")
+    print(
+        "Honesty: implementer/model/context/reviewer_selected_by "
+        "are self-declared and unverifiable"
+    )
+    print(
+        "Honesty: model family is disclosure only; "
+        "diversity gate is reviewer context"
+    )
 
     diff_id = compute_diff_id(pkg, triggers)
     rec_path = pkg / REVIEWS_DIR / f"{diff_id}.md"
@@ -642,16 +731,14 @@ def main(argv: list[str]) -> int:
 
     if not rec_path.is_file():
         print(f"FAIL: missing review record path={rec_path}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=missing_record")
-        return 1
+        return emit_outcome(flagged, "FAIL", "reason=missing_record")
 
     try:
         record_text = rec_path.read_text(encoding="utf-8")
         data = parse_front_matter(record_text)
     except Exception as e:
         print(f"FAIL: parse record: {e}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=parse")
-        return 1
+        return emit_outcome(flagged, "FAIL", "reason=parse")
 
     # G1: disclose after parse (visible even when schema later FAIL)
     print_selected_by_disclosure(data.get("reviewers") or [])
@@ -671,12 +758,13 @@ def main(argv: list[str]) -> int:
     if errs:
         for e in errs:
             print(f"FAIL: {e}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=schema")
-        return 1
+        return emit_outcome(flagged, "FAIL", "reason=schema")
 
-    print(f"REVIEW_RECORD_OK path={rec_path}")
-    print("Honesty: REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof")
-    return 0
+    if flagged:
+        print("Honesty: a fixture run is not a production acceptance path")
+    else:
+        print("Honesty: REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof")
+    return emit_outcome(flagged, "OK", f"path={rec_path}")
 
 
 if __name__ == "__main__":

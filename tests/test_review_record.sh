@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Review-record gate smoke. ∉ Tier-0 / must not enter test-tier0.sh.
-# --paths-file is TEST-ONLY (not a production acceptance path).
+# --paths-file=/--base= are TEST-ONLY via direct library invocation (not a production acceptance path).
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
@@ -166,8 +166,8 @@ conclusion: \"fixture A gate same-model distinct contexts\"
 ---
 Fixture A.
 "
-A_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
-echo "$A_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "Fixture A expected OK"
+A_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$A_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "Fixture A expected OK"
 echo "$A_OUT" | grep -Fq 'blast_class=gate' || fail "Fixture A blast_class"
 echo "$A_OUT" | grep -Fq 'review_budget_n=2' || fail "Fixture A review_budget_n"
 echo "$A_OUT" | grep -Fq 'reviewer_selected_by: owner=2 implementer=0 host_default=0' \
@@ -202,8 +202,8 @@ reviewers:
 conclusion: \"fixture G1 all implementer\"
 ---
 "
-G1_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
-echo "$G1_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "G1 all-implementer still OK"
+G1_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$G1_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "G1 all-implementer still OK"
 echo "$G1_OUT" | grep -Fq 'reviewer_selected_by: owner=0 implementer=2 host_default=0' \
   || fail "G1 counts"
 echo "$G1_OUT" | grep -Fq 'all reviewers selected by the implementing agent' \
@@ -240,11 +240,11 @@ conclusion: \"fixture B same context\"
 ---
 "
 set +e
-B_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+B_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture 2>&1)"
 B_EC=$?
 set -e
 [[ "$B_EC" -ne 0 ]] || fail "Fixture B must FAIL"
-echo "$B_OUT" | grep -Fq 'REVIEW_RECORD_FAIL' || fail "Fixture B FAIL token"
+echo "$B_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL' || fail "Fixture B FAIL token"
 
 # --- Fixture C: narrative PASS (routing-scope) ---
 printf '%s\n' 'references/routing-scope.md' >"$FIX/c_paths.txt"
@@ -277,8 +277,8 @@ reviewers:
 conclusion: \"fixture C narrative\"
 ---
 "
-C_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/c_paths.txt" --base=fixture "$ROOT")"
-echo "$C_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "Fixture C expected OK"
+C_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/c_paths.txt" --base=fixture)"
+echo "$C_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "Fixture C expected OK"
 echo "$C_OUT" | grep -Fq 'blast_class=narrative' || fail "Fixture C blast_class"
 
 # --- Fixture D: narrative FAIL missing context ---
@@ -309,7 +309,7 @@ conclusion: \"fixture D no context\"
 ---
 "
 set +e
-D_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/c_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+D_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/c_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$D_EC" -ne 0 ]] || fail "Fixture D must FAIL"
 
@@ -343,7 +343,7 @@ conclusion: \"fixture E plan floor\"
 ---
 "
 set +e
-E_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/c_paths.txt" --base=fixture "$ROOT" 2>&1)"
+E_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/c_paths.txt" --base=fixture 2>&1)"
 E_EC=$?
 set -e
 [[ "$E_EC" -ne 0 ]] || fail "Fixture E must FAIL plan floor"
@@ -380,7 +380,7 @@ conclusion: \"fixture F1\"
 ---
 "
 set +e
-F1_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+F1_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$F1_EC" -ne 0 ]] || fail "Fixture F1 blast_class mismatch must FAIL"
 
@@ -414,7 +414,7 @@ conclusion: \"fixture F2\"
 ---
 "
 set +e
-F2_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+F2_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$F2_EC" -ne 0 ]] || fail "Fixture F2 review_budget_n mismatch must FAIL"
 
@@ -448,7 +448,7 @@ conclusion: \"fixture F3\"
 ---
 "
 set +e
-F3_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+F3_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$F3_EC" -ne 0 ]] || fail "Fixture F3 min_reviewers declare must FAIL"
 
@@ -483,8 +483,8 @@ reviewers:
 conclusion: \"fixture H tests same model\"
 ---
 "
-H_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/h_paths.txt" --base=fixture "$ROOT")"
-echo "$H_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "Fixture H expected OK"
+H_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/h_paths.txt" --base=fixture)"
+echo "$H_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "Fixture H expected OK"
 echo "$H_OUT" | grep -Fq 'blast_class=tests' || fail "Fixture H blast_class"
 
 write_rec "$H_ID" "---
@@ -516,7 +516,7 @@ conclusion: \"fixture H fail same context\"
 ---
 "
 set +e
-H2_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/h_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+H2_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/h_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$H2_EC" -ne 0 ]] || fail "Fixture H same context must FAIL"
 
@@ -550,7 +550,7 @@ conclusion: \"fixture I bad loop\"
 ---
 "
 set +e
-I_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/c_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+I_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/c_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$I_EC" -ne 0 ]] || fail "Fixture I bad loop must FAIL"
 
@@ -583,8 +583,8 @@ reviewers:
 conclusion: \"fixture J waived\"
 ---
 "
-J_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
-echo "$J_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "Fixture J expected OK"
+J_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$J_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "Fixture J expected OK"
 
 write_rec "$A_ID" "---
 diff_id: \"$A_ID\"
@@ -615,7 +615,7 @@ conclusion: \"fixture J no reason\"
 ---
 "
 set +e
-J2_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+J2_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$J2_EC" -ne 0 ]] || fail "Fixture J missing reason must FAIL"
 
@@ -641,7 +641,7 @@ conclusion: \"fixture J one reviewer\"
 ---
 "
 set +e
-J3_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+J3_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$J3_EC" -ne 0 ]] || fail "Fixture J one reviewer must FAIL"
 
@@ -674,7 +674,7 @@ conclusion: \"fixture J waived same context\"
 ---
 "
 set +e
-J4_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+J4_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$J4_EC" -ne 0 ]] || fail "Fixture J waived identical context must FAIL"
 
@@ -707,7 +707,7 @@ conclusion: \"fixture K missing selected_by\"
 ---
 "
 set +e
-K_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+K_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$K_EC" -ne 0 ]] || fail "Fixture K missing reviewer_selected_by must FAIL"
 
@@ -740,7 +740,7 @@ conclusion: \"fixture K bad selected_by\"
 ---
 "
 set +e
-K2_EC="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" >/dev/null 2>&1; echo $?)"
+K2_EC="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture >/dev/null 2>&1; echo $?)"
 set -e
 [[ "$K2_EC" -ne 0 ]] || fail "Fixture K invalid reviewer_selected_by must FAIL"
 
@@ -774,7 +774,7 @@ conclusion: \"context axis verified\"
 ---
 "
 set +e
-CL_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+CL_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture 2>&1)"
 CL_EC=$?
 set -e
 [[ "$CL_EC" -ne 0 ]] || fail "conclusion with 'verified' must FAIL"
@@ -808,8 +808,8 @@ reviewers:
 conclusion: \"fields disclosed; unverifiable; not verified\"
 ---
 "
-CL_OK="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
-echo "$CL_OK" | grep -Fq 'REVIEW_RECORD_OK' || fail "unverified / not verified must PASS conclusion lint"
+CL_OK="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$CL_OK" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "unverified / not verified must PASS conclusion lint"
 echo "CONCLUSION_LINT_OK"
 
 # --- Lens A: blocking list / scalar / verdict case must not fake-green ---
@@ -873,8 +873,8 @@ PY
 
 # empty paths → SKIP
 : >"$FIX/empty.txt"
-SKIP_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/empty.txt" --base=fixture "$ROOT")"
-echo "$SKIP_OUT" | grep -Fq 'REVIEW_RECORD_SKIP' || fail "empty paths must SKIP"
+SKIP_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/empty.txt" --base=fixture)"
+echo "$SKIP_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_SKIP' || fail "empty paths must SKIP"
 if echo "$SKIP_OUT" | grep -Fq 'REVIEW_RECORD_OK'; then
   fail "SKIP must not print REVIEW_RECORD_OK"
 fi
@@ -882,7 +882,7 @@ fi
 # missing record → FAIL
 printf '%s\n' 'adapters/cursor/vibage.mdc' >"$FIX/bad_paths.txt"
 set +e
-BAD_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/bad_paths.txt" --base=fixture "$ROOT" 2>&1)"
+BAD_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/bad_paths.txt" --base=fixture 2>&1)"
 BAD_EC=$?
 set -e
 [[ "$BAD_EC" -ne 0 ]] || fail "missing record must fail"
@@ -912,11 +912,11 @@ assert_schema_fail() {
   local needle="$2"
   local out ec
   set +e
-  out="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+  out="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture 2>&1)"
   ec=$?
   set -e
   [[ "$ec" -ne 0 ]] || fail "$label: expected non-zero exit"
-  echo "$out" | grep -Fq 'REVIEW_RECORD_FAIL' || fail "$label: missing REVIEW_RECORD_FAIL"
+  echo "$out" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL' || fail "$label: missing REVIEW_RECORD_FIXTURE_FAIL"
   echo "$out" | grep -Fq 'reason=schema' || fail "$label: expected reason=schema, got: $out"
   echo "$out" | grep -Fq "$needle" || fail "$label: missing '$needle' in: $out"
 }
@@ -1042,8 +1042,8 @@ reviewers:
 conclusion: \"case 4 PASS_WITH_GAPS policy unchanged\"
 ---
 "
-C4_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
-echo "$C4_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "case4: PASS_WITH_GAPS must OK"
+C4_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$C4_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "case4: PASS_WITH_GAPS must OK"
 
 # Case 5: --- mid-value after B's required fields; conclusion before reviewers; C FAIL
 write_rec "$A_ID" "---
@@ -1124,7 +1124,7 @@ conclusion: \"case 6 indented delimiter\"
 "
 assert_schema_fail "case6" "verdict FAIL"
 set +e
-C6_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+C6_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture 2>&1)"
 set -e
 echo "$C6_OUT" | grep -Fq 'not recognised' || fail "case6: indented --- must be not recognised"
 
@@ -1431,8 +1431,8 @@ conclusion: \"case 15 body delimiter\"
 ---
 Body may contain --- without truncating.
 "
-C15_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
-echo "$C15_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "case15: body --- must OK"
+C15_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$C15_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "case15: body --- must OK"
 
 # Case 16: CRLF line endings parse same as LF
 python3 - <<'PY' || fail "case16 CRLF parity"
@@ -1509,11 +1509,11 @@ conclusion: "unterminated"
 PY
 CLEANUP_RECS+=("$ROOT/docs/evidence/reviews/${A_ID}.md")
 set +e
-C17_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+C17_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture 2>&1)"
 C17_EC=$?
 set -e
 [[ "$C17_EC" -ne 0 ]] || fail "case17: expected fail"
-echo "$C17_OUT" | grep -Fq 'REVIEW_RECORD_FAIL' || fail "case17: FAIL token"
+echo "$C17_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL' || fail "case17: FAIL token"
 echo "$C17_OUT" | grep -Fq 'reason=parse' || fail "case17: expected reason=parse"
 echo "$C17_OUT" | grep -Fq 'unterminated front matter' || fail "case17: unterminated message"
 
@@ -1547,8 +1547,8 @@ conclusion: \"case 18 outside reviewer\"
 ---
 - id: D
 "
-C18_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
-echo "$C18_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "case18: must OK"
+C18_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$C18_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "case18: must OK"
 echo "$C18_OUT" | grep -Fq 'reviewers_outside_front_matter=1' \
   || fail "case18: expected reviewers_outside_front_matter=1 in: $C18_OUT"
 
@@ -1654,11 +1654,11 @@ conclusion: \"case 21 continue past unrecognised\"
 ---
 "
 set +e
-C21_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+C21_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture 2>&1)"
 C21_EC=$?
 set -e
 [[ "$C21_EC" -ne 0 ]] || fail "case21: expected fail"
-echo "$C21_OUT" | grep -Fq 'REVIEW_RECORD_FAIL' || fail "case21: FAIL token"
+echo "$C21_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL' || fail "case21: FAIL token"
 echo "$C21_OUT" | grep -Fq 'reason=schema' || fail "case21: reason=schema"
 echo "$C21_OUT" | grep -Fq 'not recognised' || fail "case21: missing not recognised"
 echo "$C21_OUT" | grep -Fq 'verdict FAIL' || fail "case21: missing verdict FAIL (scan must continue)"
@@ -1804,5 +1804,411 @@ conclusion: \"case frozen=${frozen_val}\"
 done
 
 echo "SCHEMA_HARDENING_CASES_OK"
+
+# --- Invocation provenance (§4.5 / §4.5.1 / §4.5.2) — append-only ---
+
+count_key() {
+  local hay="$1" key="$2"
+  printf '%s\n' "$hay" | grep -c "^${key}=" || true
+}
+
+assert_provenance_once() {
+  local out="$1" label="$2"
+  [[ "$(count_key "$out" review_record_mode)" == "1" ]] \
+    || fail "$label: review_record_mode= must appear exactly once"
+  [[ "$(count_key "$out" review_record_pkg)" == "1" ]] \
+    || fail "$label: review_record_pkg= must appear exactly once"
+  [[ "$(count_key "$out" review_record_toplevel)" == "1" ]] \
+    || fail "$label: review_record_toplevel= must appear exactly once"
+  [[ "$(count_key "$out" review_record_git_dir)" == "1" ]] \
+    || fail "$label: review_record_git_dir= must appear exactly once"
+}
+
+assert_no_production_token() {
+  local out="$1" label="$2"
+  if printf '%s\n' "$out" | grep -Fq 'REVIEW_RECORD_OK'; then
+    fail "$label: production REVIEW_RECORD_OK in flagged output"
+  fi
+  if printf '%s\n' "$out" | grep -Fq 'REVIEW_RECORD_SKIP'; then
+    fail "$label: production REVIEW_RECORD_SKIP in flagged output"
+  fi
+  if printf '%s\n' "$out" | grep -Fq 'REVIEW_RECORD_FAIL'; then
+    fail "$label: production REVIEW_RECORD_FAIL in flagged output"
+  fi
+}
+
+samefile_py() {
+  local a="$1" b="$2"
+  python3 -c 'import os,sys; sys.exit(0 if os.path.samefile(sys.argv[1], sys.argv[2]) else 1)' "$a" "$b"
+}
+
+# Re-plant shared fixture A (earlier schema cases leave it invalid)
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"fixture A replant for provenance cases\"
+---
+Fixture A replant.
+"
+
+# Wrapper rejects each flag (P1)
+set +e
+WRAP_PF="$(bash scripts/verify-review-record.sh --paths-file=x . 2>&1)"
+WRAP_PF_EC=$?
+WRAP_B="$(bash scripts/verify-review-record.sh --base=x . 2>&1)"
+WRAP_B_EC=$?
+set -e
+[[ "$WRAP_PF_EC" -eq 2 ]] || fail "wrapper --paths-file must exit 2, got $WRAP_PF_EC"
+[[ "$WRAP_B_EC" -eq 2 ]] || fail "wrapper --base must exit 2, got $WRAP_B_EC"
+echo "$WRAP_PF" | grep -Fq 'FAIL: unknown flag' || fail "wrapper --paths-file unknown flag message"
+echo "$WRAP_B" | grep -Fq 'FAIL: unknown flag' || fail "wrapper --base unknown flag message"
+
+# Provenance once on fixture PASS / SKIP / FAIL
+PASS_OUT="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/a_paths.txt" --base=fixture)"
+echo "$PASS_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_PASS' || fail "provenance PASS expected"
+assert_provenance_once "$PASS_OUT" "fixture PASS"
+echo "$PASS_OUT" | grep -Fq 'review_record_mode=fixture' || fail "PASS mode=fixture"
+echo "$PASS_OUT" | grep -Fq "review_record_pkg=$(python3 -c "from pathlib import Path; print(Path('$ROOT').resolve())")" \
+  || fail "PASS review_record_pkg"
+assert_no_production_token "$PASS_OUT" "fixture PASS"
+
+SKIP_P="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/empty.txt" --base=fixture 2>&1)"
+echo "$SKIP_P" | grep -Fq 'REVIEW_RECORD_FIXTURE_SKIP' || fail "provenance SKIP expected"
+assert_provenance_once "$SKIP_P" "fixture SKIP"
+assert_no_production_token "$SKIP_P" "fixture SKIP"
+
+set +e
+FAIL_P="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/bad_paths.txt" --base=fixture 2>&1)"
+set -e
+echo "$FAIL_P" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL' || fail "provenance FAIL expected"
+assert_provenance_once "$FAIL_P" "fixture FAIL"
+assert_no_production_token "$FAIL_P" "fixture FAIL"
+
+# Empty / unreadable flag values (§4.2.1)
+set +e
+EMPTY_PF="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file= --base=fixture 2>&1)"
+EMPTY_PF_EC=$?
+EMPTY_B="$(python3 scripts/lib/review_record.py "$ROOT" --base= 2>&1)"
+EMPTY_B_EC=$?
+UNREAD="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX/missing_paths_no_such.txt" --base=fixture 2>&1)"
+UNREAD_EC=$?
+DIR_PF="$(python3 scripts/lib/review_record.py "$ROOT" --paths-file="$FIX" --base=fixture 2>&1)"
+DIR_PF_EC=$?
+set -e
+[[ "$EMPTY_PF_EC" -ne 0 ]] || fail "empty --paths-file= must fail"
+echo "$EMPTY_PF" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL reason=empty_flag_value' \
+  || fail "empty paths-file token"
+echo "$EMPTY_PF" | grep -Fq 'review_record_mode=fixture' || fail "empty paths-file mode"
+assert_no_production_token "$EMPTY_PF" "empty paths-file"
+
+[[ "$EMPTY_B_EC" -ne 0 ]] || fail "empty --base= must fail"
+echo "$EMPTY_B" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL reason=empty_flag_value' \
+  || fail "empty base token"
+echo "$EMPTY_B" | grep -Fq 'review_record_mode=base_override' || fail "empty base mode"
+assert_no_production_token "$EMPTY_B" "empty base"
+
+[[ "$UNREAD_EC" -ne 0 ]] || fail "missing paths-file must fail"
+echo "$UNREAD" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL reason=paths_file_unreadable' \
+  || fail "unreadable missing token"
+assert_no_production_token "$UNREAD" "unreadable missing"
+
+[[ "$DIR_PF_EC" -ne 0 ]] || fail "directory paths-file must fail"
+echo "$DIR_PF" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL reason=paths_file_unreadable' \
+  || fail "unreadable directory token"
+assert_no_production_token "$DIR_PF" "unreadable directory"
+
+# Legacy patterns vs fixture tokens; control REVIEW_RECORD_OK_FIXTURE matches
+LEGACY_CTRL="REVIEW_RECORD_OK_FIXTURE"
+[[ "$(printf '%s\n' "$PASS_OUT" | grep -cF 'REVIEW_RECORD_OK' || true)" == "0" ]] \
+  || fail "legacy -Fq OK must miss fixture PASS"
+[[ "$(printf '%s\n' "REVIEW_RECORD_FIXTURE_SKIP" | grep -cF 'REVIEW_RECORD_SKIP' || true)" == "0" ]] \
+  || fail "legacy -Fq SKIP must miss FIXTURE_SKIP"
+[[ "$(printf '%s\n' "REVIEW_RECORD_FIXTURE_FAIL" | grep -cF 'REVIEW_RECORD_FAIL' || true)" == "0" ]] \
+  || fail "legacy -Fq FAIL must miss FIXTURE_FAIL"
+[[ "$(printf '%s\n' "$LEGACY_CTRL" | grep -cF 'REVIEW_RECORD_OK' || true)" == "1" ]] \
+  || fail "control OK_FIXTURE must match -Fq OK"
+[[ "$(printf '%s\n' "$LEGACY_CTRL" | grep -cE 'REVIEW_RECORD_(OK|SKIP)' || true)" == "1" ]] \
+  || fail "control OK_FIXTURE must match -Eq OK|SKIP"
+
+# --- §4.5.1 integration: real temporary git repository ---
+INT_TMP="$(mktemp -d "${TMPDIR:-/tmp}/rr-int.XXXXXX")"
+cleanup_int() {
+  if [[ -n "${INT_TMP:-}" && -d "$INT_TMP" ]]; then
+    git -C "$INT_TMP" worktree prune >/dev/null 2>&1 || true
+    rm -rf "$INT_TMP"
+  fi
+  if [[ -n "${INT_SEP_DIR:-}" && -d "$INT_SEP_DIR" ]]; then
+    rm -rf "$INT_SEP_DIR"
+  fi
+  if [[ -n "${INT_SUB_SRC:-}" && -d "$INT_SUB_SRC" ]]; then
+    rm -rf "$INT_SUB_SRC"
+  fi
+  if [[ -n "${INT_WT:-}" && -d "$INT_WT" ]]; then
+    rm -rf "$INT_WT"
+  fi
+  if [[ -n "${INT_CORE_OTHER:-}" && -d "$INT_CORE_OTHER" ]]; then
+    rm -rf "$INT_CORE_OTHER"
+  fi
+}
+trap 'cleanup; cleanup_int' EXIT
+
+rsync -a --exclude '.git' --exclude 'docs/evidence/reviews/*.md' "$ROOT/" "$INT_TMP/"
+git -C "$INT_TMP" init -q
+git -C "$INT_TMP" config user.email "rr-int@example.com"
+git -C "$INT_TMP" config user.name "rr-int"
+git -C "$INT_TMP" add -A
+git -C "$INT_TMP" commit -qm "int baseline"
+# Second commit: exactly one gate-class file
+echo "# rr-int gate marker $(date +%s)" >>"$INT_TMP/scripts/assert_gate.sh"
+git -C "$INT_TMP" add scripts/assert_gate.sh
+git -C "$INT_TMP" commit -qm "int gate change"
+# Clean tree
+git -C "$INT_TMP" status --porcelain | grep -q . && fail "int tree must be clean" || true
+
+INT_RESOLVED="$(python3 -c "from pathlib import Path; print(Path('$INT_TMP').resolve())")"
+INT_HEAD1="$(git -C "$INT_TMP" rev-parse HEAD~1)"
+git -C "$INT_TMP" cat-file -e "$INT_HEAD1^{commit}" || fail "HEAD~1 must exist in int object store"
+
+set +e
+INT_OUT1="$(bash scripts/verify-review-record.sh "$INT_TMP" 2>&1)"
+INT_EC1=$?
+set -e
+echo "$INT_OUT1" | grep -Fq 'review_record_mode=head1' || fail "int: mode must be head1: $INT_OUT1"
+echo "$INT_OUT1" | grep -Fq "review_record_pkg=$INT_RESOLVED" || fail "int: pkg path: $INT_OUT1"
+echo "$INT_OUT1" | grep -Fq 'trigger_count=1' || fail "int: trigger_count=1: $INT_OUT1"
+echo "$INT_OUT1" | grep -Fq 'trigger=scripts/assert_gate.sh' || fail "int: trigger path: $INT_OUT1"
+echo "$INT_OUT1" | grep -Fq "diff_base=$INT_HEAD1" || fail "int: diff_base: $INT_OUT1"
+echo "$INT_OUT1" | grep -Fq 'blast_class=gate' || fail "int: blast_class=gate: $INT_OUT1"
+echo "$INT_OUT1" | grep -Fq 'REVIEW_RECORD_FAIL reason=missing_record' \
+  || fail "int: missing_record: $INT_OUT1"
+[[ "$INT_EC1" -ne 0 ]] || fail "int: missing_record must be non-zero"
+
+INT_DIFF_ID="$(printf '%s\n' "$INT_OUT1" | sed -n 's/^diff_id=//p' | head -1)"
+[[ -n "$INT_DIFF_ID" ]] || fail "int: no diff_id"
+mkdir -p "$INT_TMP/docs/evidence/reviews"
+cat >"$INT_TMP/docs/evidence/reviews/${INT_DIFF_ID}.md" <<EOF
+---
+diff_id: "$INT_DIFF_ID"
+diff_base: "$INT_HEAD1"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: ""
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: "int provenance integration planted record"
+---
+Int planted.
+EOF
+
+set +e
+INT_OUT2="$(bash scripts/verify-review-record.sh "$INT_TMP" 2>&1)"
+INT_EC2=$?
+set -e
+echo "$INT_OUT2" | grep -Fq 'REVIEW_RECORD_OK' || fail "int: expected OK after plant: $INT_OUT2"
+[[ "$INT_EC2" -eq 0 ]] || fail "int: OK path exit 0"
+echo "$INT_OUT2" | grep -Fq 'review_record_mode=head1' || fail "int OK: mode"
+assert_provenance_once "$INT_OUT2" "int OK"
+
+# --- §4.5.2 layout cases (built on INT_TMP; keep INT_TMP clean until replace-ref) ---
+
+# linked worktree
+INT_WT="$(mktemp -d "${TMPDIR:-/tmp}/rr-wt.XXXXXX")"
+git -C "$INT_TMP" worktree add -q "$INT_WT" HEAD
+set +e
+WT_OUT="$(bash scripts/verify-review-record.sh "$INT_WT" 2>&1)"
+set -e
+echo "$WT_OUT" | grep -Fq 'reason=git_scope_mismatch' && fail "worktree must not scope-mismatch: $WT_OUT"
+WT_TOP="$(printf '%s\n' "$WT_OUT" | sed -n 's/^review_record_toplevel=//p' | head -1)"
+samefile_py "$WT_TOP" "$INT_WT" || fail "worktree toplevel samefile: top=$WT_TOP wt=$INT_WT"
+git -C "$INT_TMP" worktree remove -f "$INT_WT" >/dev/null 2>&1 || rm -rf "$INT_WT"
+INT_WT=""
+
+# --separate-git-dir
+INT_SEP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/rr-sep.XXXXXX")"
+INT_SEP_CLONE="$(mktemp -d "${TMPDIR:-/tmp}/rr-sepclone.XXXXXX")"
+git clone -q --separate-git-dir="$INT_SEP_DIR/gitdir" "$INT_TMP" "$INT_SEP_CLONE"
+set +e
+SEP_OUT="$(bash scripts/verify-review-record.sh "$INT_SEP_CLONE" 2>&1)"
+set -e
+echo "$SEP_OUT" | grep -Fq 'reason=git_scope_mismatch' && fail "separate-git-dir must not mismatch: $SEP_OUT"
+SEP_GDIR="$(printf '%s\n' "$SEP_OUT" | sed -n 's/^review_record_git_dir=//p' | head -1)"
+samefile_py "$SEP_GDIR" "$INT_SEP_DIR/gitdir" || fail "separate git_dir samefile: got=$SEP_GDIR"
+rm -rf "$INT_SEP_CLONE"
+
+# case-folded package root (skip if FS is case-sensitive)
+CASE_ALT="$(RR_CASE_SRC="$INT_TMP" python3 - <<'PY'
+import os
+s = os.path.realpath(os.environ["RR_CASE_SRC"])
+alt = None
+for i in range(len(s) - 1, -1, -1):
+    if s[i].isalpha():
+        cand = s[:i] + s[i].swapcase() + s[i + 1 :]
+        if cand != s and os.path.exists(cand):
+            try:
+                if os.path.samefile(cand, s):
+                    alt = cand
+                    break
+            except OSError:
+                pass
+print(alt or "")
+PY
+)"
+if [[ -n "$CASE_ALT" ]]; then
+  set +e
+  CASE_OUT="$(bash scripts/verify-review-record.sh "$CASE_ALT" 2>&1)"
+  set -e
+  echo "$CASE_OUT" | grep -Fq 'reason=git_scope_mismatch' && fail "case-fold must not mismatch: $CASE_OUT"
+  CASE_TOP="$(printf '%s\n' "$CASE_OUT" | sed -n 's/^review_record_toplevel=//p' | head -1)"
+  samefile_py "$CASE_TOP" "$INT_TMP" || fail "case-fold toplevel samefile"
+else
+  echo "NOTE: skip case-fold layout (filesystem does not case-fold)"
+fi
+
+# unicode normalisation (skip if other spelling does not exist)
+NFC_DIR="$(mktemp -d "${TMPDIR:-/tmp}/rr-nfc.XXXXXX")"
+UNI_OUT="$(RR_UNI_SRC="$INT_TMP" RR_UNI_BASE="$NFC_DIR" python3 - <<'PY'
+import os, shutil, subprocess, unicodedata
+from pathlib import Path
+src = Path(os.environ["RR_UNI_SRC"])
+base = Path(os.environ["RR_UNI_BASE"])
+name_nfc = unicodedata.normalize("NFC", "café-rr")
+name_nfd = unicodedata.normalize("NFD", "café-rr")
+dst = base / name_nfc
+if dst.exists():
+    shutil.rmtree(dst)
+r = subprocess.run(
+    ["git", "clone", "-q", str(src), str(dst)],
+    capture_output=True,
+    text=True,
+)
+if r.returncode != 0:
+    print("SKIP")
+    raise SystemExit(0)
+nfd_path = str(base / name_nfd)
+if not os.path.exists(nfd_path):
+    print("SKIP")
+    raise SystemExit(0)
+try:
+    if not os.path.samefile(nfd_path, str(dst)):
+        print("SKIP")
+        raise SystemExit(0)
+except OSError:
+    print("SKIP")
+    raise SystemExit(0)
+print(nfd_path)
+PY
+)"
+if [[ "$UNI_OUT" != "SKIP" && -n "$UNI_OUT" ]]; then
+  set +e
+  UNI_RUN="$(bash scripts/verify-review-record.sh "$UNI_OUT" 2>&1)"
+  set -e
+  echo "$UNI_RUN" | grep -Fq 'reason=git_scope_mismatch' && fail "unicode norm must not mismatch: $UNI_RUN"
+  UNI_TOP="$(printf '%s\n' "$UNI_RUN" | sed -n 's/^review_record_toplevel=//p' | head -1)"
+  samefile_py "$UNI_TOP" "$UNI_OUT" || fail "unicode toplevel samefile"
+else
+  echo "NOTE: skip unicode-normalisation layout (filesystem does not normalise)"
+fi
+
+# leftover replace ref — --no-replace-objects must keep the gate trigger visible
+INT_TIP="$(git -C "$INT_TMP" rev-parse HEAD)"
+INT_INIT="$(git -C "$INT_TMP" rev-parse HEAD~1)"
+git -C "$INT_TMP" replace "$INT_TIP" "$INT_INIT"
+set +e
+REP_OUT="$(bash scripts/verify-review-record.sh "$INT_TMP" 2>&1)"
+set -e
+git -C "$INT_TMP" replace -d "$INT_TIP" >/dev/null 2>&1 || true
+echo "$REP_OUT" | grep -Fq 'trigger_count=1' || fail "replace-ref: trigger_count=1: $REP_OUT"
+echo "$REP_OUT" | grep -Fq 'trigger=scripts/assert_gate.sh' || fail "replace-ref: gate trigger: $REP_OUT"
+echo "$REP_OUT" | grep -Fq 'reason=no_trigger_paths' && fail "replace-ref must not vacuous SKIP"
+
+# package root below toplevel → scope mismatch
+set +e
+SUBDIR_OUT="$(bash scripts/verify-review-record.sh "$INT_TMP/scripts" 2>&1)"
+set -e
+echo "$SUBDIR_OUT" | grep -Fq 'REVIEW_RECORD_SKIP reason=git_scope_mismatch' \
+  || fail "subdir scope mismatch: $SUBDIR_OUT"
+echo "$SUBDIR_OUT" | grep -Fq 'REVIEW_RECORD_OK' && fail "subdir must not OK"
+echo "$SUBDIR_OUT" | grep -Fq 'reason=no_trigger_paths' && fail "subdir must not no_trigger_paths"
+
+# core.worktree pointing elsewhere
+INT_CORE_OTHER="$(mktemp -d "${TMPDIR:-/tmp}/rr-corewt.XXXXXX")"
+echo other >"$INT_CORE_OTHER/marker"
+CORE_CLONE="$(mktemp -d "${TMPDIR:-/tmp}/rr-coreclone.XXXXXX")"
+git clone -q "$INT_TMP" "$CORE_CLONE"
+git -C "$CORE_CLONE" config core.worktree "$INT_CORE_OTHER"
+set +e
+CORE_OUT="$(bash scripts/verify-review-record.sh "$CORE_CLONE" 2>&1)"
+set -e
+echo "$CORE_OUT" | grep -Fq 'REVIEW_RECORD_SKIP reason=git_scope_mismatch' \
+  || fail "core.worktree scope mismatch: $CORE_OUT"
+echo "$CORE_OUT" | grep -Fq 'reason=no_trigger_paths' && fail "core.worktree must not no_trigger_paths"
+rm -rf "$CORE_CLONE"
+
+# submodule (separate superproject so INT_TMP stays usable)
+INT_SUB_SRC="$(mktemp -d "${TMPDIR:-/tmp}/rr-subsrc.XXXXXX")"
+git -C "$INT_SUB_SRC" init -q
+git -C "$INT_SUB_SRC" config user.email "rr-sub@example.com"
+git -C "$INT_SUB_SRC" config user.name "rr-sub"
+echo sub >"$INT_SUB_SRC/README"
+git -C "$INT_SUB_SRC" add README
+git -C "$INT_SUB_SRC" commit -qm "sub"
+SUB_SUPER="$(mktemp -d "${TMPDIR:-/tmp}/rr-subsuper.XXXXXX")"
+git -C "$SUB_SUPER" init -q
+git -C "$SUB_SUPER" config user.email "rr-super@example.com"
+git -C "$SUB_SUPER" config user.name "rr-super"
+echo super >"$SUB_SUPER/README"
+git -C "$SUB_SUPER" add README
+git -C "$SUB_SUPER" commit -qm "super"
+git -C "$SUB_SUPER" -c protocol.file.allow=always submodule add "$INT_SUB_SRC" vendor_rr_sub
+SUB_PATH="$SUB_SUPER/vendor_rr_sub"
+SUB_GITDIR="$SUB_SUPER/.git/modules/vendor_rr_sub"
+set +e
+SUB_OUT="$(bash scripts/verify-review-record.sh "$SUB_PATH" 2>&1)"
+set -e
+echo "$SUB_OUT" | grep -Fq 'reason=git_scope_mismatch' && fail "submodule must not scope-mismatch: $SUB_OUT"
+SUB_GDIR="$(printf '%s\n' "$SUB_OUT" | sed -n 's/^review_record_git_dir=//p' | head -1)"
+samefile_py "$SUB_GDIR" "$SUB_GITDIR" || fail "submodule git_dir samefile: got=$SUB_GDIR want=$SUB_GITDIR"
+rm -rf "$SUB_SUPER"
+
+echo "INVOCATION_PROVENANCE_CASES_OK"
 
 echo "REVIEW_RECORD_TEST_OK"

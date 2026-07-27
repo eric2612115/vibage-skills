@@ -100,10 +100,14 @@ Pass predicate (mechanical) — script-derived; see `references/review-budget.md
 
 - No trigger path changes → `REVIEW_RECORD_SKIP` (exit 0). **Never** print `REVIEW_RECORD_OK` on a clean/non-trigger tree. SKIP ≠ reviewed.
 - Insufficient git history → `REVIEW_RECORD_FAIL reason=no_git_base` (exit ≠ 0) — must not pass pack-health.
+- Package root is not the git toplevel → `REVIEW_RECORD_SKIP reason=git_scope_mismatch` (exit 0). Accurate reason for vendored installs; pack-health does not reject this reason.
 - When triggers exist: stdout includes `blast_class=` and `review_budget_n=` (and `review_budget_n_effective=` for `loop: plan`).
 - After record parse: `reviewer_selected_by: owner=N implementer=N host_default=N`; all-`implementer` adds a highest-risk honesty line (disclosure only — does not FAIL). Writing `owner` silences that line; nothing verifies it (reader prompt, not proof).
 - When the file has more loose `-\s*id:` reviewer-entry lines than the front-matter region: `reviewers_outside_front_matter=N` (disclosure only — never FAILs; reader prompt, not a detector).
-- Qualified record → `REVIEW_RECORD_OK`
+- Every token-emitting path prints exactly once: `review_record_mode=` (`merge_base`|`head1`|`none`|`fixture`|`base_override`), `review_record_pkg=`, `review_record_toplevel=`, `review_record_git_dir=` (literal `-` when git was not consulted). The last two are diagnostics, not a redirect control.
+- Qualified record under default resolution → `REVIEW_RECORD_OK`.
+- Direct library runs with `--paths-file=` or `--base=` → fixture namespace only: `REVIEW_RECORD_FIXTURE_PASS` / `_SKIP` / `_FAIL`. A fixture run is not a production acceptance path. The production wrapper rejects those flags (unknown flag, exit 2) and never forwards them.
+- Wrapper pre-Python exits (`-h`/`--help`, unknown flag, non-directory, missing library) emit no token and therefore no provenance lines.
 - **Forbidden:** treat exit 0 as `REVIEW_RECORD_OK` (same class of bug as freshness).
 
 ∉ Tier-0. Review-record via pack-health + `tests/test_review_record.sh`.  
