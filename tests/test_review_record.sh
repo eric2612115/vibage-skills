@@ -2160,6 +2160,19 @@ echo "$REP_OUT" | grep -Fq 'trigger_count=1' || fail "replace-ref: trigger_count
 echo "$REP_OUT" | grep -Fq 'trigger=scripts/assert_gate.sh' || fail "replace-ref: gate trigger: $REP_OUT"
 echo "$REP_OUT" | grep -Fq 'reason=no_trigger_paths' && fail "replace-ref must not vacuous SKIP"
 
+# A directory that is not a git repository at all must keep the no_git_base FAIL.
+# The scope check applies only when git returned a toplevel; treating "no toplevel"
+# as a mismatch downgrades that FAIL to a SKIP, which pack-health accepts.
+NOGIT_TMP="$(mktemp -d)"
+set +e
+NOGIT_OUT="$(bash scripts/verify-review-record.sh "$NOGIT_TMP" 2>&1)"
+set -e
+echo "$NOGIT_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=no_git_base' \
+  || fail "non-git dir must FAIL no_git_base, not downgrade: $NOGIT_OUT"
+echo "$NOGIT_OUT" | grep -Fq 'reason=git_scope_mismatch' \
+  && fail "non-git dir must not report scope mismatch: $NOGIT_OUT"
+rm -rf "$NOGIT_TMP"
+
 # package root below toplevel → scope mismatch
 set +e
 SUBDIR_OUT="$(bash scripts/verify-review-record.sh "$INT_TMP/scripts" 2>&1)"

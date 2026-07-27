@@ -184,18 +184,24 @@ def git_stdout(pkg: Path, args: list[str]) -> str:
     return r.stdout
 
 
-def check_git_scope(pkg: Path) -> tuple[bool, str, str]:
-    """Require show-toplevel samefile as pkg. Return (ok, toplevel, git_dir)."""
+def check_git_scope(pkg: Path) -> tuple[str, str, str]:
+    """Require show-toplevel samefile as pkg.
+
+    Returns (status, toplevel, git_dir) where status is "ok", "mismatch", or
+    "absent". "absent" means git returned no toplevel — not a repository, or a
+    bare one — which is not a scope mismatch: the caller falls through so the
+    existing no_git_base outcome stands rather than downgrading a FAIL to a SKIP.
+    """
     top = git_stdout(pkg, ["rev-parse", "--show-toplevel"]).strip()
     gdir = git_stdout(pkg, ["rev-parse", "--absolute-git-dir"]).strip()
     if not top:
-        return False, "-", "-"
+        return "absent", "-", gdir or "-"
     try:
         if not os.path.samefile(top, str(pkg)):
-            return False, top, gdir or "-"
+            return "mismatch", top, gdir or "-"
     except OSError:
-        return False, top, gdir or "-"
-    return True, top, gdir or "-"
+        return "mismatch", top, gdir or "-"
+    return "ok", top, gdir or "-"
 
 
 def resolve_base(pkg: Path) -> tuple[str | None, str]:
@@ -673,8 +679,8 @@ def main(argv: list[str]) -> int:
         ]
         base = base_val if base_present else "fixture"
     else:
-        scope_ok, toplevel, git_dir = check_git_scope(pkg)
-        if not scope_ok:
+        scope, toplevel, git_dir = check_git_scope(pkg)
+        if scope == "mismatch":
             mode = "base_override" if base_present else "none"
             print_provenance(mode, pkg, toplevel, git_dir)
             return emit_outcome(flagged, "SKIP", "reason=git_scope_mismatch")
