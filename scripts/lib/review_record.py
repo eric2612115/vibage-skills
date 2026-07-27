@@ -11,31 +11,91 @@ Model family is disclosure only — never a gate.
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 import subprocess
 import sys
 from pathlib import Path
 
-TRIGGER_PREFIXES = (
-    "scripts/lib/",
-    "adapters/",
-    "skills/",  # G2: entire skills tree
-    "tests/",
+_GIT_ENV_CLEAR = (
+    "GIT_DIR",
+    "GIT_WORK_TREE",
+    "GIT_INDEX_FILE",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_COMMON_DIR",
+    "GIT_NAMESPACE",
 )
-TRIGGER_EXACT = {
-    "references/hard-stops.md",
-    "references/looping-review.md",
-    "references/routing-scope.md",
-    "references/review-budget.md",
-    "scripts/assert_gate.sh",
-    "scripts/write_confirm.sh",
-    "scripts/coverage-box.sh",
-    "scripts/test-tier0.sh",
-    "scripts/pack-health.sh",
-}
-TRIGGER_VERIFY_GLOB = "scripts/verify-"
+
+# Batch 3: triggers by capability (allow-list), not filename prefixes.
+# See docs/superpowers/specs/2026-07-27-review-record-enforcement-design.md §4.
+TRIGGER_GATE_EXACT = frozenset(
+    {
+        "scripts/lib/review_record.py",
+        "scripts/lib/scan_plan_hash.py",
+        "scripts/lib/coverage_box.py",
+        "scripts/lib/proven_lock.py",
+        "scripts/verify-review-record.sh",
+        "scripts/pack-health.sh",
+        "scripts/test-tier0.sh",
+        "scripts/assert_gate.sh",
+        "scripts/write_confirm.sh",
+        "scripts/coverage-box.sh",
+        ".github/workflows/tier0.yml",
+    }
+)
+TRIGGER_NARRATIVE_EXACT = frozenset(
+    {
+        "references/hard-stops.md",
+        "references/looping-review.md",
+        "references/routing-scope.md",
+        "references/review-budget.md",
+    }
+)
+TRIGGER_NARRATIVE_PREFIXES = (
+    "adapters/",
+    "skills/",
+)
+TRIGGER_TESTS_EXACT = frozenset(
+    {
+        "tests/test_scan_plan_hash.py",
+        "tests/test_assert_gate.sh",
+        "tests/test_verify_run.sh",
+        "tests/test_report_names.sh",
+        "tests/test_handoff.sh",
+        "tests/test_optional_track_gates.sh",
+        "tests/test_p1_smoke.sh",
+        "tests/test_install_force_safety.sh",
+        "tests/test_install_manifest.sh",
+        "tests/test_c_prime_graph_floor.sh",
+        "tests/test_c_prime_ledger.sh",
+        "tests/test_entry_docs_sync.sh",
+        "tests/test_owner_zero_bash.sh",
+        "tests/test_install_phrase.sh",
+        "tests/test_install_phrase_e2e.sh",
+        "tests/test_plugin_manifests.sh",
+        "tests/test_pile_index.sh",
+        "tests/test_pack_health.sh",
+        "tests/test_review_record.sh",
+        "tests/test_plan_loop_hygiene.sh",
+    }
+)
 
 REVIEWS_DIR = "docs/evidence/reviews"
+
+
+def _norm_rel(rel: str) -> str:
+    """Normalize repo-relative paths without stripping leading dots from names.
+
+    `str.lstrip("./")` is a character-class strip and turns `.github/…` into
+    `github/…`, which broke allow-list membership for workflow files.
+    """
+    rel = rel.replace("\\", "/")
+    while rel.startswith("./"):
+        rel = rel[2:]
+    return rel
+
+
 _SELECTED_BY = frozenset({"owner", "implementer", "host_default"})
 _SEVERITY = {"tests": 1, "narrative": 2, "gate": 3}
 # Ban overclaim words in conclusion. "unverified" OK (no word-boundary hit).
@@ -47,34 +107,28 @@ _CONCLUSION_OVERCLAIM = re.compile(
 
 
 def is_trigger(rel: str) -> bool:
-    rel = rel.replace("\\", "/").lstrip("./")
-    if rel.startswith(REVIEWS_DIR + "/"):
+    rel = _norm_rel(rel)
+    if rel.startswith(REVIEWS_DIR + "/") or rel.startswith("lab/"):
         return False
-    if rel.startswith(TRIGGER_VERIFY_GLOB) and rel.endswith(".sh"):
+    if rel in TRIGGER_GATE_EXACT or rel in TRIGGER_NARRATIVE_EXACT or rel in TRIGGER_TESTS_EXACT:
         return True
-    if any(rel.startswith(p) for p in TRIGGER_PREFIXES):
-        return True
-    if rel in TRIGGER_EXACT:
+    if any(rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES):
         return True
     return False
 
 
 def classify_path(rel: str) -> str | None:
     """Return blast class for a path, or None if not a trigger."""
-    rel = rel.replace("\\", "/").lstrip("./")
+    rel = _norm_rel(rel)
     if not is_trigger(rel):
         return None
-    if rel.startswith("tests/"):
+    if rel in TRIGGER_TESTS_EXACT:
         return "tests"
-    if rel.startswith("adapters/") or rel.startswith("skills/"):
+    if rel in TRIGGER_NARRATIVE_EXACT or any(
+        rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES
+    ):
         return "narrative"
-    if rel.startswith("references/") and rel in TRIGGER_EXACT:
-        return "narrative"
-    if rel.startswith(TRIGGER_VERIFY_GLOB) and rel.endswith(".sh"):
-        return "gate"
-    if rel.startswith("scripts/lib/"):
-        return "gate"
-    if rel in TRIGGER_EXACT and not rel.startswith("references/"):
+    if rel in TRIGGER_GATE_EXACT:
         return "gate"
     # Unknown trigger shape: still gate (fail-closed upgrade)
     return "gate"
@@ -152,16 +206,45 @@ def print_selected_by_disclosure(revs: list) -> None:
         )
 
 
-def git_stdout(pkg: Path, args: list[str]) -> str:
-    r = subprocess.run(
-        ["git", "-C", str(pkg), *args],
+def git_run(pkg: Path, args: list[str]) -> subprocess.CompletedProcess[str]:
+    """Run git with redirecting env cleared and --no-replace-objects on every call."""
+    env = os.environ.copy()
+    for key in _GIT_ENV_CLEAR:
+        env.pop(key, None)
+    return subprocess.run(
+        ["git", "--no-replace-objects", "-C", str(pkg), *args],
         capture_output=True,
         text=True,
         check=False,
+        env=env,
     )
+
+
+def git_stdout(pkg: Path, args: list[str]) -> str:
+    r = git_run(pkg, args)
     if r.returncode != 0:
         return ""
     return r.stdout
+
+
+def check_git_scope(pkg: Path) -> tuple[str, str, str]:
+    """Require show-toplevel samefile as pkg.
+
+    Returns (status, toplevel, git_dir) where status is "ok", "mismatch", or
+    "absent". "absent" means git returned no toplevel — not a repository, or a
+    bare one — which is not a scope mismatch: the caller falls through so the
+    existing no_git_base outcome stands rather than downgrading a FAIL to a SKIP.
+    """
+    top = git_stdout(pkg, ["rev-parse", "--show-toplevel"]).strip()
+    gdir = git_stdout(pkg, ["rev-parse", "--absolute-git-dir"]).strip()
+    if not top:
+        return "absent", "-", gdir or "-"
+    try:
+        if not os.path.samefile(top, str(pkg)):
+            return "mismatch", top, gdir or "-"
+    except OSError:
+        return "mismatch", top, gdir or "-"
+    return "ok", top, gdir or "-"
 
 
 def resolve_base(pkg: Path) -> tuple[str | None, str]:
@@ -177,24 +260,14 @@ def resolve_base(pkg: Path) -> tuple[str | None, str]:
     head = git_stdout(pkg, ["rev-parse", "HEAD"]).strip()
     mb = ""
     for cand in ("main", "master", "origin/main", "origin/master"):
-        r = subprocess.run(
-            ["git", "-C", str(pkg), "rev-parse", "--verify", cand],
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        r = git_run(pkg, ["rev-parse", "--verify", cand])
         if r.returncode != 0:
             continue
         mb = git_stdout(pkg, ["merge-base", "HEAD", cand]).strip()
         if mb:
             break
     parent = ""
-    r = subprocess.run(
-        ["git", "-C", str(pkg), "rev-parse", "--verify", "HEAD~1"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    r = git_run(pkg, ["rev-parse", "--verify", "HEAD~1"])
     if r.returncode == 0:
         parent = r.stdout.strip()
 
@@ -220,6 +293,43 @@ def changed_paths(pkg: Path, base: str | None) -> list[str]:
     return sorted(paths)
 
 
+def hidden_worktree_paths(pkg: Path) -> list[str] | None:
+    """Trigger paths with skip-worktree/assume-unchanged whose disk ≠ HEAD.
+
+    `git ls-files -v`: `S` = skip-worktree; lowercase mark = assume-unchanged.
+    Compare disk oid to `HEAD:<path>` (equivalent to show); `git diff` alone is
+    insufficient. Returns None if the probe itself failed (caller fail-closes).
+    """
+    r_ls = git_run(pkg, ["ls-files", "-v"])
+    if r_ls.returncode != 0:
+        return None
+    marks: dict[str, str] = {}
+    for line in r_ls.stdout.splitlines():
+        if len(line) < 3 or line[1] != " ":
+            continue
+        marks[line[2:]] = line[0]
+    found: list[str] = []
+    for rel, mark in sorted(marks.items()):
+        if not is_trigger(rel):
+            continue
+        # S = skip-worktree; any lowercase mark = assume-unchanged bit set
+        if mark != "S" and not mark.islower():
+            continue
+        disk = pkg / rel
+        if not disk.is_file():
+            continue
+        r = git_run(pkg, ["hash-object", str(disk)])
+        if r.returncode != 0:
+            return None
+        disk_oid = r.stdout.strip()
+        r2 = git_run(pkg, ["rev-parse", f"HEAD:{rel}"])
+        if r2.returncode != 0:
+            return None
+        if disk_oid != r2.stdout.strip():
+            found.append(rel)
+    return found
+
+
 def file_digest(pkg: Path, rel: str) -> str:
     p = pkg / rel
     if not p.is_file():
@@ -239,87 +349,245 @@ def compute_diff_id(pkg: Path, triggers: list[str]) -> str:
     return h.hexdigest()
 
 
+_TOP_LEVEL_KEYS = frozenset(
+    {
+        "diff_id",
+        "diff_base",
+        "subject_paths",
+        "loop",
+        "round",
+        "frozen",
+        "diversity",
+        "diversity_reason",
+        "reviewers",
+        "conclusion",
+        "blast_class",
+        "review_budget_n",
+        "min_reviewers",
+    }
+)
+_REVIEWER_KEYS = frozenset(
+    {
+        "id",
+        "lens",
+        "verdict",
+        "model",
+        "context",
+        "reviewer_selected_by",
+        "blocking",
+    }
+)
+_CONTAINER_KEYS = frozenset({"reviewers", "subject_paths"})
+_TOP_KEY_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*):(.*)$")
+_REVIEWER_FIELD_RE = re.compile(r"^    ([A-Za-z_][A-Za-z0-9_]*):(.*)$")
+_ID_TOKEN_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+_REVIEWER_ENTRY_LOOSE_RE = re.compile(r"^\s*-\s*id:")
+# below U+0020 except tab; plus U+2028/U+2029 (non-raw so \u escapes apply)
+_CONTROL_CHAR_RE = re.compile("[\x00-\x08\x0a-\x1f\u2028\u2029]")
+
+
+def _strip_scalar_quotes(val: str) -> str:
+    return val.strip().strip("\"'")
+
+
+def _line_has_control_char(line: str) -> bool:
+    """True if line has a forbidden control character (tab allowed)."""
+    return _CONTROL_CHAR_RE.search(line) is not None
+
+
+def _split_doc_lines(text: str) -> list[str]:
+    """Split on \\n only; strip trailing \\r. Do not use str.splitlines()."""
+    return [ln[:-1] if ln.endswith("\r") else ln for ln in text.split("\n")]
+
+
+def _is_delimiter_line(line: str) -> bool:
+    return line.rstrip() == "---"
+
+
+def front_matter_region_bounds(text: str) -> tuple[int, int] | None:
+    """Return (start, end) indices of front-matter body lines, or None if absent/unterminated."""
+    lines = _split_doc_lines(text)
+    if not lines or not _is_delimiter_line(lines[0]):
+        return None
+    for i in range(1, len(lines)):
+        if _is_delimiter_line(lines[i]):
+            return 1, i
+    return None
+
+
+def reviewers_outside_front_matter(text: str) -> int:
+    """S5: whole-file loose id-entry count minus those inside the front-matter region."""
+    lines = _split_doc_lines(text)
+    bounds = front_matter_region_bounds(text)
+    total = sum(1 for ln in lines if _REVIEWER_ENTRY_LOOSE_RE.match(ln))
+    if bounds is None:
+        return total
+    start, end = bounds
+    inside = sum(
+        1 for ln in lines[start:end] if _REVIEWER_ENTRY_LOOSE_RE.match(ln)
+    )
+    return total - inside
+
+
 def parse_front_matter(text: str) -> dict:
-    if not text.startswith("---"):
+    lines = _split_doc_lines(text)
+    if not lines or not _is_delimiter_line(lines[0]):
         raise ValueError("missing YAML front matter")
-    parts = text.split("---", 2)
-    if len(parts) < 3:
+    close_idx = None
+    for i in range(1, len(lines)):
+        if _is_delimiter_line(lines[i]):
+            close_idx = i
+            break
+    if close_idx is None:
         raise ValueError("unterminated front matter")
-    body = parts[1]
-    data: dict = {"reviewers": []}
+
+    data: dict = {"reviewers": [], "_parser_errors": []}
+    errs: list[str] = data["_parser_errors"]
     cur_rev: dict | None = None
-    in_paths = False
-    in_blocking = False
     path_list: list[str] = []
-    for raw in body.splitlines():
-        line = raw.rstrip()
-        if not line.strip() or line.strip().startswith("#"):
-            continue
-        if line.startswith("  - id:") or line.startswith("  -id:"):
-            if cur_rev:
-                data["reviewers"].append(cur_rev)
-            cur_rev = {
-                "id": line.split(":", 1)[1].strip().strip("\"'"),
-                "blocking": [],
-            }
-            in_blocking = False
-            in_paths = False
-            continue
-        # Blocking list items: any indent whose strip is "- …" (4-space or 6-space YAML)
-        if cur_rev is not None and in_blocking and line.strip().startswith("- "):
-            cur_rev["blocking"].append(line.strip()[2:].strip().strip("\"'"))
-            continue
-        if cur_rev is not None and re.match(r"^    \w", line):
-            key, _, val = line.strip().partition(":")
-            key, val = key.strip(), val.strip().strip("\"'")
-            if key == "blocking":
-                cur_rev["blocking"] = []
-                if val in ("", "[]"):
-                    in_blocking = True
-                    continue
-                # Inline list: blocking: [a, b]
-                if val.startswith("[") and val.endswith("]"):
-                    inner = val[1:-1].strip()
-                    if inner:
-                        for part in inner.split(","):
-                            item = part.strip().strip("\"'")
-                            if item:
-                                cur_rev["blocking"].append(item)
-                    in_blocking = False
-                    continue
-                # Non-empty scalar must count as a blocking finding (not wiped to [])
-                cur_rev["blocking"].append(val)
-                in_blocking = False
-                continue
-            in_blocking = False
-            cur_rev[key] = val
-            continue
-        if not line.startswith(" ") and ":" in line:
-            if cur_rev:
-                data["reviewers"].append(cur_rev)
-                cur_rev = None
-            key, _, val = line.partition(":")
-            key, val = key.strip(), val.strip().strip("\"'")
-            if key == "subject_paths":
-                in_paths = True
-                path_list = []
-                data["subject_paths"] = path_list
-                continue
-            in_paths = False
-            if key == "reviewers":
-                continue
-            if val in ("true", "false"):
-                data[key] = val == "true"
-            elif val.isdigit():
-                data[key] = int(val)
+    recent_top: str | None = None
+    recent_rev_field: str | None = None
+    top_seen: set[str] = set()
+    rev_seen: set[str] = set()
+
+    def flush_rev() -> None:
+        nonlocal cur_rev, recent_rev_field, rev_seen
+        if cur_rev is not None:
+            data["reviewers"].append(cur_rev)
+            cur_rev = None
+        recent_rev_field = None
+        rev_seen = set()
+
+    def set_top_value(key: str, val: str) -> None:
+        if key == "frozen":
+            if val == "true":
+                data[key] = True
+            elif val == "false":
+                data[key] = False
             else:
                 data[key] = val
+                errs.append(f"frozen must be true or false, got '{val}'")
+            return
+        if val in ("true", "false"):
+            data[key] = val == "true"
+        elif val.isdigit():
+            data[key] = int(val)
+        else:
+            data[key] = val
+
+    def apply_blocking_value(rev: dict, val: str) -> None:
+        nonlocal recent_rev_field
+        rev["blocking"] = []
+        if val in ("", "[]"):
+            recent_rev_field = "blocking"
+            return
+        if val.startswith("[") and val.endswith("]"):
+            inner = val[1:-1].strip()
+            if inner:
+                for part in inner.split(","):
+                    item = _strip_scalar_quotes(part)
+                    if item:
+                        rev["blocking"].append(item)
+            recent_rev_field = "blocking"
+            return
+        rev["blocking"].append(val)
+        recent_rev_field = "blocking"
+
+    for idx in range(1, close_idx):
+        line = lines[idx]
+        n = idx + 1  # 1-based file line number
+
+        if _line_has_control_char(line):
+            errs.append(f"front matter line {n} contains a control character")
+            # keep scanning; do not stop
+            # fall through — may also be unrecognised
+
+        # Shape 1: blank
+        if line.strip() == "":
             continue
-        if in_paths and line.strip().startswith("- "):
-            path_list.append(line.strip()[2:].strip().strip("\"'"))
+        # Shape 2: comment
+        if line.lstrip().startswith("#"):
             continue
-    if cur_rev:
-        data["reviewers"].append(cur_rev)
+
+        # Shape 3: top-level key
+        m3 = _TOP_KEY_RE.match(line)
+        if m3 and not line[0].isspace():
+            key = m3.group(1)
+            raw_after = m3.group(2)
+            if key in _TOP_LEVEL_KEYS:
+                flush_rev()
+                recent_top = key
+                recent_rev_field = None
+                if key in top_seen:
+                    errs.append(f"duplicate key '{key}'")
+                    continue
+                top_seen.add(key)
+                if key in _CONTAINER_KEYS:
+                    if raw_after.strip() != "":
+                        errs.append(f"key '{key}' must have no inline value")
+                    if key == "subject_paths":
+                        path_list = []
+                        data["subject_paths"] = path_list
+                    # reviewers: container only; items via shape 5
+                    continue
+                val = _strip_scalar_quotes(raw_after)
+                set_top_value(key, val)
+                continue
+            # key shape but not whitelisted → unrecognised below
+
+        # Shape 5 before shape 4: reviewer entry start
+        if line.startswith("  - id:") or line.startswith("  -id:"):
+            flush_rev()
+            id_val = _strip_scalar_quotes(line.split(":", 1)[1])
+            cur_rev = {"id": id_val, "blocking": []}
+            rev_seen = set()
+            recent_rev_field = None
+            # recent_top unchanged (still under reviewers typically)
+            if not _ID_TOKEN_RE.match(id_val):
+                i = len(data["reviewers"])  # this entry's index once flushed
+                errs.append(
+                    f"reviewer[{i}] id must be a simple token, got '{id_val}'"
+                )
+            continue
+
+        # Shape 4: subject_paths item
+        if line.startswith("  - ") and recent_top == "subject_paths":
+            path_list.append(_strip_scalar_quotes(line[4:]))
+            continue
+
+        # Shape 6: reviewer field
+        m6 = _REVIEWER_FIELD_RE.match(line)
+        if m6 and cur_rev is not None:
+            key = m6.group(1)
+            raw_after = m6.group(2)
+            if key in _REVIEWER_KEYS:
+                if key in rev_seen:
+                    i = len(data["reviewers"])
+                    errs.append(f"reviewer[{i}] duplicate key '{key}'")
+                    continue
+                rev_seen.add(key)
+                val = _strip_scalar_quotes(raw_after)
+                if key == "blocking":
+                    # retain inline/scalar/empty handling; do not discard
+                    apply_blocking_value(cur_rev, val)
+                    continue
+                recent_rev_field = key
+                cur_rev[key] = val
+                continue
+            # not whitelisted → unrecognised below
+
+        # Shape 7: blocking item (payload after eight characters: "      - ")
+        if (
+            cur_rev is not None
+            and recent_rev_field == "blocking"
+            and line.startswith("      - ")
+        ):
+            cur_rev["blocking"].append(_strip_scalar_quotes(line[8:]))
+            continue
+
+        errs.append(f"front matter line {n} not recognised: {line}")
+
+    flush_rev()
     if "subject_paths" not in data:
         data["subject_paths"] = path_list
     return data
@@ -327,6 +595,7 @@ def parse_front_matter(text: str) -> dict:
 
 def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[str]:
     errs: list[str] = []
+    errs.extend(data.get("_parser_errors") or [])
     if data.get("diff_id") != expected_id:
         errs.append(f"diff_id mismatch record={data.get('diff_id')} expected={expected_id}")
     subjects = set(data.get("subject_paths") or [])
@@ -369,8 +638,21 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     if len(revs) < n:
         errs.append(f"need ≥{n} reviewers, got {len(revs)}")
     for i, r in enumerate(revs):
-        if (r.get("verdict") or "").strip().upper() == "FAIL":
-            errs.append(f"reviewer[{i}] verdict FAIL")
+        raw_verdict = r.get("verdict")
+        if raw_verdict is None or str(raw_verdict).strip() == "":
+            errs.append(f"reviewer[{i}] missing verdict")
+        else:
+            trimmed = str(raw_verdict).strip()
+            upper = trimmed.upper()
+            if upper == "FAIL":
+                errs.append(f"reviewer[{i}] verdict FAIL")
+            elif upper in ("PASS", "PASS_WITH_GAPS"):
+                pass
+            else:
+                errs.append(
+                    f"reviewer[{i}] verdict must be PASS|PASS_WITH_GAPS|FAIL, "
+                    f"got '{trimmed}'"
+                )
         if r.get("blocking"):
             errs.append(f"reviewer[{i}] blocking non-empty: {r.get('blocking')}")
         if not r.get("model"):
@@ -404,84 +686,213 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     return errs
 
 
-def main(argv: list[str]) -> int:
-    pkg = Path(argv[1] if len(argv) > 1 else ".").resolve()
-    paths_file = None
-    base_override = None
-    i = 2
-    while i < len(argv):
-        a = argv[i]
-        if a.startswith("--paths-file="):
-            paths_file = a.split("=", 1)[1]
-        elif a.startswith("--base="):
-            base_override = a.split("=", 1)[1]
-        i += 1
+_TOKEN_LITERAL = re.compile(
+    r"REVIEW_RECORD_(?:FIXTURE(?:_(?:PASS|SKIP|FAIL))?|OK|SKIP|FAIL|PASS)"
+)
 
-    mode = "fixture"
-    if paths_file:
-        # --paths-file is TEST-ONLY; must not be used as production acceptance path.
-        all_changed = [
-            ln.strip()
-            for ln in Path(paths_file).read_text(encoding="utf-8").splitlines()
-            if ln.strip()
-        ]
-        base = base_override or "fixture"
+
+def redact(value: object) -> str:
+    """Keep token literals out of diagnostic prose.
+
+    Paths, record content and git output reach the stream as diagnostics, so a token
+    spelled inside one of them reads, to a person, like an outcome — and §1's accident is
+    a person pasting this output somewhere. It is not an integrity control. A reviewer
+    measured that an input cannot forge a pass at all: `pack-health.sh` requires exit 0,
+    and exit 0 happens only on `OK` or `SKIP`, which print their own token. What an input
+    could do is turn a real pass red, and that is closed at the consumer, where anchored
+    patterns cost two characters. This function is the narrower claim: prose a person
+    reads does not spell a token it does not mean.
+
+    `trigger=` lines are exempt — see the call site.
+    """
+    return _TOKEN_LITERAL.sub("REVIEW_RECORD_<redacted>", str(value))
+
+
+def print_provenance(mode: str, pkg: Path, toplevel: str, git_dir: str) -> None:
+    print(f"review_record_mode={mode}")
+    print(f"review_record_pkg={redact(pkg)}")
+    print(f"review_record_toplevel={redact(toplevel)}")
+    print(f"review_record_git_dir={redact(git_dir)}")
+
+
+def emit_outcome(flagged: bool, kind: str, detail: str) -> int:
+    """Emit production or fixture token. kind is OK|SKIP|FAIL.
+
+    `detail` is redacted here rather than at each call site. Today every caller passes
+    a constant `reason=` or an already-redacted path, so this changes no output; it is
+    here so that the one line which prints a token also sanitises its own payload. A
+    future caller that forgets is the shape that produced the defect this guards.
+    """
+    if flagged:
+        tok = {
+            "OK": "REVIEW_RECORD_FIXTURE_PASS",
+            "SKIP": "REVIEW_RECORD_FIXTURE_SKIP",
+            "FAIL": "REVIEW_RECORD_FIXTURE_FAIL",
+        }[kind]
     else:
-        if base_override:
-            base, mode = base_override, "override"
+        tok = {
+            "OK": "REVIEW_RECORD_OK",
+            "SKIP": "REVIEW_RECORD_SKIP",
+            "FAIL": "REVIEW_RECORD_FAIL",
+        }[kind]
+    print(f"{tok} {redact(detail)}")
+    if kind == "FAIL":
+        return 1
+    return 0
+
+
+def main(argv: list[str]) -> int:
+    args = argv[1:]
+    paths_file_present = False
+    base_present = False
+    paths_file_val = ""
+    base_val = ""
+    for a in args:
+        if a.startswith("--paths-file="):
+            paths_file_present = True
+            paths_file_val = a.split("=", 1)[1]
+        elif a.startswith("--base="):
+            base_present = True
+            base_val = a.split("=", 1)[1]
+
+    pkg_arg = "."
+    for a in args:
+        if not a.startswith("--"):
+            pkg_arg = a
+            break
+    pkg = Path(pkg_arg).resolve()
+    flagged = paths_file_present or base_present
+
+    if (paths_file_present and paths_file_val == "") or (
+        base_present and base_val == ""
+    ):
+        mode = "fixture" if paths_file_present else "base_override"
+        print_provenance(mode, pkg, "-", "-")
+        return emit_outcome(True, "FAIL", "reason=empty_flag_value")
+
+    if paths_file_present:
+        mode = "fixture"
+        pf = Path(paths_file_val)
+        try:
+            if not pf.is_file():
+                print_provenance(mode, pkg, "-", "-")
+                return emit_outcome(True, "FAIL", "reason=paths_file_unreadable")
+            raw = pf.read_text(encoding="utf-8")
+        except OSError:
+            print_provenance(mode, pkg, "-", "-")
+            return emit_outcome(True, "FAIL", "reason=paths_file_unreadable")
+        print_provenance(mode, pkg, "-", "-")
+        all_changed = [
+            ln.strip() for ln in raw.splitlines() if ln.strip()
+        ]
+        base = base_val if base_present else "fixture"
+    else:
+        scope, toplevel, git_dir = check_git_scope(pkg)
+        if scope == "mismatch":
+            mode = "base_override" if base_present else "none"
+            print_provenance(mode, pkg, toplevel, git_dir)
+            return emit_outcome(flagged, "SKIP", "reason=git_scope_mismatch")
+
+        if base_present:
+            # An explicit base cannot rescue a tree git did not resolve: without a
+            # repository the diff is empty, which reads as no_trigger_paths and
+            # turns the FAIL into a SKIP.
+            base = None if scope == "absent" else base_val
+            mode = "base_override"
         else:
             base, mode = resolve_base(pkg)
+
+        print_provenance(mode, pkg, toplevel, git_dir)
+
         if base is None:
-            print("REVIEW_RECORD_FAIL reason=no_git_base")
-            print("Honesty: no_git_base cannot pass pack-health; need fetch-depth:0 / git history")
-            return 1
-        if mode == "head1":
-            print("review_record_mode=head1")
-        elif mode == "merge_base":
-            print("review_record_mode=merge_base")
+            print(
+                "Honesty: no_git_base cannot pass pack-health; "
+                "need fetch-depth:0 / git history"
+            )
+            return emit_outcome(flagged, "FAIL", "reason=no_git_base")
+
+        # E5 (default path only): vacuous_base then hidden_worktree, before
+        # changed_paths / no_trigger_paths. Do not alter resolve_base signature.
+        if not flagged:
+            head = git_stdout(pkg, ["rev-parse", "HEAD"]).strip()
+            if head and base == head:
+                print(
+                    "Honesty: vacuous_base — resolve_base sha equals HEAD "
+                    "(single-commit / shallow tip); not a clean SKIP"
+                )
+                return emit_outcome(False, "FAIL", "reason=vacuous_base")
+            hidden = hidden_worktree_paths(pkg)
+            if hidden is None:
+                print(
+                    "Honesty: hidden_worktree probe failed; "
+                    "refusing silent no_trigger_paths"
+                )
+                return emit_outcome(False, "FAIL", "reason=hidden_worktree")
+            if hidden:
+                print(
+                    "Honesty: skip-worktree/assume-unchanged hides trigger "
+                    f"paths: {', '.join(hidden[:5])}"
+                )
+                return emit_outcome(False, "FAIL", "reason=hidden_worktree")
+
         all_changed = changed_paths(pkg, base)
 
     triggers = [p for p in all_changed if is_trigger(p)]
     if not triggers:
-        print("REVIEW_RECORD_SKIP reason=no_trigger_paths")
-        print("Honesty: exit 0 is not the OK token; SKIP ≠ reviewed")
-        return 0
+        if flagged:
+            print("Honesty: exit 0 is not a production acceptance path")
+        else:
+            print("Honesty: exit 0 is not the OK token; SKIP ≠ reviewed")
+        return emit_outcome(flagged, "SKIP", "reason=no_trigger_paths")
 
     try:
         cls = blast_class_for(triggers)
         budget = budget_for(cls)
     except ValueError as e:
-        print(f"FAIL: {e}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=blast_class")
-        return 1
+        print(f"FAIL: {redact(e)}", file=sys.stderr)
+        return emit_outcome(flagged, "FAIL", "reason=blast_class")
 
     print(f"blast_class={cls}")
     print(f"review_budget_n={budget['min_reviewers']}")
-    print("Honesty: implementer/model/context/reviewer_selected_by are self-declared and unverifiable")
-    print("Honesty: model family is disclosure only; diversity gate is reviewer context")
+    print(
+        "Honesty: implementer/model/context/reviewer_selected_by "
+        "are self-declared and unverifiable"
+    )
+    print(
+        "Honesty: model family is disclosure only; "
+        "diversity gate is reviewer context"
+    )
 
     diff_id = compute_diff_id(pkg, triggers)
     rec_path = pkg / REVIEWS_DIR / f"{diff_id}.md"
     print(f"diff_id={diff_id}")
-    print(f"diff_base={base}")
+    print(f"diff_base={redact(base)}")
     print(f"trigger_count={len(triggers)}")
     for t in triggers:
+        # Verbatim, unlike the other diagnostics: a maintainer copies these lines into
+        # the record's subject_paths, and the schema check compares against the real
+        # path, so a redacted one produces a record that can never validate. A guarded
+        # path spelling a token would appear here; pack-health's patterns are anchored,
+        # so it decides nothing.
         print(f"trigger={t}")
 
     if not rec_path.is_file():
-        print(f"FAIL: missing review record path={rec_path}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=missing_record")
-        return 1
+        print(f"FAIL: missing review record path={redact(rec_path)}", file=sys.stderr)
+        return emit_outcome(flagged, "FAIL", "reason=missing_record")
 
     try:
-        data = parse_front_matter(rec_path.read_text(encoding="utf-8"))
+        record_text = rec_path.read_text(encoding="utf-8")
+        data = parse_front_matter(record_text)
     except Exception as e:
-        print(f"FAIL: parse record: {e}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=parse")
-        return 1
+        print(f"FAIL: parse record: {redact(e)}", file=sys.stderr)
+        return emit_outcome(flagged, "FAIL", "reason=parse")
 
     # G1: disclose after parse (visible even when schema later FAIL)
     print_selected_by_disclosure(data.get("reviewers") or [])
+    # S5: disclosure only — never fails the gate
+    outside = reviewers_outside_front_matter(record_text)
+    if outside > 0:
+        print(f"reviewers_outside_front_matter={outside}")
 
     if data.get("loop") == "plan":
         try:
@@ -493,13 +904,14 @@ def main(argv: list[str]) -> int:
     errs = validate_record(data, triggers, diff_id)
     if errs:
         for e in errs:
-            print(f"FAIL: {e}", file=sys.stderr)
-        print("REVIEW_RECORD_FAIL reason=schema")
-        return 1
+            print(f"FAIL: {redact(e)}", file=sys.stderr)
+        return emit_outcome(flagged, "FAIL", "reason=schema")
 
-    print(f"REVIEW_RECORD_OK path={rec_path}")
-    print("Honesty: REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof")
-    return 0
+    if flagged:
+        print("Honesty: a fixture run is not a production acceptance path")
+    else:
+        print("Honesty: REVIEW_RECORD_OK ≠ review quality ≠ adversarial proof")
+    return emit_outcome(flagged, "OK", f"path={redact(rec_path)}")
 
 
 if __name__ == "__main__":

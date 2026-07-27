@@ -27,7 +27,7 @@ Add a GitHub Actions workflow whose **ship-gate job** runs **only**:
 bash scripts/test-tier0.sh
 ```
 
-Same command as local Tier-0. Do **not** put STATUS lints or pack-health into that job — they stay separate jobs so a failure never surfaces as `TIER0_OK` / “tier0 failed”.
+Same command as local Tier-0. Do **not** put STATUS lints, pack-health, or review-record into that job — they stay separate jobs so a failure never surfaces as `TIER0_OK` / “tier0 failed”.
 
 Allowed sibling jobs (own check-run names; **∉** `TIER0_OK`):
 
@@ -35,6 +35,7 @@ Allowed sibling jobs (own check-run names; **∉** `TIER0_OK`):
 |-----|--------|
 | `status-lints` | `tests/test_proven_lock.sh` + `tests/test_status_capability_table.sh` + `tests/test_plan_loop_hygiene.sh` |
 | `pack-health` | `tests/test_pack_health.sh` (temp parent → `PACK_HEALTH_OK`; checkout `fetch-depth: 0` for review-record) |
+| `review-record` | `tests/test_review_record.sh` (`fetch-depth: 0`; must parse `REVIEW_RECORD_TEST_OK` — exit 0 alone insufficient) |
 
 STATUS must:
 
@@ -43,7 +44,7 @@ STATUS must:
 - Keep ≠ publish-ready until human decides otherwise
 - Still point at this satellite
 
-Do not claim remote success from local `TIER0_OK` alone. Branch protection may require `status-lints` / `pack-health` independently of `tier0`.
+Do not claim remote success from local `TIER0_OK` alone. Branch protection may require `status-lints` / `pack-health` / `review-record` independently of `tier0`.
 
 ---
 

@@ -2,22 +2,26 @@
 # Mechanical review-record gate for guarded paths. ∉ Tier-0.
 # Usage:
 #   bash verify-review-record.sh [<pkg_root>]
-#   bash verify-review-record.sh --paths-file=FILE [--base=LABEL] [<pkg_root>]
 # Tokens (parse stdout; exit 0 ≠ REVIEW_RECORD_OK):
 #   REVIEW_RECORD_SKIP | REVIEW_RECORD_OK | REVIEW_RECORD_FAIL
+# Fixture tokens (direct library invocation with --paths-file= / --base= only):
+#   REVIEW_RECORD_FIXTURE_PASS | REVIEW_RECORD_FIXTURE_SKIP | REVIEW_RECORD_FIXTURE_FAIL
 # Not a required git pre-commit hook. See references/looping-review.md.
 set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PKG_DEFAULT="$(cd "$SCRIPT_DIR/.." && pwd)"
 LIB="$SCRIPT_DIR/lib/review_record.py"
 
-ARGS=()
+# These diagnostics echo argv and paths verbatim, so a token spelled in either appears
+# here. That is disclosed rather than fixed: a version of this script redacted them and
+# the redaction cost more than the gap. See §4.4 of the design. All three exit non-zero,
+# and pack-health.sh anchors its patterns to the start of a line, so neither a consumer
+# nor the exit contract depends on the spelling.
 PKG=""
 for arg in "$@"; do
   case "$arg" in
-    --paths-file=*|--base=*) ARGS+=("$arg") ;;
     -h|--help)
-      sed -n '2,10p' "$0" >&2
+      sed -n '2,12p' "$0" >&2
       exit 0
       ;;
     --*)
@@ -35,7 +39,4 @@ PKG="${PKG:-$PKG_DEFAULT}"
 
 # Header honesty always (avoid printing the OK token literally)
 echo "NOTE: exit 0 is not the OK token (same class as freshness)"
-if [[ ${#ARGS[@]} -gt 0 ]]; then
-  exec python3 "$LIB" "$PKG" "${ARGS[@]}"
-fi
 exec python3 "$LIB" "$PKG"

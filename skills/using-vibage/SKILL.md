@@ -38,6 +38,8 @@ Plans and guarded-path edits → Plan/Impl looping review until freeze. Qualifie
 
 **Plan loop ∉ plan todos:** freeze the plan **before** Build. Do not put `plan-loop-converge` (or “run 3 plan reviews”) inside the implementation todo list of the same plan.
 
+**Finding class (anti-churn):** Reviewers may keep asking; only classes 1–3 are blocking must-fixes (plan broken / impl missed plan / fix broke a contract). Class 4 = unpromised surface or proportional ideation → disclose, do not edit. Two consecutive class-4-only rounds → freeze. No mid-flight tree edits. Details: `$PKG_ROOT/references/looping-review.md` § Finding class.
+
 ## Plain milestones (F11 — owner chat)
 
 Say these in owner language (no jargon):
