@@ -12,6 +12,11 @@ cannot exclude. These carry into the Impl loop, where reviewers read this docume
 **Batch:** 2 of 3. Batch 1 (record-schema hardening) has landed on the branch. Batch 3 is
 enforcement: wiring the suite into CI, guarding `.github/workflows/tier0.yml`, `pack-health`'s
 treatment of `SKIP`, and the trigger set by capability — see the ranking in §5.
+**Reading order:** §4 through §7 are the constraints an implementer or reviewer needs. §5 and §6 are
+the honest account of what this does not cover. §8 is the loop history — provenance for how the
+constraints were reached, not something to read first. An impl-loop reviewer asked for it to be moved
+out; it stays because the review record points at one path, and the disclosure above is only auditable
+next to the findings it names.
 **Prior loop:** three rounds against the earlier shape of this design, fifteen findings, all folded.
 The third round's adversarial lens rejected the *shape* — labelling a test-only affordance rather
 than removing it from the production entry point — and the owner accepted that. §8 records the
@@ -440,6 +445,26 @@ through one substitution that rewrites token literals to `REVIEW_RECORD_<redacte
 by neither the bare nor the word-boundary patterns. Enumerating the sites instead of routing them
 through one function is what let this through the first time: the reviewer-content route existed
 before this batch and the path route was created by §4.3's provenance lines.
+
+Four details, each from a measurement:
+
+- **The bare `REVIEW_RECORD_FIXTURE` prefix is redacted too**, because that is what a consumer
+  separating the two namespaces greps for. A first implementation covered only the suffixed forms, and
+  a package directory named `REVIEW_RECORD_FIXTURE` defeated this batch's own reverse assertion.
+- **Substrings count.** `REVIEW_RECORD_OKAY` is matched by `grep -F REVIEW_RECORD_OK`, so it is
+  redacted even though it is not a token. Over-redaction costs a diagnostic some fidelity;
+  under-redaction costs the invariant.
+- **The wrapper redacts its own three diagnostics**, which echo argv and paths before python runs.
+  They all exit non-zero, so `pack-health.sh` catches them on the exit check regardless, but the
+  invariant is what makes the namespace worth splitting. The rule now exists twice, in Python and in
+  `sed`; a test runs both over one table so neither drifts.
+- **`--help` deliberately names the tokens** and is left alone: it is a human request that prints no
+  outcome, and redacting it would leave the usage text unable to say what it documents.
+
+The substitution also runs inside `emit_outcome`, so the one line that prints a token sanitises its
+own payload. That changes no output today — every caller passes a constant `reason=` or an
+already-redacted path — and exists because the reviewer who found this defect predicted its return
+through exactly that door.
 
 Naming check. The measured result, not a characterisation of it:
 

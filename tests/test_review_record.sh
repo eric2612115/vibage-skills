@@ -2299,6 +2299,14 @@ echo "$LEAK_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE_FAIL reason=schema' \
   || fail "leak case must still reach the schema FAIL: $LEAK_OUT"
 echo "$LEAK_OUT" | grep -Fq 'REVIEW_RECORD_<redacted>' \
   || fail "leak case must show the redaction, proving the route was exercised: $LEAK_OUT"
+# A redaction that returns the marker for everything satisfies the assertions above
+# while destroying the diagnostics, so require the surrounding content to survive.
+# LEAK_ROOT contains no token, so it must come through untouched.
+LEAK_RESOLVED="$(python3 -c "from pathlib import Path; print(Path('$LEAK_ROOT').resolve())")"
+echo "$LEAK_OUT" | grep -Fq "review_record_pkg=$LEAK_RESOLVED/" \
+  || fail "redaction must keep the rest of the path: $LEAK_OUT"
+echo "$LEAK_OUT" | grep -Fq 'front matter line 2 not recognised:' \
+  || fail "redaction must keep the diagnostic itself: $LEAK_OUT"
 # Reverse direction: a production run must not emit a fixture literal either.
 REV_PKG="$LEAK_ROOT/REVIEW_RECORD_FIXTURE_PASS"
 mkdir -p "$REV_PKG"
@@ -2307,6 +2315,54 @@ REV_OUT="$(bash scripts/verify-review-record.sh "$REV_PKG" 2>&1)"
 set -e
 echo "$REV_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE' \
   && fail "production run must not emit a fixture literal: $REV_OUT"
+# The bare prefix, which is what a consumer separating the namespaces greps for.
+BARE_PKG="$LEAK_ROOT/REVIEW_RECORD_FIXTURE"
+mkdir -p "$BARE_PKG"
+set +e
+BARE_OUT="$(bash scripts/verify-review-record.sh "$BARE_PKG" 2>&1)"
+set -e
+echo "$BARE_OUT" | grep -Fq 'REVIEW_RECORD_FIXTURE' \
+  && fail "production run must not emit the bare fixture prefix either: $BARE_OUT"
+
+# The wrapper's own diagnostics echo argv and paths before python runs.
+set +e
+WRAP_FLAG="$(bash scripts/verify-review-record.sh --paths-file=REVIEW_RECORD_OK 2>&1)"
+WRAP_FLAG_EC=$?
+WRAP_DIR="$(bash scripts/verify-review-record.sh "$LEAK_ROOT/absent/REVIEW_RECORD_SKIP" 2>&1)"
+WRAP_DIR_EC=$?
+set -e
+[[ "$WRAP_FLAG_EC" == "2" ]] || fail "wrapper unknown flag must exit 2: got $WRAP_FLAG_EC"
+[[ "$WRAP_DIR_EC" == "1" ]] || fail "wrapper missing dir must exit 1: got $WRAP_DIR_EC"
+assert_no_production_token "$WRAP_FLAG" "wrapper unknown-flag diagnostic"
+assert_no_production_token "$WRAP_DIR" "wrapper not-a-directory diagnostic"
+echo "$WRAP_FLAG" | grep -Fq 'unknown flag --paths-file=' \
+  || fail "wrapper must still name the rejected flag: $WRAP_FLAG"
+echo "$WRAP_DIR" | grep -Fq "not a directory: $LEAK_ROOT/absent/" \
+  || fail "wrapper must still name the path: $WRAP_DIR"
+echo "$WRAP_DIR" | grep -Fq 'REVIEW_RECORD_<redacted>' \
+  || fail "wrapper path diagnostic must show the redaction: $WRAP_DIR"
+
+# The two implementations of the rule must agree, or one drifts silently.
+while IFS= read -r probe; do
+  py="$(python3 -c 'import sys; sys.path.insert(0, "scripts/lib"); from review_record import redact; print(redact(sys.argv[1]))' "$probe")"
+  sh="$(printf '%s\n' "$probe" | sed -E 's/REVIEW_RECORD_(FIXTURE(_(PASS|SKIP|FAIL))?|OK|SKIP|FAIL|PASS)/REVIEW_RECORD_<redacted>/g')"
+  [[ "$py" == "$sh" ]] \
+    || fail "redaction rule differs between library and wrapper for '$probe': py=$py sh=$sh"
+done <<'PROBES'
+REVIEW_RECORD_OK
+REVIEW_RECORD_SKIP
+REVIEW_RECORD_FAIL
+REVIEW_RECORD_PASS
+REVIEW_RECORD_FIXTURE
+REVIEW_RECORD_FIXTURE_PASS
+REVIEW_RECORD_FIXTURE_SKIP
+REVIEW_RECORD_FIXTURE_FAIL
+REVIEW_RECORD_OKAY
+REVIEW_RECORD_OK_FIXTURE
+/tmp/a/REVIEW_RECORD_OK/b REVIEW_RECORD_FAIL
+review_record_mode=none
+nothing to redact here
+PROBES
 rm -rf "$LEAK_ROOT"
 
 echo "INVOCATION_PROVENANCE_CASES_OK"

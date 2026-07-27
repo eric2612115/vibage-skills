@@ -606,7 +606,9 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     return errs
 
 
-_TOKEN_LITERAL = re.compile(r"REVIEW_RECORD_(?:FIXTURE_)?(?:OK|SKIP|FAIL|PASS)")
+_TOKEN_LITERAL = re.compile(
+    r"REVIEW_RECORD_(?:FIXTURE(?:_(?:PASS|SKIP|FAIL))?|OK|SKIP|FAIL|PASS)"
+)
 
 
 def redact(value: object) -> str:
@@ -617,6 +619,12 @@ def redact(value: object) -> str:
     inside any of them is indistinguishable from an outcome. Substituting keeps the
     namespace a property of this program's output rather than of its inputs. The
     replacement matches neither a bare grep nor the word-boundary form consumers use.
+
+    The bare `REVIEW_RECORD_FIXTURE` prefix is included: a consumer distinguishing the
+    two namespaces greps for it without a suffix. Substrings of a token are included
+    for the same reason — `REVIEW_RECORD_OKAY` is matched by `grep -F REVIEW_RECORD_OK`,
+    so leaving it intact would leave the route open. Over-redaction costs a diagnostic
+    some fidelity; under-redaction costs the invariant.
     """
     return _TOKEN_LITERAL.sub("REVIEW_RECORD_<redacted>", str(value))
 
@@ -629,7 +637,13 @@ def print_provenance(mode: str, pkg: Path, toplevel: str, git_dir: str) -> None:
 
 
 def emit_outcome(flagged: bool, kind: str, detail: str) -> int:
-    """Emit production or fixture token. kind is OK|SKIP|FAIL."""
+    """Emit production or fixture token. kind is OK|SKIP|FAIL.
+
+    `detail` is redacted here rather than at each call site. Today every caller passes
+    a constant `reason=` or an already-redacted path, so this changes no output; it is
+    here so that the one line which prints a token also sanitises its own payload. A
+    future caller that forgets is the shape that produced the defect this guards.
+    """
     if flagged:
         tok = {
             "OK": "REVIEW_RECORD_FIXTURE_PASS",
@@ -642,7 +656,7 @@ def emit_outcome(flagged: bool, kind: str, detail: str) -> int:
             "SKIP": "REVIEW_RECORD_SKIP",
             "FAIL": "REVIEW_RECORD_FAIL",
         }[kind]
-    print(f"{tok} {detail}")
+    print(f"{tok} {redact(detail)}")
     if kind == "FAIL":
         return 1
     return 0
