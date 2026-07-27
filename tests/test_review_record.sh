@@ -2223,7 +2223,11 @@ set +e
 MONO_OUT="$(bash scripts/verify-review-record.sh "$MONO_TMP/vendor/vibage-skills" 2>&1)"
 set -e
 echo "$MONO_OUT" | grep -Fq 'REVIEW_RECORD_SKIP reason=git_scope_mismatch' \
-  || fail "vendored root must report scope mismatch, not no_trigger_paths: $MONO_OUT"
+  || fail "vendored root must report scope mismatch: $MONO_OUT"
+# The negative half: no_trigger_paths is the inaccurate reason this row replaces,
+# and it is what the outer repo's path prefix would otherwise produce.
+echo "$MONO_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "vendored root must not report no_trigger_paths: $MONO_OUT"
 rm -rf "$MONO_TMP"
 echo "$SUBDIR_OUT" | grep -Fq 'REVIEW_RECORD_OK' && fail "subdir must not OK"
 echo "$SUBDIR_OUT" | grep -Fq 'reason=no_trigger_paths' && fail "subdir must not no_trigger_paths"
