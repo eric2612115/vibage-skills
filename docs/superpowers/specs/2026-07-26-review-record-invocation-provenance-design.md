@@ -11,7 +11,11 @@ cannot exclude. These carry into the Impl loop, where reviewers read this docume
 `scripts/lib/review_record.py`, so every line number here was re-derived against that branch.
 **Batch:** 2 of 3. Batch 1 (record-schema hardening) has landed on the branch. Batch 3 is
 enforcement: wiring the suite into CI, guarding `.github/workflows/tier0.yml`, `pack-health`'s
-treatment of `SKIP`, and the trigger set by capability — see the ranking in §5.
+treatment of `SKIP`, and the trigger set by capability — see the ranking in §5. Two inputs for it come
+from this batch's impl loop: the `FAIL` → `SKIP` downgrade in §4.2.2, which closes on the accepting
+side rather than here, and the fact that nothing tests `pack-health`'s deliberate choice not to reject
+`reason=git_scope_mismatch` — a choice round 4 of the plan loop shows is easy to "fix" and thereby
+break vendored installations.
 **Reading order:** §4 through §7 are the constraints an implementer or reviewer needs. §5 and §6 are
 the honest account of what this does not cover. §8 is the loop history — provenance for how the
 constraints were reached, not something to read first. An impl-loop reviewer asked for it to be moved
