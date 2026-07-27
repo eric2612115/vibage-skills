@@ -239,87 +239,245 @@ def compute_diff_id(pkg: Path, triggers: list[str]) -> str:
     return h.hexdigest()
 
 
+_TOP_LEVEL_KEYS = frozenset(
+    {
+        "diff_id",
+        "diff_base",
+        "subject_paths",
+        "loop",
+        "round",
+        "frozen",
+        "diversity",
+        "diversity_reason",
+        "reviewers",
+        "conclusion",
+        "blast_class",
+        "review_budget_n",
+        "min_reviewers",
+    }
+)
+_REVIEWER_KEYS = frozenset(
+    {
+        "id",
+        "lens",
+        "verdict",
+        "model",
+        "context",
+        "reviewer_selected_by",
+        "blocking",
+    }
+)
+_CONTAINER_KEYS = frozenset({"reviewers", "subject_paths"})
+_TOP_KEY_RE = re.compile(r"^([A-Za-z_][A-Za-z0-9_]*):(.*)$")
+_REVIEWER_FIELD_RE = re.compile(r"^    ([A-Za-z_][A-Za-z0-9_]*):(.*)$")
+_ID_TOKEN_RE = re.compile(r"^[A-Za-z0-9._-]+$")
+_REVIEWER_ENTRY_LOOSE_RE = re.compile(r"^\s*-\s*id:")
+# below U+0020 except tab; plus U+2028/U+2029 (non-raw so \u escapes apply)
+_CONTROL_CHAR_RE = re.compile("[\x00-\x08\x0a-\x1f\u2028\u2029]")
+
+
+def _strip_scalar_quotes(val: str) -> str:
+    return val.strip().strip("\"'")
+
+
+def _line_has_control_char(line: str) -> bool:
+    """True if line has a forbidden control character (tab allowed)."""
+    return _CONTROL_CHAR_RE.search(line) is not None
+
+
+def _split_doc_lines(text: str) -> list[str]:
+    """Split on \\n only; strip trailing \\r. Do not use str.splitlines()."""
+    return [ln[:-1] if ln.endswith("\r") else ln for ln in text.split("\n")]
+
+
+def _is_delimiter_line(line: str) -> bool:
+    return line.rstrip() == "---"
+
+
+def front_matter_region_bounds(text: str) -> tuple[int, int] | None:
+    """Return (start, end) indices of front-matter body lines, or None if absent/unterminated."""
+    lines = _split_doc_lines(text)
+    if not lines or not _is_delimiter_line(lines[0]):
+        return None
+    for i in range(1, len(lines)):
+        if _is_delimiter_line(lines[i]):
+            return 1, i
+    return None
+
+
+def reviewers_outside_front_matter(text: str) -> int:
+    """S5: whole-file loose id-entry count minus those inside the front-matter region."""
+    lines = _split_doc_lines(text)
+    bounds = front_matter_region_bounds(text)
+    total = sum(1 for ln in lines if _REVIEWER_ENTRY_LOOSE_RE.match(ln))
+    if bounds is None:
+        return total
+    start, end = bounds
+    inside = sum(
+        1 for ln in lines[start:end] if _REVIEWER_ENTRY_LOOSE_RE.match(ln)
+    )
+    return total - inside
+
+
 def parse_front_matter(text: str) -> dict:
-    if not text.startswith("---"):
+    lines = _split_doc_lines(text)
+    if not lines or not _is_delimiter_line(lines[0]):
         raise ValueError("missing YAML front matter")
-    parts = text.split("---", 2)
-    if len(parts) < 3:
+    close_idx = None
+    for i in range(1, len(lines)):
+        if _is_delimiter_line(lines[i]):
+            close_idx = i
+            break
+    if close_idx is None:
         raise ValueError("unterminated front matter")
-    body = parts[1]
-    data: dict = {"reviewers": []}
+
+    data: dict = {"reviewers": [], "_parser_errors": []}
+    errs: list[str] = data["_parser_errors"]
     cur_rev: dict | None = None
-    in_paths = False
-    in_blocking = False
     path_list: list[str] = []
-    for raw in body.splitlines():
-        line = raw.rstrip()
-        if not line.strip() or line.strip().startswith("#"):
-            continue
-        if line.startswith("  - id:") or line.startswith("  -id:"):
-            if cur_rev:
-                data["reviewers"].append(cur_rev)
-            cur_rev = {
-                "id": line.split(":", 1)[1].strip().strip("\"'"),
-                "blocking": [],
-            }
-            in_blocking = False
-            in_paths = False
-            continue
-        # Blocking list items: any indent whose strip is "- …" (4-space or 6-space YAML)
-        if cur_rev is not None and in_blocking and line.strip().startswith("- "):
-            cur_rev["blocking"].append(line.strip()[2:].strip().strip("\"'"))
-            continue
-        if cur_rev is not None and re.match(r"^    \w", line):
-            key, _, val = line.strip().partition(":")
-            key, val = key.strip(), val.strip().strip("\"'")
-            if key == "blocking":
-                cur_rev["blocking"] = []
-                if val in ("", "[]"):
-                    in_blocking = True
-                    continue
-                # Inline list: blocking: [a, b]
-                if val.startswith("[") and val.endswith("]"):
-                    inner = val[1:-1].strip()
-                    if inner:
-                        for part in inner.split(","):
-                            item = part.strip().strip("\"'")
-                            if item:
-                                cur_rev["blocking"].append(item)
-                    in_blocking = False
-                    continue
-                # Non-empty scalar must count as a blocking finding (not wiped to [])
-                cur_rev["blocking"].append(val)
-                in_blocking = False
-                continue
-            in_blocking = False
-            cur_rev[key] = val
-            continue
-        if not line.startswith(" ") and ":" in line:
-            if cur_rev:
-                data["reviewers"].append(cur_rev)
-                cur_rev = None
-            key, _, val = line.partition(":")
-            key, val = key.strip(), val.strip().strip("\"'")
-            if key == "subject_paths":
-                in_paths = True
-                path_list = []
-                data["subject_paths"] = path_list
-                continue
-            in_paths = False
-            if key == "reviewers":
-                continue
-            if val in ("true", "false"):
-                data[key] = val == "true"
-            elif val.isdigit():
-                data[key] = int(val)
+    recent_top: str | None = None
+    recent_rev_field: str | None = None
+    top_seen: set[str] = set()
+    rev_seen: set[str] = set()
+
+    def flush_rev() -> None:
+        nonlocal cur_rev, recent_rev_field, rev_seen
+        if cur_rev is not None:
+            data["reviewers"].append(cur_rev)
+            cur_rev = None
+        recent_rev_field = None
+        rev_seen = set()
+
+    def set_top_value(key: str, val: str) -> None:
+        if key == "frozen":
+            if val == "true":
+                data[key] = True
+            elif val == "false":
+                data[key] = False
             else:
                 data[key] = val
+                errs.append(f"frozen must be true or false, got '{val}'")
+            return
+        if val in ("true", "false"):
+            data[key] = val == "true"
+        elif val.isdigit():
+            data[key] = int(val)
+        else:
+            data[key] = val
+
+    def apply_blocking_value(rev: dict, val: str) -> None:
+        nonlocal recent_rev_field
+        rev["blocking"] = []
+        if val in ("", "[]"):
+            recent_rev_field = "blocking"
+            return
+        if val.startswith("[") and val.endswith("]"):
+            inner = val[1:-1].strip()
+            if inner:
+                for part in inner.split(","):
+                    item = _strip_scalar_quotes(part)
+                    if item:
+                        rev["blocking"].append(item)
+            recent_rev_field = "blocking"
+            return
+        rev["blocking"].append(val)
+        recent_rev_field = "blocking"
+
+    for idx in range(1, close_idx):
+        line = lines[idx]
+        n = idx + 1  # 1-based file line number
+
+        if _line_has_control_char(line):
+            errs.append(f"front matter line {n} contains a control character")
+            # keep scanning; do not stop
+            # fall through — may also be unrecognised
+
+        # Shape 1: blank
+        if line.strip() == "":
             continue
-        if in_paths and line.strip().startswith("- "):
-            path_list.append(line.strip()[2:].strip().strip("\"'"))
+        # Shape 2: comment
+        if line.lstrip().startswith("#"):
             continue
-    if cur_rev:
-        data["reviewers"].append(cur_rev)
+
+        # Shape 3: top-level key
+        m3 = _TOP_KEY_RE.match(line)
+        if m3 and not line[0].isspace():
+            key = m3.group(1)
+            raw_after = m3.group(2)
+            if key in _TOP_LEVEL_KEYS:
+                flush_rev()
+                recent_top = key
+                recent_rev_field = None
+                if key in top_seen:
+                    errs.append(f"duplicate key '{key}'")
+                    continue
+                top_seen.add(key)
+                if key in _CONTAINER_KEYS:
+                    if raw_after.strip() != "":
+                        errs.append(f"key '{key}' must have no inline value")
+                    if key == "subject_paths":
+                        path_list = []
+                        data["subject_paths"] = path_list
+                    # reviewers: container only; items via shape 5
+                    continue
+                val = _strip_scalar_quotes(raw_after)
+                set_top_value(key, val)
+                continue
+            # key shape but not whitelisted → unrecognised below
+
+        # Shape 5 before shape 4: reviewer entry start
+        if line.startswith("  - id:") or line.startswith("  -id:"):
+            flush_rev()
+            id_val = _strip_scalar_quotes(line.split(":", 1)[1])
+            cur_rev = {"id": id_val, "blocking": []}
+            rev_seen = set()
+            recent_rev_field = None
+            # recent_top unchanged (still under reviewers typically)
+            if not _ID_TOKEN_RE.match(id_val):
+                i = len(data["reviewers"])  # this entry's index once flushed
+                errs.append(
+                    f"reviewer[{i}] id must be a simple token, got '{id_val}'"
+                )
+            continue
+
+        # Shape 4: subject_paths item
+        if line.startswith("  - ") and recent_top == "subject_paths":
+            path_list.append(_strip_scalar_quotes(line[4:]))
+            continue
+
+        # Shape 6: reviewer field
+        m6 = _REVIEWER_FIELD_RE.match(line)
+        if m6 and cur_rev is not None:
+            key = m6.group(1)
+            raw_after = m6.group(2)
+            if key in _REVIEWER_KEYS:
+                if key in rev_seen:
+                    i = len(data["reviewers"])
+                    errs.append(f"reviewer[{i}] duplicate key '{key}'")
+                    continue
+                rev_seen.add(key)
+                val = _strip_scalar_quotes(raw_after)
+                if key == "blocking":
+                    # retain inline/scalar/empty handling; do not discard
+                    apply_blocking_value(cur_rev, val)
+                    continue
+                recent_rev_field = key
+                cur_rev[key] = val
+                continue
+            # not whitelisted → unrecognised below
+
+        # Shape 7: blocking item (payload after eight characters: "      - ")
+        if (
+            cur_rev is not None
+            and recent_rev_field == "blocking"
+            and line.startswith("      - ")
+        ):
+            cur_rev["blocking"].append(_strip_scalar_quotes(line[8:]))
+            continue
+
+        errs.append(f"front matter line {n} not recognised: {line}")
+
+    flush_rev()
     if "subject_paths" not in data:
         data["subject_paths"] = path_list
     return data
@@ -327,6 +485,7 @@ def parse_front_matter(text: str) -> dict:
 
 def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[str]:
     errs: list[str] = []
+    errs.extend(data.get("_parser_errors") or [])
     if data.get("diff_id") != expected_id:
         errs.append(f"diff_id mismatch record={data.get('diff_id')} expected={expected_id}")
     subjects = set(data.get("subject_paths") or [])
@@ -369,8 +528,21 @@ def validate_record(data: dict, triggers: list[str], expected_id: str) -> list[s
     if len(revs) < n:
         errs.append(f"need ≥{n} reviewers, got {len(revs)}")
     for i, r in enumerate(revs):
-        if (r.get("verdict") or "").strip().upper() == "FAIL":
-            errs.append(f"reviewer[{i}] verdict FAIL")
+        raw_verdict = r.get("verdict")
+        if raw_verdict is None or str(raw_verdict).strip() == "":
+            errs.append(f"reviewer[{i}] missing verdict")
+        else:
+            trimmed = str(raw_verdict).strip()
+            upper = trimmed.upper()
+            if upper == "FAIL":
+                errs.append(f"reviewer[{i}] verdict FAIL")
+            elif upper in ("PASS", "PASS_WITH_GAPS"):
+                pass
+            else:
+                errs.append(
+                    f"reviewer[{i}] verdict must be PASS|PASS_WITH_GAPS|FAIL, "
+                    f"got '{trimmed}'"
+                )
         if r.get("blocking"):
             errs.append(f"reviewer[{i}] blocking non-empty: {r.get('blocking')}")
         if not r.get("model"):
@@ -474,7 +646,8 @@ def main(argv: list[str]) -> int:
         return 1
 
     try:
-        data = parse_front_matter(rec_path.read_text(encoding="utf-8"))
+        record_text = rec_path.read_text(encoding="utf-8")
+        data = parse_front_matter(record_text)
     except Exception as e:
         print(f"FAIL: parse record: {e}", file=sys.stderr)
         print("REVIEW_RECORD_FAIL reason=parse")
@@ -482,6 +655,10 @@ def main(argv: list[str]) -> int:
 
     # G1: disclose after parse (visible even when schema later FAIL)
     print_selected_by_disclosure(data.get("reviewers") or [])
+    # S5: disclosure only — never fails the gate
+    outside = reviewers_outside_front_matter(record_text)
+    if outside > 0:
+        print(f"reviewers_outside_front_matter={outside}")
 
     if data.get("loop") == "plan":
         try:

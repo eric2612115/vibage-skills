@@ -49,7 +49,8 @@ Path: `docs/evidence/reviews/<diff_id>.md`
 
 `diff_id` = SHA-256 of sorted trigger paths + content digests of those files **excluding** `docs/evidence/reviews/**` (so writing the record cannot invalidate its own id).
 
-Required fields (YAML front matter):
+Required fields (YAML front matter). The opening and closing delimiters must each be an
+**unindented** line equal to `---` (trailing whitespace / CR allowed; leading whitespace is not).
 
 ```yaml
 ---
@@ -74,13 +75,18 @@ conclusion: "no blocking; frozen"
 ---
 ```
 
+`verdict` is **required** on every reviewer and must be exactly one of
+`PASS` | `PASS_WITH_GAPS` | `FAIL` (comparison is case-insensitive; other spellings such as
+`FAILED` are schema errors). `frozen` must be the literal `true` or `false` (case-sensitive;
+`True` / `yes` / `1` are schema errors); the pass predicate still requires `frozen: true`.
+
 Pass predicate (mechanical) — script-derived; see `references/review-budget.md`:
 
 - **Impl records (`loop: impl`):** `reviewers` length ≥ blast-class N (from trigger paths); ≥2 distinct non-empty reviewer `context` values (all classes).
 - **Plan records (`loop: plan`):** effective N = `max(3, blast_N)` so Plan-loop process ≥3 is not silently lowered; same context axis.
 - each reviewer has `model` and `reviewer_selected_by: owner|implementer|host_default` (per-reviewer required)
 - across reviewers: ≥2 distinct non-empty `context` values (`contexts_ok` is set-level — a reviewer may omit `context` if others already supply two distinct values)
-- no `verdict: FAIL`; every `blocking` list empty; `frozen: true`
+- each reviewer has a required `verdict` of `PASS` or `PASS_WITH_GAPS` (not merely “no `verdict: FAIL`”); every `blocking` list empty; `frozen: true`
 - trigger paths ⊆ `subject_paths`
 - `diversity: ok` means the context axis is satisfied — **not** “model families were diversified”
 - `diversity: waived` requires non-empty `diversity_reason`; does **not** lower N; does **not** skip the context requirement
@@ -96,6 +102,7 @@ Pass predicate (mechanical) — script-derived; see `references/review-budget.md
 - Insufficient git history → `REVIEW_RECORD_FAIL reason=no_git_base` (exit ≠ 0) — must not pass pack-health.
 - When triggers exist: stdout includes `blast_class=` and `review_budget_n=` (and `review_budget_n_effective=` for `loop: plan`).
 - After record parse: `reviewer_selected_by: owner=N implementer=N host_default=N`; all-`implementer` adds a highest-risk honesty line (disclosure only — does not FAIL). Writing `owner` silences that line; nothing verifies it (reader prompt, not proof).
+- When the file has more loose `-\s*id:` reviewer-entry lines than the front-matter region: `reviewers_outside_front_matter=N` (disclosure only — never FAILs; reader prompt, not a detector).
 - Qualified record → `REVIEW_RECORD_OK`
 - **Forbidden:** treat exit 0 as `REVIEW_RECORD_OK` (same class of bug as freshness).
 

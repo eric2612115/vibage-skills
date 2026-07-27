@@ -905,4 +905,904 @@ if echo "$LIVE" | grep -Fq 'reason=no_git_base'; then
   fail "full clone must not no_git_base"
 fi
 
+# --- Schema hardening (§5 cases 1–29); append-only — do not edit assertions above ---
+
+assert_schema_fail() {
+  local label="$1"
+  local needle="$2"
+  local out ec
+  set +e
+  out="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+  ec=$?
+  set -e
+  [[ "$ec" -ne 0 ]] || fail "$label: expected non-zero exit"
+  echo "$out" | grep -Fq 'REVIEW_RECORD_FAIL' || fail "$label: missing REVIEW_RECORD_FAIL"
+  echo "$out" | grep -Fq 'reason=schema' || fail "$label: expected reason=schema, got: $out"
+  echo "$out" | grep -Fq "$needle" || fail "$label: missing '$needle' in: $out"
+}
+
+# Case 1: every reviewer verdict: FAILED
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: FAILED
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: FAILED
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 1 FAILED spelling\"
+---
+"
+assert_schema_fail "case1" "got 'FAILED'"
+
+# Case 2: verdict key omitted
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 2 missing verdict\"
+---
+"
+assert_schema_fail "case2" "missing verdict"
+
+# Case 3: verdict: fail lower case → existing case-insensitive FAIL path
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: fail
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 3 lower-case fail\"
+---
+"
+assert_schema_fail "case3" "verdict FAIL"
+
+# Case 4: PASS_WITH_GAPS + empty blocking still OK
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS_WITH_GAPS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 4 PASS_WITH_GAPS policy unchanged\"
+---
+"
+C4_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
+echo "$C4_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "case4: PASS_WITH_GAPS must OK"
+
+# Case 5: --- mid-value after B's required fields; conclusion before reviewers; C FAIL
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+conclusion: \"case 5 conclusion before reviewers\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: \"cross-ref --- thread\"
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+  - id: C
+    lens: adversarial
+    verdict: FAIL
+    model: fixture-grok
+    context: sess-C
+    reviewer_selected_by: owner
+    blocking:
+      - gate truncation hide
+---
+"
+assert_schema_fail "case5" "verdict FAIL"
+
+# Case 6: indented --- between B and C; C must still be seen
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+    ---
+  - id: C
+    lens: adversarial
+    verdict: FAIL
+    model: fixture-grok
+    context: sess-C
+    reviewer_selected_by: owner
+    blocking:
+      - indented delimiter must not hide
+conclusion: \"case 6 indented delimiter\"
+---
+"
+assert_schema_fail "case6" "verdict FAIL"
+set +e
+C6_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+set -e
+echo "$C6_OUT" | grep -Fq 'not recognised' || fail "case6: indented --- must be not recognised"
+
+# Case 7: duplicate verdict FAIL then PASS
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: FAIL
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 7 duplicate verdict\"
+---
+"
+assert_schema_fail "case7" "duplicate key 'verdict'"
+
+# Case 8: duplicate blocking finding then []
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking:
+      - gate is broken
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 8 duplicate blocking\"
+---
+"
+assert_schema_fail "case8" "duplicate key 'blocking'"
+
+# Case 9: blocking at three-space indent
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+   blocking:
+      - three-space finding
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 9 three-space blocking\"
+---
+"
+assert_schema_fail "case9" "not recognised"
+
+# Case 10: Verdict: FAIL then verdict: PASS
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    Verdict: FAIL
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 10 case-variant key\"
+---
+"
+assert_schema_fail "case10" "not recognised"
+
+# Case 11: list item with colon before blocking key
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+      - id: dropped-finding
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 11 orphan list item\"
+---
+"
+assert_schema_fail "case11" "not recognised"
+
+# Case 12: form feed before --- inside front matter; FAIL reviewer after
+python3 - <<PY || fail "case12 write"
+from pathlib import Path
+aid = "$A_ID"
+path = Path("docs/evidence/reviews") / f"{aid}.md"
+body = f"""---
+diff_id: "{aid}"
+diff_base: "fixture"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: ""
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+\x0c---
+  - id: C
+    lens: adversarial
+    verdict: FAIL
+    model: fixture-grok
+    context: sess-C
+    reviewer_selected_by: owner
+    blocking:
+      - form-feed truncation
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: "case 12 form feed"
+---
+"""
+path.write_text(body, encoding="utf-8")
+print(path)
+PY
+CLEANUP_RECS+=("$ROOT/docs/evidence/reviews/${A_ID}.md")
+assert_schema_fail "case12" "control character"
+
+# Case 13: reviewer field note:
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    note: free text not allowed
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 13 note field\"
+---
+"
+assert_schema_fail "case13" "not recognised"
+
+# Case 14: min_reviewers declared — specific message retained
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+min_reviewers: 2
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 14 min_reviewers\"
+---
+"
+assert_schema_fail "case14" "min_reviewers must not be declared"
+
+# Case 15: body contains --- after front matter — still OK
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 15 body delimiter\"
+---
+Body may contain --- without truncating.
+"
+C15_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
+echo "$C15_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "case15: body --- must OK"
+
+# Case 16: CRLF line endings parse same as LF
+python3 - <<'PY' || fail "case16 CRLF parity"
+import sys
+sys.path.insert(0, "scripts/lib")
+from review_record import parse_front_matter
+
+lf = """---
+diff_id: "x"
+diff_base: "fixture"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: ""
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: m
+    context: a
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: e
+    verdict: PASS_WITH_GAPS
+    model: m
+    context: b
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: "crlf parity"
+---
+"""
+crlf = lf.replace("\n", "\r\n")
+d_lf = parse_front_matter(lf)
+d_crlf = parse_front_matter(crlf)
+assert [(r.get("id"), r.get("verdict")) for r in d_lf["reviewers"]] == [
+    ("A", "PASS"),
+    ("B", "PASS_WITH_GAPS"),
+]
+assert [(r.get("id"), r.get("verdict")) for r in d_crlf["reviewers"]] == [
+    ("A", "PASS"),
+    ("B", "PASS_WITH_GAPS"),
+]
+assert d_lf.get("_parser_errors") == []
+assert d_crlf.get("_parser_errors") == []
+print("CASE16_CRLF_OK")
+PY
+
+# Case 17: unterminated front matter — reason=parse unchanged
+python3 - <<PY || fail "case17 write"
+from pathlib import Path
+aid = "$A_ID"
+path = Path("docs/evidence/reviews") / f"{aid}.md"
+path.write_text(f"""---
+diff_id: "{aid}"
+diff_base: "fixture"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+frozen: true
+diversity: ok
+reviewers:
+  - id: A
+    verdict: PASS
+    model: m
+    context: a
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: "unterminated"
+""", encoding="utf-8")
+PY
+CLEANUP_RECS+=("$ROOT/docs/evidence/reviews/${A_ID}.md")
+set +e
+C17_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+C17_EC=$?
+set -e
+[[ "$C17_EC" -ne 0 ]] || fail "case17: expected fail"
+echo "$C17_OUT" | grep -Fq 'REVIEW_RECORD_FAIL' || fail "case17: FAIL token"
+echo "$C17_OUT" | grep -Fq 'reason=parse' || fail "case17: expected reason=parse"
+echo "$C17_OUT" | grep -Fq 'unterminated front matter' || fail "case17: unterminated message"
+
+# Case 18: - id: D at column zero after terminator → OK + S5 disclosure
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 18 outside reviewer\"
+---
+- id: D
+"
+C18_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT")"
+echo "$C18_OUT" | grep -Fq 'REVIEW_RECORD_OK' || fail "case18: must OK"
+echo "$C18_OUT" | grep -Fq 'reviewers_outside_front_matter=1' \
+  || fail "case18: expected reviewers_outside_front_matter=1 in: $C18_OUT"
+
+# Case 19: reviewers: inline flow with FAIL entry
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers: [{id: Z, verdict: FAIL, model: x, context: cz, reviewer_selected_by: owner, blocking: [gate broken]}]
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 19 inline reviewers\"
+---
+"
+assert_schema_fail "case19" "must have no inline value"
+
+# Case 20: duplicate top-level conclusion
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"first\"
+conclusion: \"second\"
+---
+"
+assert_schema_fail "case20" "duplicate key 'conclusion'"
+
+# Case 21: unrecognised line above FAIL reviewer — both errors
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  bogus_unrecognised: true
+  - id: C
+    lens: adversarial
+    verdict: FAIL
+    model: fixture-grok
+    context: sess-C
+    reviewer_selected_by: owner
+    blocking:
+      - must still be seen
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 21 continue past unrecognised\"
+---
+"
+set +e
+C21_OUT="$(bash scripts/verify-review-record.sh --paths-file="$FIX/a_paths.txt" --base=fixture "$ROOT" 2>&1)"
+C21_EC=$?
+set -e
+[[ "$C21_EC" -ne 0 ]] || fail "case21: expected fail"
+echo "$C21_OUT" | grep -Fq 'REVIEW_RECORD_FAIL' || fail "case21: FAIL token"
+echo "$C21_OUT" | grep -Fq 'reason=schema' || fail "case21: reason=schema"
+echo "$C21_OUT" | grep -Fq 'not recognised' || fail "case21: missing not recognised"
+echo "$C21_OUT" | grep -Fq 'verdict FAIL' || fail "case21: missing verdict FAIL (scan must continue)"
+
+# Case 22: subject_paths inline value
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths: [scripts/assert_gate.sh]
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 22 inline subject_paths\"
+---
+"
+assert_schema_fail "case22" "must have no inline value"
+
+# Case 23: id line swallows FAIL fields
+write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: Z, verdict: FAIL, model: x, context: cz, reviewer_selected_by: owner, blocking: [gate broken]
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case 23 id token\"
+---
+"
+assert_schema_fail "case23" "id must be a simple token"
+
+# Case 24: U+2028 before --- on same line
+python3 - <<PY || fail "case24 write"
+from pathlib import Path
+aid = "$A_ID"
+path = Path("docs/evidence/reviews") / f"{aid}.md"
+body = f"""---
+diff_id: "{aid}"
+diff_base: "fixture"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: true
+diversity: ok
+diversity_reason: ""
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+\u2028---
+  - id: C
+    lens: adversarial
+    verdict: FAIL
+    model: fixture-grok
+    context: sess-C
+    reviewer_selected_by: owner
+    blocking:
+      - u2028 truncation
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: "case 24 u2028"
+---
+"""
+path.write_text(body, encoding="utf-8")
+PY
+CLEANUP_RECS+=("$ROOT/docs/evidence/reviews/${A_ID}.md")
+assert_schema_fail "case24" "control character"
+
+# Cases 25–29: frozen literal rule (case-sensitive; no .lower())
+for frozen_val in False no yes 1 True; do
+  write_rec "$A_ID" "---
+diff_id: \"$A_ID\"
+diff_base: \"fixture\"
+subject_paths:
+  - scripts/assert_gate.sh
+loop: impl
+round: 1
+frozen: ${frozen_val}
+diversity: ok
+diversity_reason: \"\"
+reviewers:
+  - id: A
+    lens: scope
+    verdict: PASS
+    model: fixture-grok
+    context: sess-A
+    reviewer_selected_by: owner
+    blocking: []
+  - id: B
+    lens: evidence
+    verdict: PASS
+    model: fixture-grok
+    context: sess-B
+    reviewer_selected_by: owner
+    blocking: []
+conclusion: \"case frozen=${frozen_val}\"
+---
+"
+  assert_schema_fail "frozen=${frozen_val}" "frozen must be true or false"
+done
+
+echo "SCHEMA_HARDENING_CASES_OK"
+
 echo "REVIEW_RECORD_TEST_OK"
