@@ -7,9 +7,13 @@ Works with **Cursor**, **Claude Code**, and **Codex**.
 
 MIT · [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) · **0.9.1**
 
+**This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
+
 ```bash
 git clone https://github.com/eric2612115/vibage-skills.git
 ```
+
+Plugin manifests ship in-repo (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). Listing still needs host review.
 
 ---
 
@@ -36,9 +40,9 @@ It is a **problem-location layer**: decide *where* to dig, then dig only there.
 
 | Result | Plain meaning |
 |--------|----------------|
-| App list | Every child app folder indexed (not “read every file”) |
+| App list | Every child app folder indexed (`PILE_INDEX_OK` = shallow map, not “system understood”) |
 | Scan plan | “We’ll look in these places — OK?” |
-| Your OK | You confirm the hot path before deep dig |
+| Your OK | You confirm the hot path before deep dig (**CONFIRM**) |
 | Owner report | Short brief a human can read |
 | Engineer report | Paths + evidence for someone who will fix |
 
@@ -47,7 +51,11 @@ Typical story people care about: **messy multi-service tickets that used to take
 
 ---
 
-## Try it (3 steps)
+## Stranger start (parent folder only)
+
+## What you say
+
+**Try it — 3 steps:**
 
 1. Clone this repo (above).
 2. In Cursor / Claude / Codex, open the **parent** folder that contains your many apps — **not** one child repo alone.
@@ -60,7 +68,9 @@ You should not type bash. The agent runs install scripts.
 Then paste a ticket or describe the symptom. When the agent proposes a hot path, say OK (**CONFIRM**).  
 You get two reports. No sign-up links.
 
-More install paths (Claude plugin / Cursor plugin): [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md).
+More install paths: [`docs/install/`](docs/install/) · [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md).
+
+Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`
 
 ---
 
@@ -74,8 +84,6 @@ More install paths (Claude plugin / Cursor plugin): [`docs/install/MARKETPLACE.m
 
 It must **not** stop after install only, and must **not** dig before you confirm.
 
-Proof for agents: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md)
-
 ---
 
 ## Language
@@ -88,9 +96,9 @@ Owner chat may be any language. Product phrases the agent must recognize stay En
 ## Honesty
 
 - **No SaaS / no register CTA** in this pack.
-- Public GitHub clone ≠ Cursor/Claude store listing ≠ “officially launched product”.
-- Plugin manifests are in-repo — listing still needs host review ([`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md)).
+- Public GitHub clone ≠ marketplace listing ≠ SaaS.
 - Map / index ≠ full understanding ≠ dig finished.
+- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `PILE_INDEX_OK` ≠ “scan confirmed” ≠ “locate finished”.
 
 ---
 
@@ -109,6 +117,8 @@ Extend: [`docs/EXTENDING.md`](docs/EXTENDING.md)
 | Pile index | `scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` |
 | Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
 | Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
+
+### Operator commands (owner should not need these)
 
 ```bash
 bash /path/to/vibage-skills/scripts/install.sh
