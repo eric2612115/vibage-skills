@@ -1,108 +1,120 @@
 # Vibage
 
-**Find where a problem lives** across many messy / AI-built app folders — in plain language.
+**Find which service owns the bug — before the agent writes code.**
 
+For teams with **many repos / microservices / AI-generated folder piles**.  
 Works with **Cursor**, **Claude Code**, and **Codex**.
 
-**Public repo:** [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) (MIT) · package version **0.9.0**
+MIT · [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) · **0.9.1**
 
 ```bash
 git clone https://github.com/eric2612115/vibage-skills.git
 ```
 
-## Language
+---
 
-Package files (skills, adapters, scripts, tests, references) are **English**. Owner chat may be any language; agents still recognize the English product phrases (`Install Vibage`, `full-sweep`, scene-cover slogans) and the script tokens that gate them. Do not put Chinese product slogans back into the pack.
+## Who this is for
 
-## Stranger start (parent folder only)
+**Use Vibage if you:**
 
-1. Clone this repo (above).  
-2. In Cursor / Claude / Codex, open the **parent** folder that contains your many apps — **not** a single child repo.  
+- Have **multiple app folders / microservices** in one parent workspace
+- Waste hours (or days) asking “which repo is this bug in?”
+- Already use Cursor / Claude Code / Codex and want a **locate-first** workflow
+
+**Skip Vibage if you:**
+
+- Work in a **single clean repo**
+- Mainly want autocomplete / faster code writing
+- Need an on-call / logs / incident bot (that’s a different product)
+
+This is **not** another coding skill pack.  
+It is a **problem-location layer**: decide *where* to dig, then dig only there.
+
+---
+
+## What you get
+
+| Result | Plain meaning |
+|--------|----------------|
+| App list | Every child app folder indexed (not “read every file”) |
+| Scan plan | “We’ll look in these places — OK?” |
+| Your OK | You confirm the hot path before deep dig |
+| Owner report | Short brief a human can read |
+| Engineer report | Paths + evidence for someone who will fix |
+
+Typical story people care about: **messy multi-service tickets that used to take 1–2 days of wandering → often under an hour once the right service is found.**  
+(Your mileage varies. We are collecting more public before/after write-ups.)
+
+---
+
+## Try it (3 steps)
+
+1. Clone this repo (above).
+2. In Cursor / Claude / Codex, open the **parent** folder that contains your many apps — **not** one child repo alone.
 3. Say:
 
 > Install Vibage
 
-Or just describe the pain (“checkout is broken”) — the agent must still wire parent rules first if missing.
+You should not type bash. The agent runs install scripts.
 
-You should not type bash. The agent runs scripts.
+Then paste a ticket or describe the symptom. When the agent proposes a hot path, say OK (**CONFIRM**).  
+You get two reports. No sign-up links.
 
-## What you say (no typing commands)
-
-**First time — install continuum:**
-
-> Install Vibage
-
-The agent must: wire **parent** routers (`PROJECT_ENTRY_OK`) → create the hub checklist → graph floor / pile index (`GRAPH_FLOOR_OK`; `PILE_INDEX_OK` = wrapper) → matrix sweep (full-sweep only with `MATRIX_SWEEP_SUBSTANTIVE_OK`) → freshness (`FRESHNESS_OK` or WAIVED+DISCLOSED; exit 0 ≠ OK) → say the map is a nameplate (not “system understood”) → cost/deepen ask (ticket paste = skip deepen) → then ticket or symptom → orient → **CONFIRM** → locate.  
-It must **not** stop after install only, and must **not** dig yet.  
-Proof: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md) · `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`
-
-**Then — find the problem:**
-
-1. Stay in the parent folder chat.  
-2. Paste a ticket link and/or describe what hurts (empty ticket body is OK — say the symptom).  
-3. Confirm the hot path when asked (**CONFIRM** = your OK). You do **not** need to list every repo first — the map already indexed them.  
-4. Get two reports: one for you, one for engineers (with file paths). External systems (DB/logs) show up as gaps if not connected.  
-5. Agent offers preview or stop — no sign-up links.
-
-## What you get
-
-| You get | Plain meaning |
-|---------|----------------|
-| Parent routers | Chat keeps using Vibage next time (Cursor rule always on) |
-| App map draft | Every child app folder listed — not “read every file” |
-| Optional deepen | Costlier per-app write-ups after you say yes — still not dig-all |
-| Scan plan | “We’ll dig this hot path — OK?” |
-| Owner report | Short brief you can read |
-| Engineer report | Paths and evidence for a fixer |
-| Optional later | Fix helpers / architecture glance — only if you ask |
-
-## Checks (for agents / operators)
-
-| Check | Command / link | OK token |
-|-------|----------------|----------|
-| Install continuum | `tests/test_install_phrase_e2e.sh` | `INSTALL_PHRASE_E2E_OK` |
-| Pile index | `scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` |
-| Optional dimension-fill | `scripts/verify-dimension-fill.sh <parent>` (legacy `verify-map-deepen.sh` = migrate shim) | `DIMENSION_FILL_*` (`MAP_DEEPEN_OK` retired) |
-| Review record (guarded paths) | `scripts/verify-review-record.sh <pkg>` | `REVIEW_RECORD_OK` only from default resolution (∉ Tier-0; exit 0 ≠ OK; fixture runs use `REVIEW_RECORD_FIXTURE_*`) |
-| Plan-loop hygiene | `scripts/verify-plan-loop-hygiene.sh` | `PLAN_LOOP_HYGIENE_OK` (∉ Tier-0) |
-| Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
-| Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
-| Capability table | [`STATUS.md`](STATUS.md) | — |
-| Per IDE | [`docs/install/`](docs/install/) | — |
-| Plugin manifests | [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md) | `PLUGIN_MANIFESTS_OK` |
-| Maps (agents) | [`docs/maps/AI-FIRST.md`](docs/maps/AI-FIRST.md) | — |
-| Add a skill | [`docs/EXTENDING.md`](docs/EXTENDING.md) | — |
-
-**Honesty (do not conflate):**
-- **SaaS / sign-up** = blank (no register CTA in this pack).
-- **This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
-- Plugin manifests are on-tree (`.cursor-plugin/` · `.claude-plugin/`) — see [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md). **≠** store listing until you submit and pass review.
-- `PROJECT_ENTRY_OK` ≠ hub ready ≠ `GRAPH_FLOOR_OK` / `PILE_INDEX_OK` ≠ matrix full-sweep ≠ freshness ≠ `DIMENSION_FILL_OK` ≠ “scan confirmed” ≠ “locate finished”.
-- Pile-index / dimension-fill ≠ Architecture Pass; Graphify optional / fail-soft; Plan-L prettier ≠ nested deepen; `MAP_DEEPEN_OK` brand retired.
-- `REVIEW_RECORD_OK` ≠ review quality; `REVIEW_RECORD_SKIP` ≠ reviewed.
-- Cost talk stays local — no register / SaaS CTA.
+More install paths (Claude plugin / Cursor plugin): [`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md).
 
 ---
 
-## Deeper (agents)
+## What “Install Vibage” does (owner language)
 
-- Spec: `docs/superpowers/specs/2026-07-23-vibage-v2-superpowers-grade-design.md`  
-- C′ design: `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md`
-- Plans index (SHIPPED / historical — do not treat as current Build): [`docs/superpowers/plans/README.md`](docs/superpowers/plans/README.md)
-- Pre-C′ plans: removed from tree (git history only; do not load unless archaeology)
-- Routing scope: [`references/routing-scope.md`](references/routing-scope.md)
-- Looping review + review budget: [`references/looping-review.md`](references/looping-review.md) · [`references/review-budget.md`](references/review-budget.md)
-- Hard stops: [`references/hard-stops.md`](references/hard-stops.md)
-- Optional paste: [`prompts/NEW-CHAT.md`](prompts/NEW-CHAT.md)
-- GitHub + CI: `https://github.com/eric2612115/vibage-skills`
+1. Wires parent chat rules so the next session still uses Vibage  
+2. Creates a small checklist folder under `docs/vibage/`  
+3. Indexes child app folders (a nameplate map — **not** “we understand your whole system”)  
+4. Asks whether you want a costlier deepen pass (pasting a ticket usually means skip)  
+5. Drafts a scan plan → waits for your OK → then locates
 
-### Operator commands (owner should not need these)
+It must **not** stop after install only, and must **not** dig before you confirm.
+
+Proof for agents: [`prompts/SAY-INSTALL-VIBAGE.md`](prompts/SAY-INSTALL-VIBAGE.md)
+
+---
+
+## Language
+
+Package files (skills, adapters, scripts, tests, references) are **English**.  
+Owner chat may be any language. Product phrases the agent must recognize stay English (`Install Vibage`, etc.).
+
+---
+
+## Honesty
+
+- **No SaaS / no register CTA** in this pack.
+- Public GitHub clone ≠ Cursor/Claude store listing ≠ “officially launched product”.
+- Plugin manifests are in-repo — listing still needs host review ([`docs/install/MARKETPLACE.md`](docs/install/MARKETPLACE.md)).
+- Map / index ≠ full understanding ≠ dig finished.
+
+---
+
+## For agents / operators
+
+Capability table: [`STATUS.md`](STATUS.md)  
+Per-IDE install: [`docs/install/`](docs/install/)  
+Routing scope: [`references/routing-scope.md`](references/routing-scope.md)  
+Hard stops: [`references/hard-stops.md`](references/hard-stops.md)  
+Maps for agents: [`docs/maps/AI-FIRST.md`](docs/maps/AI-FIRST.md)  
+Extend: [`docs/EXTENDING.md`](docs/EXTENDING.md)
+
+| Check | Command | OK token |
+|-------|---------|----------|
+| Install continuum | `tests/test_install_phrase_e2e.sh` | `INSTALL_PHRASE_E2E_OK` |
+| Pile index | `scripts/pile-index.sh <parent>` | `PILE_INDEX_OK` |
+| Pack health | `scripts/pack-health.sh <parent>` | `PACK_HEALTH_OK` |
+| Ship gate | `scripts/test-tier0.sh` | `TIER0_OK` |
 
 ```bash
 bash /path/to/vibage-skills/scripts/install.sh
 bash /path/to/vibage-skills/scripts/install.sh --with-project-rule=/path/to/parent
 bash /path/to/vibage-skills/scripts/verify-project-entry.sh /path/to/parent
-# PROJECT_ENTRY_OK
+# expect: PROJECT_ENTRY_OK
 ```
 
 ### License
