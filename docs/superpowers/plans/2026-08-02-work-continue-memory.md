@@ -1,16 +1,16 @@
 # Work Continue Memory Implementation Plan
 
-> **For agentic workers:** TDD for every gate. Prefer mother-agent for thin narrative edits; cold subagents for review only. Spec: `docs/superpowers/specs/2026-08-02-work-continue-memory-design.md`. Branch: `feat/work-continue-memory` only until ship. Open plan todos are **not** main SSOT.
+> **For agentic workers:** TDD for every gate. Prefer mother-agent for thin narrative edits; cold subagents for review only. Spec: `docs/superpowers/specs/2026-08-02-work-continue-memory-design.md`. Branch: `feat/work-continue-memory` only until ship.
 
-**Goal:** Post-locate hub `WORK_CONTINUE.md` + verify gate so locate DONE cannot false-green; resume reads contract, skips continuum dig, still discloses freshness/matrix.
+**Goal:** Post-locate live `WORK_CONTINUE.md` + strict verify so locate DONE cannot false-green; resume reads contract, skips continuum dig, still discloses freshness/matrix.
 
-**Architecture:** Template + install seed + verify script + locate D1 finishing + routing/adapters/hard-stops + phrase tests outside Tier-0. No child PROGRESS (Deferred).
+**Architecture:** Seed template (verify FAIL) + live contract (verify OK) + D1 skills + routing/adapters + phrase tests. No child PROGRESS. Verify ∉ Tier-0 / pack-health / `assert_gate`.
 
-**Tech Stack:** Markdown, bash verify/tests, existing skill/adapter surfaces.
+**Tech Stack:** Markdown, bash, existing skill/adapter surfaces.
 
-**Owner locks:** A=no child PROGRESS · B=4 adapters · C=verify script · D1=block DONE · E=freshness/matrix disclose + short-circuit continuum dig.
+**Owner locks:** A=no PROGRESS · B=4 adapters · C=verify · D1=block DONE · E=freshness/matrix + short-circuit continuum dig.
 
-**Process:** Plan-loop reviews recorded outside this body. Cursor Plan UI is not authoritative.
+**Process:** Plan-loop outside this body. Cursor Plan UI not authoritative.
 
 ---
 
@@ -18,38 +18,35 @@
 
 | Path | Responsibility |
 |------|----------------|
-| `references/hub/WORK_CONTINUE.md` | Template + MUST-NOT + field docs + path resolution |
-| `scripts/install.sh` | `init_hub` seeds WORK_CONTINUE |
-| `scripts/verify-work-continue.sh` | Light deliverable lint → `WORK_CONTINUE_VERIFY_OK` |
-| `skills/vibage-issue-locate/SKILL.md` | D1 order; resume; write+verify before DONE |
-| `skills/using-vibage/SKILL.md` | Finishing + routing resume (E) + S08 carve-out |
-| `references/routing-scope.md` | Continue carve-out + gold example |
-| `references/hard-stops.md` | Anti pretend-no-memory; anti side-quest without bookmark; D1 |
+| `references/hub/WORK_CONTINUE.md` | Seed template with placeholders; MUST-NOT; path rules |
+| `scripts/install.sh` | `init_hub` seeds WORK_CONTINUE (verify must FAIL on seed) |
+| `scripts/verify-work-continue.sh` | Strict live lint → `WORK_CONTINUE_VERIFY_OK` (≠ locate DONE) |
+| `skills/vibage-issue-locate/SKILL.md` | D1 order (+ legacy symlink target) |
+| `skills/using-vibage/SKILL.md` | Finishing + routing resume (E) |
+| `references/routing-scope.md` | Continue carve-out |
+| `references/hard-stops.md` | D1 + bookmark + no fabricate |
 | `references/scenario-matrix.md` | S12 resume priority |
-| 4 thin adapters | One-line WORK_CONTINUE pointer |
-| `tests/test_work_continue_memory.sh` | Phrase/fixture → `WORK_CONTINUE_FIXTURE_OK` |
-| `tests/fixtures/work_continue/*` | ok / missing field / blocked path samples |
-
-**Deferred (not in tasks):** `PROGRESS.child.md`, sessionStart continue dump, migrate script, Tier-0 wire.
+| 4 thin adapters | One-line `WORK_CONTINUE` pointer |
+| `tests/test_work_continue_memory.sh` | → `WORK_CONTINUE_FIXTURE_OK` |
+| `tests/fixtures/work_continue/*` | ok, missing_work_root, phase_blocked, empty_forbidden, missing_dual_reports, seed_placeholders |
+| `tests/test_install_manifest.sh` | Assert init-hub seeds WORK_CONTINUE |
 
 ---
 
 ### Task 1: Template + fixtures + failing phrase test
 
 **Files:**
-- Create: `references/hub/WORK_CONTINUE.md`
-- Create: `tests/fixtures/work_continue/ok.md`
-- Create: `tests/fixtures/work_continue/missing_work_root.md`
+- Create: `references/hub/WORK_CONTINUE.md` (seed: `FILL_AFTER_LOCATE` + `phase: blocked`)
+- Create: `tests/fixtures/work_continue/{ok,missing_work_root,phase_blocked,empty_forbidden,missing_dual_reports,seed_placeholders}.md`
 - Create: `tests/test_work_continue_memory.sh`
 
 - [ ] **Step 1: Write failing test**
 
-Require template headings: `work_root`, `run_id`, `dual_report_uris`, `inherited_finding_ids`, `next_step`, `phase`, `side_quest`, `forbidden`, `updated_at`.  
-Require MUST-NOT / path-resolution phrases.  
-`check_required_fields file` → ok.md pass; missing_work_root.md fail with `FAIL:`.  
-Success echo: `WORK_CONTINUE_FIXTURE_OK`. Comment: phrase gate ≠ Proven-green.
+Headings required: `work_root`, `run_id`, `dual_report_uris`, `inherited_finding_ids`, `next_step`, `phase`, `side_quest`, `forbidden`, `updated_at`.  
+Template must contain `FILL_AFTER_LOCATE` and MUST-NOT / hub-relative path text.  
+`fail()` prints `FAIL: …`; success ends with `WORK_CONTINUE_FIXTURE_OK`. Comment: ≠ Proven-green ≠ locate DONE.
 
-- [ ] **Step 2: Run — expect FAIL** (`exit != 0`, stdout contains `FAIL:`)
+- [ ] **Step 2: Run — expect FAIL** (`exit != 0`, `FAIL:`)
 
 ```bash
 bash tests/test_work_continue_memory.sh
@@ -59,46 +56,76 @@ bash tests/test_work_continue_memory.sh
 
 - [ ] **Step 4: Run — expect PASS** (`WORK_CONTINUE_FIXTURE_OK`)
 
-- [ ] **Step 5: Commit** `test+docs(hub): WORK_CONTINUE template and fixture gate`
+- [ ] **Step 5: Commit** `test+docs(hub): WORK_CONTINUE seed template and fixtures`
 
 ---
 
-### Task 2: verify script + install seed (C)
+### Task 2: Strict verify + install seed (C)
 
 **Files:**
 - Create: `scripts/verify-work-continue.sh`
-- Modify: `scripts/install.sh` (`init_hub` copy WORK_CONTINUE)
+- Modify: `scripts/install.sh`
 - Modify: `tests/test_work_continue_memory.sh`
-- Modify: init-hub / install manifest test if present (`tests/test_install_manifest.sh` or equivalent — grep first)
+- Modify: `tests/test_install_manifest.sh`
 
-- [ ] **Step 1: Failing tests** — verify rejects missing_work_root; accepts ok when paths exist or phase blocked; install/init-hub must produce hub file; success tokens `WORK_CONTINUE_VERIFY_OK` / fixture OK
+- [ ] **Step 1: Failing tests**
+
+Verify on fixtures (exact tokens):
+
+| Fixture | Expected |
+|---------|----------|
+| ok (+ temp dual report files + existing work_root dir) | exit 0, `WORK_CONTINUE_VERIFY_OK` |
+| missing_work_root | exit ≠ 0, `FAIL:` |
+| phase_blocked | exit ≠ 0, `FAIL:` |
+| empty_forbidden | exit ≠ 0, `FAIL:` |
+| missing_dual_reports | exit ≠ 0, `FAIL:` |
+| seed_placeholders / package template | exit ≠ 0, `FAIL:` |
+
+Install: after `init_hub` on temp parent, hub has `WORK_CONTINUE.md` **and** verify on that hub **FAILS**.  
+Assert `verify-work-continue.sh` string **absent** from `scripts/assert_gate.sh`, `scripts/test-tier0.sh`, `scripts/pack-health.sh`.
 
 - [ ] **Step 2: Run — expect FAIL**
+
+```bash
+bash tests/test_work_continue_memory.sh
+```
 
 - [ ] **Step 3: Implement verify + install copy**
 
 - [ ] **Step 4: Run — expect PASS**
 
-- [ ] **Step 5: Commit** `feat(verify): WORK_CONTINUE lint and init-hub seed`
+```bash
+bash tests/test_work_continue_memory.sh   # WORK_CONTINUE_FIXTURE_OK
+bash tests/test_install_manifest.sh       # existing OK token(s) still pass
+```
+
+- [ ] **Step 5: Commit** `feat(verify): strict WORK_CONTINUE lint; seed fails verify`
 
 ---
 
-### Task 3: Locate D1 + using-vibage finishing/resume
+### Task 3: Locate D1 + using-vibage (+ exception file)
 
 **Files:**
-- Modify: `skills/vibage-issue-locate/SKILL.md`
-- Modify: `skills/using-vibage/SKILL.md` (Finishing + Routing + session-start carve-out)
+- Modify: `skills/vibage-issue-locate/SKILL.md` (note: legacy `vibage-locate` install symlink → this SKILL)
+- Modify: `skills/using-vibage/SKILL.md`
 - Modify: `references/scenario-matrix.md` (S12)
 - Modify: `tests/test_work_continue_memory.sh`
-- Smoke only: `tests/test_session_hooks.sh` (do **not** extend hook to field-level WORK_CONTINUE)
+- Smoke: `tests/test_session_hooks.sh` (no hook field dump)
 
-- [ ] **Step 1: Failing phrase asserts** — D1 order; `verify-work-continue`; cannot claim DONE without verify; resume read-before-edit; E freshness/matrix still required
+- [ ] **Step 1: Failing phrase asserts**
+
+Must appear: dual reports → write → `verify-work-continue` → DONE; `WORK_CONTINUE_VERIFY_OK` ≠ locate DONE; `WORK_CONTINUE_EXCEPTION.md` fields; E requires `FRESHNESS_OK` or (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`) + matrix disclose.
 
 - [ ] **Step 2: Run — expect FAIL**
 
 - [ ] **Step 3: Minimal skill + S12 edits**
 
-- [ ] **Step 4: Run** `test_work_continue_memory.sh` + `test_session_hooks.sh` — expect PASS / no regress
+- [ ] **Step 4: Run**
+
+```bash
+bash tests/test_work_continue_memory.sh
+bash tests/test_session_hooks.sh
+```
 
 - [ ] **Step 5: Commit** `feat(skills): D1 WORK_CONTINUE blocks locate DONE`
 
@@ -113,42 +140,63 @@ bash tests/test_work_continue_memory.sh
 - Modify: `adapters/claude/CLAUDE.vibage.md`
 - Modify: `adapters/shared/AGENTS.vibage.md`
 - Modify: `adapters/codex/AGENTS.vibage.md`
-- Modify: `tests/test_work_continue_memory.sh` (**required** grep on 4 adapters)
-- Optionally extend: `tests/test_entry_docs_sync.sh` if needed for sync
+- Modify: `tests/test_work_continue_memory.sh` (required grep ×4)
 
-- [ ] **Step 1: Failing asserts** — continue carve-out; short-circuit continuum dig; freshness/matrix disclose; hard-stops D1 + side_quest bookmark; each adapter mentions `WORK_CONTINUE`
+- [ ] **Step 1: Failing asserts** — carve-out; short-circuit continuum dig; freshness/matrix; hard-stops; each adapter `WORK_CONTINUE`
 
 - [ ] **Step 2: Run — expect FAIL**
 
-- [ ] **Step 3: Prose edits** (one standard sentence for adapters)
+- [ ] **Step 3: Prose edits**
 
-- [ ] **Step 4: Run** fixture test + `test_entry_docs_sync.sh`
+- [ ] **Step 4: Run**
+
+```bash
+bash tests/test_work_continue_memory.sh
+bash tests/test_entry_docs_sync.sh
+```
 
 - [ ] **Step 5: Commit** `feat(routing): resume WORK_CONTINUE with freshness disclose`
 
 ---
 
-### Task 5: Firewall
+### Task 5: Firewall (separate commands)
 
 **Files:**
-- Modify: `tests/test_work_continue_memory.sh` (assert not in `scripts/test-tier0.sh` / pack-health)
+- Modify: `tests/test_work_continue_memory.sh` (negative greps: not referenced from tier0 / pack-health / assert_gate)
 
-- [ ] **Step 1–2:** Assert firewall; run `bash scripts/test-tier0.sh` → `TIER0_OK` + `WORK_CONTINUE_FIXTURE_OK`
+- [ ] **Step 1: Add failing firewall asserts** (if not already from Task 2)
 
-- [ ] **Step 3: Commit** if needed `test(work-continue): keep gates outside Tier-0`
+- [ ] **Step 2: Run RED then GREEN for fixture test only**
+
+```bash
+bash tests/test_work_continue_memory.sh
+# expect: WORK_CONTINUE_FIXTURE_OK
+```
+
+- [ ] **Step 3: Separate Tier-0 smoke (must NOT print WORK_CONTINUE_FIXTURE_OK)**
+
+```bash
+bash scripts/test-tier0.sh
+# expect: TIER0_OK
+# expect: stdout does NOT contain WORK_CONTINUE_FIXTURE_OK
+```
+
+- [ ] **Step 4: Commit** if needed `test(work-continue): firewall outside Tier-0 and assert_gate`
 
 ---
 
-## Deferred (wave 2+)
+## Deferred (wave 2+) — mirrors spec §7
 
-- Child PROGRESS template + tests (owner lock A)  
-- sessionStart continue summary  
-- Hub migrate script  
-- Richer verify schema  
+1. Child `PROGRESS.md` / `.vibage/progress.md` + must-not-override-hub tests  
+2. Richer verify / stale finding lint  
+3. sessionStart continue summary  
+4. Ralph / stop-hook grind consuming this contract  
+5. Hub migrate script for pre-existing parents  
 
 ## Done when
 
-- All tasks checked; `WORK_CONTINUE_FIXTURE_OK` + `WORK_CONTINUE_VERIFY_OK` + `TIER0_OK`  
-- Owner resume works without pile-index; DONE blocked without verify (D1)  
-- Impl narrative changes have looping-review records (outside this plan)  
-- **Not** claimed: Proven-green / full-sweep / system-understood  
+- Tasks 1–5 checked  
+- Separately: `WORK_CONTINUE_FIXTURE_OK` from `test_work_continue_memory.sh`; `TIER0_OK` from `test-tier0.sh` (no work-continue token from tier0)  
+- Fresh seed fails verify; live ok fixture passes verify  
+- D1 + exception file documented; legacy = symlink only  
+- **Not** claimed: Proven-green / full-sweep / system-understood / locate DONE from verify token alone  
