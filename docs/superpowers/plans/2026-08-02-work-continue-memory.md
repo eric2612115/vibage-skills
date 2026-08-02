@@ -10,7 +10,7 @@
 
 **Owner locks:** A=no PROGRESS · B=4 adapters · C=verify · D1=block DONE · E=freshness/matrix + short-circuit continuum dig.
 
-**Process:** Plan-loop outside this body. Cursor Plan UI not authoritative.
+**Process:** Plan-loop **frozen** at `aa08681` (`docs/evidence/reviews/c84e60954efbbbad2d10b23ad5d01224116b25a8a40e331316fa85cc1fad6f87.md`). Cursor Plan UI not authoritative.
 
 ---
 
