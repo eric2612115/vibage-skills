@@ -28,7 +28,7 @@
 | `references/scenario-matrix.md` | S12 resume priority |
 | 4 thin adapters | One-line `WORK_CONTINUE` pointer |
 | `tests/test_work_continue_memory.sh` | → `WORK_CONTINUE_FIXTURE_OK` |
-| `tests/fixtures/work_continue/*` | ok, missing_work_root, phase_blocked, empty_forbidden, missing_dual_reports, seed_placeholders |
+| `tests/fixtures/work_continue/*` | ok, missing_work_root, phase_blocked, empty_forbidden, missing_dual_reports, seed_placeholders, empty_inherited, tbd_next_step |
 | `tests/test_install_manifest.sh` | Assert init-hub seeds WORK_CONTINUE |
 
 ---
@@ -37,7 +37,7 @@
 
 **Files:**
 - Create: `references/hub/WORK_CONTINUE.md` (seed: `FILL_AFTER_LOCATE` + `phase: blocked`)
-- Create: `tests/fixtures/work_continue/{ok,missing_work_root,phase_blocked,empty_forbidden,missing_dual_reports,seed_placeholders}.md`
+- Create: `tests/fixtures/work_continue/{ok,missing_work_root,phase_blocked,empty_forbidden,missing_dual_reports,seed_placeholders,empty_inherited,tbd_next_step}.md`
 - Create: `tests/test_work_continue_memory.sh`
 
 - [ ] **Step 1: Write failing test**
@@ -80,6 +80,10 @@ Verify on fixtures (exact tokens):
 | empty_forbidden | exit ≠ 0, `FAIL:` |
 | missing_dual_reports | exit ≠ 0, `FAIL:` |
 | seed_placeholders / package template | exit ≠ 0, `FAIL:` |
+| empty_inherited | exit ≠ 0, `FAIL:` |
+| tbd_next_step | exit ≠ 0, `FAIL:` |
+
+Verify must enforce: `inherited_finding_ids` ≥1 pipe-triple line; reject `TBD` / `TODO_*` in `next_step`/`run_id`/finding lines; `run_id` non-empty (spec §6).
 
 Install: after `init_hub` on temp parent, hub has `WORK_CONTINUE.md` **and** verify on that hub **FAILS**.  
 Assert `verify-work-continue.sh` string **absent** from `scripts/assert_gate.sh`, `scripts/test-tier0.sh`, `scripts/pack-health.sh`.
@@ -112,13 +116,15 @@ bash tests/test_install_manifest.sh       # existing OK token(s) still pass
 - Modify: `tests/test_work_continue_memory.sh`
 - Smoke: `tests/test_session_hooks.sh` (no hook field dump)
 
-- [ ] **Step 1: Failing phrase asserts**
+- [ ] **Step 1: Failing phrase asserts (add + retire)**
 
-Must appear: dual reports → write → `verify-work-continue` → DONE; `WORK_CONTINUE_VERIFY_OK` ≠ locate DONE; `WORK_CONTINUE_EXCEPTION.md` fields; E requires `FRESHNESS_OK` or (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`) + matrix disclose.
+**Must appear:** dual → write → `verify-work-continue` → plain `locate DONE`; `WORK_CONTINUE_VERIFY_OK` ≠ locate DONE; exception only via `locate DONE (WORK_CONTINUE_EXCEPTION)`; E freshness tokens + matrix disclose.
+
+**Must retire (tests fail if still present as sole success auth):** in `vibage-issue-locate` / `using-vibage`, wording that authorizes finishing or DONE from dual reports / `phase: done` **alone** (e.g. “After dual reports exist / phase `done`” without verify). Replace those sentences; do not leave dual-track auth.
 
 - [ ] **Step 2: Run — expect FAIL**
 
-- [ ] **Step 3: Minimal skill + S12 edits**
+- [ ] **Step 3: Edit skills + S12 — add D1 order and delete/replace sole dual⇒DONE auth**
 
 - [ ] **Step 4: Run**
 
@@ -198,5 +204,6 @@ bash scripts/test-tier0.sh
 - Tasks 1–5 checked  
 - Separately: `WORK_CONTINUE_FIXTURE_OK` from `test_work_continue_memory.sh`; `TIER0_OK` from `test-tier0.sh` (no work-continue token from tier0)  
 - Fresh seed fails verify; live ok fixture passes verify  
-- D1 + exception file documented; legacy = symlink only  
+- Plain `locate DONE` only on verified path; exception uses exact `locate DONE (WORK_CONTINUE_EXCEPTION)`  
+- Sole dual-reports⇒DONE auth removed from skills  
 - **Not** claimed: Proven-green / full-sweep / system-understood / locate DONE from verify token alone  

@@ -1,7 +1,7 @@
 # Work Continue Memory — Design
 
 **Date:** 2026-08-02  
-**Status:** owner-locked; plan-loop round 2 patches applied (feat branch only)  
+**Status:** owner-locked; plan-loop round 3 D1 blockers patched (feat branch only)  
 **Owner goal:** After multi-repo dig, keep working in one app (optional brief side quest) with file-backed resume. Chat is not SSOT.
 
 ## Owner locks (2026-08-02)
@@ -80,18 +80,25 @@ Verify success token: **`WORK_CONTINUE_VERIFY_OK`** (≠ Proven-green / On-tree 
 
 ### 5.1 Locate DONE = D1
 
-Hard order (skills + tests phrase-gate):
+**Default path (only path that may say plain `locate DONE`):**
 
 1. Dual report files exist  
-2. Write/update live `WORK_CONTINUE.md` (no `TODO_*` placeholders)  
+2. Write/update live `WORK_CONTINUE.md` (no placeholders)  
 3. `bash scripts/verify-work-continue.sh <hub_parent>` → `WORK_CONTINUE_VERIFY_OK`  
-4. **Then** may claim locate DONE / offer finishing options  
+4. **Then** may claim `locate DONE` / offer finishing options  
 
-`WORK_CONTINUE_VERIFY_OK` alone ≠ locate DONE. Dual reports alone ≠ DONE.
+`WORK_CONTINUE_VERIFY_OK` alone ≠ locate DONE. Dual reports alone ≠ DONE.  
+`phase: done` in RunEnvelope / STATUS **without** step 3 **≠** locate DONE.
 
-**Owner exception (only escape):** file `docs/vibage/WORK_CONTINUE_EXCEPTION.md` with fields `owner_quote`, `reason`, `run_id`, `updated_at`. Without that file, no DONE-then-backfill. Exception path is disclosed in chat; still not Proven-green.
+**Must retire (skills + tests):** any prose that currently authorizes success/finishing from “dual reports exist” or “phase `done`” **alone**. Replace with the order above. Leaving both old and new wording = plan fail.
 
-**Legacy:** install may symlink `vibage-locate` → `vibage-issue-locate`; D1 lives in `vibage-issue-locate/SKILL.md` only (no separate legacy body to desync).
+**Owner exception (narrow escape — not the verified path):**  
+File `docs/vibage/WORK_CONTINUE_EXCEPTION.md` with `owner_quote`, `reason`, `run_id`, `updated_at`.  
+If present, agent may end the dig session **only** by saying exactly:  
+`locate DONE (WORK_CONTINUE_EXCEPTION)` — **never** plain `locate DONE`, **never** `WORK_CONTINUE_VERIFY_OK`, **never** “verified continue”.  
+Still ≠ Proven-green. Without that file → no DONE-then-backfill.
+
+**Legacy:** install may symlink `vibage-locate` → `vibage-issue-locate`; D1 lives in `vibage-issue-locate/SKILL.md` only.
 
 ### 5.2 Resume / routing (E)
 
@@ -131,8 +138,10 @@ Continue ≠ system-understood ≠ full-sweep ≠ dig authorization ≠ CONFIRM.
 
 - File exists  
 - All required headings present  
-- No `FILL_AFTER_LOCATE` / `TODO_SET_AFTER_LOCATE` / `REPLACE_ME` placeholders in required value lines  
-- `next_step` non-empty  
+- `run_id` non-empty  
+- No placeholders in required value lines: `FILL_AFTER_LOCATE`, `TODO_SET_AFTER_LOCATE`, `REPLACE_ME`, `TODO_*`, `TBD` (case-sensitive token `TBD` as whole value or substring in `next_step` / `run_id` / finding lines)  
+- `next_step` non-empty after trim  
+- `inherited_finding_ids`: ≥1 line matching `*| *| *` (three pipe-separated fields); no placeholder tokens  
 - Both `dual_report_uris` paths exist on disk  
 - `work_root` directory exists  
 - `phase` is `implement_in_work_root` or `side_quest` (not `blocked`)  
@@ -140,7 +149,7 @@ Continue ≠ system-understood ≠ full-sweep ≠ dig authorization ≠ CONFIRM.
 
 Optional: `RUNS/<run_id>.json` exists when `docs/vibage/RUNS/` directory present.
 
-Fixtures (fail-first): `ok.md` (+ temp report files), `missing_work_root.md`, `phase_blocked.md`, `empty_forbidden.md`, `missing_dual_reports.md`, `seed_placeholders.md`.
+Fixtures (fail-first): `ok.md` (+ temp report files), `missing_work_root.md`, `phase_blocked.md`, `empty_forbidden.md`, `missing_dual_reports.md`, `seed_placeholders.md`, `empty_inherited.md`, `tbd_next_step.md`.
 
 ## 7. Deferred (wave 2+) — plan must mirror this list
 
@@ -152,6 +161,8 @@ Fixtures (fail-first): `ok.md` (+ temp report files), `missing_work_root.md`, `p
 
 ## 8. Success (owner-visible)
 
-- Cannot claim locate DONE without verified live contract (D1)  
+- Plain `locate DONE` **only** after verified live contract (default D1 path)  
+- Exception path, if used, must say `locate DONE (WORK_CONTINUE_EXCEPTION)` and must **not** claim verify / verified continue  
 - Fresh hub seed does **not** verify green  
 - Resume without pile-index; freshness/matrix still disclosed (E)  
+- Old “dual reports alone ⇒ DONE/finishing” wording removed from locate + using-vibage  
