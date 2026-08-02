@@ -23,7 +23,7 @@ grep -Fq 'MUST-NOT' "$TEMPLATE" || fail "template missing MUST-NOT block"
 grep -Fq 'hub workspace' "$TEMPLATE" || fail "template missing hub-relative path resolution note"
 grep -Eq 'phase:[[:space:]]*blocked' "$TEMPLATE" || fail "seed template must set phase: blocked"
 
-for name in ok missing_work_root phase_blocked empty_forbidden missing_dual_reports seed_placeholders empty_inherited tbd_next_step; do
+for name in ok missing_work_root phase_blocked empty_forbidden missing_dual_reports seed_placeholders empty_inherited tbd_next_step duplicate_dual; do
   [[ -f "$FIX/${name}.md" ]] || fail "missing fixture ${name}.md"
 done
 
@@ -70,6 +70,7 @@ run_verify_fixture missing_dual_reports fail
 run_verify_fixture seed_placeholders fail
 run_verify_fixture empty_inherited fail
 run_verify_fixture tbd_next_step fail
+run_verify_fixture duplicate_dual fail
 
 # Package template as hub file must fail verify
 tmp_seed="$(mktemp -d)"
@@ -87,14 +88,22 @@ LOCATE="$ROOT/skills/vibage-issue-locate/SKILL.md"
 USING="$ROOT/skills/using-vibage/SKILL.md"
 [[ -f "$LOCATE" && -f "$USING" ]] || fail "missing locate/using skills"
 
-# D1 + exception honesty (Task 3)
+# D1 + exception honesty (Task 3) — lock order / anti false-green phrases
 for f in "$LOCATE" "$USING"; do
   grep -Fq 'verify-work-continue' "$f" || fail "$f must mention verify-work-continue"
   grep -Fq 'WORK_CONTINUE' "$f" || fail "$f must mention WORK_CONTINUE"
   grep -Fq 'WORK_CONTINUE_EXCEPTION' "$f" || fail "$f must mention WORK_CONTINUE_EXCEPTION"
+  grep -Fq 'WORK_CONTINUE_VERIFY_OK' "$f" || fail "$f must mention WORK_CONTINUE_VERIFY_OK"
+  grep -Fq 'locate DONE (WORK_CONTINUE_EXCEPTION)' "$f" || fail "$f missing exception DONE phrase"
+  grep -Fq 'Dual reports alone ≠ locate DONE' "$f" || grep -Fq 'Dual reports alone ≠ DONE' "$f" \
+    || fail "$f must say dual reports alone ≠ DONE"
+  grep -Fq 'no DONE-then-backfill' "$f" || fail "$f must forbid DONE-then-backfill without exception file"
+  grep -Fq 'never `WORK_CONTINUE_VERIFY_OK`' "$f" || grep -Fq 'never WORK_CONTINUE_VERIFY_OK' "$f" \
+    || fail "$f exception path must forbid WORK_CONTINUE_VERIFY_OK"
 done
-grep -Fq 'locate DONE (WORK_CONTINUE_EXCEPTION)' "$LOCATE" || fail "locate skill missing exception DONE phrase"
-grep -Fq 'WORK_CONTINUE_VERIFY_OK' "$LOCATE" || fail "locate skill must note WORK_CONTINUE_VERIFY_OK"
+grep -Fq 'WORK_CONTINUE_VERIFY_OK` alone ≠ locate DONE' "$LOCATE" \
+  || grep -Fq 'WORK_CONTINUE_VERIFY_OK alone ≠ locate DONE' "$LOCATE" \
+  || fail "locate must say VERIFY_OK alone ≠ locate DONE"
 # Banned leftovers (coexistence FAIL)
 if grep -Fq 'After dual reports exist / phase `done`' "$LOCATE"; then
   fail "banned leftover still in locate skill: After dual reports exist / phase done"

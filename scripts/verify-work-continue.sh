@@ -95,7 +95,20 @@ dual_block = field_block("dual_report_uris")
 uris = re.findall(r"(?m)^\s*-\s+(\S+)\s*$", dual_block)
 if len(uris) < 2:
     die("dual_report_uris needs ≥2 list paths")
-for u in uris[:2]:
+# Require distinct OWNER + LOCATE report paths (not the same file twice)
+owner_uris = [u for u in uris if "VIBAGE-ISSUE-OWNER" in Path(u).name]
+locate_uris = [u for u in uris if "VIBAGE-ISSUE-LOCATE" in Path(u).name]
+if not owner_uris:
+    die("dual_report_uris missing VIBAGE-ISSUE-OWNER path")
+if not locate_uris:
+    die("dual_report_uris missing VIBAGE-ISSUE-LOCATE path")
+if Path(owner_uris[0]).resolve() == Path(locate_uris[0]).resolve() and owner_uris[0] == locate_uris[0]:
+    # same relative path listed twice
+    die("dual_report_uris OWNER and LOCATE must be distinct paths")
+# Also reject duplicate identical strings
+if uris[0] == uris[1]:
+    die("dual_report_uris first two paths must be distinct")
+for u in (owner_uris[0], locate_uris[0]):
     if PLACEHOLDER_RE.search(u):
         die(f"placeholder in dual_report_uris: {u}")
     p = (ws / u).resolve()

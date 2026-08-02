@@ -143,7 +143,7 @@ Deliverable `verify-report` token lint (Held + Token evidence) ≠ chat-level ho
 
 **Before plain `locate DONE` / finishing options (D1):** dual reports on disk → write live `docs/vibage/WORK_CONTINUE.md` → `"$PKG_ROOT/scripts/verify-work-continue.sh" "$PARENT"` → `WORK_CONTINUE_VERIFY_OK`.  
 `WORK_CONTINUE_VERIFY_OK` ≠ locate DONE. Dual reports alone ≠ locate DONE.  
-Exception only with `docs/vibage/WORK_CONTINUE_EXCEPTION.md` (`owner_quote`, `reason`, `run_id`, `updated_at`) and exact phrase `locate DONE (WORK_CONTINUE_EXCEPTION)` — never plain `locate DONE`, never claim verified continue.
+Exception only with `docs/vibage/WORK_CONTINUE_EXCEPTION.md` (`owner_quote`, `reason`, `run_id`, `updated_at`) and exact phrase `locate DONE (WORK_CONTINUE_EXCEPTION)` — never plain `locate DONE`, never `WORK_CONTINUE_VERIFY_OK`, never “verified continue”. Without that exception file → no DONE-then-backfill.
 
 Owner-language only (no soft CTA / no register / no pairing / no API-key / no Architecture Pass upsell):
 
