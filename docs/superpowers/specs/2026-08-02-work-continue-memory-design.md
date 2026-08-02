@@ -1,80 +1,147 @@
 # Work Continue Memory — Design
 
 **Date:** 2026-08-02  
-**Status:** draft (awaiting plan-loop freeze before Build)  
-**Owner goal (plain language, confirmed):** After digging across many apps, keep working in one app (and maybe briefly check another app and come back) without losing “what we already proved” and “what to do next.” Chat is not the source of truth — files are.
+**Status:** owner-locked (Build on `feat/work-continue-memory` only; do not merge open todos to main as “current checklist”)  
+**Owner goal:** After multi-repo dig, keep working in one app (optional brief side quest) with file-backed resume. Chat is not SSOT.
+
+## Owner locks (2026-08-02)
+
+| ID | Decision |
+|----|----------|
+| A | **No** child `PROGRESS` in wave 1 (explicit Deferred) |
+| B | **Yes** — one-line pointer on all 4 thin entry adapters |
+| C | **Yes** — light `verify-work-continue.sh` (∉ Tier-0 / ∉ `assert_gate`) |
+| D | **D1** — missing/invalid `WORK_CONTINUE` **blocks** locate DONE (anti false-green) |
+| E | Matching continue contract **short-circuits continuum dig** but **still** requires freshness + incomplete-matrix disclosure |
+
+Plan-loop reviews (5 lenses): all ISSUES; consensus fixes below. Diversity: composer-fast ×5 (`diversity: waived` host-same-family).
 
 ## 1. Problem
 
-Vibage is strong at multi-repo **where** (orient → CONFIRM → dig → dual reports). After locate succeeds, a new session often:
+After locate, new sessions often rediscover, ignore dig pointers, or side-quest without bookmarks. Gap is **memory continuity**, not another SDLC pin pack.
 
-1. Re-discovers or ignores dig conclusions  
-2. Treats single-repo work as “out of scope → improvise” with no memory bridge  
-3. Jumps to another repo mid-work without a bookmark, then loses the main phase  
+## 2. Non-goals (wave 1)
 
-That feels like “single-repo is weak.” The root gap is **memory continuity**, not a missing third-party coding-methodology pack.
-
-## 2. Non-goals (this wave)
-
-- Do not pin OMC / gstack / Matt / Addy / GSD as install dependencies  
-- Do not expand single-repo work into full locate continuum (pile-index / matrix / CONFIRM)  
-- Do not require CLI Ralph / stop-hook grind (later, must consume this memory)  
-- Do not put continue-memory into Tier-0 or `assert_gate`  
-- Do not invent a second locate report; continue file is pointers + bookmarks only  
+- No new methodology pins (OMC / gstack / Matt / Addy / GSD)
+- No expanding single-repo into full locate continuum
+- No CLI Ralph / stop-hook grind
+- No Tier-0 / `assert_gate` wiring
+- No second locate report
+- **No child `PROGRESS` template or dual-path progress files** (see Deferred)
 
 ## 3. Approach
 
-**Hub continue contract is authoritative; optional child progress is execution-only.**
+**Hub continue contract only (wave 1).**
 
 | Artifact | Path | Role |
 |----------|------|------|
-| Continue contract | Parent hub `docs/vibage/WORK_CONTINUE.md` | Work root, pointers to dual reports + key finding ids, phase, side-quest bookmark, forbidden claims, `run_id` |
-| Child progress (optional) | Child repo `PROGRESS.md` or `.vibage/progress.md` | Last commit, local gates, notes — **must not** override hub work-root / side-quest fields |
-
-New session / host switch: **read `WORK_CONTINUE.md` before editing code.**
+| Continue contract | Parent `docs/vibage/WORK_CONTINUE.md` | `work_root`, `next_step`, dig pointers, phase, side-quest bookmark, forbidden, `run_id` |
 
 ```text
-locate dual reports → write WORK_CONTINUE
+dual reports → write+verify WORK_CONTINUE → only then locate DONE
        ↓
- single-repo deep work (optional child PROGRESS)
+ resume: read WORK_CONTINUE (+ freshness/matrix disclose) → skip pile-index/orient
        ↓
- side quest? → bookmark in WORK_CONTINUE → dig/read → return to work root
+ side quest? bookmark (read-only) → return → clear bookmark
 ```
 
-## 4. Required fields (`WORK_CONTINUE.md`)
+### Path resolution
 
-Machine-oriented headings (English identifiers); owner chat may stay in owner language.
+- Canonical: paths **relative to parent hub workspace root** (directory that contains `docs/vibage/`).
+- Prefer hub-relative over machine-absolute. If absolute used, pair with `hub_root` note in template comments.
+- Missing `work_root` on disk → `phase: blocked`; ask owner; do not invent continue state from chat.
+
+### Precedence vs RUNS / STATUS
+
+1. `WORK_CONTINUE.md` — work root, next_step, side_quest (post-locate resume SSOT)  
+2. Dual reports — evidence detail (re-read before acting on findings)  
+3. `docs/vibage/RUNS/<run_id>.json` — fallback if report paths stale (`artifact_uris`)  
+4. Hub `STATUS.md` — focus_run_id / Where card; does **not** override work_root  
+
+`inherited_finding_ids` = **snapshot pointers**; re-read reports before edits. Format: `id | repo_relative_path | one-line claim` (≤7).
+
+## 4. Required fields
 
 | Field | Required | Meaning |
 |-------|----------|---------|
-| `work_root` | yes | Absolute or parent-relative path of the active child checkout |
-| `run_id` | yes | Locate run that produced this continue state |
-| `dual_report_uris` | yes | Paths to `VIBAGE-ISSUE-OWNER.md` + `VIBAGE-ISSUE-LOCATE.md` |
-| `inherited_finding_ids` | yes | Short list of locate finding ids (with path) still in force |
-| `phase` | yes | e.g. `post_locate_implement` / `side_quest` / `blocked` |
-| `side_quest` | yes (may be `none`) | If active: target path, why, return_next step |
-| `forbidden` | yes | Claims not allowed (e.g. full-understanding, full-sweep without tokens) |
+| `work_root` | yes | Hub-relative path of active child checkout |
+| `run_id` | yes | Locate run id |
+| `dual_report_uris` | yes | OWNER + LOCATE paths (hub-relative) |
+| `inherited_finding_ids` | yes | Snapshot list (see format above) |
+| `next_step` | yes | Concrete next action in `work_root` (not only side_quest return) |
+| `phase` | yes | Enum: `implement_in_work_root` \| `side_quest` \| `blocked` |
+| `side_quest` | yes | `none` or target + why + `return_next` |
+| `forbidden` | yes | Non-empty; template ships defaults (≠ full-understanding, ≠ full-sweep without tokens, ≠ CONFIRM, ≠ assert_gate, ≠ dig auth) |
 | `updated_at` | yes | ISO-8601 |
+
+Template top MUST-NOT block (fixed copy). Test stdout token: **`WORK_CONTINUE_FIXTURE_OK`** (phrase/fixture gate only — **not** Proven-green / On-tree / capability).
 
 ## 5. Behavioral rules
 
-1. **Locate success finishing:** Writing/updating `WORK_CONTINUE.md` is required (same class as finishing options — not skippable).  
-2. **Routing:** If hub has `WORK_CONTINUE.md` and the task is continue/implement in the named work root → one-line out-of-scope disclosure for continuum **plus** mandatory read of the contract, then proceed (prefer pinned superpowers for How).  
-3. **Side quest:** Before leaving `work_root`, set `side_quest` fields; on return, clear or close bookmark and restore `phase`.  
-4. **Honesty:** Continue file ≠ “system understood.” Pointers only.
+### 5.1 Locate DONE = D1
 
-## 6. Test strategy (TDD)
+Order: dual reports → write/update `WORK_CONTINUE.md` → `verify-work-continue.sh` exit 0 → **then** may claim locate DONE / finishing options.  
+Dual reports alone ≠ DONE. No “DONE then backfill” without owner exception.
 
-Prefer scripted phrase/structure tests (same family as `test_entry_docs_sync.sh` / status-lints):
+### 5.2 Resume / routing (E)
 
-- Template exists and lists all required field headings  
-- `vibage-issue-locate` + `using-vibage` finishing mention `WORK_CONTINUE` as required  
-- `routing-scope.md` requires read-before-edit when file present  
-- Fixture: sample `WORK_CONTINUE.md` parses required keys (small Python or bash grep suite)  
-- Firewall: new tests **not** wired into Tier-0 / pack-health unless later decided  
+If `docs/vibage/WORK_CONTINUE.md` exists, verifies, and task matches its `work_root`:
 
-## 7. Success (owner-visible)
+- One-line continuum out-of-scope disclosure  
+- **Read contract before code edits**  
+- **Do not** re-run pile-index / orient / CONFIRM for that continue task  
+- **Still** run/parse freshness + disclose `stale_count` / incomplete matrix (+ env-vacancy tokens as today) — continue ≠ skip mother honesty  
 
-- New chat on parent: agent states work root + report pointers from file without re-running pile-index  
-- Side quest then return: bookmark recorded; main phase not wiped  
-- No slogan that continue-memory replaces CONFIRM or dual reports  
+If file missing: read dual reports if any; **ask** owner for work root; **do not** fabricate continue state.
+
+### 5.3 Side quest
+
+Read/bookmark only. Does **not** expand `planned_dig_ids` or authorize new locate dig. Return → `side_quest: none`, restore `phase`, refresh `next_step`.
+
+### 5.4 Adapters (B)
+
+Required one-liner on:
+
+- `adapters/cursor/vibage.mdc`  
+- `adapters/claude/CLAUDE.vibage.md`  
+- `adapters/shared/AGENTS.vibage.md`  
+- `adapters/codex/AGENTS.vibage.md`  
+
+No sessionStart hook field dump (defer).
+
+### 5.5 Install / old hubs
+
+`install.sh` `init_hub` **must** seed `WORK_CONTINUE.md` template (or empty scaffold) for new hubs.  
+**No migrate script** for existing hubs: first locate finishing writes the live file; owner may copy template manually.
+
+### 5.6 Honesty
+
+Continue ≠ system-understood ≠ full-sweep ≠ dig authorization ≠ CONFIRM substitute.
+
+## 6. Verification (C)
+
+`scripts/verify-work-continue.sh` (∉ Tier-0, ∉ pack-health, ∉ `assert_gate`):
+
+- File exists under hub  
+- All required field headings present  
+- `forbidden` non-empty + contains standard NOT-claims substring(s)  
+- `work_root` path exists (or explicit `phase: blocked`)  
+- Optional: `run_id` has matching `RUNS/<run_id>.json` when RUNS dir present  
+
+Stdout success token for verify: `WORK_CONTINUE_VERIFY_OK` (deliverable lint — still ≠ Proven-green).  
+Package phrase tests: `WORK_CONTINUE_FIXTURE_OK`.
+
+## 7. Deferred (wave 2+) — do not “forget”
+
+Track here (and in plan Deferred); not chat memory:
+
+1. Child `PROGRESS.md` / `.vibage/progress.md` template + “must not override hub” tests — **only when** an owner actually needs long-running child-local progress  
+2. `verify-work-continue` richer schema / stale finding lint  
+3. sessionStart hook injecting continue summary  
+4. Ralph / stop-hook grind consuming this contract  
+
+## 8. Success (owner-visible)
+
+- New chat: agent states work_root + next_step from file; no pile-index slogans for continue tasks  
+- Cannot claim locate DONE without verified continue file (D1)  
+- Side quest bookmarked; freshness still disclosed (E)  

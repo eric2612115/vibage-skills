@@ -13,9 +13,16 @@ and live skills / `references/` over re-executing shipped plan todos.
 | Honesty | `2026-07-25-vibage-honesty-followup.md`, `2026-07-25-vibage-honesty-hardening.md` | SHIPPED |
 | Review budget / blast radius | `2026-07-26-review-budget-blast-radius.md` | SHIPPED on `feat/review-budget-blast-radius` → merge to main |
 
+## OPEN (feature branch only — do not treat as main Build checklist)
+
+| Plan | Branch | Notes |
+|------|--------|-------|
+| `2026-08-02-work-continue-memory.md` | `feat/work-continue-memory` | Owner locks A/B/C/D1/E; implement only on that branch |
+
 **Design refs (not executable todos):**  
 `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md` ·  
-`docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md`
+`docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md` ·  
+`docs/superpowers/specs/2026-08-02-work-continue-memory-design.md` (open on feat branch)
 
 **STATUS (package):** C′ row Designed=YES · On-tree=YES · Proven-green=YES (`scope=script+live-pressure`).
 

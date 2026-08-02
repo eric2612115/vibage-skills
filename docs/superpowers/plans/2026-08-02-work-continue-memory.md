@@ -1,14 +1,16 @@
 # Work Continue Memory Implementation Plan
 
-> **For agentic workers:** REQUIRED: Use TDD for every task that adds scripts or narrative gates. Prefer implementing in the mother agent for thin narrative edits (cheaper); use fresh cold subagents for review only. Steps use checkbox (`- [ ]`) syntax for tracking. Spec: `docs/superpowers/specs/2026-08-02-work-continue-memory-design.md`.
+> **For agentic workers:** TDD for every gate. Prefer mother-agent for thin narrative edits; cold subagents for review only. Spec: `docs/superpowers/specs/2026-08-02-work-continue-memory-design.md`. Branch: `feat/work-continue-memory` only until ship. Open plan todos are **not** main SSOT.
 
-**Goal:** After locate succeeds, hub `docs/vibage/WORK_CONTINUE.md` carries work-root + dig pointers + side-quest bookmarks so new sessions resume single-repo work without rediscovering the pile.
+**Goal:** Post-locate hub `WORK_CONTINUE.md` + verify gate so locate DONE cannot false-green; resume reads contract, skips continuum dig, still discloses freshness/matrix.
 
-**Architecture:** Template + locate finishing + routing-scope/adapters + hard-stops. Optional child `PROGRESS` template. Light verify/fixture tests outside Tier-0. No new methodology pins. No `assert_gate` / Tier-0 wiring.
+**Architecture:** Template + install seed + verify script + locate D1 finishing + routing/adapters/hard-stops + phrase tests outside Tier-0. No child PROGRESS (Deferred).
 
-**Tech Stack:** Markdown templates, bash test scripts, existing skill/adapter narrative surfaces.
+**Tech Stack:** Markdown, bash verify/tests, existing skill/adapter surfaces.
 
-**Process note:** This plan is the Superpowers SSOT for Build. Cursor Plan UI is not authoritative. Plan-loop reviews happen **before** Build and are recorded under `docs/evidence/reviews/` — do **not** put plan-loop todos inside this file.
+**Owner locks:** A=no child PROGRESS · B=4 adapters · C=verify script · D1=block DONE · E=freshness/matrix disclose + short-circuit continuum dig.
+
+**Process:** Plan-loop reviews recorded outside this body. Cursor Plan UI is not authoritative.
 
 ---
 
@@ -16,218 +18,137 @@
 
 | Path | Responsibility |
 |------|----------------|
-| `references/hub/WORK_CONTINUE.md` | Hub continue contract template + field docs |
-| `references/PROGRESS.child.md` | Optional child execution progress template |
-| `skills/vibage-issue-locate/SKILL.md` | Require write/update WORK_CONTINUE on locate success |
-| `skills/using-vibage/SKILL.md` | Finishing: WORK_CONTINUE required alongside finishing options |
-| `references/routing-scope.md` | Out-of-scope continue path: read contract before edit |
-| `adapters/**` (thin) | Same read-before-edit duty where they mention out-of-scope |
-| `references/hard-stops.md` | Forbid pretend-no-memory after locate DONE; forbid side-quest without bookmark |
-| `tests/test_work_continue_memory.sh` | Structure + phrase gates |
-| `tests/fixtures/work_continue/*` | Sample good/bad continue files |
+| `references/hub/WORK_CONTINUE.md` | Template + MUST-NOT + field docs + path resolution |
+| `scripts/install.sh` | `init_hub` seeds WORK_CONTINUE |
+| `scripts/verify-work-continue.sh` | Light deliverable lint → `WORK_CONTINUE_VERIFY_OK` |
+| `skills/vibage-issue-locate/SKILL.md` | D1 order; resume; write+verify before DONE |
+| `skills/using-vibage/SKILL.md` | Finishing + routing resume (E) + S08 carve-out |
+| `references/routing-scope.md` | Continue carve-out + gold example |
+| `references/hard-stops.md` | Anti pretend-no-memory; anti side-quest without bookmark; D1 |
+| `references/scenario-matrix.md` | S12 resume priority |
+| 4 thin adapters | One-line WORK_CONTINUE pointer |
+| `tests/test_work_continue_memory.sh` | Phrase/fixture → `WORK_CONTINUE_FIXTURE_OK` |
+| `tests/fixtures/work_continue/*` | ok / missing field / blocked path samples |
+
+**Deferred (not in tasks):** `PROGRESS.child.md`, sessionStart continue dump, migrate script, Tier-0 wire.
 
 ---
 
-### Task 1: Fixture + failing test (required fields)
+### Task 1: Template + fixtures + failing phrase test
 
 **Files:**
+- Create: `references/hub/WORK_CONTINUE.md`
 - Create: `tests/fixtures/work_continue/ok.md`
 - Create: `tests/fixtures/work_continue/missing_work_root.md`
 - Create: `tests/test_work_continue_memory.sh`
 
 - [ ] **Step 1: Write failing test**
 
-`tests/test_work_continue_memory.sh` must:
+Require template headings: `work_root`, `run_id`, `dual_report_uris`, `inherited_finding_ids`, `next_step`, `phase`, `side_quest`, `forbidden`, `updated_at`.  
+Require MUST-NOT / path-resolution phrases.  
+`check_required_fields file` → ok.md pass; missing_work_root.md fail with `FAIL:`.  
+Success echo: `WORK_CONTINUE_FIXTURE_OK`. Comment: phrase gate ≠ Proven-green.
 
-1. Fail if `references/hub/WORK_CONTINUE.md` is missing  
-2. Require these heading tokens (exact English identifiers) in the template:  
-   `work_root`, `run_id`, `dual_report_uris`, `inherited_finding_ids`, `phase`, `side_quest`, `forbidden`, `updated_at`  
-3. Require fixture `ok.md` to contain all eight; `missing_work_root.md` must fail a small checker that greps required fields  
-4. Echo `WORK_CONTINUE_MEMORY_OK` on success  
-
-```bash
-# Sketch — implement fully in Task 1:
-REQUIRED=(work_root run_id dual_report_uris inherited_finding_ids phase side_quest forbidden updated_at)
-for k in "${REQUIRED[@]}"; do
-  grep -Fq "$k" "$ROOT/references/hub/WORK_CONTINUE.md" || fail "template missing $k"
-done
-```
-
-- [ ] **Step 2: Run test — expect FAIL**
+- [ ] **Step 2: Run — expect FAIL** (`exit != 0`, stdout contains `FAIL:`)
 
 ```bash
 bash tests/test_work_continue_memory.sh
 ```
 
-Expected: FAIL (template missing)
+- [ ] **Step 3: Add template + fixtures**
 
-- [ ] **Step 3: Add template + ok fixture (minimal)**
+- [ ] **Step 4: Run — expect PASS** (`WORK_CONTINUE_FIXTURE_OK`)
 
-Create `references/hub/WORK_CONTINUE.md` with all required field headings, short English comments, and a filled example block. Create `tests/fixtures/work_continue/ok.md` matching required keys; `missing_work_root.md` omits `work_root`.
-
-- [ ] **Step 4: Run test — expect PASS**
-
-```bash
-bash tests/test_work_continue_memory.sh
-# expect: WORK_CONTINUE_MEMORY_OK
-```
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add references/hub/WORK_CONTINUE.md tests/test_work_continue_memory.sh tests/fixtures/work_continue/
-git commit -m "$(cat <<'EOF'
-test+docs(hub): WORK_CONTINUE template and memory gate
-
-EOF
-)"
-```
+- [ ] **Step 5: Commit** `test+docs(hub): WORK_CONTINUE template and fixture gate`
 
 ---
 
-### Task 2: Locate finishing requires WORK_CONTINUE
+### Task 2: verify script + install seed (C)
+
+**Files:**
+- Create: `scripts/verify-work-continue.sh`
+- Modify: `scripts/install.sh` (`init_hub` copy WORK_CONTINUE)
+- Modify: `tests/test_work_continue_memory.sh`
+- Modify: init-hub / install manifest test if present (`tests/test_install_manifest.sh` or equivalent — grep first)
+
+- [ ] **Step 1: Failing tests** — verify rejects missing_work_root; accepts ok when paths exist or phase blocked; install/init-hub must produce hub file; success tokens `WORK_CONTINUE_VERIFY_OK` / fixture OK
+
+- [ ] **Step 2: Run — expect FAIL**
+
+- [ ] **Step 3: Implement verify + install copy**
+
+- [ ] **Step 4: Run — expect PASS**
+
+- [ ] **Step 5: Commit** `feat(verify): WORK_CONTINUE lint and init-hub seed`
+
+---
+
+### Task 3: Locate D1 + using-vibage finishing/resume
 
 **Files:**
 - Modify: `skills/vibage-issue-locate/SKILL.md`
-- Modify: `skills/using-vibage/SKILL.md`
+- Modify: `skills/using-vibage/SKILL.md` (Finishing + Routing + session-start carve-out)
+- Modify: `references/scenario-matrix.md` (S12)
 - Modify: `tests/test_work_continue_memory.sh`
-- Modify: `tests/test_session_hooks.sh` (only if finishing pointer already asserted — extend, do not weaken)
+- Smoke only: `tests/test_session_hooks.sh` (do **not** extend hook to field-level WORK_CONTINUE)
 
-- [ ] **Step 1: Extend failing assertions**
-
-Add to `test_work_continue_memory.sh`:
-
-- `vibage-issue-locate` SKILL must contain `WORK_CONTINUE` and a MUST/required finishing duty  
-- `using-vibage` Finishing section must contain `WORK_CONTINUE` as required (not optional skip)
+- [ ] **Step 1: Failing phrase asserts** — D1 order; `verify-work-continue`; cannot claim DONE without verify; resume read-before-edit; E freshness/matrix still required
 
 - [ ] **Step 2: Run — expect FAIL**
 
-```bash
-bash tests/test_work_continue_memory.sh
-```
+- [ ] **Step 3: Minimal skill + S12 edits**
 
-- [ ] **Step 3: Minimal skill edits**
+- [ ] **Step 4: Run** `test_work_continue_memory.sh` + `test_session_hooks.sh` — expect PASS / no regress
 
-In both skills: after locate success / finishing options, require write or update parent `docs/vibage/WORK_CONTINUE.md` from template fields. State: pointers only; ≠ full-understanding; ≠ second locate report.
-
-- [ ] **Step 4: Run — expect PASS**
-
-```bash
-bash tests/test_work_continue_memory.sh
-bash tests/test_session_hooks.sh
-```
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add skills/vibage-issue-locate/SKILL.md skills/using-vibage/SKILL.md tests/test_work_continue_memory.sh
-git commit -m "$(cat <<'EOF'
-feat(skills): require WORK_CONTINUE on locate finishing
-
-EOF
-)"
-```
+- [ ] **Step 5: Commit** `feat(skills): D1 WORK_CONTINUE blocks locate DONE`
 
 ---
 
-### Task 3: Routing-scope + adapters + hard-stops
+### Task 4: Routing + hard-stops + 4 adapters (B, E)
 
 **Files:**
 - Modify: `references/routing-scope.md`
-- Modify: thin adapters that mention out-of-scope / routing (grep first; touch only those with out-of-scope prose)
 - Modify: `references/hard-stops.md`
-- Modify: `tests/test_work_continue_memory.sh`
-- Create: `references/PROGRESS.child.md`
+- Modify: `adapters/cursor/vibage.mdc`
+- Modify: `adapters/claude/CLAUDE.vibage.md`
+- Modify: `adapters/shared/AGENTS.vibage.md`
+- Modify: `adapters/codex/AGENTS.vibage.md`
+- Modify: `tests/test_work_continue_memory.sh` (**required** grep on 4 adapters)
+- Optionally extend: `tests/test_entry_docs_sync.sh` if needed for sync
 
-- [ ] **Step 1: Failing assertions**
-
-- `routing-scope.md` must instruct: if `docs/vibage/WORK_CONTINUE.md` exists and task continues that work_root → read it before code edits  
-- `hard-stops.md` must forbid pretending no memory after locate DONE; forbid side-quest without updating `side_quest`  
-- Optional: adapters contain the same one-line pointer to `WORK_CONTINUE` / routing-scope (no long fork)
+- [ ] **Step 1: Failing asserts** — continue carve-out; short-circuit continuum dig; freshness/matrix disclose; hard-stops D1 + side_quest bookmark; each adapter mentions `WORK_CONTINUE`
 
 - [ ] **Step 2: Run — expect FAIL**
 
-```bash
-bash tests/test_work_continue_memory.sh
-```
+- [ ] **Step 3: Prose edits** (one standard sentence for adapters)
 
-- [ ] **Step 3: Implement prose + child template**
+- [ ] **Step 4: Run** fixture test + `test_entry_docs_sync.sh`
 
-Add routing + hard-stop bullets per design §5. Add `references/PROGRESS.child.md` stating child progress must not override hub `work_root` / `side_quest`.
-
-- [ ] **Step 4: Run — expect PASS**
-
-```bash
-bash tests/test_work_continue_memory.sh
-bash tests/test_entry_docs_sync.sh
-```
-
-- [ ] **Step 5: Commit**
-
-```bash
-git add references/routing-scope.md references/hard-stops.md references/PROGRESS.child.md adapters/ tests/test_work_continue_memory.sh
-git commit -m "$(cat <<'EOF'
-feat(routing): read WORK_CONTINUE before single-repo continue
-
-EOF
-)"
-```
+- [ ] **Step 5: Commit** `feat(routing): resume WORK_CONTINUE with freshness disclose`
 
 ---
 
-### Task 4: Firewall + pack health honesty
+### Task 5: Firewall
 
 **Files:**
-- Modify: none of `scripts/test-tier0.sh` / `scripts/pack-health.sh` unless a later owner decision says otherwise  
-- Modify: `tests/test_work_continue_memory.sh` (assert not listed in tier0 if pattern exists in other firewall tests)
+- Modify: `tests/test_work_continue_memory.sh` (assert not in `scripts/test-tier0.sh` / pack-health)
 
-- [ ] **Step 1: Assert firewall**
+- [ ] **Step 1–2:** Assert firewall; run `bash scripts/test-tier0.sh` → `TIER0_OK` + `WORK_CONTINUE_FIXTURE_OK`
 
-Mirror honesty-followup style: confirm `test_work_continue_memory.sh` is **not** required by Tier-0. Document in test comment.
-
-- [ ] **Step 2: Run suite slice**
-
-```bash
-bash tests/test_work_continue_memory.sh
-bash scripts/test-tier0.sh
-# expect: WORK_CONTINUE_MEMORY_OK and TIER0_OK
-```
-
-- [ ] **Step 3: Commit only if firewall assert added files**
-
-```bash
-git add tests/test_work_continue_memory.sh
-git commit -m "$(cat <<'EOF'
-test(work-continue): keep memory gate outside Tier-0
-
-EOF
-)"
-```
+- [ ] **Step 3: Commit** if needed `test(work-continue): keep gates outside Tier-0`
 
 ---
 
-### Task 5: Evidence note (no Build claim of full-sweep)
+## Deferred (wave 2+)
 
-**Files:**
-- Create: `docs/evidence/work-continue/README.md` (short: what shipped, NOT-claims)
-
-- [ ] Document: continue memory ≠ full-sweep ≠ system-understood; depends on locate dual reports  
-- [ ] Commit
-
-```bash
-git add docs/evidence/work-continue/README.md
-git commit -m "$(cat <<'EOF'
-docs(evidence): WORK_CONTINUE memory NOT-claims
-
-EOF
-)"
-```
-
----
+- Child PROGRESS template + tests (owner lock A)  
+- sessionStart continue summary  
+- Hub migrate script  
+- Richer verify schema  
 
 ## Done when
 
-- All checkboxes above complete  
-- `WORK_CONTINUE_MEMORY_OK` + `TIER0_OK`  
-- Owner can open a new chat and see agent resume from hub file without pile-index slogans  
-- Impl narrative changes have looping-review records (outside this plan body)  
+- All tasks checked; `WORK_CONTINUE_FIXTURE_OK` + `WORK_CONTINUE_VERIFY_OK` + `TIER0_OK`  
+- Owner resume works without pile-index; DONE blocked without verify (D1)  
+- Impl narrative changes have looping-review records (outside this plan)  
+- **Not** claimed: Proven-green / full-sweep / system-understood  
