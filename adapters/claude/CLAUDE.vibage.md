@@ -10,7 +10,7 @@ Owner: do not type bash; agent runs install/verify/pins scripts. no register CTA
 
 Apply Skill routing / continuum **only** when in scope (install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·full-sweep). Details: `$PKG_ROOT/references/routing-scope.md`.
 
-**Out of scope** (one-line disclosure, then proceed — **do not** init/orient/locate): vibage-skills package work; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig; established single work root.
+**Out of scope** (one-line disclosure, then proceed — **do not** init/orient/locate): vibage-skills package work; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig; established single work root. If hub `docs/vibage/WORK_CONTINUE.md` verifies and task matches its `work_root`, read it before edits (see `references/routing-scope.md`); still disclose freshness/matrix.
 
 When unclear: ask. **Do not silently** pick either side.
 

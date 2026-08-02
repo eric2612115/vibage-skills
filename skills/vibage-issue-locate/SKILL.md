@@ -52,7 +52,7 @@ On these milestones — not every tool call — write **both**:
 |-----------|--------------|------|
 | gate (assert_gate) | Plain: ok to dig, or plan changed / re-confirm | RunEnvelope progress; on fail → STOP + `handoff` |
 | locate start | Plain: starting dig on planned subset | STATUS focus + RunEnvelope phase `analyzing` |
-| locate end / success | Plain brief that dual reports exist | STATUS + RunEnvelope `done` + `VIBAGE-ISSUE-*` |
+| locate end / success | Plain `locate DONE` only after dual reports + live `WORK_CONTINUE` + `WORK_CONTINUE_VERIFY_OK` (or exact `locate DONE (WORK_CONTINUE_EXCEPTION)`) | STATUS + RunEnvelope `done` + `VIBAGE-ISSUE-*` + verified `docs/vibage/WORK_CONTINUE.md` |
 | stop / mid-fail / abort | Plain STOP + next step | STATUS STOP + `handoff`; **no** dual reports |
 
 Rules:
@@ -118,17 +118,21 @@ Rules:
     (copies asset into `$WORKSPACE/vibage-preview/`, serves `$WORKSPACE` on 127.0.0.1
     so `../VIBAGE-ISSUE-*.md` links resolve). Open `http://127.0.0.1:8765/vibage-preview/`.
     Optionally edit that HTML from OWNER content before/while serving.
-    If copy or serve fails: set RunEnvelope field `preview_error` to the message,
-    keep `phase: done` when dual MD exist.
-    Preview never blocks DONE.
+    If copy or serve fails: set RunEnvelope field `preview_error` to the message.
+    Preview never blocks the continue-contract gate; preview alone ≠ locate DONE.
     Start serve in background (or copy-only, then tell the human the URL) so later steps are not blocked by http.server.
-14. Local delivery ends at dual Markdown reports + optional preview. Cloud deepening is out of scope this phase.
-15. **locate end / success or stop** milestone: Update STATUS focus + RunEnvelope phase `done`|`failed`|`aborted`. On `failed`|`aborted` fill STATUS STOP + `handoff` and do **not** write dual reports. Plain chat only — never dump JSON.
-16. **Finishing (required on success path):** After dual reports exist / phase `done`, **must** follow `using-vibage` finishing options (owner language): optional localhost preview (fail-soft), handoff/STOP if needed, or stop — local delivery complete. Optional issue-fix / architecture review only if owner asks. **No soft CTA / no register.** Do not skip this step after DONE.
+14. Local delivery artifacts = dual Markdown reports + optional preview + **required** live `docs/vibage/WORK_CONTINUE.md`. Cloud deepening is out of scope this phase.
+15. **WORK_CONTINUE + verify (D1 — required before plain locate DONE):** After dual reports exist, overwrite hub `docs/vibage/WORK_CONTINUE.md` from the live contract fields (not seed placeholders). Run:
+    `"$PKG_ROOT/scripts/verify-work-continue.sh" "$WORKSPACE"`
+    Must print `WORK_CONTINUE_VERIFY_OK`. Then you may claim plain `locate DONE` and offer finishing options.
+    `WORK_CONTINUE_VERIFY_OK` alone ≠ locate DONE. Dual reports alone ≠ locate DONE. RunEnvelope/STATUS `phase: done` without this verify ≠ locate DONE.
+    **Exception only:** if `docs/vibage/WORK_CONTINUE_EXCEPTION.md` exists with `owner_quote`, `reason`, `run_id`, `updated_at`, you may end with exactly `locate DONE (WORK_CONTINUE_EXCEPTION)` — never plain `locate DONE`, never `WORK_CONTINUE_VERIFY_OK`, never “verified continue”. Without that file → no DONE-then-backfill.
+16. **locate end / success or stop** milestone: On success after step 15 verify (or exception phrase), update STATUS focus + RunEnvelope phase `done`. On `failed`|`aborted` fill STATUS STOP + `handoff` and do **not** write dual reports. Plain chat only — never dump JSON.
+17. **Finishing (required on success path):** Only after step 15 (verify OK or exception phrase), **must** follow `using-vibage` finishing options (owner language): optional localhost preview (fail-soft), handoff/STOP if needed, or stop — local delivery complete. Optional issue-fix / architecture review only if owner asks. **No soft CTA / no register.**
 
 ## Stale / resume
 
-- **Resume (S12):** Read STATUS + RUNS; if CONFIRM still valid (`assert_gate` OK), continue; never wipe CONFIRM via re-init. After terminal (`done|failed|aborted|stale_confirm`), mint a **new** `run_id` with `supersedes_run_id` set (never rewrite old failed→done).
+- **Resume (S12):** Prefer live `docs/vibage/WORK_CONTINUE.md` (work_root, next_step, side_quest) + dual reports; then STATUS/RUNS. If continue contract verifies and task matches `work_root`, do not re-run pile-index/orient for that continue task; still disclose freshness/matrix. If CONFIRM still valid (`assert_gate` OK) for a new dig, continue; never wipe CONFIRM via re-init. After terminal (`done|failed|aborted|stale_confirm`), mint a **new** `run_id` with `supersedes_run_id` set (never rewrite old failed→done).
 - **Stale confirm (S14):** assert_gate fail → phase `stale_confirm` → STOP + handoff (no `VIBAGE-ISSUE-*`) → orient → new CONFIRM.
 - **Reject plan (S13):** clear CONFIRM, re-orient, re-confirm.
 

@@ -23,7 +23,8 @@ Shared DO NOT / MUST for all surfaces (Cursor, Claude Code, Codex). Thin IDE ada
 - MUST attempt nested investigators → fresh reviewers → synthesize (`references/nested-protocol.md`).
 - `Mode: full nested` / `mode: "full nested"` **only** when investigators and reviewers were actually dispatched and recorded. Otherwise `Mode: degraded` (legitimate success).
 - Engineer findings ≤ 7 after review; kill anything without `path` + evidence quote.
-- Local delivery ends at dual Markdown reports + optional preview (fail-soft).
+- Local delivery ends at dual Markdown reports + optional preview (fail-soft) + **required** live `docs/vibage/WORK_CONTINUE.md` verified via `verify-work-continue.sh` before plain `locate DONE` (D1). Dual reports alone ≠ DONE. Exception only via `WORK_CONTINUE_EXCEPTION.md` and exact `locate DONE (WORK_CONTINUE_EXCEPTION)`.
+- Do not pretend there is no post-locate memory when a verified `WORK_CONTINUE` exists; do not start a side-quest without updating `side_quest`.
 - No whole-repo upload.
 
 ## Safety

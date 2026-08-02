@@ -26,9 +26,11 @@ Thin router only. **Parent project entry** (`.cursor/rules/vibage.mdc` / `CLAUDE
 
 **Vibage conversation (in scope)** = install / NEW-CHAT-bootstrap / cross-repo locate / explicit orient·CONFIRM·locate·pile-index·full-sweep.
 
-**Out of scope** examples: work inside **vibage-skills** `PKG_ROOT`; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig. Gold example: workspace=`vibage-skills`, edit lab/tests/adapters → skip init even if parent lacks hub STATUS.
+**Out of scope** examples: work inside **vibage-skills** `PKG_ROOT`; owner named file/repo without cross-repo locate; research/review/Q&A/plan with no dig; established single work root. Gold example: workspace=`vibage-skills`, edit lab/tests/adapters → skip init even if parent lacks hub STATUS.
 
 When out of scope: one line, then do the task. When unclear: ask. **Do not silently** pick either side.
+
+**Continue-memory carve-out:** If parent `docs/vibage/WORK_CONTINUE.md` exists, `verify-work-continue.sh` prints `WORK_CONTINUE_VERIFY_OK`, and the task matches its `work_root` → continuum dig (pile-index/orient/CONFIRM) is out of scope for that continue task, but you **must** read `WORK_CONTINUE` before code edits and **still** parse freshness (`FRESHNESS_OK` or `FRESHNESS_WAIVED` + `STALE_DISCLOSED`) and disclose stale_count / incomplete matrix (+ env-vacancy as today). Continue ≠ skip mother honesty. Missing/invalid file → ask owner; do not fabricate.
 
 Full text: `$PKG_ROOT/references/routing-scope.md`.
 
@@ -138,6 +140,10 @@ Re-run: `bash tests/test_install_phrase_e2e.sh` → `INSTALL_PHRASE_E2E_OK`.
 ## Finishing (required after locate success)
 
 Deliverable `verify-report` token lint (Held + Token evidence) ≠ chat-level honesty; ≠ replace C′ live panel.
+
+**Before plain `locate DONE` / finishing options (D1):** dual reports on disk → write live `docs/vibage/WORK_CONTINUE.md` → `"$PKG_ROOT/scripts/verify-work-continue.sh" "$PARENT"` → `WORK_CONTINUE_VERIFY_OK`.  
+`WORK_CONTINUE_VERIFY_OK` ≠ locate DONE. Dual reports alone ≠ locate DONE.  
+Exception only with `docs/vibage/WORK_CONTINUE_EXCEPTION.md` (`owner_quote`, `reason`, `run_id`, `updated_at`) and exact phrase `locate DONE (WORK_CONTINUE_EXCEPTION)` — never plain `locate DONE`, never claim verified continue.
 
 Owner-language only (no soft CTA / no register / no pairing / no API-key / no Architecture Pass upsell):
 
