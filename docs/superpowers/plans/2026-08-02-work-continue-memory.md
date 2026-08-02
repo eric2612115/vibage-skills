@@ -21,8 +21,9 @@
 | `references/hub/WORK_CONTINUE.md` | Seed template with placeholders; MUST-NOT; path rules |
 | `scripts/install.sh` | `init_hub` seeds WORK_CONTINUE (verify must FAIL on seed) |
 | `scripts/verify-work-continue.sh` | Strict live lint → `WORK_CONTINUE_VERIFY_OK` (≠ locate DONE) |
-| `skills/vibage-issue-locate/SKILL.md` | D1 order (+ legacy symlink target) |
-| `skills/using-vibage/SKILL.md` | Finishing + routing resume (E) |
+| `skills/vibage-issue-locate/SKILL.md` | D1 order; retire dual-only DONE leftovers (+ legacy symlink target) |
+| `skills/using-vibage/SKILL.md` | Finishing + routing resume (E); same retire rules |
+| `references/hub/WORK_CONTINUE_EXCEPTION.md` | Exception file template (four fields) |
 | `references/routing-scope.md` | Continue carve-out |
 | `references/hard-stops.md` | D1 + bookmark + no fabricate |
 | `references/scenario-matrix.md` | S12 resume priority |
@@ -110,21 +111,30 @@ bash tests/test_install_manifest.sh       # existing OK token(s) still pass
 ### Task 3: Locate D1 + using-vibage (+ exception file)
 
 **Files:**
+- Create: `references/hub/WORK_CONTINUE_EXCEPTION.md` (template: `owner_quote`, `reason`, `run_id`, `updated_at`)
 - Modify: `skills/vibage-issue-locate/SKILL.md` (note: legacy `vibage-locate` install symlink → this SKILL)
 - Modify: `skills/using-vibage/SKILL.md`
 - Modify: `references/scenario-matrix.md` (S12)
-- Modify: `tests/test_work_continue_memory.sh`
+- Modify: `tests/test_work_continue_memory.sh` (positive D1 + negative banned leftover greps + exception honesty greps)
 - Smoke: `tests/test_session_hooks.sh` (no hook field dump)
 
 - [ ] **Step 1: Failing phrase asserts (add + retire)**
 
-**Must appear:** dual → write → `verify-work-continue` → plain `locate DONE`; `WORK_CONTINUE_VERIFY_OK` ≠ locate DONE; exception only via `locate DONE (WORK_CONTINUE_EXCEPTION)`; E freshness tokens + matrix disclose.
+**Must appear:**
+- dual → write → `verify-work-continue` → plain `locate DONE`
+- `WORK_CONTINUE_VERIFY_OK` ≠ locate DONE
+- Exception: requires file `docs/vibage/WORK_CONTINUE_EXCEPTION.md` with fields `owner_quote`, `reason`, `run_id`, `updated_at`; chat must say exactly `locate DONE (WORK_CONTINUE_EXCEPTION)`; that path **forbids** plain `locate DONE`, `WORK_CONTINUE_VERIFY_OK`, and “verified continue”; without the file → **no** DONE-then-backfill
+- E: `FRESHNESS_OK` or (`FRESHNESS_WAIVED` + `STALE_DISCLOSED`) + matrix disclose
 
-**Must retire (tests fail if still present as sole success auth):** in `vibage-issue-locate` / `using-vibage`, wording that authorizes finishing or DONE from dual reports / `phase: done` **alone** (e.g. “After dual reports exist / phase `done`” without verify). Replace those sentences; do not leave dual-track auth.
+**Must retire (tests FAIL if any of these patterns remain — coexistence with new D1 text is still FAIL):**  
+In `vibage-issue-locate` / `using-vibage`, any success/finishing authorization tied to dual reports or `phase: done` **without** an adjacent `verify-work-continue` requirement. Concrete banned leftovers include (adapt if wording drifts but same meaning):
+- `After dual reports exist / phase \`done\``
+- `keep \`phase: done\` when dual MD exist` used as DONE/finishing gate without verify  
+Spec §5.1: leaving old + new wording = plan/impl fail (not only “sole” auth).
 
 - [ ] **Step 2: Run — expect FAIL**
 
-- [ ] **Step 3: Edit skills + S12 — add D1 order and delete/replace sole dual⇒DONE auth**
+- [ ] **Step 3: Edit skills + S12 — add D1 order; delete/replace banned dual⇒DONE leftovers (not merely append)**
 
 - [ ] **Step 4: Run**
 

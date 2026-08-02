@@ -90,7 +90,7 @@ Verify success token: **`WORK_CONTINUE_VERIFY_OK`** (≠ Proven-green / On-tree 
 `WORK_CONTINUE_VERIFY_OK` alone ≠ locate DONE. Dual reports alone ≠ DONE.  
 `phase: done` in RunEnvelope / STATUS **without** step 3 **≠** locate DONE.
 
-**Must retire (skills + tests):** any prose that currently authorizes success/finishing from “dual reports exist” or “phase `done`” **alone**. Replace with the order above. Leaving both old and new wording = plan fail.
+**Must retire (skills + tests):** any prose that authorizes success/finishing from “dual reports exist” or “phase `done`” without an adjacent `verify-work-continue` requirement. **Coexistence of old leftover + new D1 text still fails** tests (not only when old text is the sole auth).
 
 **Owner exception (narrow escape — not the verified path):**  
 File `docs/vibage/WORK_CONTINUE_EXCEPTION.md` with `owner_quote`, `reason`, `run_id`, `updated_at`.  
@@ -162,7 +162,7 @@ Fixtures (fail-first): `ok.md` (+ temp report files), `missing_work_root.md`, `p
 ## 8. Success (owner-visible)
 
 - Plain `locate DONE` **only** after verified live contract (default D1 path)  
-- Exception path, if used, must say `locate DONE (WORK_CONTINUE_EXCEPTION)` and must **not** claim verify / verified continue  
+- Exception path, if used: file present with four fields; chat says exactly `locate DONE (WORK_CONTINUE_EXCEPTION)`; must **not** claim `WORK_CONTINUE_VERIFY_OK`, plain `locate DONE`, or “verified continue”  
 - Fresh hub seed does **not** verify green  
 - Resume without pile-index; freshness/matrix still disclosed (E)  
-- Old “dual reports alone ⇒ DONE/finishing” wording removed from locate + using-vibage  
+- Banned dual/`phase: done` leftovers removed from locate + using-vibage (coexistence fails tests)  
