@@ -287,6 +287,7 @@ init_hub() {
   copy_if_needed "$src/DECISIONS.md" "$hub/DECISIONS.md"
   copy_if_needed "$src/UploadManifest.stub.json" "$hub/UploadManifest.stub.json"
   copy_if_needed "$src/model-routing.json" "$hub/model-routing.json"
+  copy_if_needed "$src/WORK_CONTINUE.md" "$hub/WORK_CONTINUE.md"
   if [[ -e "$hub/SCAN_PLAN.md" && "$FORCE_HUB" -ne 1 ]]; then
     echo "Skip existing: $hub/SCAN_PLAN.md"
   else

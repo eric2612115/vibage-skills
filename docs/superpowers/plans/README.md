@@ -12,10 +12,12 @@ and live skills / `references/` over re-executing shipped plan todos.
 | C′ follow-ons (freshness, vacancy, dimension, tier0-thin, …) | `2026-07-25-vibage-c-prime-*.md` | SHIPPED; see freeze-lift spec |
 | Honesty | `2026-07-25-vibage-honesty-followup.md`, `2026-07-25-vibage-honesty-hardening.md` | SHIPPED |
 | Review budget / blast radius | `2026-07-26-review-budget-blast-radius.md` | SHIPPED on `feat/review-budget-blast-radius` → merge to main |
+| Work-continue memory | `2026-08-02-work-continue-memory.md` | SHIPPED on `feat/work-continue-memory` → main @ v0.9.3; pressure evidence under `/tmp` + `docs/evidence/work-continue/` |
 
 **Design refs (not executable todos):**  
 `docs/superpowers/specs/2026-07-24-vibage-c-prime-graph-brief-ledger-design.md` ·  
-`docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md`
+`docs/superpowers/specs/2026-07-25-vibage-c-prime-freeze-lift.md` ·  
+`docs/superpowers/specs/2026-08-02-work-continue-memory-design.md`
 
 **STATUS (package):** C′ row Designed=YES · On-tree=YES · Proven-green=YES (`scope=script+live-pressure`).
 

@@ -14,7 +14,7 @@
 | S9 | Design section gate | section-gate; `go_next` ≠ Mode |
 | S10 | User skips web | survey SKIP |
 | S11 | Post-CONFIRM delivery | dual MD + RUNS + preview fail-soft |
-| S12 | Resume | read STATUS/RUNS; do not wipe CONFIRM via re-init |
+| S12 | Resume | prefer `WORK_CONTINUE` + dual reports, then STATUS/RUNS; verified continue skips pile-index/orient but still freshness/matrix disclose; do not wipe CONFIRM via re-init |
 | S13 | Reject/change plan | clear/re-CONFIRM; hash mismatch blocks analyzing |
 | S14 | Stale CONFIRM | phase stale_confirm; re-orient/confirm |
 

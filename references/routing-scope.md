@@ -20,6 +20,17 @@ Say so in **one line**, then proceed with the task. **Do not** run vibage-init /
 3. Research / review / Q&A / writing a plan that produces **no dig** and claims no continuum milestones.
 4. Session work root is already established; task is implement / fix tests inside that root.
 
+### Continue-memory carve-out (`WORK_CONTINUE`)
+
+If `docs/vibage/WORK_CONTINUE.md` exists on the parent hub, `scripts/verify-work-continue.sh` prints `WORK_CONTINUE_VERIFY_OK`, and the task continues that file's `work_root`:
+
+- One-line continuum out-of-scope disclosure (skip pile-index / orient / CONFIRM for that continue task)
+- **Must** read `WORK_CONTINUE` before code edits
+- **Still** run/parse freshness (`FRESHNESS_OK` or `FRESHNESS_WAIVED` + `STALE_DISCLOSED`) and disclose stale_count / incomplete matrix (env-vacancy as today)
+- Side quest: bookmark in `side_quest` before leaving `work_root` (read-only; not dig auth)
+
+Gold example: hub has verified `WORK_CONTINUE` with `work_root: apps/foo`, owner says continue the fix → read contract; do not re-run pile-index; disclose freshness.
+
 ### Gold example (CC live failure)
 
 Workspace = `vibage-skills`. Task = review lab harness / add verify script / edit adapters.  

@@ -30,7 +30,16 @@ issue_expected="$(python3 -c 'import os,sys; print(os.path.realpath(sys.argv[1])
 [[ -f "$TMP_WS/docs/vibage/SCAN_PLAN.md" ]] || { echo "FAIL: hub SCAN_PLAN missing"; exit 1; }
 [[ -f "$TMP_WS/docs/vibage/UploadManifest.stub.json" ]] || { echo "FAIL: stub missing"; exit 1; }
 [[ -f "$TMP_WS/docs/vibage/model-routing.json" ]] || { echo "FAIL: model-routing missing"; exit 1; }
+[[ -f "$TMP_WS/docs/vibage/WORK_CONTINUE.md" ]] || { echo "FAIL: hub WORK_CONTINUE missing"; exit 1; }
 [[ -d "$TMP_WS/docs/vibage/RUNS" ]] || { echo "FAIL: RUNS dir missing"; exit 1; }
+
+# Seed must not verify green (D1 anti false-green)
+if bash "$ROOT/scripts/verify-work-continue.sh" "$TMP_WS" >/tmp/wc_seed_out.txt 2>&1; then
+  echo "FAIL: seeded WORK_CONTINUE must fail verify-work-continue.sh"
+  cat /tmp/wc_seed_out.txt
+  exit 1
+fi
+grep -q 'FAIL:' /tmp/wc_seed_out.txt || { echo "FAIL: seed verify should print FAIL:"; cat /tmp/wc_seed_out.txt; exit 1; }
 
 # Re-init must not clobber existing CONFIRM
 mkdir -p "$TMP_WS/docs/vibage"
