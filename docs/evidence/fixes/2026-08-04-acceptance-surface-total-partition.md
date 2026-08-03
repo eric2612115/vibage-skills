@@ -65,7 +65,16 @@ this one (`--no-renames`, merge commits with empty trees counted under "none"):
 | Window | Newly require a record | Already required one | None | Touched a newly gated path |
 |--------|------------------------|----------------------|------|-----------------------------|
 | last 60 | **0** | 28 | 32 (7 merge/empty) | 6 |
-| last 150 | **3** | 89 | 58 (10 merge/empty) | 34 |
+| last 150 | **3** | 89 | 58 (10 merge/empty) | 37 |
+
+Method, so this is reproducible: commits from `git log -N --format=%H 0dd2d3d`; files from
+`git show --pretty= --name-only --no-renames <sha>`; a commit with an empty file list (the
+PR merge commits) counts under "none"; "touched a newly gated path" counts any commit with a
+path that is a trigger now and was not at `0dd2d3d`, whichever column it lands in.
+
+A reviewer's independent replay returned 88 / 59 / 11 for the 150 window. Enumerating the
+empty-diff commits in that window shows exactly 10, all of them PR merges #1–#10, so the
+table above is the one that reconciles.
 
 Sixty commits is a short and favourable window; the 150-commit figure is the honest one to
 quote. Even there the added burden is 3 records across 150 commits, because most edits to a
@@ -147,4 +156,10 @@ unlisted script now uses `resolve-pkg-root.sh`.
 - Same shape as above: an exempt script could be turned into an acceptance carrier by a
   gated wiring commit, after which edits to it are unreviewed. The exempt list is six
   entries precisely so that stays auditable.
-- The 60-commit cost replay describes this repo's history, not future workload.
+- The cost replay describes this repo's history, not future workload.
+- The CI derivation reads `scripts/test-tier0.sh`, `scripts/pack-health.sh`, and
+  `.github/workflows/*.y*ml`. A reviewer showed two shapes still slip it: a suite run from a
+  composite action under `.github/actions/**`, and a workflow in a nested directory (which
+  GitHub itself ignores). Neither exists in this pack today.
+- Globbing workflows is fail-closed in the other direction too: a `tests/test_*` path
+  mentioned in a workflow comment or a `paths:` filter is read as CI-run and must be gated.

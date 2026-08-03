@@ -2655,6 +2655,8 @@ echo "$E5_MV_OUT" | grep -Fq 'reason=no_trigger_paths' \
   && fail "rename out of the allow-list must not SKIP: $E5_MV_OUT"
 echo "$E5_MV_OUT" | grep -Fq 'trigger=scripts/verify-matrix-substantive.sh' \
   || fail "renamed-away guarded path must still count as a trigger: $E5_MV_OUT"
+echo "$E5_MV_OUT" | grep -Eq '^REVIEW_RECORD_FAIL reason=missing_record' \
+  || fail "rename with no record must FAIL missing_record: $E5_MV_OUT"
 
 # dirty only an unlisted script → honest no_trigger_paths SKIP.
 # (verify-*.sh became a gate trigger in v0.9.3.3, so the stand-in is an exempt

@@ -9,7 +9,7 @@ requires. Agents must **not** declare N — the script derives it from trigger p
 |-------|----------------------------------------------------------|------------|----------------|
 | `gate` | gate EXACT scripts (`assert_gate`, `write_confirm`, `coverage-box`, `test-tier0`, `pack-health`, `.github/workflows/tier0.yml`) + named `scripts/lib/` helpers; **hub-state writers**; **acceptance definers** (all `scripts/verify-*.sh` + named checkers) — both below | ≥2 | ≥2 distinct non-empty reviewer **`context`** (all classes; A1) |
 | `narrative` | entire `adapters/`; entire `skills/`; `references/hard-stops.md`; `references/looping-review.md`; `references/routing-scope.md`; `references/review-budget.md` | ≥2 | same: ≥2 distinct **`context`** |
-| `tests` | entire `tests/` | ≥2 | same: ≥2 distinct **`context`** |
+| `tests` | named suites only (`TRIGGER_TESTS_EXACT`), which must include every suite a CI job runs | ≥2 | same: ≥2 distinct **`context`** |
 
 Severity: `gate` > `narrative` > `tests`. Mixed diffs use the highest class.
 
@@ -21,9 +21,9 @@ and blanket `tests/` are still **not** triggers — only named members are. The 
 `git ls-files scripts` (any extension), except `scripts/lab/**`, is either a trigger or is
 named in `NON_GATE_EXEMPT` with a reason. There is no content predicate to satisfy, so a
 tracked script cannot land unclassified. The same suite derives the CI-run test set from
-`scripts/test-tier0.sh`, `scripts/pack-health.sh`, and every `.github/workflows/*.yml`, and
-fails if a suite a CI job runs is not a trigger. `scripts/lab/**` is out of scope — the
-harness runs on copies under `/tmp`, never a real owner hub.
+`scripts/test-tier0.sh`, `scripts/pack-health.sh`, and every `.github/workflows/*.yml` /
+`*.yaml`, and fails if a suite a CI job runs is not a trigger. `scripts/lab/**` is out of
+scope — the harness runs on copies under `/tmp`, never a real owner hub.
 
 ### Hub-state writers (gate class)
 
