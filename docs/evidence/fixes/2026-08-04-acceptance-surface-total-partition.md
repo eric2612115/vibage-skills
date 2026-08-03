@@ -36,31 +36,72 @@ variables. That was not hypothetical: `dimension-fill.sh`, `dimension-search.sh`
 `env-vacancy-answer.sh` mutate hub state through `scripts/lib` and never spell the path —
 they were outside the allow-list and outside the scan.
 
-**Fix.** The partition has no predicate now. Every non-lab file under `scripts/` is either a
-trigger or is named in `NON_GATE_EXEMPT` with a reason. Five exemptions remain:
+**Fix.** The partition enumerates `git ls-files scripts` — every tracked file, any
+extension — and each is either a trigger or is named in `NON_GATE_EXEMPT` with a reason.
+Six exemptions remain:
 
 | Path | Reason |
 |------|--------|
-| `generate-service-map-graph.sh`, `render-service-map-preview.sh` | presentation — render a view, mint no verdict |
-| `serve-preview.sh` | presentation — fail-soft localhost server |
+| `generate-service-map-graph.sh` | presentation — writes `graph.mmd` / notes, mints no gate token |
+| `render-service-map-preview.sh` | presentation — writes preview assets, mints no gate token |
+| `serve-preview.sh` | presentation — copies preview assets and serves localhost; no verdict |
 | `resolve-pkg-root.sh` | path resolution — reads symlinks, no hub state, no token |
 | `lib/__init__.py` | package marker |
+| `hooks/vibage-child-post-commit.sample` | sample hook — not installed or executed by the pack |
 
-A new script cannot land unclassified: the suite fails and names it. The three wrapper
-writers found by removing the predicate were added to `TRIGGER_GATE_HUB_WRITERS` (now 20).
+A first draft kept a `.sh`/`.py` suffix filter, and a reviewer walked straight through it
+with `scripts/check-matrix.mjs` and an extensionless script. Enumerating tracked files
+removes that last predicate. The three wrapper writers found by dropping the earlier
+`docs/vibage` predicate joined `TRIGGER_GATE_HUB_WRITERS` (now 20).
 
 ## Cost
 
-Gate surface is 37 exact paths plus the `scripts/verify-` prefix (23 scripts today).
-Replaying the last 60 commits on `main`: **2 would newly require a review record**, 26
-already required one, 32 needed none. Both new ones are the `matrix-inventory.sh` fixes from
-this same thread — which is the surface the gate is meant to cover.
+Gate surface is 41 exact paths plus the `scripts/verify-` prefix (23 scripts today).
+
+Replaying the last 60 commits reachable from `0dd2d3d` (v0.9.3.2) with that release's
+allow-list versus this one: **0 commits would newly require a record**, 28 already required
+one, 25 needed none. Three commits touched newly gated paths (`verify-work-continue.sh`
+twice, plus an English-copy pass) but already carried another trigger, so the record burden
+does not move for this repo's recent history.
+
+That is a statement about history, not a forecast. The forward cost is one record per edit
+to a verify script, a named checker, or a CI-run suite — the surfaces where a change alters
+what "passing" means.
+
+An earlier draft of this report quoted "2 of the last 60", which a reviewer showed was the
+**v0.9.3.2 hub-writer** delta measured against a pre-`26b082a` baseline, not this batch.
+
+## Hole 3 — renaming a path out of the allow-list escaped the gate
+
+Found during review, same class as the other two. `changed_paths()` used
+`git diff --name-only`, which is rename-aware and reports only the destination. So
+`git mv scripts/verify-matrix-substantive.sh scripts/check-matrix-substantive.sh` produced
+`REVIEW_RECORD_SKIP reason=no_trigger_paths` — the guarded source path vanished from the
+diff. Moving a file out of the gate is precisely the edit that must not escape review.
+
+**Fix.** `changed_paths()` passes `--no-renames`, so both the old and new paths appear and
+the guarded source still counts. Verified on an isolated clone: the same rename now yields
+`REVIEW_RECORD_FAIL reason=missing_record`.
+
+## Hole 4 — the regression suites CI runs were not all gated
+
+`TRIGGER_TESTS_EXACT` is a frozen enumeration, and it omitted `test_proven_lock.sh`,
+`test_status_capability_table.sh`, `test_c_prime_matrix_durability.sh`, and
+`test_install_pins_report.sh` — the last two being the regressions added for the v0.9.3
+matrix bug and the pin-ordering bug. Weakening or deleting one needed no record: editing
+what "still locked" means was a no-ceremony change.
+
+**Fix.** Those four joined the enumeration, and the suite now DERIVES the required set by
+reading `scripts/test-tier0.sh`, `scripts/pack-health.sh`, and `.github/workflows/tier0.yml`
+for `tests/test_*` references, failing if any CI-run suite is not a trigger. Wiring a new
+suite into CI without gating it fails here rather than being remembered.
 
 ## Regression tests
 
-`tests/test_review_record.sh` → `TRIGGER_HUB_WRITERS_OK n=20 acceptance=29 exempt=5`:
+`tests/test_review_record.sh` → `TRIGGER_HUB_WRITERS_OK n=20 acceptance=29 exempt=6`:
 
-- total partition over `scripts/**` with the exempt list carrying reasons
+- total partition over every tracked file under `scripts/` with the exempt list carrying reasons
+- every suite referenced by a CI runner is a trigger (derived, not hard-coded)
 - every `verify-*.sh` on disk is a trigger and classifies `gate`
 - a not-yet-written `scripts/verify-not-yet-written.sh` is already gated (prefix, not memory)
 - `scripts/lab/verify-l1-done.sh` is not gated
@@ -79,6 +120,14 @@ unlisted script now uses `resolve-pkg-root.sh`.
   will notice a loosened threshold — `REVIEW_RECORD_OK` is still not review quality.
 - The partition guarantees classification, not correctness: a hub writer wrongly filed as
   exempt would still slip. The exempt list is 5 entries precisely so it stays auditable.
-- `scripts/lab/**` is excluded by rule. If the lab harness ever writes a real owner hub,
-  that exclusion becomes wrong.
+- `scripts/lab/**` is excluded by rule. A reviewer noted `lab/continuum.sh`,
+  `lab/seed-lab-scan-plan.sh`, and `lab/mint-lab-confirm.sh` accept a parent path and write
+  `docs/vibage` inside it; callers copy under `/tmp` first, so the exclusion rests on that
+  convention rather than on an enforced write gate. Disclosed, not closed.
+- The partition covers `scripts/`. A new top-level `bin/` or `tools/` holding acceptance
+  logic is outside it. Wiring such a script into the pack requires editing a gated caller,
+  so the wiring commit needs a record — but later edits to the out-of-tree helper would not.
+- Same shape as above: an exempt script could be turned into an acceptance carrier by a
+  gated wiring commit, after which edits to it are unreviewed. The exempt list is six
+  entries precisely so that stays auditable.
 - The 60-commit cost replay describes this repo's history, not future workload.
