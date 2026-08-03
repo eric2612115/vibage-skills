@@ -14,8 +14,11 @@ Budget SSOT: `references/review-budget.md` (blast class → N; diversity axis = 
   gate entrypoints + helper closure (`review_record.py`, `verify-review-record.sh`,
   `pack-health.sh`, `test-tier0.sh`, `assert_gate.sh`, `write_confirm.sh`,
   `coverage-box.sh`, `.github/workflows/tier0.yml`, plus `scan_plan_hash.py` /
-  `coverage_box.py` / `proven_lock.py`); narrative (`adapters/**`, `skills/**`,
-  four `references/*` files); frozen `tests/test_*.{sh,py}` enumeration only
+  `coverage_box.py` / `proven_lock.py`); **hub-state writers** (scripts that write the
+  owner's `docs/vibage/**` or mint cell / freshness / evidence values —
+  `TRIGGER_GATE_HUB_WRITERS`, see `references/review-budget.md`); narrative
+  (`adapters/**`, `skills/**`, four `references/*` files); frozen
+  `tests/test_*.{sh,py}` enumeration only
 
 Not every commit message. Not a required git pre-commit hook in V1.
 

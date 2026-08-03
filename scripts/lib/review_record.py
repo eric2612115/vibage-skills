@@ -44,6 +44,34 @@ TRIGGER_GATE_EXACT = frozenset(
         ".github/workflows/tier0.yml",
     }
 )
+# Hub-state writers: scripts that write the owner's docs/vibage/** or mint the
+# cell / freshness / evidence values that gate tokens are computed from. A silent
+# false state written here is exactly the class of bug that shipped in v0.9.3
+# (matrix-inventory resetting proven cells), and editing one of them alone used
+# to require no review record at all.
+# Deliberately excluded: presentation-only writers (graph/preview renderers) and
+# read-only verify-*.sh wrappers.
+TRIGGER_GATE_HUB_WRITERS = frozenset(
+    {
+        "scripts/c-prime-fill.sh",
+        "scripts/dimension-synth-repo.sh",
+        "scripts/env-vacancy-apply-point.sh",
+        "scripts/freshness-mark.sh",
+        "scripts/freshness-refresh-repo.sh",
+        "scripts/graph-floor.sh",
+        "scripts/install.sh",
+        "scripts/ledger-append.sh",
+        "scripts/matrix-extract-evidence.py",
+        "scripts/matrix-inventory.sh",
+        "scripts/matrix-sweep-cell.sh",
+        "scripts/pile-index.sh",
+        "scripts/scene-brief.sh",
+        "scripts/lib/dimension_fill.py",
+        "scripts/lib/env_discovery.py",
+        "scripts/lib/env_vacancy.py",
+        "scripts/lib/freshness.py",
+    }
+)
 TRIGGER_NARRATIVE_EXACT = frozenset(
     {
         "references/hard-stops.md",
@@ -110,7 +138,12 @@ def is_trigger(rel: str) -> bool:
     rel = _norm_rel(rel)
     if rel.startswith(REVIEWS_DIR + "/") or rel.startswith("lab/"):
         return False
-    if rel in TRIGGER_GATE_EXACT or rel in TRIGGER_NARRATIVE_EXACT or rel in TRIGGER_TESTS_EXACT:
+    if (
+        rel in TRIGGER_GATE_EXACT
+        or rel in TRIGGER_GATE_HUB_WRITERS
+        or rel in TRIGGER_NARRATIVE_EXACT
+        or rel in TRIGGER_TESTS_EXACT
+    ):
         return True
     if any(rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES):
         return True
@@ -128,7 +161,7 @@ def classify_path(rel: str) -> str | None:
         rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES
     ):
         return "narrative"
-    if rel in TRIGGER_GATE_EXACT:
+    if rel in TRIGGER_GATE_EXACT or rel in TRIGGER_GATE_HUB_WRITERS:
         return "gate"
     # Unknown trigger shape: still gate (fail-closed upgrade)
     return "gate"

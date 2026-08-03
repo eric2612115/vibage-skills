@@ -5,7 +5,7 @@
 For teams with **many repos / microservices / AI-generated folder piles**.  
 Works with **Cursor**, **Claude Code**, and **Codex**.
 
-MIT · [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) · **0.9.3.1**
+MIT · [github.com/eric2612115/vibage-skills](https://github.com/eric2612115/vibage-skills) · **0.9.3.2**
 
 **This GitHub repo is public** — you can clone it. That is still **≠** Cursor/Claude marketplace listing; **≠** “officially launched product”; **≠** SaaS.
 

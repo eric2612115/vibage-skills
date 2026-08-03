@@ -205,6 +205,181 @@ else
   echo "NOTE: main cell not proven in this fixture — untracked-carry path not exercised"
 fi
 
+# 3d) Content drift must not be carried: same path, env evidence gone.
+# The compose file keeps its name (so the env is still inventoried via the
+# filename rule) but loses the line that backed the verdict.
+DRIFT="$TMP/drift"
+mkdir -p "$DRIFT/docs/vibage/maps"
+mkdir -p "$DRIFT/repo-a/deploy/production"
+(
+  cd "$DRIFT/repo-a"
+  git init -q -b main
+  git config user.email "t@t"
+  git config user.name "t"
+  # Pointer evidence lives in the compose body; deploy/production/ keeps the env
+  # in the inventory after that line goes, so the cell survives structurally and
+  # the carry gate is what has to refuse it.
+  cat >docker-compose.yml <<'EOF'
+services:
+  app:
+    image: repo-a:latest
+    environment:
+      APP_ENV: production
+      PORT: 8080
+EOF
+  printf 'k8s\n' >deploy/production/.gitkeep
+  git add -A
+  git commit -q -m "init compose with env line + deploy dir"
+)
+python3 - "$P/docs/vibage/maps/service_map.json" "$DRIFT/docs/vibage/maps/service_map.json" <<'PY'
+import json, sys
+m = json.load(open(sys.argv[1], encoding="utf-8"))
+m["services"] = [s for s in m["services"] if s["id"] == "repo-a"]
+m["repos"] = [r for r in m["repos"] if r["repo_id"] == "repo-a"]
+json.dump(m, open(sys.argv[2], "w", encoding="utf-8"), indent=2)
+PY
+DMATRIX="$DRIFT/docs/vibage/maps/env_branch_matrix.json"
+bash "$ROOT/scripts/matrix-inventory.sh" "$DRIFT" >/dev/null
+bash "$ROOT/scripts/matrix-sweep-cell.sh" "$DRIFT" "repo-a" "main" "production" --sweep-started >/dev/null
+[[ "$(state_of "$DMATRIX" repo-a main production)" == "proven" ]] \
+  || fail "precondition: drift fixture cell should start proven"
+python3 - "$DMATRIX" <<'PY' || fail "drift precondition: pointer should be the compose body"
+import json, sys
+m = json.load(open(sys.argv[1], encoding="utf-8"))
+for c in m["cells"]:
+    if c["env_id"] == "production" and c["state"] == "proven":
+        paths = [p["path"] for p in c.get("pointers") or []]
+        assert paths == ["repo-a/docker-compose.yml"], paths
+        break
+else:
+    raise SystemExit("no proven production cell")
+PY
+(
+  cd "$DRIFT/repo-a"
+  cat >docker-compose.yml <<'EOF'
+services:
+  app:
+    image: repo-a:latest
+    environment:
+      PORT: 8080
+EOF
+  git add -A
+  git commit -q -m "drop env line, keep file and deploy dir"
+)
+drift_out="$(bash "$ROOT/scripts/matrix-inventory.sh" "$DRIFT")"
+[[ "$(state_of "$DMATRIX" repo-a main production)" == "unproven" ]] \
+  || fail "content drift must not be carried (residual false-green)"
+printf '%s\n' "$drift_out" | grep -Eq 'dropped_stale_evidence=[1-9]' \
+  || fail "content drift should be reported, got: $drift_out"
+pass "content drift drops durability"
+
+# ...and a re-sweep repairs it from the surviving deploy/ evidence: fail-closed,
+# not permanently red.
+bash "$ROOT/scripts/matrix-sweep-cell.sh" "$DRIFT" "repo-a" "main" "production" --sweep-started >/dev/null
+[[ "$(state_of "$DMATRIX" repo-a main production)" == "proven" ]] \
+  || fail "re-sweep should re-prove from surviving evidence"
+python3 - "$DMATRIX" <<'PY' || fail "re-swept pointer should be the surviving evidence"
+import json, sys
+m = json.load(open(sys.argv[1], encoding="utf-8"))
+for c in m["cells"]:
+    if c["env_id"] == "production" and c["state"] == "proven":
+        quotes = [p["quote"] for p in c.get("pointers") or []]
+        assert not any("APP_ENV: production" in q for q in quotes), quotes
+        break
+else:
+    raise SystemExit("no proven production cell after re-sweep")
+PY
+pass "re-sweep repairs the dropped cell without the stale quote"
+
+# 3e) Quote shapes that are NOT file substrings must still carry.
+# Measured during design: naive substring comparison false-reds ~31% of real
+# proven cells (directory pointers and synthesised presence quotes), so carrying
+# must re-derive rather than string-match.
+SHAPES="$TMP/shapes"
+mkdir -p "$SHAPES/docs/vibage/maps" "$SHAPES/repo-a/deploy/qa"
+(
+  cd "$SHAPES/repo-a"
+  git init -q -b main
+  git config user.email "t@t"
+  git config user.name "t"
+  cat >docker-compose.yml <<'EOF'
+services:
+  app:
+    image: repo-a:latest
+EOF
+  cat >.env.example <<'EOF'
+# comment only, no KEY=value
+EOF
+  printf 'qa\n' >deploy/qa/.gitkeep
+  git add -A
+  git commit -q -m "dir + presence-only shapes"
+)
+python3 - "$P/docs/vibage/maps/service_map.json" "$SHAPES/docs/vibage/maps/service_map.json" <<'PY'
+import json, sys
+m = json.load(open(sys.argv[1], encoding="utf-8"))
+m["services"] = [s for s in m["services"] if s["id"] == "repo-a"]
+m["repos"] = [r for r in m["repos"] if r["repo_id"] == "repo-a"]
+json.dump(m, open(sys.argv[2], "w", encoding="utf-8"), indent=2)
+PY
+SHMATRIX="$SHAPES/docs/vibage/maps/env_branch_matrix.json"
+bash "$ROOT/scripts/matrix-inventory.sh" "$SHAPES" >/dev/null
+python3 - "$SHMATRIX" "$SHAPES" "$ROOT" <<'PY' || fail "non-substring quote shapes must survive carry"
+import json, subprocess, sys
+from pathlib import Path
+
+matrix_path, parent, root = Path(sys.argv[1]), sys.argv[2], sys.argv[3]
+cells = json.loads(matrix_path.read_text(encoding="utf-8"))["cells"]
+swept = 0
+for c in cells:
+    if c["env_id"] in ("missing-env-config", "unknown-env"):
+        continue
+    subprocess.run(
+        ["bash", f"{root}/scripts/matrix-sweep-cell.sh", parent,
+         c["repo_id"], c["branch_ref"], c["env_id"], "--sweep-started"],
+        check=True, capture_output=True, text=True,
+    )
+    swept += 1
+if not swept:
+    raise SystemExit("fixture produced no sweepable cells")
+
+before = json.loads(matrix_path.read_text(encoding="utf-8"))["cells"]
+proven_before = {
+    (c["repo_id"], c["branch_ref"], c["env_id"]): c
+    for c in before if c["state"] == "proven"
+}
+if not proven_before:
+    raise SystemExit("fixture produced no proven cells")
+# Any quote that is not a literal substring of its file is exactly the shape a
+# naive comparison would have dropped; assert at least one exists so this case
+# cannot silently stop testing what it claims to.
+non_substring = 0
+for (rid, br, eid), c in proven_before.items():
+    for p in c.get("pointers") or []:
+        rel = p["path"].split("/", 1)[1] if "/" in p["path"] else p["path"]
+        r = subprocess.run(
+            ["git", "-C", f"{parent}/{rid}", "show", f"{br}:{rel}"],
+            capture_output=True, text=True,
+        )
+        if r.returncode != 0 or p["quote"] not in (r.stdout or ""):
+            non_substring += 1
+if not non_substring:
+    raise SystemExit("fixture no longer contains a non-substring quote shape")
+
+out = subprocess.run(
+    ["bash", f"{root}/scripts/matrix-inventory.sh", parent],
+    capture_output=True, text=True, check=True,
+).stdout
+after = {
+    (c["repo_id"], c["branch_ref"], c["env_id"]): c
+    for c in json.loads(matrix_path.read_text(encoding="utf-8"))["cells"]
+}
+lost = [k for k in proven_before if after.get(k, {}).get("state") != "proven"]
+if lost:
+    raise SystemExit(f"carry false-red on non-substring quotes: {lost}\n{out}")
+print(f"non_substring_quotes={non_substring} preserved={len(proven_before)}")
+PY
+pass "directory and presence-only quote shapes still carry"
+
 # 4) Deleted branches must not survive as ghost proven cells.
 GHOST="$TMP/ghost"
 mkdir -p "$GHOST/docs/vibage/maps"

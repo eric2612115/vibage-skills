@@ -80,6 +80,80 @@ assert not is_trigger("lab/x.sh")
 print("TRIGGER_ALLOWLIST_E4_OK")
 PY
 
+python3 - <<'PY' || fail "hub-state writers must be gate triggers"
+import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts/lib")
+from review_record import TRIGGER_GATE_HUB_WRITERS, classify_path, is_trigger
+
+# Frozen enumeration: the writers that mint owner hub state.
+for rel in (
+    "scripts/matrix-inventory.sh",
+    "scripts/matrix-sweep-cell.sh",
+    "scripts/matrix-extract-evidence.py",
+    "scripts/c-prime-fill.sh",
+    "scripts/freshness-refresh-repo.sh",
+    "scripts/freshness-mark.sh",
+    "scripts/graph-floor.sh",
+    "scripts/pile-index.sh",
+    "scripts/scene-brief.sh",
+    "scripts/ledger-append.sh",
+    "scripts/dimension-synth-repo.sh",
+    "scripts/env-vacancy-apply-point.sh",
+    "scripts/install.sh",
+    "scripts/lib/freshness.py",
+    "scripts/lib/env_discovery.py",
+    "scripts/lib/env_vacancy.py",
+    "scripts/lib/dimension_fill.py",
+):
+    assert Path(rel).is_file(), f"allow-list names a missing file: {rel}"
+    assert is_trigger(rel), f"hub writer not a trigger: {rel}"
+    assert classify_path(rel) == "gate", f"hub writer not gate class: {rel}"
+
+# Presentation-only writers stay outside the gate.
+for rel in (
+    "scripts/generate-service-map-graph.sh",
+    "scripts/render-service-map-preview.sh",
+):
+    assert not is_trigger(rel), f"presentation writer must not gate: {rel}"
+
+# Drift guard: a script that writes under the owner's docs/vibage must be in the
+# allow-list, so a new hub writer cannot land unreviewed by construction.
+EXEMPT = {
+    "scripts/generate-service-map-graph.sh",
+    "scripts/render-service-map-preview.sh",
+}
+WRITE_HINTS = (
+    re.compile(r"\bwrite_text\("),
+    re.compile(r"\bjson\.dump\("),
+    re.compile(r'>\s*"?\$(HUB|MATRIX|MAP|OUT)'),
+    re.compile(r"\bmkdir -p .*docs/vibage"),
+)
+missing = []
+for path in sorted(Path("scripts").rglob("*")):
+    if not path.is_file() or path.suffix not in (".sh", ".py"):
+        continue
+    rel = path.as_posix()
+    if rel in EXEMPT or rel.startswith("scripts/lab/"):
+        continue
+    text = path.read_text(encoding="utf-8", errors="ignore")
+    if "docs/vibage" not in text and 'docs" / "vibage' not in text:
+        continue
+    if not any(h.search(text) for h in WRITE_HINTS):
+        continue
+    if not is_trigger(rel):
+        missing.append(rel)
+if missing:
+    raise SystemExit(
+        "hub writers outside the review allow-list: "
+        + ", ".join(missing)
+        + " — add to TRIGGER_GATE_HUB_WRITERS or EXEMPT with a reason"
+    )
+print(f"TRIGGER_HUB_WRITERS_OK n={len(TRIGGER_GATE_HUB_WRITERS)}")
+PY
+
 python3 - <<'PY' || fail "blast class / budget"
 import sys
 sys.path.insert(0, "scripts/lib")
