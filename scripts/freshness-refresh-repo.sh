@@ -38,6 +38,9 @@ if [[ "$in_map" != "1" ]]; then
   echo "FULL_MOTHER_FLOOR_REFRESH"
 fi
 
+# Inventory refreshes structure for every repo (so deleted branches cannot
+# linger) but keeps other repos' terminal verdicts, so refreshing this repo no
+# longer wipes their sweep results. Bounded means: only this repo gets swept.
 bash "$PKG_ROOT/scripts/matrix-inventory.sh" "$PARENT" || fail "matrix-inventory failed"
 [[ -f "$MATRIX" ]] || fail "missing matrix after inventory"
 
