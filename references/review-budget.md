@@ -7,15 +7,20 @@ requires. Agents must **not** declare N — the script derives it from trigger p
 
 | Class | Trigger membership (see `is_trigger` + `classify_path`) | Impl min N | Diversity rule |
 |-------|----------------------------------------------------------|------------|----------------|
-| `gate` | gate EXACT scripts (`assert_gate`, `write_confirm`, `coverage-box`, `test-tier0`, `pack-health`, `verify-review-record`, `.github/workflows/tier0.yml`) + named `scripts/lib/` helpers; **hub-state writers** (see below) | ≥2 | ≥2 distinct non-empty reviewer **`context`** (all classes; A1) |
+| `gate` | gate EXACT scripts (`assert_gate`, `write_confirm`, `coverage-box`, `test-tier0`, `pack-health`, `.github/workflows/tier0.yml`) + named `scripts/lib/` helpers; **hub-state writers**; **acceptance definers** (all `scripts/verify-*.sh` + named checkers) — both below | ≥2 | ≥2 distinct non-empty reviewer **`context`** (all classes; A1) |
 | `narrative` | entire `adapters/`; entire `skills/`; `references/hard-stops.md`; `references/looping-review.md`; `references/routing-scope.md`; `references/review-budget.md` | ≥2 | same: ≥2 distinct **`context`** |
 | `tests` | entire `tests/` | ≥2 | same: ≥2 distinct **`context`** |
 
 Severity: `gate` > `narrative` > `tests`. Mixed diffs use the highest class.
 
-Membership is the **allow-list in `scripts/lib/review_record.py`**, not a path glob.
-`scripts/verify-*.sh` and blanket `scripts/lib/` are **not** triggers — read-only wrappers
-stay outside the gate on purpose (`tests/test_review_record.sh` freezes that).
+Membership is the **allow-list in `scripts/lib/review_record.py`**. Blanket `scripts/lib/`
+and blanket `tests/` are still **not** triggers — only named members are. The one glob is
+`scripts/verify-*`, below.
+
+`tests/test_review_record.sh` enforces a **total partition**: every non-lab file under
+`scripts/` is either a trigger or is named in `NON_GATE_EXEMPT` with a reason. There is no
+predicate to satisfy, so a new script cannot land unclassified. `scripts/lab/**` is out of
+scope — the harness runs on copies under `/tmp`, never a real owner hub.
 
 ### Hub-state writers (gate class)
 
@@ -31,6 +36,25 @@ Rationale: a silent false state written by one of these is the v0.9.3 matrix bug
 (inventory reset `proven` cells and no gate noticed), and before this group existed a solo
 edit to any of them produced `REVIEW_RECORD_SKIP`. Presentation-only writers (graph /
 preview renderers) are excluded because they mint no verdict.
+
+Membership is not "mentions `docs/vibage`". `dimension-fill`, `dimension-search`, and
+`env-vacancy-answer` never spell the hub path — they mutate it through `scripts/lib` — and
+are writers all the same.
+
+### Acceptance definers (gate class)
+
+Gating writers alone left the other half open: a **verify script defines what passing
+means**, so editing one can turn `FAIL` into `OK` while the state it judges is untouched.
+Under the writers-only allow-list that edit produced `REVIEW_RECORD_SKIP`.
+
+Every `scripts/verify-*.sh` is therefore gate class **by prefix** — a verify script added
+tomorrow is gated the moment it exists, with nothing to remember. Named non-`verify-`
+checkers join it: `freshness-check.sh`, `env-vacancy-check.sh`, `scene-validate.sh`,
+`scene-classify.sh`, `scripts/lib/report_token_lint.py`, `scripts/lib/require_rg.sh`
+(a fail-closed dependency guard whose absence would let slogan/copy checks pass silently).
+
+`scripts/lab/verify-l1-done.sh` is not gated: the prefix is `scripts/verify-`, and the lab
+harness never judges a real owner hub.
 
 **V1 N is identical across classes (G3):** every class has Impl min N=2. Classification
 is for stdout disclosure (`blast_class=`) and future budget tuning — **not** a stricter

@@ -49,12 +49,15 @@ TRIGGER_GATE_EXACT = frozenset(
 # false state written here is exactly the class of bug that shipped in v0.9.3
 # (matrix-inventory resetting proven cells), and editing one of them alone used
 # to require no review record at all.
-# Deliberately excluded: presentation-only writers (graph/preview renderers) and
-# read-only verify-*.sh wrappers.
+# Membership is not "mentions docs/vibage": thin wrappers that mutate hub state
+# through scripts/lib are writers too. Presentation-only renderers are not.
 TRIGGER_GATE_HUB_WRITERS = frozenset(
     {
         "scripts/c-prime-fill.sh",
+        "scripts/dimension-fill.sh",
+        "scripts/dimension-search.sh",
         "scripts/dimension-synth-repo.sh",
+        "scripts/env-vacancy-answer.sh",
         "scripts/env-vacancy-apply-point.sh",
         "scripts/freshness-mark.sh",
         "scripts/freshness-refresh-repo.sh",
@@ -70,6 +73,21 @@ TRIGGER_GATE_HUB_WRITERS = frozenset(
         "scripts/lib/env_discovery.py",
         "scripts/lib/env_vacancy.py",
         "scripts/lib/freshness.py",
+    }
+)
+# Acceptance definers: scripts that decide what "passing" MEANS. Gating writers
+# alone left this open — a verify script can be edited to turn FAIL into OK, and
+# under the old allow-list that produced REVIEW_RECORD_SKIP. The prefix is
+# deliberate so a newly added verify-*.sh is gated the moment it exists.
+TRIGGER_GATE_ACCEPTANCE_PREFIXES = ("scripts/verify-",)
+TRIGGER_GATE_ACCEPTANCE_EXACT = frozenset(
+    {
+        "scripts/env-vacancy-check.sh",
+        "scripts/freshness-check.sh",
+        "scripts/scene-classify.sh",
+        "scripts/scene-validate.sh",
+        "scripts/lib/report_token_lint.py",
+        "scripts/lib/require_rg.sh",
     }
 )
 TRIGGER_NARRATIVE_EXACT = frozenset(
@@ -134,13 +152,24 @@ _CONCLUSION_OVERCLAIM = re.compile(
 )
 
 
+def _is_gate_path(rel: str) -> bool:
+    if (
+        rel in TRIGGER_GATE_EXACT
+        or rel in TRIGGER_GATE_HUB_WRITERS
+        or rel in TRIGGER_GATE_ACCEPTANCE_EXACT
+    ):
+        return True
+    return any(rel.startswith(p) for p in TRIGGER_GATE_ACCEPTANCE_PREFIXES)
+
+
 def is_trigger(rel: str) -> bool:
     rel = _norm_rel(rel)
     if rel.startswith(REVIEWS_DIR + "/") or rel.startswith("lab/"):
         return False
+    if rel.startswith("scripts/lab/"):
+        return False
     if (
-        rel in TRIGGER_GATE_EXACT
-        or rel in TRIGGER_GATE_HUB_WRITERS
+        _is_gate_path(rel)
         or rel in TRIGGER_NARRATIVE_EXACT
         or rel in TRIGGER_TESTS_EXACT
     ):
@@ -161,7 +190,7 @@ def classify_path(rel: str) -> str | None:
         rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES
     ):
         return "narrative"
-    if rel in TRIGGER_GATE_EXACT or rel in TRIGGER_GATE_HUB_WRITERS:
+    if _is_gate_path(rel):
         return "gate"
     # Unknown trigger shape: still gate (fail-closed upgrade)
     return "gate"
