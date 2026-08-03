@@ -5,8 +5,10 @@
 # Terminal cell states (proven|failed) are DURABLE by default: re-running
 # inventory re-derives the cell set for every repo but does not downgrade a
 # swept cell back to unproven — provided its evidence still resolves at that
-# branch. Structure is always recomputed, so deleted branches cannot survive as
-# ghost proven cells. --reset opts into a true rebuild.
+# branch AND still yields env evidence when re-derived. Carried quotes are
+# refreshed to the re-derived value, so a carried cell never cites text it can no
+# longer produce. Structure is always recomputed, so deleted branches cannot
+# survive as ghost proven cells. --reset opts into a true rebuild.
 set -euo pipefail
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -59,7 +61,9 @@ sys.path.insert(0, str(pkg_root / "scripts"))
 from lib.env_discovery import (  # noqa: E402
     COMPOSE_ENV_FILE_RE,
     COMPOSE_NAMES,
+    SECRET_DOTENV_NAMES,
     discover_envs,
+    quote_for_env,
 )
 
 policy_path = parent / "docs" / "vibage" / "OWNER_POLICY.json"
@@ -128,6 +132,21 @@ def git_ok(repo_root: Path, *args: str) -> bool:
     except (OSError, subprocess.TimeoutExpired):
         return False
     return r.returncode == 0
+
+
+def git_object_kind(repo_root: Path, rev_path: str) -> str:
+    try:
+        r = subprocess.run(
+            ["git", "-C", str(repo_root), "cat-file", "-t", rev_path],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+    if r.returncode != 0:
+        return ""
+    return (r.stdout or "").strip()
 
 
 def list_local_branches(repo_root: Path):
@@ -417,44 +436,93 @@ if not reset and out_matrix.is_file():
 roots_by_repo = {info["repo_id"]: info["root"] for info in repo_info}
 
 
-def evidence_resolves(repo_id, branch_ref, pointers) -> bool:
-    """Does every carried pointer still exist AT THAT BRANCH?
+def evidence_resolves(repo_id, branch_ref, env_id, pointers):
+    """Does every carried pointer still PROVE its env AT THAT BRANCH?
 
-    A carried verdict is only as honest as its evidence. Restoring pointers to a
-    renamed/deleted file would keep MATRIX_SWEEP_SUBSTANTIVE_OK green on
-    evidence that is gone, so an unresolvable pointer means do not carry.
+    Returns the pointer list to store (quotes refreshed) or None to refuse the
+    carry. A carried verdict is only as honest as its evidence, so this checks
+    two things:
 
-    Branch identity matters: a working-tree hit proves nothing about another
-    branch, so git is asked first. Working-tree existence only counts for the
-    checked-out branch, which is the one case where extract also reads the disk
-    (and therefore accepts untracked evidence).
+    1. The path still exists at that branch. Branch identity matters — a
+       working-tree hit proves nothing about another branch, so git is asked
+       first, and disk existence only counts for the checked-out branch (the one
+       case extract also reads disk, hence accepts untracked evidence).
+    2. The file content still yields env evidence, re-derived with the same
+       `quote_for_env` the sweep uses. A file that keeps its name while losing
+       its env line would otherwise carry a `proven` verdict whose quote no
+       longer matches. Directory/tree evidence has no text to re-derive, so
+       existence is the whole test there.
+
+    String-comparing the stored quote false-reds a large share of healthy cells
+    (measured 4 of 13 on one design fixture: `dir:` pointers and synthesised
+    presence quotes are not file substrings at all), so the check re-derives
+    instead, and the refreshed quote is written back — a carried cell never cites
+    text it can no longer produce.
     """
     root = roots_by_repo.get(repo_id)
-    if root is None:
-        return False
-    if not pointers:
-        return False
+    if root is None or not pointers:
+        return None
     cur = current_branch(root)
+    refreshed = []
     for p in pointers:
         if not isinstance(p, dict):
-            return False
+            return None
         path = str(p.get("path") or "").strip()
         if not path:
-            return False
+            return None
         rel = path
         prefix = f"{repo_id}/"
         if repo_id not in (".", "") and path.startswith(prefix):
             rel = path[len(prefix) :]
         if not rel:
-            return False
-        # Tracked at that branch (also covers tree/dir pointers).
-        if git_ok(root, "cat-file", "-e", f"{branch_ref}:{rel}"):
+            return None
+
+        kind = git_object_kind(root, f"{branch_ref}:{rel}")
+        on_disk = parent / path
+        disk_ok = bool(cur) and cur == branch_ref and on_disk.exists()
+        if not kind and not disk_ok:
+            return None
+
+        # Tree/dir evidence: no text to re-derive, so existence is the whole test.
+        if kind == "tree" or (disk_ok and on_disk.is_dir()):
+            refreshed.append(dict(p))
             continue
-        # Untracked evidence is only readable on the checked-out branch.
-        if cur and cur == branch_ref and (parent / path).exists():
-            continue
-        return False
-    return True
+        # Secret dotenv: extract never emits these, so such a pointer can only
+        # come from a hand-edited or foreign matrix. Carrying it on existence
+        # alone would launder a verdict citing content nothing is allowed to
+        # read, so refuse and make the sweep re-derive from a readable path.
+        if Path(rel).name in SECRET_DOTENV_NAMES or Path(rel).name == ".env":
+            return None
+
+        text = None
+        if kind == "blob":
+            r = subprocess.run(
+                ["git", "-C", str(root), "show", f"{branch_ref}:{rel}"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+            if r.returncode == 0:
+                text = r.stdout or ""
+        if text is None and disk_ok and on_disk.is_file():
+            try:
+                text = on_disk.read_text(encoding="utf-8", errors="ignore")
+            except OSError:
+                text = None
+        if text is None:
+            return None
+
+        new_quote = quote_for_env(text, env_id, rel)
+        if not new_quote:
+            return None
+        carried = dict(p)
+        if new_quote != carried.get("quote"):
+            # The hash described the quote we just replaced; keeping it would
+            # pair a fresh citation with stale provenance.
+            carried.pop("evidence_hash", None)
+        carried["quote"] = new_quote
+        refreshed.append(carried)
+    return refreshed
 
 
 # Terminal states are durable, but only while their evidence still resolves.
@@ -470,16 +538,25 @@ if not reset:
         if c.get("state") != "unproven":
             # Structural verdicts (branch_cap / missing-env-config) still recompute.
             continue
-        if not evidence_resolves(
-            c.get("repo_id"), c.get("branch_ref"), pc.get("pointers")
-        ):
+        carried_pointers = evidence_resolves(
+            c.get("repo_id"),
+            c.get("branch_ref"),
+            c.get("env_id"),
+            pc.get("pointers"),
+        )
+        if carried_pointers is None:
             dropped_stale_evidence += 1
             continue
         c["state"] = pc["state"]
         if pc.get("reason"):
             c["reason"] = pc["reason"]
-        c["pointers"] = pc["pointers"]
-        if pc.get("evidence_hash"):
+        c["pointers"] = carried_pointers
+        quotes_refreshed = [p.get("quote") for p in carried_pointers] != [
+            p.get("quote") for p in (pc.get("pointers") or [])
+        ]
+        # Same reason as the pointer-level drop: a cell hash describes the
+        # citations we just replaced.
+        if pc.get("evidence_hash") and not quotes_refreshed:
             c["evidence_hash"] = pc["evidence_hash"]
         c["updated_at"] = pc.get("updated_at") or c["updated_at"]
         preserved += 1

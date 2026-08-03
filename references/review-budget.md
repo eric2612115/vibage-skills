@@ -7,11 +7,30 @@ requires. Agents must **not** declare N — the script derives it from trigger p
 
 | Class | Trigger membership (see `is_trigger` + `classify_path`) | Impl min N | Diversity rule |
 |-------|----------------------------------------------------------|------------|----------------|
-| `gate` | `scripts/verify-*.sh`; gate EXACT scripts (`assert_gate`, `write_confirm`, `coverage-box`, `test-tier0`, `pack-health`); entire `scripts/lib/` | ≥2 | ≥2 distinct non-empty reviewer **`context`** (all classes; A1) |
+| `gate` | gate EXACT scripts (`assert_gate`, `write_confirm`, `coverage-box`, `test-tier0`, `pack-health`, `verify-review-record`, `.github/workflows/tier0.yml`) + named `scripts/lib/` helpers; **hub-state writers** (see below) | ≥2 | ≥2 distinct non-empty reviewer **`context`** (all classes; A1) |
 | `narrative` | entire `adapters/`; entire `skills/`; `references/hard-stops.md`; `references/looping-review.md`; `references/routing-scope.md`; `references/review-budget.md` | ≥2 | same: ≥2 distinct **`context`** |
 | `tests` | entire `tests/` | ≥2 | same: ≥2 distinct **`context`** |
 
 Severity: `gate` > `narrative` > `tests`. Mixed diffs use the highest class.
+
+Membership is the **allow-list in `scripts/lib/review_record.py`**, not a path glob.
+`scripts/verify-*.sh` and blanket `scripts/lib/` are **not** triggers — read-only wrappers
+stay outside the gate on purpose (`tests/test_review_record.sh` freezes that).
+
+### Hub-state writers (gate class)
+
+`TRIGGER_GATE_HUB_WRITERS` covers scripts that write the owner's `docs/vibage/**` or mint
+the cell / freshness / evidence values gate tokens are computed from: `matrix-inventory`,
+`matrix-sweep-cell`, `matrix-extract-evidence`, `c-prime-fill`, `freshness-refresh-repo`,
+`freshness-mark`, `graph-floor`, `pile-index`, `scene-brief`, `ledger-append`,
+`dimension-synth-repo`, `env-vacancy-apply-point`, `install.sh`, and the
+`scripts/lib/` modules behind them (`freshness`, `env_discovery`, `env_vacancy`,
+`dimension_fill`).
+
+Rationale: a silent false state written by one of these is the v0.9.3 matrix bug class
+(inventory reset `proven` cells and no gate noticed), and before this group existed a solo
+edit to any of them produced `REVIEW_RECORD_SKIP`. Presentation-only writers (graph /
+preview renderers) are excluded because they mint no verdict.
 
 **V1 N is identical across classes (G3):** every class has Impl min N=2. Classification
 is for stdout disclosure (`blast_class=`) and future budget tuning — **not** a stricter

@@ -80,6 +80,101 @@ assert not is_trigger("lab/x.sh")
 print("TRIGGER_ALLOWLIST_E4_OK")
 PY
 
+python3 - <<'PY' || fail "hub-state writers must be gate triggers"
+import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, "scripts/lib")
+from review_record import TRIGGER_GATE_HUB_WRITERS, classify_path, is_trigger
+
+# Frozen enumeration: the writers that mint owner hub state.
+for rel in (
+    "scripts/matrix-inventory.sh",
+    "scripts/matrix-sweep-cell.sh",
+    "scripts/matrix-extract-evidence.py",
+    "scripts/c-prime-fill.sh",
+    "scripts/freshness-refresh-repo.sh",
+    "scripts/freshness-mark.sh",
+    "scripts/graph-floor.sh",
+    "scripts/pile-index.sh",
+    "scripts/scene-brief.sh",
+    "scripts/ledger-append.sh",
+    "scripts/dimension-synth-repo.sh",
+    "scripts/env-vacancy-apply-point.sh",
+    "scripts/install.sh",
+    "scripts/lib/freshness.py",
+    "scripts/lib/env_discovery.py",
+    "scripts/lib/env_vacancy.py",
+    "scripts/lib/dimension_fill.py",
+):
+    assert Path(rel).is_file(), f"allow-list names a missing file: {rel}"
+    assert is_trigger(rel), f"hub writer not a trigger: {rel}"
+    assert classify_path(rel) == "gate", f"hub writer not gate class: {rel}"
+
+# Presentation-only writers stay outside the gate.
+for rel in (
+    "scripts/generate-service-map-graph.sh",
+    "scripts/render-service-map-preview.sh",
+):
+    assert not is_trigger(rel), f"presentation writer must not gate: {rel}"
+
+# Complete partition, not a write-verb heuristic: every script that touches the
+# owner's docs/vibage is either a trigger or is named here with a reason. A
+# heuristic scanner is evadable (open().write, tee, cp, plain redirects); an
+# exhaustive partition forces a new hub writer to be classified by a human.
+NON_WRITER_EXEMPT = {
+    # presentation only — renders a view, mints no verdict
+    "scripts/generate-service-map-graph.sh": "presentation",
+    "scripts/render-service-map-preview.sh": "presentation",
+    # read-only classifiers — parse hub state and print, never write it
+    "scripts/scene-classify.sh": "read-only",
+    "scripts/scene-validate.sh": "read-only",
+    # read-only gates — they judge hub state and print tokens; the writers they
+    # judge are the triggers. Freezing verify-*.sh outside the gate is the same
+    # decision `assert not is_trigger("scripts/verify-freshness.sh")` records.
+    "scripts/verify-brief.sh": "read-only gate",
+    "scripts/verify-env-branch-matrix.sh": "read-only gate",
+    "scripts/verify-graph-floor.sh": "read-only gate",
+    "scripts/verify-issue-fix-unlock.sh": "read-only gate",
+    "scripts/verify-ledger-slice.sh": "read-only gate",
+    "scripts/verify-map-deepen.sh": "read-only gate",
+    "scripts/verify-matrix-substantive.sh": "read-only gate",
+    "scripts/verify-project-entry.sh": "read-only gate",
+    "scripts/verify-scene-brief.sh": "read-only gate",
+    "scripts/verify-scene-cover.sh": "read-only gate",
+    "scripts/verify-service-map.sh": "read-only gate",
+    "scripts/verify-understanding-rollup.sh": "read-only gate",
+    "scripts/verify-work-continue.sh": "read-only gate",
+}
+unclassified = []
+for path in sorted(Path("scripts").rglob("*")):
+    if not path.is_file() or path.suffix not in (".sh", ".py"):
+        continue
+    rel = path.as_posix()
+    if rel.startswith("scripts/lab/"):
+        continue  # lab harness never writes a real owner hub (LAB_NO_DELETE)
+    text = path.read_text(encoding="utf-8", errors="ignore")
+    if "docs/vibage" not in text and 'docs" / "vibage' not in text:
+        continue
+    if is_trigger(rel) or rel in NON_WRITER_EXEMPT:
+        continue
+    unclassified.append(rel)
+if unclassified:
+    raise SystemExit(
+        "scripts touching docs/vibage that are neither triggers nor exempt: "
+        + ", ".join(unclassified)
+        + " — add to TRIGGER_GATE_HUB_WRITERS, or to NON_WRITER_EXEMPT with a reason"
+    )
+for rel in NON_WRITER_EXEMPT:
+    assert Path(rel).is_file(), f"exempt names a missing file: {rel}"
+    assert not is_trigger(rel), f"exempt path is also a trigger: {rel}"
+print(
+    f"TRIGGER_HUB_WRITERS_OK n={len(TRIGGER_GATE_HUB_WRITERS)} "
+    f"exempt={len(NON_WRITER_EXEMPT)}"
+)
+PY
+
 python3 - <<'PY' || fail "blast class / budget"
 import sys
 sys.path.insert(0, "scripts/lib")
