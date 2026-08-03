@@ -114,7 +114,7 @@ what "still locked" means was a no-ceremony change.
 
 **Fix.** Those four joined the enumeration, and the suite now DERIVES the required set by
 reading `scripts/test-tier0.sh`, `scripts/pack-health.sh`, and **every**
-`.github/workflows/*.yml`, failing if any CI-run suite is not a trigger. (A reviewer showed
+`.github/workflows/*.yml` / `*.yaml`, failing if any CI-run suite is not a trigger. (A reviewer showed
 a hard-coded `tier0.yml` source list would miss a new `nightly.yml`, so the workflow
 directory is globbed.)
 
