@@ -551,7 +551,12 @@ if not reset:
         if pc.get("reason"):
             c["reason"] = pc["reason"]
         c["pointers"] = carried_pointers
-        if pc.get("evidence_hash"):
+        quotes_refreshed = [p.get("quote") for p in carried_pointers] != [
+            p.get("quote") for p in (pc.get("pointers") or [])
+        ]
+        # Same reason as the pointer-level drop: a cell hash describes the
+        # citations we just replaced.
+        if pc.get("evidence_hash") and not quotes_refreshed:
             c["evidence_hash"] = pc["evidence_hash"]
         c["updated_at"] = pc.get("updated_at") or c["updated_at"]
         preserved += 1
