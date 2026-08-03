@@ -79,13 +79,17 @@ for helper in (
 assert is_trigger("scripts/verify-freshness.sh")
 assert classify_path("scripts/verify-freshness.sh") == "gate"
 assert not is_trigger("scripts/lib/env_vacancy_unused_helper.py")
-assert not is_trigger("tests/test_status_capability_table.sh")
+# CI-run suites joined TRIGGER_TESTS_EXACT in v0.9.3.3; blanket tests/ still does not.
+assert is_trigger("tests/test_status_capability_table.sh")
+assert classify_path("tests/test_status_capability_table.sh") == "tests"
+assert not is_trigger("tests/test_not_wired_anywhere.sh")
 assert not is_trigger("lab/x.sh")
 print("TRIGGER_ALLOWLIST_E4_OK")
 PY
 
 python3 - <<'PY' || fail "hub-state writers must be gate triggers"
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -138,17 +142,23 @@ for rel in (
 # env-vacancy wrappers actually do). Enumerating the whole directory removes the
 # predicate, so a new script cannot land without being classified.
 NON_GATE_EXEMPT = {
-    "scripts/generate-service-map-graph.sh": "presentation — renders a view, mints no verdict",
-    "scripts/render-service-map-preview.sh": "presentation — renders a view, mints no verdict",
-    "scripts/serve-preview.sh": "presentation — fail-soft localhost server",
+    "scripts/generate-service-map-graph.sh": "presentation — writes graph.mmd / notes, mints no gate token",
+    "scripts/render-service-map-preview.sh": "presentation — writes vibage-preview assets, mints no gate token",
+    "scripts/serve-preview.sh": "presentation — copies preview assets and serves localhost; no verdict",
     "scripts/resolve-pkg-root.sh": "path resolution — reads symlinks, no hub state, no token",
     "scripts/lib/__init__.py": "package marker",
+    "scripts/hooks/vibage-child-post-commit.sample": "sample hook — not installed or executed by the pack",
 }
+# No suffix filter: an earlier version only looked at .sh/.py, which a reviewer
+# bypassed with scripts/check-matrix.mjs and an extensionless script. Every
+# tracked file under scripts/ must be classified.
 unclassified = []
-for path in sorted(Path("scripts").rglob("*")):
-    if not path.is_file() or path.suffix not in (".sh", ".py"):
+tracked = subprocess.run(
+    ["git", "ls-files", "scripts"], capture_output=True, text=True, check=True
+).stdout.split()
+for rel in sorted(tracked):
+    if not Path(rel).is_file():
         continue
-    rel = path.as_posix()
     if rel.startswith("scripts/lab/"):
         continue  # lab harness runs on copies under /tmp, never a real owner hub
     if is_trigger(rel) or rel in NON_GATE_EXEMPT:
@@ -185,6 +195,29 @@ assert is_trigger("scripts/verify-not-yet-written.sh")
 assert classify_path("scripts/verify-not-yet-written.sh") == "gate"
 # The lab harness stays outside the gate.
 assert not is_trigger("scripts/lab/verify-l1-done.sh")
+
+# Every suite a CI job runs must be a trigger. Weakening or deleting one edits
+# what "still locked" means, so it cannot be a no-record change. Derived from the
+# runners themselves, so wiring a new suite into CI without gating it fails here.
+ci_sources = [
+    Path("scripts/test-tier0.sh"),
+    Path("scripts/pack-health.sh"),
+    Path(".github/workflows/tier0.yml"),
+]
+ci_suites = set()
+for src in ci_sources:
+    assert src.is_file(), f"missing CI runner: {src}"
+    ci_suites.update(
+        re.findall(r"tests/test_[A-Za-z0-9_]+\.(?:sh|py)", src.read_text(encoding="utf-8"))
+    )
+assert ci_suites, "no CI-run suites discovered — the derivation broke"
+ungated_ci = sorted(s for s in ci_suites if not is_trigger(s))
+if ungated_ci:
+    raise SystemExit(
+        "CI-run suites outside the review allow-list: "
+        + ", ".join(ungated_ci)
+        + " — add to TRIGGER_TESTS_EXACT"
+    )
 
 n_verify = len(list(Path("scripts").glob("verify-*.sh")))
 print(
