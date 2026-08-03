@@ -17,10 +17,13 @@ Membership is the **allow-list in `scripts/lib/review_record.py`**. Blanket `scr
 and blanket `tests/` are still **not** triggers — only named members are. The one glob is
 `scripts/verify-*`, below.
 
-`tests/test_review_record.sh` enforces a **total partition**: every non-lab file under
-`scripts/` is either a trigger or is named in `NON_GATE_EXEMPT` with a reason. There is no
-predicate to satisfy, so a new script cannot land unclassified. `scripts/lab/**` is out of
-scope — the harness runs on copies under `/tmp`, never a real owner hub.
+`tests/test_review_record.sh` enforces a **total partition**: every file in
+`git ls-files scripts` (any extension), except `scripts/lab/**`, is either a trigger or is
+named in `NON_GATE_EXEMPT` with a reason. There is no content predicate to satisfy, so a
+tracked script cannot land unclassified. The same suite derives the CI-run test set from
+`scripts/test-tier0.sh`, `scripts/pack-health.sh`, and every `.github/workflows/*.yml`, and
+fails if a suite a CI job runs is not a trigger. `scripts/lab/**` is out of scope — the
+harness runs on copies under `/tmp`, never a real owner hub.
 
 ### Hub-state writers (gate class)
 

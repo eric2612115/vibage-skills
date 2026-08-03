@@ -56,20 +56,27 @@ removes that last predicate. The three wrapper writers found by dropping the ear
 
 ## Cost
 
-Gate surface is 41 exact paths plus the `scripts/verify-` prefix (23 scripts today).
+Trigger surface is 37 exact gate paths plus the `scripts/verify-` prefix (23 scripts today),
+plus 4 CI-run suites added to the `tests` class.
 
-Replaying the last 60 commits reachable from `0dd2d3d` (v0.9.3.2) with that release's
-allow-list versus this one: **0 commits would newly require a record**, 28 already required
-one, 25 needed none. Three commits touched newly gated paths (`verify-work-continue.sh`
-twice, plus an English-copy pass) but already carried another trigger, so the record burden
-does not move for this repo's recent history.
+Replaying commits reachable from `0dd2d3d` (v0.9.3.2) with that release's allow-list versus
+this one (`--no-renames`, merge commits with empty trees counted under "none"):
 
-That is a statement about history, not a forecast. The forward cost is one record per edit
-to a verify script, a named checker, or a CI-run suite — the surfaces where a change alters
-what "passing" means.
+| Window | Newly require a record | Already required one | None | Touched a newly gated path |
+|--------|------------------------|----------------------|------|-----------------------------|
+| last 60 | **0** | 28 | 32 (7 merge/empty) | 6 |
+| last 150 | **3** | 89 | 58 (10 merge/empty) | 34 |
 
-An earlier draft of this report quoted "2 of the last 60", which a reviewer showed was the
-**v0.9.3.2 hub-writer** delta measured against a pre-`26b082a` baseline, not this batch.
+Sixty commits is a short and favourable window; the 150-commit figure is the honest one to
+quote. Even there the added burden is 3 records across 150 commits, because most edits to a
+newly gated path already carried another trigger.
+
+That is history, not a forecast. Forward cost is one record per edit to a verify script, a
+named checker, or a CI-run suite — the surfaces where a change alters what "passing" means.
+
+Two earlier drafts got this wrong and reviewers caught both: the first quoted "2 of the last
+60", which was the **v0.9.3.2 hub-writer** delta measured against a pre-`26b082a` baseline;
+the second quoted a "none" count that had silently dropped merge commits.
 
 ## Hole 3 — renaming a path out of the allow-list escaped the gate
 
@@ -80,8 +87,13 @@ Found during review, same class as the other two. `changed_paths()` used
 diff. Moving a file out of the gate is precisely the edit that must not escape review.
 
 **Fix.** `changed_paths()` passes `--no-renames`, so both the old and new paths appear and
-the guarded source still counts. Verified on an isolated clone: the same rename now yields
-`REVIEW_RECORD_FAIL reason=missing_record`.
+the guarded source still counts. Reproduced on an isolated clone — the same rename now
+yields `REVIEW_RECORD_FAIL reason=missing_record` — and locked by a fixture in
+`tests/test_review_record.sh` that renames a guarded path and fails if the result is
+`no_trigger_paths` or if the renamed-away path is missing from the trigger list.
+
+A record for such a rename is still producible: the deleted source hashes as `missing` in
+`compute_diff_id`, so a record written for that `diff_id` validates normally.
 
 ## Hole 4 — the regression suites CI runs were not all gated
 
@@ -92,9 +104,14 @@ matrix bug and the pin-ordering bug. Weakening or deleting one needed no record:
 what "still locked" means was a no-ceremony change.
 
 **Fix.** Those four joined the enumeration, and the suite now DERIVES the required set by
-reading `scripts/test-tier0.sh`, `scripts/pack-health.sh`, and `.github/workflows/tier0.yml`
-for `tests/test_*` references, failing if any CI-run suite is not a trigger. Wiring a new
-suite into CI without gating it fails here rather than being remembered.
+reading `scripts/test-tier0.sh`, `scripts/pack-health.sh`, and **every**
+`.github/workflows/*.yml`, failing if any CI-run suite is not a trigger. (A reviewer showed
+a hard-coded `tier0.yml` source list would miss a new `nightly.yml`, so the workflow
+directory is globbed.)
+
+The derivation reads literal `tests/test_*` references. A path assembled from shell
+variables would slip it — but the commit that wires it into a runner edits a gated file, so
+the wiring itself needs a record.
 
 ## Regression tests
 
@@ -119,7 +136,7 @@ unlisted script now uses `resolve-pkg-root.sh`.
 - Gating an acceptance definer means an edit needs a record. It does not mean the reviewer
   will notice a loosened threshold — `REVIEW_RECORD_OK` is still not review quality.
 - The partition guarantees classification, not correctness: a hub writer wrongly filed as
-  exempt would still slip. The exempt list is 5 entries precisely so it stays auditable.
+  exempt would still slip. The exempt list is six entries precisely so it stays auditable.
 - `scripts/lab/**` is excluded by rule. A reviewer noted `lab/continuum.sh`,
   `lab/seed-lab-scan-plan.sh`, and `lab/mint-lab-confirm.sh` accept a parent path and write
   `docs/vibage` inside it; callers copy under `/tmp` first, so the exclusion rests on that

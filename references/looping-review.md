@@ -18,9 +18,11 @@ Budget SSOT: `references/review-budget.md` (blast class → N; diversity axis = 
   cell / freshness / evidence values, including thin wrappers that do it through
   `scripts/lib`); **acceptance definers** (all `scripts/verify-*.sh` by prefix, plus named
   checkers — editing one changes what passing *means*); narrative (`adapters/**`,
-  `skills/**`, four `references/*` files); frozen `tests/test_*.{sh,py}` enumeration only.
-  `tests/test_review_record.sh` holds a total partition of `scripts/**`, so an unclassified
-  script fails the suite. Details: `references/review-budget.md`
+  `skills/**`, four `references/*` files); frozen `tests/test_*.{sh,py}` enumeration only —
+  membership stays a hand-kept list, but every suite a CI job runs must be on it, and
+  `tests/test_review_record.sh` fails if one is missing. That suite also holds a total
+  partition of tracked `scripts/**`, so an unclassified script fails.
+  Details: `references/review-budget.md`
 
 Not every commit message. Not a required git pre-commit hook in V1.
 

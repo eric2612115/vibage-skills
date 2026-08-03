@@ -199,11 +199,10 @@ assert not is_trigger("scripts/lab/verify-l1-done.sh")
 # Every suite a CI job runs must be a trigger. Weakening or deleting one edits
 # what "still locked" means, so it cannot be a no-record change. Derived from the
 # runners themselves, so wiring a new suite into CI without gating it fails here.
-ci_sources = [
-    Path("scripts/test-tier0.sh"),
-    Path("scripts/pack-health.sh"),
-    Path(".github/workflows/tier0.yml"),
-]
+ci_sources = [Path("scripts/test-tier0.sh"), Path("scripts/pack-health.sh")]
+# Every workflow, not just tier0.yml: a reviewer showed a new nightly.yml could
+# wire an ungated suite past a hard-coded source list.
+ci_sources += sorted(Path(".github/workflows").glob("*.y*ml"))
 ci_suites = set()
 for src in ci_sources:
     assert src.is_file(), f"missing CI runner: {src}"
@@ -2635,6 +2634,27 @@ echo "$E5_SH_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=vacuous_base' \
   || fail "depth-1 clone must FAIL vacuous_base: $E5_SH_OUT"
 echo "$E5_SH_OUT" | grep -Fq 'reason=no_trigger_paths' \
   && fail "depth-1 clone must not SKIP no_trigger_paths: $E5_SH_OUT"
+
+# Renaming a guarded path OUT of the allow-list must not SKIP. git's rename
+# detection reports only the destination, so changed_paths passes --no-renames.
+E5_MV="$E5_ROOT/renamed"
+mkdir -p "$E5_MV/scripts"
+git -C "$E5_MV" init -q
+git -C "$E5_MV" config user.email "rr-e5@example.com"
+git -C "$E5_MV" config user.name "rr-e5"
+printf '#!/usr/bin/env bash\necho gate\n' >"$E5_MV/scripts/verify-matrix-substantive.sh"
+printf '# readme\n' >"$E5_MV/README.md"
+git -C "$E5_MV" add -A
+git -C "$E5_MV" commit -qm "e5 mv c1"
+git -C "$E5_MV" mv scripts/verify-matrix-substantive.sh scripts/check-matrix-substantive.sh
+git -C "$E5_MV" commit -qm "e5 mv rename out of gate"
+set +e
+E5_MV_OUT="$(bash scripts/verify-review-record.sh "$E5_MV" 2>&1)"
+set -e
+echo "$E5_MV_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "rename out of the allow-list must not SKIP: $E5_MV_OUT"
+echo "$E5_MV_OUT" | grep -Fq 'trigger=scripts/verify-matrix-substantive.sh' \
+  || fail "renamed-away guarded path must still count as a trigger: $E5_MV_OUT"
 
 # dirty only an unlisted script → honest no_trigger_paths SKIP.
 # (verify-*.sh became a gate trigger in v0.9.3.3, so the stand-in is an exempt
