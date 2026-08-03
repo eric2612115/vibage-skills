@@ -10,15 +10,19 @@ Budget SSOT: `references/review-budget.md` (blast class → N; diversity axis = 
 
 - Authoring or revising an implementation **plan** that will drive guarded work
 - Changing guarded paths (capability allow-list in `scripts/lib/review_record.py`
-  + `references/review-budget.md` — not blanket `verify-*` / `tests/` / `scripts/lib/`):
-  gate entrypoints + helper closure (`review_record.py`, `verify-review-record.sh`,
-  `pack-health.sh`, `test-tier0.sh`, `assert_gate.sh`, `write_confirm.sh`,
-  `coverage-box.sh`, `.github/workflows/tier0.yml`, plus `scan_plan_hash.py` /
-  `coverage_box.py` / `proven_lock.py`); **hub-state writers** (scripts that write the
-  owner's `docs/vibage/**` or mint cell / freshness / evidence values —
-  `TRIGGER_GATE_HUB_WRITERS`, see `references/review-budget.md`); narrative
-  (`adapters/**`, `skills/**`, four `references/*` files); frozen
-  `tests/test_*.{sh,py}` enumeration only
+  + `references/review-budget.md` — not blanket `tests/` / `scripts/lib/`):
+  gate entrypoints + helper closure (`review_record.py`, `pack-health.sh`,
+  `test-tier0.sh`, `assert_gate.sh`, `write_confirm.sh`, `coverage-box.sh`,
+  `.github/workflows/tier0.yml`, plus `scan_plan_hash.py` / `coverage_box.py` /
+  `proven_lock.py`); **hub-state writers** (write the owner's `docs/vibage/**` or mint
+  cell / freshness / evidence values, including thin wrappers that do it through
+  `scripts/lib`); **acceptance definers** (all `scripts/verify-*.sh` by prefix, plus named
+  checkers — editing one changes what passing *means*); narrative (`adapters/**`,
+  `skills/**`, four `references/*` files); frozen `tests/test_*.{sh,py}` enumeration only —
+  membership stays a hand-kept list, but every suite a CI job runs must be on it, and
+  `tests/test_review_record.sh` fails if one is missing. That suite also holds a total
+  partition of tracked `scripts/**`, so an unclassified script fails.
+  Details: `references/review-budget.md`
 
 Not every commit message. Not a required git pre-commit hook in V1.
 

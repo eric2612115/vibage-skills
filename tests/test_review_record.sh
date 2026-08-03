@@ -73,20 +73,33 @@ for helper in (
 ):
     assert is_trigger(helper), helper
     assert classify_path(helper) == "gate", helper
-assert not is_trigger("scripts/verify-freshness.sh")
-assert classify_path("scripts/verify-freshness.sh") is None
-assert not is_trigger("tests/test_status_capability_table.sh")
+# verify-*.sh moved INTO the gate in v0.9.3.3: a verify script defines what
+# passing means, so editing one can turn FAIL into OK. Blanket `scripts/lib/`
+# stays out — only named helpers are gated.
+assert is_trigger("scripts/verify-freshness.sh")
+assert classify_path("scripts/verify-freshness.sh") == "gate"
+assert not is_trigger("scripts/lib/env_vacancy_unused_helper.py")
+# CI-run suites joined TRIGGER_TESTS_EXACT in v0.9.3.3; blanket tests/ still does not.
+assert is_trigger("tests/test_status_capability_table.sh")
+assert classify_path("tests/test_status_capability_table.sh") == "tests"
+assert not is_trigger("tests/test_not_wired_anywhere.sh")
 assert not is_trigger("lab/x.sh")
 print("TRIGGER_ALLOWLIST_E4_OK")
 PY
 
 python3 - <<'PY' || fail "hub-state writers must be gate triggers"
 import re
+import subprocess
 import sys
 from pathlib import Path
 
 sys.path.insert(0, "scripts/lib")
-from review_record import TRIGGER_GATE_HUB_WRITERS, classify_path, is_trigger
+from review_record import (
+    TRIGGER_GATE_ACCEPTANCE_EXACT,
+    TRIGGER_GATE_HUB_WRITERS,
+    classify_path,
+    is_trigger,
+)
 
 # Frozen enumeration: the writers that mint owner hub state.
 for rel in (
@@ -100,7 +113,10 @@ for rel in (
     "scripts/pile-index.sh",
     "scripts/scene-brief.sh",
     "scripts/ledger-append.sh",
+    "scripts/dimension-fill.sh",
+    "scripts/dimension-search.sh",
     "scripts/dimension-synth-repo.sh",
+    "scripts/env-vacancy-answer.sh",
     "scripts/env-vacancy-apply-point.sh",
     "scripts/install.sh",
     "scripts/lib/freshness.py",
@@ -119,59 +135,94 @@ for rel in (
 ):
     assert not is_trigger(rel), f"presentation writer must not gate: {rel}"
 
-# Complete partition, not a write-verb heuristic: every script that touches the
-# owner's docs/vibage is either a trigger or is named here with a reason. A
-# heuristic scanner is evadable (open().write, tee, cp, plain redirects); an
-# exhaustive partition forces a new hub writer to be classified by a human.
-NON_WRITER_EXEMPT = {
-    # presentation only — renders a view, mints no verdict
-    "scripts/generate-service-map-graph.sh": "presentation",
-    "scripts/render-service-map-preview.sh": "presentation",
-    # read-only classifiers — parse hub state and print, never write it
-    "scripts/scene-classify.sh": "read-only",
-    "scripts/scene-validate.sh": "read-only",
-    # read-only gates — they judge hub state and print tokens; the writers they
-    # judge are the triggers. Freezing verify-*.sh outside the gate is the same
-    # decision `assert not is_trigger("scripts/verify-freshness.sh")` records.
-    "scripts/verify-brief.sh": "read-only gate",
-    "scripts/verify-env-branch-matrix.sh": "read-only gate",
-    "scripts/verify-graph-floor.sh": "read-only gate",
-    "scripts/verify-issue-fix-unlock.sh": "read-only gate",
-    "scripts/verify-ledger-slice.sh": "read-only gate",
-    "scripts/verify-map-deepen.sh": "read-only gate",
-    "scripts/verify-matrix-substantive.sh": "read-only gate",
-    "scripts/verify-project-entry.sh": "read-only gate",
-    "scripts/verify-scene-brief.sh": "read-only gate",
-    "scripts/verify-scene-cover.sh": "read-only gate",
-    "scripts/verify-service-map.sh": "read-only gate",
-    "scripts/verify-understanding-rollup.sh": "read-only gate",
-    "scripts/verify-work-continue.sh": "read-only gate",
+# Total partition with NO predicate: every non-lab script under scripts/ is a
+# trigger or is named here with a reason. Earlier versions keyed on a write-verb
+# grep, then on mentioning `docs/vibage` — both were evadable (open().write, tee,
+# cp, or simply building the hub path from variables, which the dimension /
+# env-vacancy wrappers actually do). Enumerating the whole directory removes the
+# predicate, so a new script cannot land without being classified.
+NON_GATE_EXEMPT = {
+    "scripts/generate-service-map-graph.sh": "presentation — writes graph.mmd / notes, mints no gate token",
+    "scripts/render-service-map-preview.sh": "presentation — writes vibage-preview assets, mints no gate token",
+    "scripts/serve-preview.sh": "presentation — copies preview assets and serves localhost; no verdict",
+    "scripts/resolve-pkg-root.sh": "path resolution — reads symlinks, no hub state, no token",
+    "scripts/lib/__init__.py": "package marker",
+    "scripts/hooks/vibage-child-post-commit.sample": "sample hook — not installed or executed by the pack",
 }
+# No suffix filter: an earlier version only looked at .sh/.py, which a reviewer
+# bypassed with scripts/check-matrix.mjs and an extensionless script. Every
+# tracked file under scripts/ must be classified.
 unclassified = []
-for path in sorted(Path("scripts").rglob("*")):
-    if not path.is_file() or path.suffix not in (".sh", ".py"):
+tracked = subprocess.run(
+    ["git", "ls-files", "scripts"], capture_output=True, text=True, check=True
+).stdout.split()
+for rel in sorted(tracked):
+    if not Path(rel).is_file():
         continue
-    rel = path.as_posix()
     if rel.startswith("scripts/lab/"):
-        continue  # lab harness never writes a real owner hub (LAB_NO_DELETE)
-    text = path.read_text(encoding="utf-8", errors="ignore")
-    if "docs/vibage" not in text and 'docs" / "vibage' not in text:
-        continue
-    if is_trigger(rel) or rel in NON_WRITER_EXEMPT:
+        continue  # lab harness runs on copies under /tmp, never a real owner hub
+    if is_trigger(rel) or rel in NON_GATE_EXEMPT:
         continue
     unclassified.append(rel)
 if unclassified:
     raise SystemExit(
-        "scripts touching docs/vibage that are neither triggers nor exempt: "
+        "scripts that are neither review triggers nor exempt: "
         + ", ".join(unclassified)
-        + " — add to TRIGGER_GATE_HUB_WRITERS, or to NON_WRITER_EXEMPT with a reason"
+        + " — gate it (hub writer / acceptance definer) or add it to"
+        " NON_GATE_EXEMPT with a reason"
     )
-for rel in NON_WRITER_EXEMPT:
+for rel in NON_GATE_EXEMPT:
     assert Path(rel).is_file(), f"exempt names a missing file: {rel}"
     assert not is_trigger(rel), f"exempt path is also a trigger: {rel}"
+
+# Acceptance surface: editing what "passing" means requires a record.
+for rel in sorted(Path("scripts").glob("verify-*.sh")):
+    r = rel.as_posix()
+    assert is_trigger(r), f"verify script not gated: {r}"
+    assert classify_path(r) == "gate", f"verify script not gate class: {r}"
+for rel in (
+    "scripts/freshness-check.sh",
+    "scripts/env-vacancy-check.sh",
+    "scripts/scene-validate.sh",
+    "scripts/scene-classify.sh",
+    "scripts/lib/report_token_lint.py",
+    "scripts/lib/require_rg.sh",
+):
+    assert Path(rel).is_file(), f"acceptance allow-list names a missing file: {rel}"
+    assert is_trigger(rel), f"acceptance definer not gated: {rel}"
+# A verify script added tomorrow is gated by prefix, not by remembering to list it.
+assert is_trigger("scripts/verify-not-yet-written.sh")
+assert classify_path("scripts/verify-not-yet-written.sh") == "gate"
+# The lab harness stays outside the gate.
+assert not is_trigger("scripts/lab/verify-l1-done.sh")
+
+# Every suite a CI job runs must be a trigger. Weakening or deleting one edits
+# what "still locked" means, so it cannot be a no-record change. Derived from the
+# runners themselves, so wiring a new suite into CI without gating it fails here.
+ci_sources = [Path("scripts/test-tier0.sh"), Path("scripts/pack-health.sh")]
+# Every workflow, not just tier0.yml: a reviewer showed a new nightly.yml could
+# wire an ungated suite past a hard-coded source list.
+ci_sources += sorted(Path(".github/workflows").glob("*.y*ml"))
+ci_suites = set()
+for src in ci_sources:
+    assert src.is_file(), f"missing CI runner: {src}"
+    ci_suites.update(
+        re.findall(r"tests/test_[A-Za-z0-9_]+\.(?:sh|py)", src.read_text(encoding="utf-8"))
+    )
+assert ci_suites, "no CI-run suites discovered — the derivation broke"
+ungated_ci = sorted(s for s in ci_suites if not is_trigger(s))
+if ungated_ci:
+    raise SystemExit(
+        "CI-run suites outside the review allow-list: "
+        + ", ".join(ungated_ci)
+        + " — add to TRIGGER_TESTS_EXACT"
+    )
+
+n_verify = len(list(Path("scripts").glob("verify-*.sh")))
 print(
     f"TRIGGER_HUB_WRITERS_OK n={len(TRIGGER_GATE_HUB_WRITERS)} "
-    f"exempt={len(NON_WRITER_EXEMPT)}"
+    f"acceptance={n_verify + len(TRIGGER_GATE_ACCEPTANCE_EXACT)} "
+    f"exempt={len(NON_GATE_EXEMPT)}"
 )
 PY
 
@@ -197,7 +248,7 @@ for p in SAMPLES:
     assert (classify_path(p) is not None) == is_trigger(p), p
 
 assert classify_path("scripts/assert_gate.sh") == "gate"
-assert classify_path("scripts/verify-freshness.sh") is None
+assert classify_path("scripts/verify-freshness.sh") == "gate"
 assert classify_path("scripts/lib/review_record.py") == "gate"
 assert classify_path("adapters/cursor/vibage.mdc") == "narrative"
 assert classify_path("skills/vibage-init/SKILL.md") == "narrative"
@@ -2584,20 +2635,45 @@ echo "$E5_SH_OUT" | grep -Fq 'REVIEW_RECORD_FAIL reason=vacuous_base' \
 echo "$E5_SH_OUT" | grep -Fq 'reason=no_trigger_paths' \
   && fail "depth-1 clone must not SKIP no_trigger_paths: $E5_SH_OUT"
 
-# dirty only unlisted verify script → honest no_trigger_paths SKIP
+# Renaming a guarded path OUT of the allow-list must not SKIP. git's rename
+# detection reports only the destination, so changed_paths passes --no-renames.
+E5_MV="$E5_ROOT/renamed"
+mkdir -p "$E5_MV/scripts"
+git -C "$E5_MV" init -q
+git -C "$E5_MV" config user.email "rr-e5@example.com"
+git -C "$E5_MV" config user.name "rr-e5"
+printf '#!/usr/bin/env bash\necho gate\n' >"$E5_MV/scripts/verify-matrix-substantive.sh"
+printf '# readme\n' >"$E5_MV/README.md"
+git -C "$E5_MV" add -A
+git -C "$E5_MV" commit -qm "e5 mv c1"
+git -C "$E5_MV" mv scripts/verify-matrix-substantive.sh scripts/check-matrix-substantive.sh
+git -C "$E5_MV" commit -qm "e5 mv rename out of gate"
+set +e
+E5_MV_OUT="$(bash scripts/verify-review-record.sh "$E5_MV" 2>&1)"
+set -e
+echo "$E5_MV_OUT" | grep -Fq 'reason=no_trigger_paths' \
+  && fail "rename out of the allow-list must not SKIP: $E5_MV_OUT"
+echo "$E5_MV_OUT" | grep -Fq 'trigger=scripts/verify-matrix-substantive.sh' \
+  || fail "renamed-away guarded path must still count as a trigger: $E5_MV_OUT"
+echo "$E5_MV_OUT" | grep -Eq '^REVIEW_RECORD_FAIL reason=missing_record' \
+  || fail "rename with no record must FAIL missing_record: $E5_MV_OUT"
+
+# dirty only an unlisted script → honest no_trigger_paths SKIP.
+# (verify-*.sh became a gate trigger in v0.9.3.3, so the stand-in is an exempt
+# script that neither writes hub state nor defines acceptance.)
 E5_NT="$E5_ROOT/notrig"
 mkdir -p "$E5_NT/scripts"
 git -C "$E5_NT" init -q
 git -C "$E5_NT" config user.email "rr-e5@example.com"
 git -C "$E5_NT" config user.name "rr-e5"
-printf '#!/usr/bin/env bash\necho v\n' >"$E5_NT/scripts/verify-freshness.sh"
+printf '#!/usr/bin/env bash\necho v\n' >"$E5_NT/scripts/resolve-pkg-root.sh"
 printf '#!/usr/bin/env bash\necho g\n' >"$E5_NT/scripts/assert_gate.sh"
 git -C "$E5_NT" add -A
 git -C "$E5_NT" commit -qm "e5 nt c1"
-printf '#!/usr/bin/env bash\necho v2\n' >"$E5_NT/scripts/verify-freshness.sh"
+printf '#!/usr/bin/env bash\necho v2\n' >"$E5_NT/scripts/resolve-pkg-root.sh"
 git -C "$E5_NT" add -A
 git -C "$E5_NT" commit -qm "e5 nt c2"
-printf '# dirt\n' >>"$E5_NT/scripts/verify-freshness.sh"
+printf '# dirt\n' >>"$E5_NT/scripts/resolve-pkg-root.sh"
 set +e
 E5_NT_OUT="$(bash scripts/verify-review-record.sh "$E5_NT" 2>&1)"
 set -e

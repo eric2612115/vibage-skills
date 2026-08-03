@@ -49,12 +49,15 @@ TRIGGER_GATE_EXACT = frozenset(
 # false state written here is exactly the class of bug that shipped in v0.9.3
 # (matrix-inventory resetting proven cells), and editing one of them alone used
 # to require no review record at all.
-# Deliberately excluded: presentation-only writers (graph/preview renderers) and
-# read-only verify-*.sh wrappers.
+# Membership is not "mentions docs/vibage": thin wrappers that mutate hub state
+# through scripts/lib are writers too. Presentation-only renderers are not.
 TRIGGER_GATE_HUB_WRITERS = frozenset(
     {
         "scripts/c-prime-fill.sh",
+        "scripts/dimension-fill.sh",
+        "scripts/dimension-search.sh",
         "scripts/dimension-synth-repo.sh",
+        "scripts/env-vacancy-answer.sh",
         "scripts/env-vacancy-apply-point.sh",
         "scripts/freshness-mark.sh",
         "scripts/freshness-refresh-repo.sh",
@@ -70,6 +73,21 @@ TRIGGER_GATE_HUB_WRITERS = frozenset(
         "scripts/lib/env_discovery.py",
         "scripts/lib/env_vacancy.py",
         "scripts/lib/freshness.py",
+    }
+)
+# Acceptance definers: scripts that decide what "passing" MEANS. Gating writers
+# alone left this open — a verify script can be edited to turn FAIL into OK, and
+# under the old allow-list that produced REVIEW_RECORD_SKIP. The prefix is
+# deliberate so a newly added verify-*.sh is gated the moment it exists.
+TRIGGER_GATE_ACCEPTANCE_PREFIXES = ("scripts/verify-",)
+TRIGGER_GATE_ACCEPTANCE_EXACT = frozenset(
+    {
+        "scripts/env-vacancy-check.sh",
+        "scripts/freshness-check.sh",
+        "scripts/scene-classify.sh",
+        "scripts/scene-validate.sh",
+        "scripts/lib/report_token_lint.py",
+        "scripts/lib/require_rg.sh",
     }
 )
 TRIGGER_NARRATIVE_EXACT = frozenset(
@@ -106,6 +124,14 @@ TRIGGER_TESTS_EXACT = frozenset(
         "tests/test_pack_health.sh",
         "tests/test_review_record.sh",
         "tests/test_plan_loop_hygiene.sh",
+        # Every suite a CI job runs belongs here: weakening one edits what
+        # "still locked" means, which is the same class of change as editing a
+        # verify script. tests/test_review_record.sh derives this set from
+        # test-tier0.sh / pack-health.sh / the workflow and fails on drift.
+        "tests/test_proven_lock.sh",
+        "tests/test_status_capability_table.sh",
+        "tests/test_c_prime_matrix_durability.sh",
+        "tests/test_install_pins_report.sh",
     }
 )
 
@@ -134,13 +160,24 @@ _CONCLUSION_OVERCLAIM = re.compile(
 )
 
 
+def _is_gate_path(rel: str) -> bool:
+    if (
+        rel in TRIGGER_GATE_EXACT
+        or rel in TRIGGER_GATE_HUB_WRITERS
+        or rel in TRIGGER_GATE_ACCEPTANCE_EXACT
+    ):
+        return True
+    return any(rel.startswith(p) for p in TRIGGER_GATE_ACCEPTANCE_PREFIXES)
+
+
 def is_trigger(rel: str) -> bool:
     rel = _norm_rel(rel)
     if rel.startswith(REVIEWS_DIR + "/") or rel.startswith("lab/"):
         return False
+    if rel.startswith("scripts/lab/"):
+        return False
     if (
-        rel in TRIGGER_GATE_EXACT
-        or rel in TRIGGER_GATE_HUB_WRITERS
+        _is_gate_path(rel)
         or rel in TRIGGER_NARRATIVE_EXACT
         or rel in TRIGGER_TESTS_EXACT
     ):
@@ -161,7 +198,7 @@ def classify_path(rel: str) -> str | None:
         rel.startswith(p) for p in TRIGGER_NARRATIVE_PREFIXES
     ):
         return "narrative"
-    if rel in TRIGGER_GATE_EXACT or rel in TRIGGER_GATE_HUB_WRITERS:
+    if _is_gate_path(rel):
         return "gate"
     # Unknown trigger shape: still gate (fail-closed upgrade)
     return "gate"
@@ -314,11 +351,18 @@ def resolve_base(pkg: Path) -> tuple[str | None, str]:
 
 
 def changed_paths(pkg: Path, base: str | None) -> list[str]:
+    # --no-renames on purpose: rename detection reports only the destination, so
+    # `git mv scripts/verify-x.sh scripts/check-x.sh` would drop the guarded
+    # source path and the gate would SKIP. Moving a path OUT of the allow-list is
+    # exactly the edit that must not escape review.
     paths: set[str] = set()
     if base:
-        out = git_stdout(pkg, ["diff", "--name-only", f"{base}...HEAD"])
+        out = git_stdout(pkg, ["diff", "--name-only", "--no-renames", f"{base}...HEAD"])
         paths.update(p for p in out.splitlines() if p.strip())
-    for args in (["diff", "--name-only"], ["diff", "--name-only", "--cached"]):
+    for args in (
+        ["diff", "--name-only", "--no-renames"],
+        ["diff", "--name-only", "--no-renames", "--cached"],
+    ):
         out = git_stdout(pkg, args)
         paths.update(p for p in out.splitlines() if p.strip())
     out = git_stdout(pkg, ["ls-files", "--others", "--exclude-standard"])
