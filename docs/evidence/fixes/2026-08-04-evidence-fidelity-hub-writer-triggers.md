@@ -21,9 +21,15 @@ Deliberately excluded: presentation-only writers (`generate-service-map-graph.sh
 `render-service-map-preview.sh`) mint no verdict, and read-only `verify-*.sh` wrappers stay
 outside the gate as before (`tests/test_review_record.sh` still freezes that).
 
-**Drift guard.** `tests/test_review_record.sh` now fails if any `scripts/**` file that
-writes under `docs/vibage` is absent from the allow-list, so a future hub writer cannot
-land unreviewed by construction. The exempt list must name a reason.
+**Drift guard.** `tests/test_review_record.sh` partitions every `scripts/**` file that
+mentions `docs/vibage`: it is a trigger, or it is named in `NON_WRITER_EXEMPT` with a
+reason (17 presentation / read-only-gate / read-only-classifier entries). A new hub writer
+therefore fails the suite until a human classifies it.
+
+The first version of this guard grepped for write verbs (`write_text(`, `json.dump(`, …)
+and a reviewer showed it was evadable with `open().write`, `tee`, `cp`, or a plain
+redirect — so it was replaced with the exhaustive partition above. The frozen 17-path
+enumeration remains the actual control; the partition is what stops silent growth.
 
 Cost accepted: every future edit to those 17 paths needs a review record (N=2).
 
@@ -46,8 +52,13 @@ Implemented instead:
 - Carrying re-derives evidence with the same `quote_for_env` the sweep uses. No env quote
   derivable at that branch → refuse the carry, cell stays `unproven`, counted in
   `dropped_stale_evidence`.
-- Tree/directory evidence and (unreachable by construction) secret dotenv paths keep
-  existence as the whole test — there is no text to re-derive.
+- Tree/directory evidence keeps existence as the whole test — there is no text to re-derive.
+- A pointer naming a real secret dotenv (`.env`, `.env.production`, …) refuses the carry.
+  Extract never emits those, so such a pointer can only come from a hand-edited or foreign
+  matrix; a reviewer showed that carrying it on existence alone would launder a `proven`
+  verdict citing content nothing is allowed to read.
+- When the re-derived quote differs from the stored one, a stale `evidence_hash` is
+  dropped rather than paired with a fresh citation.
 - **The carried quote is rewritten to the re-derived value.** This is the part no analyst
   proposed and it closes their shared regret case: when a weaker rule still proves the env
   after the original line is gone, the cell keeps its verdict but stops citing text it can

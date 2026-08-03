@@ -453,10 +453,11 @@ def evidence_resolves(repo_id, branch_ref, env_id, pointers):
        longer matches. Directory/tree evidence has no text to re-derive, so
        existence is the whole test there.
 
-    String-comparing the stored quote was measured to false-red ~31% of real
-    proven cells (`dir:` pointers and synthesised presence quotes are not file
-    substrings), so the check re-derives instead, and the refreshed quote is
-    written back — a carried cell never cites text it can no longer produce.
+    String-comparing the stored quote false-reds a large share of healthy cells
+    (measured 4 of 13 on one design fixture: `dir:` pointers and synthesised
+    presence quotes are not file substrings at all), so the check re-derives
+    instead, and the refreshed quote is written back — a carried cell never cites
+    text it can no longer produce.
     """
     root = roots_by_repo.get(repo_id)
     if root is None or not pointers:
@@ -482,14 +483,16 @@ def evidence_resolves(repo_id, branch_ref, env_id, pointers):
         if not kind and not disk_ok:
             return None
 
-        # Tree/dir evidence, or a secret dotenv extract refuses to read: presence
-        # is the only assertion the sweep made, so presence is all we re-check.
+        # Tree/dir evidence: no text to re-derive, so existence is the whole test.
         if kind == "tree" or (disk_ok and on_disk.is_dir()):
             refreshed.append(dict(p))
             continue
+        # Secret dotenv: extract never emits these, so such a pointer can only
+        # come from a hand-edited or foreign matrix. Carrying it on existence
+        # alone would launder a verdict citing content nothing is allowed to
+        # read, so refuse and make the sweep re-derive from a readable path.
         if Path(rel).name in SECRET_DOTENV_NAMES or Path(rel).name == ".env":
-            refreshed.append(dict(p))
-            continue
+            return None
 
         text = None
         if kind == "blob":
@@ -513,6 +516,10 @@ def evidence_resolves(repo_id, branch_ref, env_id, pointers):
         if not new_quote:
             return None
         carried = dict(p)
+        if new_quote != carried.get("quote"):
+            # The hash described the quote we just replaced; keeping it would
+            # pair a fresh citation with stale provenance.
+            carried.pop("evidence_hash", None)
         carried["quote"] = new_quote
         refreshed.append(carried)
     return refreshed

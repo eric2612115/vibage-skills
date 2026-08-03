@@ -119,39 +119,60 @@ for rel in (
 ):
     assert not is_trigger(rel), f"presentation writer must not gate: {rel}"
 
-# Drift guard: a script that writes under the owner's docs/vibage must be in the
-# allow-list, so a new hub writer cannot land unreviewed by construction.
-EXEMPT = {
-    "scripts/generate-service-map-graph.sh",
-    "scripts/render-service-map-preview.sh",
+# Complete partition, not a write-verb heuristic: every script that touches the
+# owner's docs/vibage is either a trigger or is named here with a reason. A
+# heuristic scanner is evadable (open().write, tee, cp, plain redirects); an
+# exhaustive partition forces a new hub writer to be classified by a human.
+NON_WRITER_EXEMPT = {
+    # presentation only — renders a view, mints no verdict
+    "scripts/generate-service-map-graph.sh": "presentation",
+    "scripts/render-service-map-preview.sh": "presentation",
+    # read-only classifiers — parse hub state and print, never write it
+    "scripts/scene-classify.sh": "read-only",
+    "scripts/scene-validate.sh": "read-only",
+    # read-only gates — they judge hub state and print tokens; the writers they
+    # judge are the triggers. Freezing verify-*.sh outside the gate is the same
+    # decision `assert not is_trigger("scripts/verify-freshness.sh")` records.
+    "scripts/verify-brief.sh": "read-only gate",
+    "scripts/verify-env-branch-matrix.sh": "read-only gate",
+    "scripts/verify-graph-floor.sh": "read-only gate",
+    "scripts/verify-issue-fix-unlock.sh": "read-only gate",
+    "scripts/verify-ledger-slice.sh": "read-only gate",
+    "scripts/verify-map-deepen.sh": "read-only gate",
+    "scripts/verify-matrix-substantive.sh": "read-only gate",
+    "scripts/verify-project-entry.sh": "read-only gate",
+    "scripts/verify-scene-brief.sh": "read-only gate",
+    "scripts/verify-scene-cover.sh": "read-only gate",
+    "scripts/verify-service-map.sh": "read-only gate",
+    "scripts/verify-understanding-rollup.sh": "read-only gate",
+    "scripts/verify-work-continue.sh": "read-only gate",
 }
-WRITE_HINTS = (
-    re.compile(r"\bwrite_text\("),
-    re.compile(r"\bjson\.dump\("),
-    re.compile(r'>\s*"?\$(HUB|MATRIX|MAP|OUT)'),
-    re.compile(r"\bmkdir -p .*docs/vibage"),
-)
-missing = []
+unclassified = []
 for path in sorted(Path("scripts").rglob("*")):
     if not path.is_file() or path.suffix not in (".sh", ".py"):
         continue
     rel = path.as_posix()
-    if rel in EXEMPT or rel.startswith("scripts/lab/"):
-        continue
+    if rel.startswith("scripts/lab/"):
+        continue  # lab harness never writes a real owner hub (LAB_NO_DELETE)
     text = path.read_text(encoding="utf-8", errors="ignore")
     if "docs/vibage" not in text and 'docs" / "vibage' not in text:
         continue
-    if not any(h.search(text) for h in WRITE_HINTS):
+    if is_trigger(rel) or rel in NON_WRITER_EXEMPT:
         continue
-    if not is_trigger(rel):
-        missing.append(rel)
-if missing:
+    unclassified.append(rel)
+if unclassified:
     raise SystemExit(
-        "hub writers outside the review allow-list: "
-        + ", ".join(missing)
-        + " — add to TRIGGER_GATE_HUB_WRITERS or EXEMPT with a reason"
+        "scripts touching docs/vibage that are neither triggers nor exempt: "
+        + ", ".join(unclassified)
+        + " — add to TRIGGER_GATE_HUB_WRITERS, or to NON_WRITER_EXEMPT with a reason"
     )
-print(f"TRIGGER_HUB_WRITERS_OK n={len(TRIGGER_GATE_HUB_WRITERS)}")
+for rel in NON_WRITER_EXEMPT:
+    assert Path(rel).is_file(), f"exempt names a missing file: {rel}"
+    assert not is_trigger(rel), f"exempt path is also a trigger: {rel}"
+print(
+    f"TRIGGER_HUB_WRITERS_OK n={len(TRIGGER_GATE_HUB_WRITERS)} "
+    f"exempt={len(NON_WRITER_EXEMPT)}"
+)
 PY
 
 python3 - <<'PY' || fail "blast class / budget"
