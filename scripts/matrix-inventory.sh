@@ -418,34 +418,42 @@ roots_by_repo = {info["repo_id"]: info["root"] for info in repo_info}
 
 
 def evidence_resolves(repo_id, branch_ref, pointers) -> bool:
-    """Does every carried pointer still exist at that branch?
+    """Does every carried pointer still exist AT THAT BRANCH?
 
     A carried verdict is only as honest as its evidence. Restoring pointers to a
     renamed/deleted file would keep MATRIX_SWEEP_SUBSTANTIVE_OK green on
     evidence that is gone, so an unresolvable pointer means do not carry.
+
+    Branch identity matters: a working-tree hit proves nothing about another
+    branch, so git is asked first. Working-tree existence only counts for the
+    checked-out branch, which is the one case where extract also reads the disk
+    (and therefore accepts untracked evidence).
     """
     root = roots_by_repo.get(repo_id)
     if root is None:
         return False
     if not pointers:
         return False
+    cur = current_branch(root)
     for p in pointers:
         if not isinstance(p, dict):
             return False
         path = str(p.get("path") or "").strip()
         if not path:
             return False
-        if (parent / path).exists():
-            continue
         rel = path
         prefix = f"{repo_id}/"
         if repo_id not in (".", "") and path.startswith(prefix):
             rel = path[len(prefix) :]
         if not rel:
             return False
-        # Non-current branches are read via git; a deleted branch fails here too.
-        if not git_ok(root, "cat-file", "-e", f"{branch_ref}:{rel}"):
-            return False
+        # Tracked at that branch (also covers tree/dir pointers).
+        if git_ok(root, "cat-file", "-e", f"{branch_ref}:{rel}"):
+            continue
+        # Untracked evidence is only readable on the checked-out branch.
+        if cur and cur == branch_ref and (parent / path).exists():
+            continue
+        return False
     return True
 
 

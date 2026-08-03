@@ -145,6 +145,66 @@ if bash "$ROOT/scripts/verify-matrix-substantive.sh" "$STALE" >/dev/null 2>&1; t
 fi
 pass "vanished evidence drops durability and fails closed"
 
+# 3b) A working-tree hit must not stand in for another branch's evidence.
+# Deleting the compose file on `staging` while `main` is checked out leaves the
+# file on disk, so a path-existence-only gate would carry staging's proven cell
+# even though extract for staging now fails.
+BR="$TMP/branchref"
+mkdir -p "$BR/docs/vibage/maps"
+setup_repo "$BR" "repo-a" "staging"
+python3 - "$P/docs/vibage/maps/service_map.json" "$BR/docs/vibage/maps/service_map.json" <<'PY'
+import json, sys
+m = json.load(open(sys.argv[1], encoding="utf-8"))
+m["services"] = [s for s in m["services"] if s["id"] == "repo-a"]
+m["repos"] = [r for r in m["repos"] if r["repo_id"] == "repo-a"]
+json.dump(m, open(sys.argv[2], "w", encoding="utf-8"), indent=2)
+PY
+BMATRIX="$BR/docs/vibage/maps/env_branch_matrix.json"
+(
+  cd "$BR/repo-a"
+  git branch -q staging
+)
+bash "$ROOT/scripts/matrix-inventory.sh" "$BR" >/dev/null
+bash "$ROOT/scripts/matrix-sweep-cell.sh" "$BR" "repo-a" "staging" "staging" --sweep-started >/dev/null
+[[ "$(state_of "$BMATRIX" repo-a staging staging)" == "proven" ]] \
+  || fail "precondition: branch-ref fixture cell should start proven"
+(
+  cd "$BR/repo-a"
+  git checkout -q staging
+  git rm -q docker-compose.yml
+  git commit -q -m "drop compose on staging"
+  git checkout -q main
+)
+[[ -f "$BR/repo-a/docker-compose.yml" ]] \
+  || fail "precondition: working tree should still hold the file on main"
+br_out="$(bash "$ROOT/scripts/matrix-inventory.sh" "$BR")"
+[[ "$(state_of "$BMATRIX" repo-a staging staging)" == "unproven" ]] \
+  || fail "working-tree hit must not carry another branch's proven cell (false-green)"
+printf '%s\n' "$br_out" | grep -Eq 'dropped_stale_evidence=[1-9]' \
+  || fail "branch-scoped drop should be reported, got: $br_out"
+pass "evidence is resolved per branch, not per working tree"
+
+# 3c) Untracked evidence on the checked-out branch still counts.
+(
+  cd "$BR/repo-a"
+  cat >docker-compose.untracked.yml <<'EOF'
+services:
+  app:
+    image: repo-a:latest
+    environment:
+      APP_ENV: staging
+EOF
+)
+bash "$ROOT/scripts/matrix-sweep-cell.sh" "$BR" "repo-a" "main" "staging" --sweep-started >/dev/null
+if [[ "$(state_of "$BMATRIX" repo-a main staging)" == "proven" ]]; then
+  bash "$ROOT/scripts/matrix-inventory.sh" "$BR" >/dev/null
+  [[ "$(state_of "$BMATRIX" repo-a main staging)" == "proven" ]] \
+    || fail "checked-out-branch evidence must stay carryable"
+  pass "checked-out branch evidence still carries"
+else
+  echo "NOTE: main cell not proven in this fixture — untracked-carry path not exercised"
+fi
+
 # 4) Deleted branches must not survive as ghost proven cells.
 GHOST="$TMP/ghost"
 mkdir -p "$GHOST/docs/vibage/maps"
