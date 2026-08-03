@@ -259,6 +259,15 @@ def compute_stale(mother: Path) -> Dict[str, str]:
     return stale
 
 
+# "stale" implies it was fresh once. These reasons mean nothing ever scanned the
+# repo, which needs c-prime-fill rather than a refresh.
+NEVER_SCANNED_REASONS = frozenset({"missing_freshness_json", "missing_record"})
+
+
+def never_scanned_ids(stale: Dict[str, str]) -> List[str]:
+    return sorted(rid for rid, reason in stale.items() if reason in NEVER_SCANNED_REASONS)
+
+
 def refuse_counts(mother: Path) -> Dict[str, int]:
     fr = load_freshness(mother)
     if not fr:
@@ -437,10 +446,25 @@ def check_mother(mother: Path) -> int:
     escalate = refuse_counts(mother)
     incomplete = incomplete_matrix_count(mother)
     # Always emit session-useful counts on stderr for skills
+    never = never_scanned_ids(stale)
     print(
-        f"stale_count={len(stale)} incomplete_matrix={incomplete}",
+        f"stale_count={len(stale)} incomplete_matrix={incomplete} "
+        f"never_scanned_count={len(never)}",
         file=sys.stderr,
     )
+    reason_counts: Dict[str, int] = {}
+    for reason in stale.values():
+        reason_counts[reason] = reason_counts.get(reason, 0) + 1
+    if reason_counts:
+        summary = " ".join(f"{k}:{v}" for k, v in sorted(reason_counts.items()))
+        print(f"stale_reasons={summary}", file=sys.stderr)
+    if never:
+        print(
+            "NOTE: never scanned (not gone stale) repos="
+            + ",".join(never)
+            + " — run c-prime-fill; a per-repo refresh will not fix this",
+            file=sys.stderr,
+        )
     for rid, n in sorted(escalate.items()):
         print(ESCALATE_LINE.format(rid=rid).replace("N>=3", f"N>={n}"))
     if not stale:

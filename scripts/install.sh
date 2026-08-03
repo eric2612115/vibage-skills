@@ -7,6 +7,7 @@ PROJECT_RULE=""
 PROJECT_SKILLS=""
 INIT_HUB=""
 C_PRIME_FILL=""
+REQUIRE_PINS=0
 FORCE=0
 FORCE_HUB=0
 FORCE_PROJECT_ENTRY=0
@@ -30,9 +31,14 @@ Usage: $0 [options]
       Prints ENV_BRANCH_MATRIX_OK | MATRIX_INCOMPLETE | MATRIX_SWEEP_SUBSTANTIVE_OK.
       Substantive miss → MATRIX_INCOMPLETE, exit 0 (honest; not greenwash full-sweep).
       Default: off. Prefer with --init-hub on same parent.
+  --require-pins                   Exit non-zero when verify-pins fails (default: report only)
   --force                          Replace package-owned stale project skill symlinks only
   --force-hub                      Overwrite existing hub files (never deletes CONFIRM)
   -h|--help
+
+Pins are always checked at the end and reported as PINS_OK | PINS_FAIL. locate
+preflight treats a pin failure as a hard stop, so PINS_FAIL here means locate
+will refuse later — fix it before running the continuum.
 EOF
   exit 2
 }
@@ -45,6 +51,7 @@ for arg in "$@"; do
     --project-skills=*) PROJECT_SKILLS="${arg#*=}" ;;
     --init-hub=*) INIT_HUB="${arg#*=}" ;;
     --c-prime-fill=*) C_PRIME_FILL="${arg#*=}" ;;
+    --require-pins) REQUIRE_PINS=1 ;;
     --force) FORCE=1 ;;
     --force-hub) FORCE_HUB=1 ;;
     -h|--help) usage ;;
@@ -359,6 +366,46 @@ fi
 echo "Installed. PKG_ROOT=$PKG_ROOT"
 echo "Surfaces: $SURFACES"
 echo "MANIFEST skills linked under enabled global skill homes."
-echo "Pin check: $PKG_ROOT/scripts/verify-pins.sh"
 echo "PKG_ROOT resolve: $PKG_ROOT/scripts/resolve-pkg-root.sh"
-echo "Tip: clone obra/superpowers once, then symlink into each skill home; verify-pins probes all three."
+
+# --- pins: check now, not at the last gate ---
+# locate preflight makes verify-pins a hard stop. Reporting it only as a "tip"
+# let the owner finish the whole continuum before learning a prerequisite was
+# never met, so run it here and name the exact remediation.
+echo "== install: verify-pins =="
+set +e
+PINS_OUT="$(bash "$PKG_ROOT/scripts/verify-pins.sh" 2>&1)"
+PINS_EC=$?
+set -e
+printf '%s\n' "$PINS_OUT"
+
+if [[ "$PINS_EC" -eq 0 ]]; then
+  echo "PINS_OK"
+else
+  SP_SHA="$(grep -E '^superpowers_sha=' "$PKG_ROOT/DEPENDENCIES.md" | head -1 | cut -d= -f2 | tr -d '[:space:]')"
+  cat <<EOF
+PINS_FAIL exit=$PINS_EC
+Prerequisites are NOT met. vibage-issue-locate preflight treats this as a hard
+stop, so locate will refuse after the whole continuum unless this is fixed now.
+
+Fix ripgrep (a shell function named rg does not count — bash scripts cannot see it):
+  brew install ripgrep     # macOS
+  sudo apt-get install -y ripgrep
+
+Fix the pinned superpowers checkout (full clone; a --depth 1 clone cannot check
+out the pin):
+  git clone https://github.com/obra/superpowers.git ~/src/superpowers
+  git -C ~/src/superpowers fetch --unshallow || true
+  git -C ~/src/superpowers checkout ${SP_SHA:-<superpowers_sha from DEPENDENCIES.md>}
+  ln -sfn ~/src/superpowers ~/.cursor/skills/superpowers
+  ln -sfn ~/src/superpowers ~/.claude/skills/superpowers
+  ln -sfn ~/src/superpowers ~/.agents/skills/superpowers
+
+Re-check: bash $PKG_ROOT/scripts/verify-pins.sh
+EOF
+  if [[ "$REQUIRE_PINS" -eq 1 ]]; then
+    echo "FAIL: --require-pins set and pins failed" >&2
+    exit 1
+  fi
+  echo "NOTE: install continued (skills are linked); PINS_FAIL still blocks locate."
+fi

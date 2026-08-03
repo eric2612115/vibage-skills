@@ -1,6 +1,12 @@
 #!/usr/bin/env bash
 # Sparse env×branch inventory → env_branch_matrix.json + inventory_manifest.json
 # Caps: max_branches_per_repo=30, max_matrix_cells=500. branch_cap ≠ overflow.
+#
+# Terminal cell states (proven|failed) are DURABLE by default: re-running
+# inventory re-derives the cell set for every repo but does not downgrade a
+# swept cell back to unproven — provided its evidence still resolves at that
+# branch. Structure is always recomputed, so deleted branches cannot survive as
+# ghost proven cells. --reset opts into a true rebuild.
 set -euo pipefail
 PKG_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 
@@ -10,18 +16,31 @@ if [[ $# -lt 1 || -z "${1:-}" ]]; then
   cat >&2 <<EOF
 FAIL: parent workspace path required.
 
-Usage: $0 /path/to/parent-workspace
+Usage: $0 /path/to/parent-workspace [--reset]
+
+  --reset   Rebuild every cell as unproven (drops prior sweep results).
 
 Requires docs/vibage/maps/service_map.json (GRAPH_FLOOR). Writes sparse matrix.
+Default (no flags) keeps terminal proven|failed cells whose evidence still
+resolves; cells with vanished evidence fall back to unproven (fail-closed).
 EOF
   exit 1
 fi
 
 PARENT="$(cd "$1" && pwd)" || fail "parent is not a directory: $1"
+shift
+RESET=0
+for arg in "$@"; do
+  case "$arg" in
+    --reset) RESET=1 ;;
+    *) fail "unknown flag: $arg" ;;
+  esac
+done
+
 MAP="$PARENT/docs/vibage/maps/service_map.json"
 [[ -f "$MAP" ]] || fail "missing service_map.json — run graph-floor first"
 
-python3 - "$PARENT" "$MAP" "$PKG_ROOT" <<'PY'
+python3 - "$PARENT" "$MAP" "$PKG_ROOT" "$RESET" <<'PY'
 import fnmatch
 import json
 import os
@@ -34,6 +53,8 @@ from pathlib import Path
 parent = Path(sys.argv[1]).resolve()
 map_path = Path(sys.argv[2])
 pkg_root = Path(sys.argv[3])
+reset = sys.argv[4] == "1"
+TERMINAL_STATES = ("proven", "failed")
 sys.path.insert(0, str(pkg_root / "scripts"))
 from lib.env_discovery import (  # noqa: E402
     COMPOSE_ENV_FILE_RE,
@@ -94,6 +115,19 @@ def run_git(repo_root: Path, *args: str) -> str:
     if r.returncode != 0:
         return ""
     return (r.stdout or "").strip()
+
+
+def git_ok(repo_root: Path, *args: str) -> bool:
+    try:
+        r = subprocess.run(
+            ["git", "-C", str(repo_root), *args],
+            capture_output=True,
+            text=True,
+            timeout=30,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return False
+    return r.returncode == 0
 
 
 def list_local_branches(repo_root: Path):
@@ -350,8 +384,6 @@ for info in repo_info:
             reason="branch_cap",
         )
 
-status = "overflow" if overflow else "ok"
-
 # Deduplicate cells by key (keep first)
 seen_keys = set()
 deduped = []
@@ -362,6 +394,89 @@ for c in cells:
     seen_keys.add(k)
     deduped.append(c)
 cells = deduped
+
+
+def cell_key(c):
+    return (c.get("repo_id"), c.get("branch_ref"), c.get("env_id"))
+
+
+prev_by_key = {}
+if not reset and out_matrix.is_file():
+    try:
+        prev_obj = json.load(open(out_matrix, encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        prev_obj = {}
+    for pc in prev_obj.get("cells") or []:
+        if not isinstance(pc, dict):
+            continue
+        k = cell_key(pc)
+        if None in k:
+            continue
+        prev_by_key[k] = pc
+
+roots_by_repo = {info["repo_id"]: info["root"] for info in repo_info}
+
+
+def evidence_resolves(repo_id, branch_ref, pointers) -> bool:
+    """Does every carried pointer still exist at that branch?
+
+    A carried verdict is only as honest as its evidence. Restoring pointers to a
+    renamed/deleted file would keep MATRIX_SWEEP_SUBSTANTIVE_OK green on
+    evidence that is gone, so an unresolvable pointer means do not carry.
+    """
+    root = roots_by_repo.get(repo_id)
+    if root is None:
+        return False
+    if not pointers:
+        return False
+    for p in pointers:
+        if not isinstance(p, dict):
+            return False
+        path = str(p.get("path") or "").strip()
+        if not path:
+            return False
+        if (parent / path).exists():
+            continue
+        rel = path
+        prefix = f"{repo_id}/"
+        if repo_id not in (".", "") and path.startswith(prefix):
+            rel = path[len(prefix) :]
+        if not rel:
+            return False
+        # Non-current branches are read via git; a deleted branch fails here too.
+        if not git_ok(root, "cat-file", "-e", f"{branch_ref}:{rel}"):
+            return False
+    return True
+
+
+# Terminal states are durable, but only while their evidence still resolves.
+preserved = 0
+dropped_stale_evidence = 0
+if not reset:
+    for c in cells:
+        pc = prev_by_key.get(cell_key(c))
+        if not pc:
+            continue
+        if pc.get("state") not in TERMINAL_STATES:
+            continue
+        if c.get("state") != "unproven":
+            # Structural verdicts (branch_cap / missing-env-config) still recompute.
+            continue
+        if not evidence_resolves(
+            c.get("repo_id"), c.get("branch_ref"), pc.get("pointers")
+        ):
+            dropped_stale_evidence += 1
+            continue
+        c["state"] = pc["state"]
+        if pc.get("reason"):
+            c["reason"] = pc["reason"]
+        c["pointers"] = pc["pointers"]
+        if pc.get("evidence_hash"):
+            c["evidence_hash"] = pc["evidence_hash"]
+        c["updated_at"] = pc.get("updated_at") or c["updated_at"]
+        preserved += 1
+
+status = "overflow" if overflow else "ok"
 
 # If we overflowed mid-way, keep what we have and mark overflow
 matrix = {
@@ -386,5 +501,16 @@ out_matrix.write_text(json.dumps(matrix, indent=2) + "\n", encoding="utf-8")
 out_manifest.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
 print(f"Wrote {out_matrix}")
 print(f"Wrote {out_manifest}")
-print(f"OK: cells={len(cells)} status={status}")
+mode = "reset" if reset else "merge"
+print(
+    f"OK: cells={len(cells)} status={status} mode={mode} "
+    f"preserved_terminal={preserved} dropped_stale_evidence={dropped_stale_evidence}"
+)
+if reset:
+    print("NOTE: --reset dropped prior sweep results (all cells unproven)")
+if dropped_stale_evidence:
+    print(
+        "NOTE: evidence no longer resolves for "
+        f"{dropped_stale_evidence} cell(s) — left unproven, re-sweep required"
+    )
 PY

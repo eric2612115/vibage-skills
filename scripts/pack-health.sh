@@ -16,7 +16,8 @@ FAIL: parent workspace path required.
 Usage: $0 /path/to/parent-workspace
 
 This is a composite check (pins + parent entry + entry-docs +
-owner-zero-bash + install-phrase + install-phrase-e2e).
+owner-zero-bash + install-phrase + install-phrase-e2e + matrix durability +
+install pin reporting).
 PACK_HEALTH_OK ≠ TIER0_OK ≠ letter B.
 Capability SSOT remains package STATUS.md.
 EOF
@@ -48,6 +49,14 @@ bash "$PKG_ROOT/tests/test_plugin_manifests.sh"
 
 echo "== pack-health: test_pile_index =="
 bash "$PKG_ROOT/tests/test_pile_index.sh"
+
+# Matrix durability + pin ordering are script-correctness regressions, so they
+# ride pack-health (matrix/freshness stay out of Tier-0 by policy).
+echo "== pack-health: test_c_prime_matrix_durability =="
+bash "$PKG_ROOT/tests/test_c_prime_matrix_durability.sh"
+
+echo "== pack-health: test_install_pins_report =="
+bash "$PKG_ROOT/tests/test_install_pins_report.sh"
 
 echo "== pack-health: proven-green lock =="
 bash "$PKG_ROOT/scripts/verify-proven-lock.sh" "$PKG_ROOT"
