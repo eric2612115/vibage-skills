@@ -41,7 +41,39 @@ TRIGGER_GATE_EXACT = frozenset(
         "scripts/assert_gate.sh",
         "scripts/write_confirm.sh",
         "scripts/coverage-box.sh",
-        ".github/workflows/tier0.yml",
+    }
+)
+# CI definition: what runs, and therefore what "green" covers. Only tier0.yml
+# used to be gated, so a new workflow — or a composite action it calls — could
+# add an ungoverned job with no record. Gate all of `.github/` and carve out the
+# metadata instead of listing executable locations: a reviewer showed that naming
+# `workflows/` and `actions/` alone leaves `.github/scripts/**` as the next
+# carrier, which is the predicate-chasing this design keeps losing to.
+TRIGGER_GATE_CI_PREFIXES = (".github/",)
+# Repo metadata under .github: prose and configuration that runs nothing.
+# Directory carve-outs MUST end in "/" — a bare ".github/PULL_REQUEST_TEMPLATE"
+# prefix also matched ".github/PULL_REQUEST_TEMPLATE_x/action.yml", which handed
+# back the composite-action carrier this release closes.
+CI_NON_TRIGGER_PREFIXES = (
+    ".github/ISSUE_TEMPLATE/",
+    ".github/PULL_REQUEST_TEMPLATE/",
+    ".github/DISCUSSION_TEMPLATE/",
+)
+CI_NON_TRIGGER_EXACT = frozenset(
+    {
+        ".github/CODEOWNERS",
+        ".github/CODE_OF_CONDUCT.md",
+        ".github/CONTRIBUTING.md",
+        ".github/FUNDING.yml",
+        ".github/ISSUE_TEMPLATE.md",
+        ".github/PULL_REQUEST_TEMPLATE",
+        ".github/PULL_REQUEST_TEMPLATE.md",
+        ".github/README.md",
+        ".github/SECURITY.md",
+        ".github/SUPPORT.md",
+        ".github/dependabot.yaml",
+        ".github/dependabot.yml",
+        ".github/pull_request_template.md",
     }
 )
 # Hub-state writers: scripts that write the owner's docs/vibage/** or mint the
@@ -167,7 +199,13 @@ def _is_gate_path(rel: str) -> bool:
         or rel in TRIGGER_GATE_ACCEPTANCE_EXACT
     ):
         return True
-    return any(rel.startswith(p) for p in TRIGGER_GATE_ACCEPTANCE_PREFIXES)
+    if any(rel.startswith(p) for p in TRIGGER_GATE_ACCEPTANCE_PREFIXES):
+        return True
+    if any(rel.startswith(p) for p in TRIGGER_GATE_CI_PREFIXES):
+        if rel in CI_NON_TRIGGER_EXACT:
+            return False
+        return not any(rel.startswith(p) for p in CI_NON_TRIGGER_PREFIXES)
+    return False
 
 
 def is_trigger(rel: str) -> bool:

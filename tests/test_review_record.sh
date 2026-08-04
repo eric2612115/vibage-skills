@@ -65,7 +65,13 @@ assert _norm_rel("./.github/workflows/tier0.yml") == ".github/workflows/tier0.ym
 assert is_trigger(".github/workflows/tier0.yml")
 assert is_trigger("./.github/workflows/tier0.yml")
 assert classify_path(".github/workflows/tier0.yml") == "gate"
-assert not is_trigger(".github/workflows/other.yml")
+# Every workflow and composite action is gated from v0.9.3.4: adding a CI job
+# changes what "green" covers, so it cannot be a no-record change.
+assert is_trigger(".github/workflows/other.yml")
+assert classify_path(".github/workflows/other.yml") == "gate"
+assert is_trigger(".github/actions/run-suite/action.yml")
+assert classify_path(".github/actions/run-suite/action.yml") == "gate"
+assert not is_trigger(".github/ISSUE_TEMPLATE/bug.md")
 for helper in (
     "scripts/lib/scan_plan_hash.py",
     "scripts/lib/proven_lock.py",
@@ -95,6 +101,8 @@ from pathlib import Path
 
 sys.path.insert(0, "scripts/lib")
 from review_record import (
+    CI_NON_TRIGGER_EXACT,
+    CI_NON_TRIGGER_PREFIXES,
     TRIGGER_GATE_ACCEPTANCE_EXACT,
     TRIGGER_GATE_HUB_WRITERS,
     classify_path,
@@ -199,16 +207,35 @@ assert not is_trigger("scripts/lab/verify-l1-done.sh")
 # Every suite a CI job runs must be a trigger. Weakening or deleting one edits
 # what "still locked" means, so it cannot be a no-record change. Derived from the
 # runners themselves, so wiring a new suite into CI without gating it fails here.
-ci_sources = [Path("scripts/test-tier0.sh"), Path("scripts/pack-health.sh")]
-# Every workflow, not just tier0.yml: a reviewer showed a new nightly.yml could
-# wire an ungated suite past a hard-coded source list.
-ci_sources += sorted(Path(".github/workflows").glob("*.y*ml"))
-ci_suites = set()
-for src in ci_sources:
-    assert src.is_file(), f"missing CI runner: {src}"
-    ci_suites.update(
-        re.findall(r"tests/test_[A-Za-z0-9_]+\.(?:sh|py)", src.read_text(encoding="utf-8"))
-    )
+def discover_ci_suites(root: Path) -> set:
+    """Suite paths any CI runner under `root` can reach.
+
+    One function so the simulation below exercises the shipped logic instead of
+    re-implementing it — a reviewer pointed out that a private copy would stay
+    green while the real scan regressed.
+    """
+    sources = [root / "scripts/test-tier0.sh", root / "scripts/pack-health.sh"]
+    # Every workflow, not just tier0.yml, and composite actions too: a workflow
+    # can call an action that runs a suite, hiding the name from a shallow scan.
+    for sub in (".github/workflows", ".github/actions"):
+        d = root / sub
+        if d.is_dir():
+            sources += sorted(d.rglob("*.y*ml"))
+    found = set()
+    for src in sources:
+        if not src.is_file():
+            continue
+        found.update(
+            re.findall(
+                r"tests/test_[A-Za-z0-9_]+\.(?:sh|py)", src.read_text(encoding="utf-8")
+            )
+        )
+    return found
+
+
+for required in (Path("scripts/test-tier0.sh"), Path("scripts/pack-health.sh")):
+    assert required.is_file(), f"missing CI runner: {required}"
+ci_suites = discover_ci_suites(Path("."))
 assert ci_suites, "no CI-run suites discovered — the derivation broke"
 ungated_ci = sorted(s for s in ci_suites if not is_trigger(s))
 if ungated_ci:
@@ -217,6 +244,72 @@ if ungated_ci:
         + ", ".join(ungated_ci)
         + " — add to TRIGGER_TESTS_EXACT"
     )
+
+# A suite reachable only through a composite action must still be discovered.
+# Simulated in a temp tree so the check does not depend on this repo owning one.
+import tempfile
+
+with tempfile.TemporaryDirectory() as td:
+    sim = Path(td)
+    (sim / ".github/workflows").mkdir(parents=True)
+    (sim / ".github/actions/run-suite").mkdir(parents=True)
+    (sim / ".github/workflows/nightly.yml").write_text(
+        "jobs:\n  n:\n    steps:\n      - uses: ./.github/actions/run-suite\n",
+        encoding="utf-8",
+    )
+    (sim / ".github/actions/run-suite/action.yml").write_text(
+        "runs:\n  using: composite\n  steps:\n    - run: bash tests/test_sneaky.sh\n",
+        encoding="utf-8",
+    )
+    sim_suites = discover_ci_suites(sim)
+    assert "tests/test_sneaky.sh" in sim_suites, (
+        "composite-action suites must be discovered by the CI derivation"
+    )
+
+# Same total-partition rule for .github: everything there is CI definition
+# unless it is repo metadata. Naming only workflows/ and actions/ would leave
+# .github/scripts/** as the next carrier.
+github_unclassified = []
+for rel in sorted(
+    subprocess.run(
+        ["git", "ls-files", ".github"], capture_output=True, text=True, check=True
+    ).stdout.split()
+):
+    if not Path(rel).is_file():
+        continue
+    if is_trigger(rel):
+        continue
+    if rel in CI_NON_TRIGGER_EXACT or any(
+        rel.startswith(p) for p in CI_NON_TRIGGER_PREFIXES
+    ):
+        continue
+    github_unclassified.append(rel)
+if github_unclassified:
+    raise SystemExit(
+        "tracked .github files that are neither CI-definition triggers nor known "
+        "metadata: " + ", ".join(github_unclassified)
+    )
+for rel in (
+    ".github/scripts/run-ci.sh",
+    ".github/workflows/nested/deep.yml",
+    # A directory carve-out without a trailing slash used to match these.
+    ".github/PULL_REQUEST_TEMPLATE_x/action.yml",
+    ".github/PULL_REQUEST_TEMPLATEsneaky.yml",
+    ".github/ISSUE_TEMPLATE_x/run.sh",
+):
+    assert is_trigger(rel), f"CI carrier must be gated: {rel}"
+for rel in (
+    ".github/CODEOWNERS",
+    ".github/dependabot.yml",
+    ".github/README.md",
+    ".github/PULL_REQUEST_TEMPLATE.md",
+    ".github/pull_request_template.md",
+    ".github/PULL_REQUEST_TEMPLATE/two.md",
+    ".github/DISCUSSION_TEMPLATE/ideas.yml",
+):
+    assert not is_trigger(rel), f"repo metadata must not gate: {rel}"
+for p in CI_NON_TRIGGER_PREFIXES:
+    assert p.endswith("/"), f"directory carve-out needs a path boundary: {p}"
 
 n_verify = len(list(Path("scripts").glob("verify-*.sh")))
 print(

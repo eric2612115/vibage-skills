@@ -7,7 +7,7 @@ requires. Agents must **not** declare N — the script derives it from trigger p
 
 | Class | Trigger membership (see `is_trigger` + `classify_path`) | Impl min N | Diversity rule |
 |-------|----------------------------------------------------------|------------|----------------|
-| `gate` | gate EXACT scripts (`assert_gate`, `write_confirm`, `coverage-box`, `test-tier0`, `pack-health`, `.github/workflows/tier0.yml`) + named `scripts/lib/` helpers; **hub-state writers**; **acceptance definers** (all `scripts/verify-*.sh` + named checkers) — both below | ≥2 | ≥2 distinct non-empty reviewer **`context`** (all classes; A1) |
+| `gate` | gate EXACT scripts (`assert_gate`, `write_confirm`, `coverage-box`, `test-tier0`, `pack-health`) + named `scripts/lib/` helpers; **hub-state writers**; **acceptance definers** (all `scripts/verify-*.sh` + named checkers); **CI definition** (all `.github/**` except listed metadata) — all below | ≥2 | ≥2 distinct non-empty reviewer **`context`** (all classes; A1) |
 | `narrative` | entire `adapters/`; entire `skills/`; `references/hard-stops.md`; `references/looping-review.md`; `references/routing-scope.md`; `references/review-budget.md` | ≥2 | same: ≥2 distinct **`context`** |
 | `tests` | named suites only (`TRIGGER_TESTS_EXACT`), which must include every suite a CI job runs | ≥2 | same: ≥2 distinct **`context`** |
 
@@ -21,9 +21,10 @@ and blanket `tests/` are still **not** triggers — only named members are. The 
 `git ls-files scripts` (any extension), except `scripts/lab/**`, is either a trigger or is
 named in `NON_GATE_EXEMPT` with a reason. There is no content predicate to satisfy, so a
 tracked script cannot land unclassified. The same suite derives the CI-run test set from
-`scripts/test-tier0.sh`, `scripts/pack-health.sh`, and every `.github/workflows/*.yml` /
-`*.yaml`, and fails if a suite a CI job runs is not a trigger. `scripts/lab/**` is out of
-scope — the harness runs on copies under `/tmp`, never a real owner hub.
+`scripts/test-tier0.sh`, `scripts/pack-health.sh`, every `.github/workflows/**` YAML, and
+every `.github/actions/**` YAML, and fails if a suite a CI job runs is not a trigger.
+`scripts/lab/**` is out of scope — the harness runs on copies under `/tmp`, never a real
+owner hub.
 
 ### Hub-state writers (gate class)
 
@@ -58,6 +59,24 @@ checkers join it: `freshness-check.sh`, `env-vacancy-check.sh`, `scene-validate.
 
 `scripts/lab/verify-l1-done.sh` is not gated: the prefix is `scripts/verify-`, and the lab
 harness never judges a real owner hub.
+
+### CI definition (gate class)
+
+Everything under `.github/` is gate class **except** listed repo metadata: the
+`ISSUE_TEMPLATE/`, `PULL_REQUEST_TEMPLATE/`, and `DISCUSSION_TEMPLATE/` directories, plus
+`CODEOWNERS`, `dependabot.yml`/`.yaml`, `FUNDING.yml`, `README.md`, `SECURITY.md`,
+`SUPPORT.md`, `CONTRIBUTING.md`, `CODE_OF_CONDUCT.md`, and the single-file template
+spellings. Directory carve-outs must end in `/` — a bare prefix also matches
+`PULL_REQUEST_TEMPLATE_x/action.yml`, which is a carrier, not metadata.
+What CI runs is what "green" covers, so adding a job — or
+a composite action or helper script a job calls — changes the meaning of a passing build.
+
+Gating only `tier0.yml` left that open: a new workflow plus a composite action could add an
+ungoverned suite with no record and no failing check, because the workflow-only derivation
+never saw the suite name. Naming `workflows/` and `actions/` alone would have moved the same
+hole to `.github/scripts/**`, so the rule carves metadata out rather than listing executable
+locations. `tests/test_review_record.sh` partitions `git ls-files .github` the same way it
+partitions `scripts/`.
 
 **V1 N is identical across classes (G3):** every class has Impl min N=2. Classification
 is for stdout disclosure (`blast_class=`) and future budget tuning — **not** a stricter
