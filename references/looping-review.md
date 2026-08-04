@@ -12,9 +12,10 @@ Budget SSOT: `references/review-budget.md` (blast class → N; diversity axis = 
 - Changing guarded paths (capability allow-list in `scripts/lib/review_record.py`
   + `references/review-budget.md` — not blanket `tests/` / `scripts/lib/`):
   gate entrypoints + helper closure (`review_record.py`, `pack-health.sh`,
-  `test-tier0.sh`, `assert_gate.sh`, `write_confirm.sh`, `coverage-box.sh`,
-  `.github/workflows/tier0.yml`, plus `scan_plan_hash.py` / `coverage_box.py` /
-  `proven_lock.py`); **hub-state writers** (write the owner's `docs/vibage/**` or mint
+  `test-tier0.sh`, `assert_gate.sh`, `write_confirm.sh`, `coverage-box.sh`, plus
+  `scan_plan_hash.py` / `coverage_box.py` / `proven_lock.py`);   **CI definition**
+  (all `.github/**` except listed metadata — what runs is what green covers);
+  **hub-state writers** (write the owner's `docs/vibage/**` or mint
   cell / freshness / evidence values, including thin wrappers that do it through
   `scripts/lib`); **acceptance definers** (all `scripts/verify-*.sh` by prefix, plus named
   checkers — editing one changes what passing *means*); narrative (`adapters/**`,
